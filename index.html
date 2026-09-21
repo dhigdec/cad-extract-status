@@ -103,11 +103,14 @@
         </table>`;
 
       const buckets = st.remaining_by_size || [];
+      const depthCap = st.max_depth_cap || t.max_depth_cap || 15;
+      const depthSeen = st.max_depth_seen || t.max_depth_seen || 0;
       html += `<h2>Archives still waiting, by size</h2>
+        <p>Each of these is unzipped, then every zip inside it, up to <b>${fmt(depthCap)} levels</b>. Deepest level opened so far: <b>${fmt(depthSeen)}</b>. Depth of an archive still waiting is not known until it is opened.</p>
         <table>
-          <tr><th>Size of archive</th><th>How many left</th><th>Total size</th></tr>`;
+          <tr><th>Size of archive</th><th>How many left</th><th>Total size</th><th>Unzip levels</th></tr>`;
       for (const row of buckets) {
-        html += `<tr><td>${row.label}</td><td>${fmt(row.left)}</td><td>${Number(row.tb).toFixed(3)} TB</td></tr>`;
+        html += `<tr><td>${row.label}</td><td>${fmt(row.left)}</td><td>${Number(row.tb).toFixed(3)} TB</td><td>up to ${fmt(depthCap)}</td></tr>`;
       }
       html += `</table>`;
 
