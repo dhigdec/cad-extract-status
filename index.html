@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Deep CAD count</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 1.25rem; color: #111; }
+    h1 { font-size: 1.25rem; margin: 0 0 0.5rem; }
+    h2 { font-size: 1rem; margin: 1.25rem 0 0.4rem; }
+    .meta { color: #444; margin-bottom: 0.75rem; }
+    .alive { color: #0a7; font-weight: 700; }
+    .stalled { color: #c40; font-weight: 700; }
+    table { border-collapse: collapse; margin-bottom: 0.5rem; }
+    th, td { border: 1px solid #ccc; padding: 4px 8px; text-align: right; }
+    th:first-child, td:first-child { text-align: left; }
+    th { background: #f3f3f3; }
+    .bar { background: #e5e5e5; height: 18px; width: 100%; max-width: 520px; }
+    .bar > span { display: block; height: 100%; background: #3a7; }
+    .bar-label { margin-top: 4px; }
+    .current { font-family: ui-monospace, monospace; font-size: 0.85rem; word-break: break-all; }
+    .err { color: #c40; }
+  </style>
+</head>
+<body>
+  <h1>Disk-1 / Disk-2 deep CAD count</h1>
+  <div id="root">Loading…</div>
+  <script>
+    const TYPES = ["shop","detail","gather","erection","construction","abm","approval","inputs","other"];
+    const CATS = [
+      ["pdf","PDF"],
+      ["2d","2D"],
+      ["3d","3D"],
+      ["nc1","NC1"],
+    ];
+
+    function n(obj, path) {
+      let cur = obj;
+      for (const k of path) {
+        if (cur == null) return 0;
+        cur = cur[k];
+      }
+      return typeof cur === "number" ? cur : 0;
+    }
+
+    function fmt(x) { return Number(x || 0).toLocaleString(); }
+
+    function render(st) {
+      const t = st.totals || {};
+      const a = t.archives || {};
+      const c = t.counts || {};
+      const d1a = a["Disk-1"] || {};
+      const d2a = a["Disk-2"] || {};
+      const comb = a.combined || {};
+      const done = comb.completed_total || 0;
+      const total = comb.manifest_total || 3620;
+      const pct = total ? Math.min(100, (done / total) * 100) : 0;
+      const healthClass = st.health === "alive" ? "alive" : "stalled";
+      const healthLabel = st.health === "alive" ? "ALIVE" : "STALLED";
+
+      let html = "";
+      html += `<div class="meta">
+        Status: <span class="${healthClass}">${healthLabel}</span>
+        &nbsp;|&nbsp; last totals update: ${st.last_update_iso || "n/a"}
+        (${st.age_seconds == null ? "?" : st.age_seconds + "s ago"})
+        &nbsp;|&nbsp; worker pgrep: ${st.worker_alive ? "yes" : "no"}
+      </div>`;
+
+      html += `<div class="bar"><span style="width:${pct.toFixed(1)}%"></span></div>`;
+      html += `<div class="bar-label">Archives ${fmt(done)} / ${fmt(total)} (${pct.toFixed(1)}%)</div>`;
+
+      html += `<h2>Archives</h2>
+        <table>
+          <tr><th></th><th>Done</th><th>Total</th><th>Remaining</th><th>Failed</th><th>Skipped</th></tr>
+          <tr><td>Disk-1</td><td>${fmt(d1a.completed_total)}</td><td>${fmt(d1a.manifest_total)}</td>
+            <td>${fmt(d1a.remaining)}</td><td>${fmt(d1a.failed)}</td><td>${fmt(d1a.skipped_too_large)}</td></tr>
+          <tr><td>Disk-2</td><td>${fmt(d2a.completed_total)}</td><td>${fmt(d2a.manifest_total)}</td>
+            <td>${fmt(d2a.remaining)}</td><td>${fmt(d2a.failed)}</td><td>${fmt(d2a.skipped_too_large)}</td></tr>
+          <tr><td>Combined</td><td>${fmt(comb.completed_total)}</td><td>${fmt(comb.manifest_total)}</td>
+            <td>${fmt(comb.remaining)}</td><td>${fmt(comb.failed)}</td><td>${fmt(comb.skipped_too_large)}</td></tr>
+        </table>`;
+
+      const buckets = st.remaining_by_size || [];
+      html += `<h2>Archives still waiting, by size</h2>
+        <table>
+          <tr><th>Size of archive</th><th>How many left</th><th>Total size</th></tr>`;
+      for (const row of buckets) {
+        html += `<tr><td>${row.label}</td><td>${fmt(row.left)}</td><td>${Number(row.tb).toFixed(3)} TB</td></tr>`;
+      }
+      html += `</table>`;
+
+      html += `<h2>Asset counts (RAW vs DEDUPED sha256)</h2>
+        <table>
+          <tr>
+            <th>Channel</th>
+            <th colspan="2">Disk-1</th>
+            <th colspan="2">Disk-2</th>
+            <th colspan="2">Combined</th>
+          </tr>
+          <tr>
+            <th></th>
+            <th>RAW</th><th>DEDUPED</th>
+            <th>RAW</th><th>DEDUPED</th>
+            <th>RAW</th><th>DEDUPED</th>
+          </tr>`;
+      for (const [key, label] of CATS) {
+        html += `<tr><td>${label}</td>`;
+        for (const disk of ["Disk-1","Disk-2","combined"]) {
+          html += `<td>${fmt(n(c, [disk, key, "raw"]))}</td>`;
+          html += `<td>${fmt(n(c, [disk, key, "sha256"]))}</td>`;
+        }
+        html += `</tr>`;
+      }
+      html += `</table>`;
+
+      html += `<h2>PDF drawing types</h2>
+        <table>
+          <tr>
+            <th>Type</th>
+            <th colspan="2">Disk-1</th>
+            <th colspan="2">Disk-2</th>
+            <th colspan="2">Combined</th>
+          </tr>
+          <tr>
+            <th></th>
+            <th>RAW</th><th>sha256</th>
+            <th>RAW</th><th>sha256</th>
+            <th>RAW</th><th>sha256</th>
+          </tr>`;
+      for (const typ of TYPES) {
+        html += `<tr><td>${typ}</td>`;
+        for (const disk of ["Disk-1","Disk-2","combined"]) {
+          html += `<td>${fmt(n(c, [disk, "pdf_by_drawing_type", typ, "raw"]))}</td>`;
+          html += `<td>${fmt(n(c, [disk, "pdf_by_drawing_type", typ, "sha256"]))}</td>`;
+        }
+        html += `</tr>`;
+      }
+      html += `</table>`;
+
+      html += `<h2>PDF path flags</h2>
+        <table>
+          <tr>
+            <th>Flag</th>
+            <th colspan="2">Disk-1</th>
+            <th colspan="2">Disk-2</th>
+            <th colspan="2">Combined</th>
+          </tr>
+          <tr>
+            <th></th>
+            <th>RAW</th><th>sha256</th>
+            <th>RAW</th><th>sha256</th>
+            <th>RAW</th><th>sha256</th>
+          </tr>`;
+      for (const [flag, label] of [
+        ["client_final_uploads", "uploads (client-final)"],
+        ["superseded_void", "void (superseded)"],
+      ]) {
+        html += `<tr><td>${label}</td>`;
+        for (const disk of ["Disk-1","Disk-2","combined"]) {
+          html += `<td>${fmt(n(c, [disk, "pdf_path_flags", flag, "raw"]))}</td>`;
+          html += `<td>${fmt(n(c, [disk, "pdf_path_flags", flag, "sha256"]))}</td>`;
+        }
+        html += `</tr>`;
+      }
+      html += `</table>`;
+
+      html += `<h2>Nested zip depth</h2>
+        <p>Max nested zip depth seen: <b>${fmt(t.max_depth_seen)}</b>
+        &nbsp;|&nbsp; depth cap: ${fmt(t.max_depth_cap)}
+        &nbsp;|&nbsp; cap hits: ${fmt(t.depth_cap_hits)}</p>`;
+
+      const cur = st.current || {};
+      const fin = st.last_finished || {};
+      const esc = (s) => String(s || "").replace(/</g, "&lt;");
+      html += `<h2>Now</h2>
+        <p><b>${esc(cur.disk) || "?"}</b>
+        &nbsp; ${esc(cur.size_label) || "?"}
+        &nbsp; archive ${fmt(cur.index)} / ${fmt(cur.total || total)}</p>
+        <p class="current"><b>${esc(cur.name) || "(waiting for next archive)"}</b></p>
+        <p class="current">${esc(cur.path)}</p>`;
+
+      html += `<h2>Last archive finished</h2>`;
+      if (!fin.name) {
+        html += `<p>None yet.</p>`;
+      } else {
+        html += `<p><b>${esc(fin.disk)}</b> ${fmt(fin.size_mb)} MB
+          &nbsp; ${esc(fin.status)}
+          &nbsp; ${fmt(fin.elapsed_s)}s
+          &nbsp; nested depth ${fmt(fin.max_depth)}</p>
+          <p class="current"><b>${esc(fin.name)}</b></p>
+          <table>
+            <tr><th>From this archive</th><th>Count</th></tr>
+            <tr><td>PDF</td><td>${fmt(fin.pdf)}</td></tr>
+            <tr><td>2D</td><td>${fmt(fin.d2)}</td></tr>
+            <tr><td>3D</td><td>${fmt(fin.d3)}</td></tr>
+            <tr><td>CAD files</td><td>${fmt(fin.files)}</td></tr>
+          </table>`;
+      }
+
+      document.getElementById("root").innerHTML = html;
+    }
+
+    async function tick() {
+      try {
+        const r = await fetch("status.json?t=" + Date.now(), { cache: "no-store" });
+        if (!r.ok) throw new Error("HTTP " + r.status);
+        render(await r.json());
+      } catch (e) {
+        document.getElementById("root").innerHTML =
+          `<p class="err">Could not load /status.json: ${e}</p>`;
+      }
+    }
+    tick();
+    setInterval(tick, 5000);
+  </script>
+</body>
+</html>
