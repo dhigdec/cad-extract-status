@@ -103,14 +103,46 @@
         </table>`;
 
       const buckets = st.remaining_by_size || [];
-      const depthCap = st.max_depth_cap || t.max_depth_cap || 15;
       const depthSeen = st.max_depth_seen || t.max_depth_seen || 0;
       html += `<h2>Archives still waiting, by size</h2>
-        <p>Each of these is unzipped, then every zip inside it, up to <b>${fmt(depthCap)} levels</b>. Deepest level opened so far: <b>${fmt(depthSeen)}</b>. Depth of an archive still waiting is not known until it is opened.</p>
+        <p>Exact unzip levels are measured per archive after it is opened; unopened archives are listed as not yet measured. Deepest exact depth seen so far across finished archives: <b>${fmt(depthSeen)}</b>.</p>
         <table>
-          <tr><th>Size of archive</th><th>How many left</th><th>Total size</th><th>Unzip levels</th></tr>`;
+          <tr><th>Size of archive</th><th>How many left</th><th>Total size</th><th>Exact unzip depth</th></tr>`;
       for (const row of buckets) {
-        html += `<tr><td>${row.label}</td><td>${fmt(row.left)}</td><td>${Number(row.tb).toFixed(3)} TB</td><td>up to ${fmt(depthCap)}</td></tr>`;
+        html += `<tr><td>${row.label}</td><td>${fmt(row.left)}</td><td>${Number(row.tb).toFixed(3)} TB</td><td>not yet measured</td></tr>`;
+      }
+      html += `</table>`;
+
+      const finishedDepth = st.finished_depth_by_size || [];
+      let maxDepthCol = 0;
+      for (const row of finishedDepth) {
+        const deepest = row.deepest;
+        if (deepest != null && deepest > maxDepthCol) maxDepthCol = deepest;
+        for (const k of Object.keys(row.depth_counts || {})) {
+          const d = Number(k);
+          if (!Number.isNaN(d) && d > maxDepthCol) maxDepthCol = d;
+        }
+      }
+      html += `<h2>Exact unzip depth of finished archives, by size</h2>
+        <p>Built only from archives that have already been opened. Each count is the exact nested depth measured for that archive (not a safety cap).</p>
+        <table>
+          <tr><th>Size of archive</th><th>Finished</th>`;
+      for (let d = 0; d <= maxDepthCol; d++) {
+        html += `<th>Depth ${d}</th>`;
+      }
+      html += `<th>Deepest exact</th></tr>`;
+      if (!finishedDepth.length) {
+        html += `<tr><td colspan="${3 + maxDepthCol + 1}">No finished archives yet.</td></tr>`;
+      } else {
+        for (const row of finishedDepth) {
+          const counts = row.depth_counts || {};
+          html += `<tr><td>${row.label}</td><td>${fmt(row.finished)}</td>`;
+          for (let d = 0; d <= maxDepthCol; d++) {
+            const c = counts[String(d)] || counts[d] || 0;
+            html += `<td>${row.finished ? fmt(c) : "—"}</td>`;
+          }
+          html += `<td>${row.deepest == null ? "—" : fmt(row.deepest)}</td></tr>`;
+        }
       }
       html += `</table>`;
 
@@ -190,8 +222,8 @@
       html += `</table>`;
 
       html += `<h2>Nested zip depth</h2>
-        <p>Max nested zip depth seen: <b>${fmt(t.max_depth_seen)}</b>
-        &nbsp;|&nbsp; depth cap: ${fmt(t.max_depth_cap)}
+        <p>Deepest exact nested zip depth measured so far: <b>${fmt(st.max_depth_seen || t.max_depth_seen)}</b>
+        &nbsp;|&nbsp; safety cap (not a measured depth): ${fmt(st.max_depth_cap || t.max_depth_cap)}
         &nbsp;|&nbsp; cap hits: ${fmt(t.depth_cap_hits)}</p>`;
 
       const cur = st.current || {};
