@@ -1,34 +1,13 @@
 {
   "source_of_truth": "cloud-ec2",
   "health": "stale",
-  "updated": "2026-09-22T02:01:00.613367Z",
-  "last_update_iso": "2026-09-22T02:01:00.613367Z",
-  "age_seconds": 611.7,
-  "worker_alive": true,
-  "stalled": true,
-  "current": [
-    {
-      "shard": 0,
-      "state": "processing",
-      "archive": "JHCamp.7z"
-    },
-    {
-      "shard": 1,
-      "state": "processing",
-      "archive": "32-21039 Solar Turbines Test Cell 7.7z"
-    },
-    {
-      "shard": 2,
-      "state": "processing",
-      "archive": "TeklaStructuresModels.7z"
-    },
-    {
-      "shard": 3,
-      "state": "processing",
-      "archive": "BMW BAY EXPANSION_JOB.7z"
-    }
-  ],
-  "current_archive": "JHCamp.7z",
+  "updated": "2026-09-22T02:11:18.605253Z",
+  "last_update_iso": "2026-09-22T02:11:18.605253Z",
+  "age_seconds": 19.0,
+  "worker_alive": false,
+  "stalled": false,
+  "current": [],
+  "current_archive": null,
   "last_finished": {
     "disk": "Disk-2",
     "name": "15-144_GMS_Seq# 1 Partial Dwgs  for FAB_T#010.zip",
@@ -991,8 +970,8 @@
       "Disk-2": "s3://annotationprod/cad-disk-extract/Disk-2/"
     },
     "profile": "annotationprod-publish",
-    "stored_bytes": 9967130798,
-    "stored_gb": 9.967131,
+    "stored_bytes": 512275276,
+    "stored_gb": 0.512275,
     "stored_bytes_by_disk": {
       "Disk-1": 38274820,
       "Disk-2": 474000456
@@ -1008,16 +987,13 @@
       "combined": 155
     },
     "archives_pending_s3": 832,
-    "estimated_monthly_usd": 0.2492,
+    "estimated_monthly_usd": 0.0128,
     "cost_rate_usd_per_gb_month": 0.025,
-    "note": "Estimate = stored_GB uploaded by this job \u00d7 $0.025/GB-month (S3 Standard ap-south-1). Not the AWS invoice. Only cad-disk-extract/ is written; source buckets are read-only.",
-    "scope": "whole cad-disk-extract/ prefix measured from EC2",
-    "object_count": 60000,
-    "scanned_at": "2026-09-22T01:58:43.371010Z"
+    "note": "Estimate = stored_GB uploaded by this job \u00d7 $0.025/GB-month (S3 Standard ap-south-1). Not the AWS invoice. Only cad-disk-extract/ is written; source buckets are read-only."
   },
-  "s3_stored_bytes": 9967130798,
-  "s3_stored_gb": 9.967131,
-  "estimated_monthly_usd": 0.2492,
+  "s3_stored_bytes": 512275276,
+  "s3_stored_gb": 0.512275,
+  "estimated_monthly_usd": 0.0128,
   "local_baseline": {
     "note": "Archives completed by the laptop run before cutover to EC2. Extraction, unzip and counting now happen on EC2 only.",
     "health": "stalled",
@@ -1051,296 +1027,26 @@
   },
   "cloud": {
     "schema": 1,
-    "state": "running",
-    "heartbeat_at": "2026-09-22T02:01:00.613367Z",
+    "state": "starting",
+    "heartbeat_at": "2026-09-22T02:11:18.605253Z",
     "run_id": "run-20260922T011906Z",
-    "instance_id": "i-03cbb2e935bbb2445",
+    "instance_id": "i-08d525e127b68d899",
     "instance_type": "c7i.4xlarge",
     "availability_zone": "ap-south-1a",
-    "credential_expiry": "none",
-    "credential_stop_at": "2027-09-22T01:44:22.171928Z",
-    "progress": {
-      "manifest_total": 2647,
-      "completed_ok": 411,
-      "failed": 0,
-      "remaining": 2236,
-      "retries": 0
-    },
-    "counts": {
-      "raw": {
-        "pdf": 16627,
-        "cad_pdf": 9650,
-        "other_pdf": 6977,
-        "2d": 43962,
-        "3d": 330,
-        "nc1": 6943
-      },
-      "sha256": {
-        "pdf": 11798,
-        "cad_pdf": 6607,
-        "other_pdf": 5326,
-        "2d": 33857,
-        "3d": 272,
-        "nc1": 3743
-      },
-      "block_sha256": 54063,
-      "extensions": {
-        ".db1": {
-          "category": "3d",
-          "raw": 212,
-          "sha256": 184
-        },
-        ".dg": {
-          "category": "2d",
-          "raw": 30474,
-          "sha256": 24229
-        },
-        ".dpm": {
-          "category": "2d",
-          "raw": 7613,
-          "sha256": 5212
-        },
-        ".dwg": {
-          "category": "2d",
-          "raw": 2632,
-          "sha256": 2060
-        },
-        ".dxf": {
-          "category": "2d",
-          "raw": 3243,
-          "sha256": 2356
-        },
-        ".ifc": {
-          "category": "3d",
-          "raw": 107,
-          "sha256": 84
-        },
-        ".nc1": {
-          "category": "nc1",
-          "raw": 6943,
-          "sha256": 3743
-        },
-        ".pdf": {
-          "category": "pdf",
-          "raw": 16627,
-          "sha256": 11798
-        },
-        ".stp": {
-          "category": "3d",
-          "raw": 11,
-          "sha256": 4
-        }
-      }
-    },
-    "nested_depth": {
-      "measured_finished_archives": 411,
-      "unopened_archives_not_measured": 2236,
-      "archive_nodes_by_depth": {
-        "0": 411,
-        "1": 368,
-        "2": 5
-      },
-      "finished_archive_max_depth_distribution": {
-        "0": 303,
-        "1": 105,
-        "2": 3
-      }
-    },
-    "storage": {
-      "stored_bytes": 11556936803,
-      "stored_gb": 11.556937,
-      "stored_files": 67862,
-      "estimated_s3_monthly_usd": 0.2889
-    },
-    "compute": {
-      "hourly_ec2_estimate_usd": "0.93",
-      "uptime_seconds": 754.5,
-      "uptime_hours": 0.2096,
-      "accrued_estimate_usd": 0.1949,
-      "estimate_label": "On-Demand estimate; excludes taxes and data transfer"
-    },
-    "ebs": {
-      "size_gb": 1000.0,
-      "volume_type": "gp3",
-      "iops": 6000,
-      "throughput_mibps": 500,
-      "rate_usd_per_gb_month": 0.0912,
-      "estimated_monthly_usd": 91.2,
-      "hourly_estimate_usd": 0.124932,
-      "accrued_estimate_usd": 0.0262
-    },
-    "s3_prefix": {
-      "state": "ok",
-      "scanned_at": "2026-09-22T01:58:43.371010Z",
-      "prefix": "s3://annotationprod/cad-disk-extract/",
-      "object_count": 60000,
-      "stored_bytes": 9967130798,
-      "stored_gb": 9.967131,
-      "estimated_s3_monthly_usd": 0.2492,
-      "cost_rate_usd_per_gb_month": 0.025
-    },
-    "costs": {
-      "compute_accrued_usd": 0.1949,
-      "ebs_accrued_usd": 0.0262,
-      "s3_estimated_monthly_usd": 0.2492,
-      "combined_accrued_usd": 0.2211,
-      "combined_hourly_usd": 1.0549,
-      "label": "ESTIMATE ONLY - computed from On-Demand list prices (EC2 + gp3 EBS + S3 Standard at $0.025/GB-month). This is not the AWS invoice."
-    },
-    "workers": [
-      {
-        "shard": 0,
-        "state": "processing",
-        "current_archive": "JHCamp.7z",
-        "current_archive_id": "6031a08b1b8b3bb1",
-        "archive_index": 85,
-        "shard_total": 651,
-        "updated_at": "2026-09-22T02:01:00.090529Z",
-        "pid": 4109,
-        "returncode": null
-      },
-      {
-        "shard": 1,
-        "state": "processing",
-        "current_archive": "32-21039 Solar Turbines Test Cell 7.7z",
-        "current_archive_id": "be1db80bc48f5e99",
-        "archive_index": 102,
-        "shard_total": 676,
-        "updated_at": "2026-09-22T02:00:45.397635Z",
-        "pid": 4110,
-        "returncode": null
-      },
-      {
-        "shard": 2,
-        "state": "processing",
-        "current_archive": "TeklaStructuresModels.7z",
-        "current_archive_id": "00e5054dafea93e1",
-        "archive_index": 107,
-        "shard_total": 681,
-        "updated_at": "2026-09-22T02:00:58.846377Z",
-        "pid": 4111,
-        "returncode": null
-      },
-      {
-        "shard": 3,
-        "state": "processing",
-        "current_archive": "BMW BAY EXPANSION_JOB.7z",
-        "current_archive_id": "7e0fbbd30c2c5ebb",
-        "archive_index": 117,
-        "shard_total": 639,
-        "updated_at": "2026-09-22T02:00:40.274627Z",
-        "pid": 4112,
-        "returncode": null
-      }
-    ],
-    "worker_processes_alive": 4,
-    "source_listing": {
-      "state": "complete",
-      "finished_at": "2026-09-22T01:51:32.285169Z",
-      "cloud_remaining": 2647,
-      "snapshot_remaining": 2647,
-      "missing_from_snapshot": 0,
-      "stale_in_snapshot": 0,
-      "matched_exactly": true
-    },
-    "last_checkpoint_at": "2026-09-22T02:00:47.403953Z",
-    "github_publisher": {
-      "repo": "dhigdec/cad-extract-status",
-      "last_push_success_at": null,
-      "last_error": "FileNotFoundError"
-    },
-    "temporary_credential_limitation": "Workers stop five minutes before destination credential expiry. The instance remains running; new destination writes require refreshed credentials."
+    "credential_expiry": "none"
   },
-  "cloud_workers_alive": 4,
+  "cloud_workers_alive": 0,
   "archives_combined": {
     "total": 3620,
-    "done": 1397,
-    "remaining": 2223,
+    "done": 986,
+    "remaining": 2634,
     "failed": 0,
-    "retries": 0,
+    "retries": null,
     "done_local_before_cutover": 986,
-    "done_on_ec2": 411,
-    "ec2_manifest_total": 2647,
+    "done_on_ec2": 0,
+    "ec2_manifest_total": 0,
     "ec2_skipped_already_done_locally": 13
   },
-  "cloud_counts": {
-    "raw": {
-      "pdf": 16627,
-      "cad_pdf": 9650,
-      "other_pdf": 6977,
-      "2d": 43962,
-      "3d": 330,
-      "nc1": 6943
-    },
-    "sha256": {
-      "pdf": 11798,
-      "cad_pdf": 6607,
-      "other_pdf": 5326,
-      "2d": 33857,
-      "3d": 272,
-      "nc1": 3743
-    },
-    "block_sha256": 54063,
-    "extensions": {
-      ".db1": {
-        "category": "3d",
-        "raw": 212,
-        "sha256": 184
-      },
-      ".dg": {
-        "category": "2d",
-        "raw": 30474,
-        "sha256": 24229
-      },
-      ".dpm": {
-        "category": "2d",
-        "raw": 7613,
-        "sha256": 5212
-      },
-      ".dwg": {
-        "category": "2d",
-        "raw": 2632,
-        "sha256": 2060
-      },
-      ".dxf": {
-        "category": "2d",
-        "raw": 3243,
-        "sha256": 2356
-      },
-      ".ifc": {
-        "category": "3d",
-        "raw": 107,
-        "sha256": 84
-      },
-      ".nc1": {
-        "category": "nc1",
-        "raw": 6943,
-        "sha256": 3743
-      },
-      ".pdf": {
-        "category": "pdf",
-        "raw": 16627,
-        "sha256": 11798
-      },
-      ".stp": {
-        "category": "3d",
-        "raw": 11,
-        "sha256": 4
-      }
-    }
-  },
-  "cloud_depth": {
-    "measured_finished_archives": 411,
-    "unopened_archives_not_measured": 2236,
-    "archive_nodes_by_depth": {
-      "0": 411,
-      "1": 368,
-      "2": 5
-    },
-    "finished_archive_max_depth_distribution": {
-      "0": 303,
-      "1": 105,
-      "2": 3
-    }
-  }
+  "cloud_counts": {},
+  "cloud_depth": null
 }
