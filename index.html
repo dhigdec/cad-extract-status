@@ -862,8 +862,9 @@
   <script>
     "use strict";
 
-    const LIVE_STATUS_URL = "https://storage.googleapis.com/cad-extract-public-status-mlproject-501205/status.json";
-    const FALLBACK_STATUS_URL = "https://raw.githubusercontent.com/dhigdec/cad-extract-status/main/status.json";
+    const LIVE_STATUS_URL = "https://cad-extract-status-874846752452.s3.ap-south-1.amazonaws.com/status.json";
+    const FALLBACK_GCS_STATUS_URL = "https://storage.googleapis.com/cad-extract-public-status-mlproject-501205/status.json";
+    const FALLBACK_STATUS_URL = FALLBACK_GCS_STATUS_URL;
     const POLL_MS = 5000;
     const STALL_AFTER_SECONDS = 120;
     const SCOPE_DEFS = [
@@ -2177,13 +2178,18 @@
         let source;
         try {
           status = await fetchStatus(LIVE_STATUS_URL);
-          source = "live";
+          source = "aws-s3";
         } catch (primaryError) {
           try {
-            status = await fetchStatus(FALLBACK_STATUS_URL);
-            source = "fallback";
-          } catch (fallbackError) {
-            throw new Error(`Live GCP and GitHub fallback failed (${primaryError.message}; ${fallbackError.message})`);
+            status = await fetchStatus(FALLBACK_GCS_STATUS_URL);
+            source = "gcs-fallback";
+          } catch (gcsError) {
+            try {
+              status = await fetchStatus("https://raw.githubusercontent.com/dhigdec/cad-extract-status/main/status.json");
+              source = "github-fallback";
+            } catch (fallbackError) {
+              throw new Error(`AWS/GCS/GitHub status failed (${primaryError.message}; ${gcsError.message}; ${fallbackError.message})`);
+            }
           }
         }
         const payload = `${source}:${JSON.stringify(status)}`;
