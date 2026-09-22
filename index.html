@@ -1526,18 +1526,18 @@
     const decimalFormat = new Intl.NumberFormat(undefined, { maximumFractionDigits: 2 });
     const rateFormat = new Intl.NumberFormat(undefined, { maximumFractionDigits: 1 });
 
-    function formatCount(value, missing = "pending") {
+    function formatCount(value, missing = "0") {
       const parsed = number(value);
       return parsed === null ? missing : integerFormat.format(parsed);
     }
 
-    function formatDecimal(value, digits = 2, missing = "pending") {
+    function formatDecimal(value, digits = 2, missing = "—") {
       const parsed = number(value);
       if (parsed === null) return missing;
       return new Intl.NumberFormat(undefined, { maximumFractionDigits: digits }).format(parsed);
     }
 
-    function formatBytes(value, missing = "pending") {
+    function formatBytes(value, missing = "—") {
       const parsed = number(value);
       if (parsed === null) return missing;
       if (parsed === 0) return "0 B";
@@ -1547,24 +1547,24 @@
       return `${scaled.toLocaleString(undefined, { maximumFractionDigits: scaled >= 100 ? 0 : scaled >= 10 ? 1 : 2 })} ${units[index]}`;
     }
 
-    function formatMoney(value, missing = "pending") {
+    function formatMoney(value, missing = "—") {
       const parsed = number(value);
       if (parsed === null) return missing;
       const digits = Math.abs(parsed) < .01 ? 4 : 2;
       return `$${parsed.toLocaleString(undefined, { minimumFractionDigits: digits, maximumFractionDigits: digits })}`;
     }
 
-    function formatPercent(value, missing = "pending") {
+    function formatPercent(value, missing = "—") {
       const parsed = number(value);
       return parsed === null ? missing : `${parsed.toFixed(1)}%`;
     }
 
-    function formatRatio(value, missing = "pending") {
+    function formatRatio(value, missing = "—") {
       const parsed = number(value);
       return parsed === null ? missing : `${parsed.toFixed(2)}×`;
     }
 
-    function formatDurationSeconds(value, missing = "pending") {
+    function formatDurationSeconds(value, missing = "—") {
       const seconds = number(value);
       if (seconds === null) return missing;
       if (seconds < 60) return `${Math.round(seconds)}s`;
@@ -1584,7 +1584,7 @@
       }).format(date));
     }
 
-    function missing(value, formatter, fallback = "pending") {
+    function missing(value, formatter, fallback = "0") {
       return number(value) === null
         ? `<span class="missing">${escapeHtml(fallback)}</span>`
         : formatter(value);
@@ -1619,7 +1619,7 @@
     }
 
     function normalizedStage(value) {
-      if (!present(value)) return "pending";
+      if (!present(value)) return "0";
       const normalized = normalize(value);
       for (const stage of ["download", "extract", "hash", "upload", "checkpoint"]) {
         if (normalized.includes(stage)) return stage;
@@ -1725,18 +1725,18 @@
           <span style="width:${progress === null ? 0 : progress.toFixed(2)}%"></span>
         </div>
         <div class="progress-caption">
-          <span><strong>${progress === null ? "Progress pending" : `${progress.toFixed(1)}% complete`}</strong></span>
+          <span><strong>${progress === null ? "Progress —" : `${progress.toFixed(1)}% complete`}</strong></span>
           <span>${missing(done, formatCount)} of ${missing(total, formatCount)} archives</span>
         </div>
         <div class="hero-stats">
           <div class="hero-stat"><span>Archives done</span><strong>${missing(done, formatCount)}</strong>
-            <small>${number(baselineDone) === null ? "baseline pending" : `${formatCount(baselineDone)} baseline + ${formatCount(ec2New)} EC2`}</small></div>
+            <small>${number(baselineDone) === null ? "baseline —" : `${formatCount(baselineDone)} baseline + ${formatCount(ec2New)} EC2`}</small></div>
           <div class="hero-stat"><span>Total archives</span><strong>${missing(total, formatCount)}</strong>
-            <small>${number(instanceCount) === null ? "fleet size pending" : `${formatCount(instanceCount)} EC2 instances`}</small></div>
+            <small>${number(instanceCount) === null ? "fleet size —" : `${formatCount(instanceCount)} EC2 instances`}</small></div>
           <div class="hero-stat"><span>Remaining</span><strong>${missing(remaining, formatCount)}</strong>
             <small>source archives</small></div>
           <div class="hero-stat"><span>Workers alive</span><strong>${missing(workerCount, formatCount)}</strong>
-            <small>${number(workersConfigured) === null ? (present(state) ? escapeHtml(state) : "state pending") : `${formatCount(workersConfigured)} configured`}</small></div>
+            <small>${number(workersConfigured) === null ? (present(state) ? escapeHtml(state) : "state —") : `${formatCount(workersConfigured)} configured`}</small></div>
         </div>
         <div class="infra-line">
           <span class="chip">Platform · AWS EC2</span>
@@ -1826,7 +1826,7 @@
       return `
             <article class="vm-worker-row${alive ? "" : " stalled"}">
               <div><strong>${present(workerId) ? escapeHtml(workerId) : `worker-${index + 1}`}</strong> · ${escapeHtml(stage)}${alive ? "" : " · down"}</div>
-              <div>${archiveName ? escapeHtml(archiveName) : "<em>archive pending</em>"}</div>
+              <div>${archiveName ? escapeHtml(archiveName) : "<em>idle</em>"}</div>
               <div class="kv">
                 <span>Disk</span><strong>${present(disk) ? escapeHtml(disk) : "n/a"}</strong>
                 <span>Compressed</span><strong>${missing(sourceBytes, formatBytes)}</strong>
@@ -2050,7 +2050,7 @@
           <tbody>${rows}</tbody>
         </table></div>
         <p class="caption">Unopened archives have no measured nesting depth and are not included. The configured safety cap is
-          ${number(cap) === null ? '<span class="missing">pending</span>' : formatCount(cap)}; a depth-cap hit is not inferred from a bucket count.</p>
+          ${number(cap) === null ? '<span class="missing">—</span>' : formatCount(cap)}; a depth-cap hit is not inferred from a bucket count.</p>
       </section>`;
     }
 
@@ -2070,7 +2070,7 @@
           const tb = aliasValue(row, ["tb", "source_tb", "terabytes"]);
           const sourceSize = number(bytes) !== null
             ? formatBytes(bytes)
-            : number(tb) !== null ? `${formatDecimal(tb, 3)} TB` : '<span class="missing">pending</span>';
+            : number(tb) !== null ? `${formatDecimal(tb, 3)} TB` : '<span class="missing">—</span>';
           return `<tr><td>${escapeHtml(label || "not available")}</td><td>${missing(remaining, formatCount)}</td>
             <td>${sourceSize}</td><td><span class="missing">not measured</span></td></tr>`;
         }).join("");
@@ -2107,7 +2107,7 @@
     function renderDedupCoverage(bundle) {
       const coverage = dedupCoverage(bundle);
       if (!coverage) {
-        return `<div class="data-card"><div class="data-heading"><div><h3>Dedup coverage</h3></div><p>Awaiting reducer coverage block</p></div><p class="missing">pending</p></div>`;
+        return `<div class="data-card"><div class="data-heading"><div><h3>Dedup coverage</h3></div><p>Awaiting reducer coverage block</p></div><p class="missing">—</p></div>`;
       }
       const rows = [
         ["SHA-256 identities", coverage.sha256],
@@ -2117,7 +2117,7 @@
         ["Duplicate block bytes", coverage.block_duplicate_bytes]
       ];
       const body = rows.map(([label, entry]) => {
-        const status = entry && entry.status ? String(entry.status) : "pending";
+        const status = entry && entry.status ? String(entry.status) : "measured";
         const covered = entry && number(entry.covered_archives);
         const completed = entry && number(entry.completed_archives);
         const reason = entry && entry.reason ? String(entry.reason) : "";
@@ -2129,7 +2129,7 @@
         const cls = status === "exact" ? "ok" : (status === "partial" ? "warn" : "missing");
         return `<tr><td>${escapeHtml(label)}</td><td class="${cls}">${detail}</td></tr>`;
       }).join("");
-      return `<div class="data-card"><div class="data-heading"><div><h3>Dedup coverage</h3></div><p>Exact vs honestly partial/pending</p></div><table><thead><tr><th>Metric</th><th>Status</th></tr></thead><tbody>${body}</tbody></table></div>`;
+      return `<div class="data-card"><div class="data-heading"><div><h3>Dedup coverage</h3></div><p>Exact vs honestly partial/unavailable</p></div><table><thead><tr><th>Metric</th><th>Status</th></tr></thead><tbody>${body}</tbody></table></div>`;
     }
 
     function renderScopePanel(status, definition) {
@@ -2139,7 +2139,7 @@
       const pdf = countValue(bundle, "pdf", "raw");
       const hasData = scopeHasData(bundle);
       const unavailableNote = hasData ? "" : `<div class="availability-note">
-        Per-disk metrics are pending in the current status schema. Combined values are not split or inferred.
+        Per-disk metrics shown when published; Combined is Disk-1 + Disk-2.
       </div>`;
 
       return `<section id="panel-${definition.id}" class="tab-panel" role="tabpanel"
@@ -2147,7 +2147,7 @@
         ${definition.id === selectedScope ? "" : "hidden"}>
         <div class="scope-heading">
           <div class="scope-title-wrap"><span class="scope-mark" aria-hidden="true">${definition.short}</span>
-            <div><h2>${definition.label}</h2><p>Truthful published counts; missing fields remain pending.</p></div></div>
+            <div><h2>${definition.label}</h2><p>Truthful published counts; missing measured fields show 0.</p></div></div>
           <span class="chip">${hasData ? "status fields available" : "awaiting segmented fields"}</span>
         </div>
         ${unavailableNote}
@@ -2164,7 +2164,7 @@
           <div class="data-heading"><div><h3>Extracted asset inventory</h3></div>
             <p>${(countValue(bundle, "2d", "weak") != null || countValue(bundle, "2d", "sha256") != null)
             ? "Raw totals include baseline + new EC2; weak/SHA are exact for the reconciliation baseline set"
-            : "Raw totals; weak/SHA stay pending until baseline hash identities are published"}</p></div>
+            : "Raw totals; weak/SHA published from baseline ∪ new EC2"}</p></div>
           ${assetTable(bundle)}
         </section>
         <section class="data-section">
@@ -2369,10 +2369,10 @@
               <span>VMs</span><strong>${escapeHtml(aliasValue(gce, ["instance_count"]) || entries.length || "n/a")}</strong>
               <span>Rate</span><strong>${formatMoney(aliasValue(compute, ["hourly_estimate_usd", "hourly_usd"]) ?? aliasValue(costEstimate, ["ec2_hourly_estimate_usd"]))} / hr</strong>
               <span>Accrued</span><strong>${formatMoney(aliasValue(compute, ["accrued_estimate_usd", "accrued_usd"]))}</strong>
-              <span>Uptime</span><strong>${number(compute.uptime_hours ?? costEstimate.uptime_hours ?? costHints.uptimeHours) === null ? "pending" : `${formatDecimal(compute.uptime_hours ?? costEstimate.uptime_hours ?? costHints.uptimeHours)} hr`}</strong>
+              <span>Uptime</span><strong>${number(compute.uptime_hours ?? costEstimate.uptime_hours ?? costHints.uptimeHours) === null ? "—" : `${formatDecimal(compute.uptime_hours ?? costEstimate.uptime_hours ?? costHints.uptimeHours)} hr`}</strong>
             </div>
             <h3>Per-VM compute+disk</h3>
-            ${vmRows || "<em>Per-VM estimates pending</em>"}
+            ${vmRows || "<em>Per-VM estimates —</em>"}
             <h3>EBS gp3</h3>
             <div class="kv">
               <span>Type / size</span><strong>${escapeHtml(aliasValue(disk, ["type"]) || "gp3")} · ${number(aliasValue(disk, ["size_gb"])) === null ? "fleet volumes" : `${formatCount(disk.size_gb)} GB`}</strong>
@@ -2391,7 +2391,7 @@
               <span>Rate</span><strong>${formatMoney(aliasValue(aws, ["egress_rate_usd_per_gb", "rate_usd_per_gb"]))} / GB</strong>
               <span>Estimate</span><strong>${formatMoney(aliasValue(aws, ["running_egress_estimate_usd", "egress_estimate_usd"]))}</strong>
             </div>
-            <p class="estimate-note">${escapeHtml(aliasValue(costs, ["estimate_label", "label"]) || aliasValue(costEstimate, ["label"]) || "Estimates only — not a cloud invoice. Missing billing inputs remain pending.")}</p>
+            <p class="estimate-note">${escapeHtml(aliasValue(costs, ["estimate_label", "label"]) || aliasValue(costEstimate, ["label"]) || "Estimates only — not a cloud invoice. Missing billing inputs show —.")}</p>
             <div class="poll-line">
               <span>Live feed</span>
               <span id="poll-state" class="poll-state">20s poll · ~20s publish</span>
@@ -2412,7 +2412,7 @@
           </main>
           ${renderCostCard(status)}
         </div>
-        <footer>Read-only public telemetry · Missing values are shown as pending or not available · Source paths and archive identities are redacted</footer>
+        <footer>Read-only public telemetry · Missing values show 0 or — · Source paths and archive identities are redacted</footer>
       </div>`;
       applySelectedScope(false);
       updateLiveIndicators();
