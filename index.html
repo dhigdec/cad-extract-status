@@ -3,176 +3,2049 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>GCP deep CAD extraction</title>
+  <title>GCP CAD Extraction Status · Disk 1, Disk 2 &amp; Combined</title>
   <style>
-    body{font-family:system-ui,sans-serif;margin:20px;color:#111;padding-right:405px}
-    h1{font-size:1.3rem;margin:0 0 8px}h2{font-size:1rem;margin:22px 0 7px}
-    .meta{color:#444}.alive{color:#087;font-weight:700}.stale{color:#c40;font-weight:700}
-    table{border-collapse:collapse;width:auto;max-width:100%;margin-bottom:8px}
-    th,td{border:1px solid #ccc;padding:5px 8px;text-align:right}
-    th:first-child,td:first-child{text-align:left}th{background:#f3f3f3}
-    .bar{height:20px;background:#e5e5e5;max-width:700px;margin-top:10px}
-    .bar span{display:block;height:100%;background:#298f68}
-    .mono{font-family:ui-monospace,monospace;font-size:.85rem;word-break:break-all}
-    .card{position:fixed;right:12px;top:12px;width:365px;max-height:calc(100vh - 48px);
-      overflow:auto;background:#111;color:#f5f5f5;padding:13px 15px;border-radius:9px;
-      box-shadow:0 2px 12px #0005;font-size:13px;line-height:1.4}
-    .card h2{margin:0 0 7px;color:#fff}.card .big{font-size:1.3rem;font-weight:700}
-    .card .section{color:#8fd;font-weight:700;margin-top:10px}
-    .kv{display:flex;justify-content:space-between;gap:10px}.kv b{text-align:right;word-break:break-word}
-    .muted{color:#666;font-size:12px}.card .muted{color:#bbb}.warning{color:#ffd37a;margin-top:8px}
-    @media(max-width:960px){body{padding-right:0}.card{position:static;width:auto;margin-bottom:18px}}
+    :root {
+      color-scheme: light dark;
+      --bg: #f4f7fb;
+      --bg-accent: #e7f0ff;
+      --surface: rgba(255, 255, 255, .88);
+      --surface-solid: #ffffff;
+      --surface-soft: #f7f9fc;
+      --surface-raised: #ffffff;
+      --text: #142033;
+      --text-soft: #526078;
+      --text-faint: #758198;
+      --border: #dce3ee;
+      --border-strong: #cbd5e3;
+      --brand: #2563eb;
+      --brand-2: #0f8f83;
+      --brand-soft: #e7efff;
+      --good: #087f5b;
+      --good-soft: #dff7ed;
+      --warn: #a45c00;
+      --warn-soft: #fff0cf;
+      --danger: #be3046;
+      --danger-soft: #ffe5ea;
+      --shadow: 0 16px 45px rgba(34, 51, 84, .09);
+      --shadow-soft: 0 7px 24px rgba(34, 51, 84, .07);
+      --radius: 20px;
+      --radius-sm: 12px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #08111f;
+        --bg-accent: #0d2038;
+        --surface: rgba(16, 28, 45, .9);
+        --surface-solid: #101c2d;
+        --surface-soft: #0c1727;
+        --surface-raised: #142238;
+        --text: #e8eef8;
+        --text-soft: #a9b6c9;
+        --text-faint: #8391a6;
+        --border: #263750;
+        --border-strong: #344761;
+        --brand: #78a7ff;
+        --brand-2: #52d4c5;
+        --brand-soft: #172d50;
+        --good: #54d3a3;
+        --good-soft: #123c33;
+        --warn: #ffc86b;
+        --warn-soft: #493516;
+        --danger: #ff899a;
+        --danger-soft: #4c202b;
+        --shadow: 0 18px 50px rgba(0, 0, 0, .28);
+        --shadow-soft: 0 8px 25px rgba(0, 0, 0, .2);
+      }
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-width: 320px;
+      background:
+        radial-gradient(circle at 9% -8%, var(--bg-accent), transparent 31rem),
+        radial-gradient(circle at 86% 2%, color-mix(in srgb, var(--brand-2) 11%, transparent), transparent 26rem),
+        var(--bg);
+      color: var(--text);
+      font: 15px/1.55 Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    button, input, select { font: inherit; }
+    button { color: inherit; }
+    a { color: var(--brand); }
+    .skip-link {
+      position: fixed;
+      z-index: 100;
+      left: 1rem;
+      top: -5rem;
+      padding: .65rem 1rem;
+      border-radius: .6rem;
+      background: var(--surface-solid);
+      box-shadow: var(--shadow);
+    }
+    .skip-link:focus { top: 1rem; }
+
+    .shell {
+      width: min(1540px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 28px 0 54px;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      padding: clamp(22px, 4vw, 42px);
+      border: 1px solid var(--border);
+      border-radius: 26px;
+      background:
+        linear-gradient(135deg, color-mix(in srgb, var(--surface-solid) 94%, var(--brand) 6%), var(--surface) 62%),
+        var(--surface-solid);
+      box-shadow: var(--shadow);
+    }
+    .hero::after {
+      content: "";
+      position: absolute;
+      width: 290px;
+      height: 290px;
+      right: -100px;
+      top: -130px;
+      border: 48px solid color-mix(in srgb, var(--brand) 7%, transparent);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+    .hero-top, .section-heading, .cost-heading, .scope-heading {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 18px;
+    }
+    .eyebrow {
+      margin: 0 0 8px;
+      color: var(--brand);
+      font-size: .74rem;
+      font-weight: 800;
+      letter-spacing: .13em;
+      text-transform: uppercase;
+    }
+    h1, h2, h3, p { margin-top: 0; }
+    h1 {
+      max-width: 850px;
+      margin-bottom: 10px;
+      font-size: clamp(1.75rem, 3.5vw, 3.15rem);
+      line-height: 1.06;
+      letter-spacing: -.04em;
+    }
+    h2 {
+      margin-bottom: 4px;
+      font-size: clamp(1.25rem, 2vw, 1.65rem);
+      line-height: 1.2;
+      letter-spacing: -.025em;
+    }
+    h3 {
+      margin-bottom: 3px;
+      font-size: 1rem;
+      letter-spacing: -.01em;
+    }
+    .lede {
+      max-width: 800px;
+      margin: 0;
+      color: var(--text-soft);
+      font-size: 1rem;
+    }
+    .status-badge {
+      position: relative;
+      z-index: 1;
+      display: inline-flex;
+      flex: 0 0 auto;
+      align-items: center;
+      gap: 8px;
+      min-width: 112px;
+      justify-content: center;
+      padding: 9px 13px;
+      border: 1px solid currentColor;
+      border-radius: 999px;
+      font-size: .75rem;
+      font-weight: 850;
+      letter-spacing: .08em;
+    }
+    .status-badge::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: currentColor;
+      box-shadow: 0 0 0 4px color-mix(in srgb, currentColor 17%, transparent);
+    }
+    .status-badge.alive { color: var(--good); background: var(--good-soft); }
+    .status-badge.stalled { color: var(--danger); background: var(--danger-soft); }
+    .status-badge.waiting { color: var(--warn); background: var(--warn-soft); }
+
+    .freshness-line {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 18px;
+      margin: 22px 0 13px;
+      color: var(--text-soft);
+      font-size: .82rem;
+    }
+    .freshness-line strong { color: var(--text); font-weight: 720; }
+    .freshness-line span { display: inline-flex; align-items: center; gap: 7px; }
+    .freshness-line span::before {
+      content: "";
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--border-strong);
+    }
+    .progress-track {
+      position: relative;
+      height: 11px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: var(--surface-soft);
+    }
+    .progress-track > span {
+      display: block;
+      height: 100%;
+      width: 0;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--brand), var(--brand-2));
+      box-shadow: 0 0 20px color-mix(in srgb, var(--brand) 35%, transparent);
+      transition: width .45s ease;
+    }
+    .progress-caption {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 7px;
+      color: var(--text-soft);
+      font-size: .78rem;
+    }
+    .progress-caption strong { color: var(--text); }
+
+    .hero-stats {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 11px;
+      margin-top: 21px;
+    }
+    .hero-stat {
+      min-height: 82px;
+      padding: 14px 15px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: color-mix(in srgb, var(--surface-solid) 83%, transparent);
+    }
+    .hero-stat span {
+      display: block;
+      color: var(--text-faint);
+      font-size: .71rem;
+      font-weight: 760;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+    .hero-stat strong {
+      display: block;
+      margin-top: 4px;
+      font-size: 1.25rem;
+      line-height: 1.2;
+      font-variant-numeric: tabular-nums;
+    }
+    .hero-stat small { color: var(--text-soft); }
+    .infra-line {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 15px;
+    }
+    .chip, .metric-source {
+      display: inline-flex;
+      align-items: center;
+      padding: 5px 9px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: var(--surface-soft);
+      color: var(--text-soft);
+      font-size: .73rem;
+      font-weight: 650;
+    }
+
+    .page-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 345px;
+      align-items: start;
+      gap: 20px;
+      margin-top: 20px;
+    }
+    .main-column { min-width: 0; }
+    .panel {
+      margin-bottom: 18px;
+      padding: clamp(18px, 3vw, 27px);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      box-shadow: var(--shadow-soft);
+      backdrop-filter: blur(14px);
+    }
+    .section-heading { margin-bottom: 17px; }
+    .section-heading p, .scope-heading p {
+      margin: 4px 0 0;
+      color: var(--text-soft);
+      font-size: .86rem;
+    }
+    .section-kicker {
+      flex: 0 0 auto;
+      color: var(--text-faint);
+      font-size: .72rem;
+      font-weight: 750;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+    }
+
+    .worker-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .worker-card {
+      min-width: 0;
+      padding: 15px;
+      border: 1px solid var(--border);
+      border-radius: 15px;
+      background: var(--surface-soft);
+    }
+    .worker-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .worker-id {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 780;
+    }
+    .worker-id::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--good);
+      box-shadow: 0 0 0 4px color-mix(in srgb, var(--good) 14%, transparent);
+    }
+    .worker-card.idle .worker-id::before { background: var(--text-faint); box-shadow: none; }
+    .stage {
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: var(--brand-soft);
+      color: var(--brand);
+      font-size: .69rem;
+      font-weight: 800;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+    .archive-name {
+      min-height: 2.7em;
+      margin-bottom: 11px;
+      overflow-wrap: anywhere;
+      font-family: var(--mono);
+      font-size: .8rem;
+      font-weight: 650;
+    }
+    .worker-details {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px 12px;
+      margin: 0;
+    }
+    .worker-details div { min-width: 0; }
+    .worker-details dt {
+      color: var(--text-faint);
+      font-size: .66rem;
+      font-weight: 730;
+      letter-spacing: .045em;
+      text-transform: uppercase;
+    }
+    .worker-details dd {
+      margin: 1px 0 0;
+      overflow-wrap: anywhere;
+      font-size: .79rem;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .tabs {
+      position: sticky;
+      z-index: 5;
+      top: 8px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      margin: -7px -7px 18px;
+      padding: 7px;
+      border: 1px solid var(--border);
+      border-radius: 15px;
+      background: color-mix(in srgb, var(--surface-solid) 90%, transparent);
+      box-shadow: var(--shadow-soft);
+      backdrop-filter: blur(16px);
+    }
+    .tab {
+      min-height: 46px;
+      padding: 9px 12px;
+      border: 1px solid transparent;
+      border-radius: 10px;
+      background: transparent;
+      cursor: pointer;
+      font-weight: 760;
+      transition: background .16s ease, border-color .16s ease, transform .16s ease;
+    }
+    .tab:hover { background: var(--surface-soft); }
+    .tab:focus-visible { outline: 3px solid color-mix(in srgb, var(--brand) 32%, transparent); outline-offset: 2px; }
+    .tab[aria-selected="true"] {
+      border-color: color-mix(in srgb, var(--brand) 35%, var(--border));
+      background: var(--brand-soft);
+      color: var(--brand);
+      box-shadow: 0 3px 12px color-mix(in srgb, var(--brand) 10%, transparent);
+    }
+    .tab-panel[hidden] { display: none; }
+    .scope-heading {
+      align-items: center;
+      margin-bottom: 15px;
+      padding: 2px 2px 0;
+    }
+    .scope-mark {
+      display: grid;
+      width: 45px;
+      height: 45px;
+      flex: 0 0 auto;
+      place-items: center;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--brand), var(--brand-2));
+      color: #fff;
+      font-weight: 850;
+      letter-spacing: -.04em;
+    }
+    .scope-title-wrap { display: flex; align-items: center; gap: 12px; }
+    .scope-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 9px;
+      margin-bottom: 16px;
+    }
+    .scope-stat {
+      padding: 12px 13px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: var(--surface-soft);
+    }
+    .scope-stat span {
+      display: block;
+      color: var(--text-faint);
+      font-size: .68rem;
+      font-weight: 740;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+    }
+    .scope-stat strong {
+      display: block;
+      margin-top: 2px;
+      font-size: 1.04rem;
+      font-variant-numeric: tabular-nums;
+    }
+    .availability-note, .callout, .empty-state {
+      padding: 12px 14px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: var(--surface-soft);
+      color: var(--text-soft);
+      font-size: .82rem;
+    }
+    .availability-note {
+      margin-bottom: 15px;
+      border-color: color-mix(in srgb, var(--warn) 35%, var(--border));
+      background: var(--warn-soft);
+      color: var(--warn);
+    }
+
+    .data-section {
+      padding: 19px 0 4px;
+      border-top: 1px solid var(--border);
+    }
+    .data-section:first-of-type { border-top: 0; }
+    .data-heading {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 15px;
+      margin-bottom: 9px;
+    }
+    .data-heading p {
+      margin: 0;
+      color: var(--text-faint);
+      font-size: .76rem;
+    }
+    .table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      border-radius: 13px;
+      background: var(--surface-solid);
+      scrollbar-width: thin;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .79rem;
+      font-variant-numeric: tabular-nums;
+    }
+    th, td {
+      padding: 9px 11px;
+      border-bottom: 1px solid var(--border);
+      text-align: right;
+      white-space: nowrap;
+    }
+    th:first-child, td:first-child { text-align: left; }
+    tr:last-child td { border-bottom: 0; }
+    thead th {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      background: var(--surface-soft);
+      color: var(--text-soft);
+      font-size: .67rem;
+      font-weight: 780;
+      letter-spacing: .045em;
+      text-transform: uppercase;
+    }
+    tbody tr:hover { background: color-mix(in srgb, var(--brand) 3.5%, transparent); }
+    .group-row td {
+      background: color-mix(in srgb, var(--brand) 4%, var(--surface-solid));
+      font-weight: 770;
+    }
+    .sub-row td:first-child { padding-left: 28px; color: var(--text-soft); }
+    .missing { color: var(--text-faint); font-style: italic; font-weight: 450; }
+    .number-strong { color: var(--text); font-weight: 750; }
+    .mono { font-family: var(--mono); }
+
+    .binary-grid, .throughput-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .binary-card, .throughput-card {
+      padding: 13px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: var(--surface-soft);
+    }
+    .binary-top, .throughput-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 7px;
+    }
+    .binary-top strong, .throughput-card strong { font-variant-numeric: tabular-nums; }
+    .binary-top span, .throughput-card span {
+      color: var(--text-faint);
+      font-size: .72rem;
+    }
+    .meter {
+      height: 7px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: var(--border);
+    }
+    .meter > span {
+      display: block;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--brand), var(--brand-2));
+    }
+    .binary-meta {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      margin-top: 6px;
+      color: var(--text-soft);
+      font-size: .69rem;
+    }
+
+    .depth-summary {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .depth-summary div {
+      padding: 10px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--surface-soft);
+    }
+    .depth-summary span {
+      display: block;
+      color: var(--text-faint);
+      font-size: .65rem;
+      font-weight: 730;
+      text-transform: uppercase;
+    }
+    .depth-summary strong { display: block; margin-top: 2px; font-size: .9rem; }
+    .mini-bar-track {
+      width: 110px;
+      height: 6px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: var(--border);
+    }
+    .mini-bar-track span {
+      display: block;
+      height: 100%;
+      border-radius: inherit;
+      background: var(--brand);
+    }
+    .caption {
+      margin: 9px 1px 0;
+      color: var(--text-faint);
+      font-size: .73rem;
+    }
+
+    .throughput-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+    .throughput-card { min-width: 0; }
+    .throughput-card strong {
+      display: block;
+      margin: 3px 0 5px;
+      overflow-wrap: anywhere;
+      font-size: 1.1rem;
+    }
+    .metric-source { padding: 3px 7px; font-size: .62rem; }
+    .callout { margin-top: 11px; }
+
+    .recent-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .recent-card {
+      min-width: 0;
+      padding: 13px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: var(--surface-soft);
+    }
+    .recent-card.error { border-color: color-mix(in srgb, var(--danger) 35%, var(--border)); }
+    .recent-card .archive-name { min-height: auto; margin: 6px 0; }
+    .recent-meta { color: var(--text-faint); font-size: .71rem; }
+    .error-summary {
+      margin: 7px 0 0;
+      color: var(--danger);
+      font-size: .76rem;
+      overflow-wrap: anywhere;
+    }
+
+    .cost-card {
+      position: sticky;
+      top: 12px;
+      overflow: hidden;
+      border: 1px solid color-mix(in srgb, var(--brand) 24%, var(--border));
+      border-radius: var(--radius);
+      background:
+        linear-gradient(155deg, color-mix(in srgb, var(--surface-raised) 93%, var(--brand) 7%), var(--surface-solid));
+      box-shadow: var(--shadow);
+    }
+    .cost-inner { padding: 21px; }
+    .cost-total {
+      padding: 16px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #1d4ed8, #0f8f83);
+      color: #fff;
+    }
+    .cost-total span {
+      display: block;
+      font-size: .69rem;
+      font-weight: 760;
+      letter-spacing: .07em;
+      opacity: .82;
+      text-transform: uppercase;
+    }
+    .cost-total strong {
+      display: block;
+      margin-top: 3px;
+      font-size: 1.75rem;
+      line-height: 1.15;
+      font-variant-numeric: tabular-nums;
+    }
+    .cost-group {
+      padding: 15px 0 2px;
+      border-bottom: 1px solid var(--border);
+    }
+    .cost-group:last-of-type { border-bottom: 0; }
+    .cost-group h3 {
+      margin-bottom: 8px;
+      color: var(--brand);
+      font-size: .77rem;
+      letter-spacing: .055em;
+      text-transform: uppercase;
+    }
+    .kv {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+      margin: 6px 0;
+      color: var(--text-soft);
+      font-size: .76rem;
+    }
+    .kv strong {
+      max-width: 62%;
+      color: var(--text);
+      text-align: right;
+      overflow-wrap: anywhere;
+      font-variant-numeric: tabular-nums;
+    }
+    .estimate-note {
+      margin: 14px 0 0;
+      padding: 10px 11px;
+      border-radius: 10px;
+      background: var(--warn-soft);
+      color: var(--warn);
+      font-size: .7rem;
+    }
+
+    .poll-line {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 15px;
+      color: var(--text-faint);
+      font-size: .72rem;
+    }
+    .poll-state { display: inline-flex; align-items: center; gap: 6px; }
+    .poll-state::before {
+      content: "";
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--good);
+    }
+    .poll-state.retrying::before { background: var(--warn); }
+    footer {
+      padding: 7px 2px 0;
+      color: var(--text-faint);
+      font-size: .73rem;
+      text-align: center;
+    }
+    .loading {
+      display: grid;
+      min-height: 420px;
+      place-items: center;
+      color: var(--text-soft);
+    }
+    .loading-box {
+      padding: 22px 26px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      box-shadow: var(--shadow-soft);
+      text-align: center;
+    }
+    .spinner {
+      width: 28px;
+      height: 28px;
+      margin: 0 auto 10px;
+      border: 3px solid var(--border);
+      border-top-color: var(--brand);
+      border-radius: 50%;
+      animation: spin .8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    @media (max-width: 1160px) {
+      .page-grid { grid-template-columns: minmax(0, 1fr) 310px; }
+      .throughput-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .hero-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 900px) {
+      .page-grid { display: flex; flex-direction: column; }
+      .main-column { width: 100%; order: 2; }
+      .cost-card { position: static; width: 100%; order: 1; }
+      .cost-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 0 20px; }
+      .cost-heading, .cost-total, .estimate-note { grid-column: 1 / -1; }
+      .worker-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 650px) {
+      .shell { width: min(100% - 20px, 1540px); padding-top: 10px; }
+      .hero, .panel { border-radius: 17px; }
+      .hero-top { display: block; }
+      .status-badge { margin-top: 17px; }
+      .hero-stats, .scope-grid, .binary-grid, .depth-summary, .throughput-grid, .recent-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+      .cost-inner { display: block; }
+      .tabs { top: 4px; margin-left: -4px; margin-right: -4px; }
+      .tab { padding: 8px 5px; font-size: .8rem; }
+      .scope-heading { align-items: flex-start; }
+      .section-heading, .data-heading { display: block; }
+      .section-kicker, .data-heading p { margin-top: 4px; }
+      .mini-bar-track { width: 70px; }
+    }
+    @media (max-width: 420px) {
+      .hero-stats, .scope-grid, .binary-grid, .depth-summary, .throughput-grid, .recent-grid {
+        grid-template-columns: 1fr;
+      }
+      .worker-details { grid-template-columns: 1fr; }
+      .progress-caption { display: block; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition: none !important; }
+    }
   </style>
 </head>
 <body>
-  <h1>Disk-1 / Disk-2 deep CAD extraction on GCP</h1>
-  <div id="root">Loading…</div>
-  <script>
-    const present=x=>x!==null&&x!==undefined&&x!=="";
-    const finite=x=>present(x)&&Number.isFinite(Number(x));
-    const fmt=x=>finite(x)?Number(x).toLocaleString():"not available";
-    const decimal=(x,d=3)=>finite(x)?Number(x).toFixed(d):"not available";
-    const money=x=>finite(x)?`$${Number(x).toFixed(Math.abs(Number(x))<.01?4:2)}`:"pending";
-    const esc=x=>String(x??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-    const text=(x,fallback="not available")=>present(x)?esc(x):fallback;
-    const heartbeatAge=x=>{
-      if(!present(x))return null;
-      const millis=Date.parse(x);
-      return Number.isFinite(millis)?Math.max(0,(Date.now()-millis)/1000):null;
-    };
-    const ageText=x=>{
-      const seconds=heartbeatAge(x);
-      if(seconds===null)return "not available";
-      if(seconds<120)return `${Math.round(seconds)}s`;
-      if(seconds<7200)return `${(seconds/60).toFixed(1)}m`;
-      return `${(seconds/3600).toFixed(1)}h`;
-    };
-    const sizeGB=bytes=>finite(bytes)?`${(Number(bytes)/1e9).toFixed(3)} GB`:"not available";
+  <a class="skip-link" href="#main-content">Skip to extraction metrics</a>
+  <div id="app" aria-live="polite">
+    <div class="loading">
+      <div class="loading-box">
+        <div class="spinner" aria-hidden="true"></div>
+        <strong>Loading GCP extraction status</strong>
+        <div>Reading the latest cloud snapshot…</div>
+      </div>
+    </div>
+  </div>
 
-    function costCard(st){
-      const gce=st.gce||{}, comp=st.compute||{}, disk=st.persistent_disk||{};
-      const gcs=st.gcs||{}, aws=st.aws_source||{}, costs=st.costs||{};
-      const workerCount=finite(st.cloud_workers_alive)?fmt(st.cloud_workers_alive):fmt(gce.worker_count);
-      const stored=finite(gcs.stored_gb)?`${decimal(gcs.stored_gb,3)} GB`:"not available";
-      const transferred=finite(aws.bytes_transferred)
-        ?`${fmt(aws.bytes_transferred)} bytes${finite(aws.gb_transferred)?` (${decimal(aws.gb_transferred,3)} GB)`:""}`
-        :(finite(aws.gb_transferred)?`${decimal(aws.gb_transferred,3)} GB`:"not available");
-      const computeRate=finite(comp.hourly_estimate_usd)?`${money(comp.hourly_estimate_usd)}/hour`:"pending";
-      const egressRate=finite(aws.egress_rate_usd_per_gb)?`${money(aws.egress_rate_usd_per_gb)}/GB`:"pending";
-      return `<aside class="card">
-        <h2>GCP pipeline · estimates</h2>
-        <div class="big">${money(costs.combined_accrued_estimate_usd)}
-          <span class="muted">combined accrued estimate</span></div>
-        <div class="section">GCE VM</div>
-        <div class="kv"><span>Name</span><b>${text(gce.instance_name)}</b></div>
-        <div class="kv"><span>Type / zone</span><b>${text(gce.machine_type)} · ${text(gce.zone)}</b></div>
-        <div class="kv"><span>State / workers</span><b>${text(gce.state||st.state)} · ${workerCount}</b></div>
-        <div class="kv"><span>Uptime</span><b>${finite(comp.uptime_hours)?`${decimal(comp.uptime_hours,2)}h`:"pending"}</b></div>
-        <div class="kv"><span>Rate / accrued</span><b>${computeRate} · ${money(comp.accrued_estimate_usd)}</b></div>
-        <div class="section">GCS bucket</div>
-        <div class="kv"><span>Bucket</span><b>${text(gcs.bucket)}</b></div>
-        <div class="kv"><span>Objects / stored</span><b>${fmt(gcs.object_count)} · ${stored}</b></div>
-        <div class="kv"><span>Monthly estimate</span><b>${money(gcs.estimated_monthly_usd)}</b></div>
-        <div class="section">Persistent disk</div>
-        <div class="kv"><span>Type / size</span><b>${text(disk.type)} · ${finite(disk.size_gb)?`${fmt(disk.size_gb)} GB`:"not available"}</b></div>
-        <div class="kv"><span>Monthly / accrued</span><b>${money(disk.monthly_estimate_usd)} · ${money(disk.accrued_estimate_usd)}</b></div>
-        <div class="section">AWS source transfer only</div>
-        <div class="kv"><span>Transferred</span><b>${transferred}</b></div>
-        <div class="kv"><span>One-time egress estimate</span><b>${money(aws.running_egress_estimate_usd)}</b></div>
-        <div class="muted">Rate from status: ${egressRate}. This is source transfer, not destination storage.</div>
-        <div class="section">Status freshness</div>
-        <div class="kv"><span>Last updated</span><b>${text(st.status_last_updated)}</b></div>
-        <div class="kv"><span>Heartbeat age</span><b>${ageText(st.last_update_iso)}</b></div>
-        <div class="warning">Estimates only; not a cloud invoice. Missing rates or costs remain pending.</div>
+  <script>
+    "use strict";
+
+    const LOCAL = location.protocol === "file:" || /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
+    const STATUS_URL = LOCAL
+      ? "status.json"
+      : "https://raw.githubusercontent.com/dhigdec/cad-extract-status/main/status.json";
+    const POLL_MS = 5000;
+    const STALL_AFTER_SECONDS = 120;
+    const SCOPE_DEFS = [
+      { id: "disk1", label: "Disk 1", short: "D1", aliases: ["Disk-1", "Disk 1", "disk1", "disk_1", "d1", "1"] },
+      { id: "disk2", label: "Disk 2", short: "D2", aliases: ["Disk-2", "Disk 2", "disk2", "disk_2", "d2", "2"] },
+      { id: "combined", label: "Combined", short: "Σ", aliases: ["combined", "all", "overall", "total", "totals"] }
+    ];
+    const CATEGORY_ALIASES = {
+      pdf: ["pdf", "pdfs", "all_pdf", "all_pdfs"],
+      cad_pdf: ["cad_pdf", "cad_pdfs", "cadpdf", "drawing_pdf", "drawing_pdfs"],
+      other_pdf: ["other_pdf", "other_pdfs", "non_cad_pdf", "noncad_pdf", "non_cad_pdfs"],
+      "2d": ["2d", "cad_2d", "two_d", "drawings_2d"],
+      "3d": ["3d", "cad_3d", "three_d", "models_3d"],
+      nc1: ["nc1", ".nc1", "nc_1"]
+    };
+    const VARIANT_ALIASES = {
+      raw: ["raw", "total", "observations", "files", "count"],
+      weak: ["weak", "weak_distinct", "weak_unique", "name_size_distinct", "distinct_name_size"],
+      sha256: ["sha256", "sha", "sha_distinct", "sha256_distinct", "distinct_sha", "unique"]
+    };
+    const PDF_CLASSES = [
+      ["shop", "Shop"],
+      ["detail", "Detail"],
+      ["gather", "Gather"],
+      ["erection", "Erection"],
+      ["construction", "Construction"],
+      ["abm", "ABM"],
+      ["approval", "Approval"],
+      ["inputs", "Inputs"],
+      ["other", "Other"]
+    ];
+    const EXTENSIONS_2D = [".dxf", ".dwg", ".dg", ".dpm"];
+    const EXTENSIONS_3D = [".stp", ".step", ".ifc", ".db1", ".sat", ".obj", ".stl", ".gltf", ".glb"];
+
+    let latestStatus = null;
+    let selectedScope = "combined";
+    let lastPayload = "";
+    let lastFetchAt = null;
+    let pollError = null;
+
+    const app = document.getElementById("app");
+    const isObject = value => value !== null && typeof value === "object" && !Array.isArray(value);
+    const present = value => value !== null && value !== undefined && value !== "";
+    const number = value => {
+      if (!present(value)) return null;
+      const parsed = Number(value);
+      return Number.isFinite(parsed) ? parsed : null;
+    };
+    const escapeHtml = value => String(value ?? "").replace(/[&<>"']/g, char => ({
+      "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+    })[char]);
+    const normalize = value => String(value ?? "").toLowerCase().replace(/[^a-z0-9]+/g, "");
+
+    function aliasValue(object, aliases) {
+      if (!isObject(object)) return undefined;
+      for (const key of aliases) {
+        if (Object.prototype.hasOwnProperty.call(object, key) && present(object[key])) return object[key];
+      }
+      const normalized = new Map(Object.keys(object).map(key => [normalize(key), key]));
+      for (const key of aliases) {
+        const actual = normalized.get(normalize(key));
+        if (actual !== undefined && present(object[actual])) return object[actual];
+      }
+      return undefined;
+    }
+
+    function valueAt(object, path) {
+      const parts = Array.isArray(path) ? path : String(path).split(".");
+      let value = object;
+      for (const part of parts) {
+        if (!isObject(value) || !Object.prototype.hasOwnProperty.call(value, part)) return undefined;
+        value = value[part];
+      }
+      return value;
+    }
+
+    function pickPath(object, paths) {
+      for (const path of paths) {
+        const value = valueAt(object, path);
+        if (present(value)) return value;
+      }
+      return undefined;
+    }
+
+    function uniqueObjects(values) {
+      return [...new Set(values.filter(isObject))];
+    }
+
+    function scopeDef(scopeId) {
+      return SCOPE_DEFS.find(scope => scope.id === scopeId) || SCOPE_DEFS[2];
+    }
+
+    function scopedValue(container, scopeId) {
+      const definition = scopeDef(scopeId);
+      if (Array.isArray(container)) {
+        return container.find(row => {
+          const label = isObject(row) ? aliasValue(row, ["disk", "scope", "name", "id"]) : null;
+          return definition.aliases.some(candidate => normalize(candidate) === normalize(label));
+        });
+      }
+      if (!isObject(container)) return undefined;
+      return aliasValue(container, definition.aliases);
+    }
+
+    function collectScopeRoots(status, scopeId) {
+      const roots = [];
+      const containers = [
+        status.disks, status.by_disk, status.byDisk, status.per_disk, status.perDisk,
+        status.disk_stats, status.diskStats, status.scopes, status.datasets
+      ];
+      for (const container of containers) {
+        const scoped = scopedValue(container, scopeId);
+        if (isObject(scoped)) roots.push(scoped);
+      }
+      const direct = scopedValue(status, scopeId);
+      if (isObject(direct)) roots.push(direct);
+      if (scopeId === "combined") {
+        for (const key of ["combined", "overall", "summary"]) {
+          if (isObject(status[key])) roots.push(status[key]);
+        }
+        roots.push(status);
+      }
+      return uniqueObjects(roots);
+    }
+
+    function addObject(target, value) {
+      if (isObject(value)) target.push(value);
+    }
+
+    function addScopedObject(target, container, scopeId) {
+      const scoped = scopedValue(container, scopeId);
+      if (isObject(scoped)) target.push(scoped);
+    }
+
+    function addArray(target, value) {
+      if (Array.isArray(value)) target.push(value);
+    }
+
+    function addScopedArray(target, container, scopeId) {
+      const scoped = scopedValue(container, scopeId);
+      if (Array.isArray(scoped)) target.push(scoped);
+    }
+
+    function buildBundle(status, scopeId) {
+      const roots = collectScopeRoots(status, scopeId);
+      const archiveRoots = [];
+      const countRoots = [];
+      const depthRoots = [];
+      const storageRoots = [];
+      const backlogArrays = [];
+
+      for (const root of roots) {
+        archiveRoots.push(root);
+        countRoots.push(root);
+        storageRoots.push(root);
+        for (const key of ["archives", "archive", "archive_counts", "archiveCounts", "progress"]) {
+          addObject(archiveRoots, root[key]);
+        }
+        for (const key of ["counts", "assets", "file_counts", "fileCounts", "totals"]) {
+          addObject(countRoots, root[key]);
+        }
+        for (const key of ["nested_depth", "nestedDepth", "depth", "depths"]) {
+          addObject(depthRoots, root[key]);
+        }
+        for (const key of ["storage", "transfer", "bytes", "gcs"]) {
+          addObject(storageRoots, root[key]);
+        }
+        for (const key of ["remaining_by_size", "remainingBySize", "backlog_by_size", "backlogBySize"]) {
+          addArray(backlogArrays, root[key]);
+        }
+      }
+
+      for (const container of [status.archives, status.archive, status.archive_counts, status.progress]) {
+        addScopedObject(archiveRoots, container, scopeId);
+      }
+      for (const container of [status.counts, status.cloud_counts, status.file_counts, status.assets]) {
+        addScopedObject(countRoots, container, scopeId);
+      }
+      for (const container of [status.nested_depth, status.cloud_depth, status.depth, status.depths]) {
+        addScopedObject(depthRoots, container, scopeId);
+      }
+      for (const container of [status.storage, status.transfers, status.gcs, status.aws_source]) {
+        addScopedObject(storageRoots, container, scopeId);
+      }
+      for (const container of [status.remaining_by_size, status.backlog_by_size, status.backlog]) {
+        addScopedArray(backlogArrays, container, scopeId);
+      }
+
+      if (scopeId === "combined") {
+        addObject(archiveRoots, status.archives_combined);
+        addObject(archiveRoots, status.progress);
+        addObject(countRoots, status.cloud_counts);
+        addObject(countRoots, status.counts);
+        addObject(depthRoots, status.cloud_depth);
+        addObject(depthRoots, status.nested_depth);
+        addObject(storageRoots, status.gcs);
+        addObject(storageRoots, status.aws_source);
+        addArray(backlogArrays, status.remaining_by_size);
+      }
+
+      return {
+        id: scopeId,
+        roots,
+        archiveRoots: uniqueObjects(archiveRoots),
+        countRoots: uniqueObjects(countRoots),
+        depthRoots: uniqueObjects(depthRoots),
+        storageRoots: uniqueObjects(storageRoots),
+        backlogArrays
+      };
+    }
+
+    function metricFromRoots(roots, aliases) {
+      for (const root of roots) {
+        const value = aliasValue(root, aliases);
+        if (present(value) && !isObject(value) && !Array.isArray(value)) return value;
+      }
+      return undefined;
+    }
+
+    function archiveMetric(bundle, metric) {
+      const aliases = {
+        total: ["total", "archives_total", "archive_total", "manifest_total", "total_archives"],
+        done: ["done", "completed_ok", "archives_done", "archive_done", "finished", "successful"],
+        remaining: ["remaining", "archives_remaining", "archive_remaining", "left", "pending"],
+        failed: ["failed", "failures", "error", "errors", "failed_active_checkpoints"],
+        retried: ["retried", "retries", "retry_count", "archives_retried"],
+        skipped: ["skipped", "skipped_too_large", "skip_count", "archives_skipped"],
+        doneOnGcp: ["done_on_gcp", "completed_on_gcp", "gcp_done"],
+        doneBeforeGcp: ["done_local_before_cutover", "done_before_gcp", "pre_gcp_done"]
+      };
+      return metricFromRoots(bundle.archiveRoots, aliases[metric] || [metric]);
+    }
+
+    function categoryNodes(root, category) {
+      const aliases = CATEGORY_ALIASES[category] || [category];
+      const bases = [root];
+      for (const key of ["categories", "assets", "files", "file_counts", "fileCounts", "totals"]) {
+        const child = aliasValue(root, [key]);
+        if (isObject(child)) bases.push(child);
+      }
+      const nodes = [];
+      for (const base of bases) {
+        const direct = aliasValue(base, aliases);
+        if (present(direct)) nodes.push(direct);
+        if (category === "cad_pdf" || category === "other_pdf") {
+          const binary = aliasValue(base, ["pdf_cad_binary", "pdf_binary", "cad_binary", "pdf_classification"]);
+          const nested = aliasValue(binary, aliases);
+          if (present(nested)) nodes.push(nested);
+        }
+      }
+      return nodes;
+    }
+
+    function countValue(bundle, category, variant) {
+      const categoryAliases = CATEGORY_ALIASES[category] || [category];
+      const variantAliases = VARIANT_ALIASES[variant] || [variant];
+      for (const root of bundle.countRoots) {
+        for (const node of categoryNodes(root, category)) {
+          if (!isObject(node) && variant === "raw" && number(node) !== null) return node;
+          const value = aliasValue(node, variantAliases);
+          if (present(value) && !isObject(value)) return value;
+        }
+        const bases = [root];
+        for (const key of ["categories", "assets", "files", "file_counts", "fileCounts", "totals"]) {
+          const child = aliasValue(root, [key]);
+          if (isObject(child)) bases.push(child);
+        }
+        for (const base of bases) {
+          const variantNode = aliasValue(base, variantAliases);
+          if (isObject(variantNode)) {
+            const value = aliasValue(variantNode, categoryAliases);
+            if (present(value) && !isObject(value)) return value;
+          }
+        }
+      }
+      return undefined;
+    }
+
+    function extensionValue(bundle, family, extension, variant) {
+      const variantAliases = VARIANT_ALIASES[variant] || [variant];
+      const extensionAliases = [extension, extension.replace(".", "")];
+      for (const root of bundle.countRoots) {
+        const bases = [root];
+        for (const key of ["categories", "assets", "files", "file_counts", "fileCounts"]) {
+          const child = aliasValue(root, [key]);
+          if (isObject(child)) bases.push(child);
+        }
+        for (const base of bases) {
+          const familyNode = aliasValue(base, CATEGORY_ALIASES[family]);
+          if (isObject(familyNode)) {
+            const extensions = aliasValue(familyNode, ["by_ext", "by_extension", "extensions", "extension_breakdown"]);
+            const extensionNode = aliasValue(extensions, extensionAliases);
+            const value = aliasValue(extensionNode, variantAliases);
+            if (present(value) && !isObject(value)) return value;
+          }
+          const extensions = aliasValue(base, ["by_ext", "by_extension", "extensions", "extension_breakdown"]);
+          const extensionNode = aliasValue(extensions, extensionAliases);
+          if (isObject(extensionNode)) {
+            const familyNode = aliasValue(extensionNode, CATEGORY_ALIASES[family]);
+            const value = aliasValue(isObject(familyNode) ? familyNode : extensionNode, variantAliases);
+            if (present(value) && !isObject(value)) return value;
+          }
+        }
+      }
+      return undefined;
+    }
+
+    function blockRoot(bundle) {
+      const roots = [];
+      for (const root of bundle.countRoots) {
+        roots.push(root);
+        addObject(roots, aliasValue(root, ["block", "blocks", "block_level", "block_dedup"]));
+      }
+      return uniqueObjects(roots);
+    }
+
+    function blockMetrics(bundle) {
+      const roots = blockRoot(bundle);
+      const distinctBlocks = metricFromRoots(roots, ["distinct_blocks", "block_sha256", "unique_blocks", "block_hashes"]);
+      const totalBytes = metricFromRoots(roots, ["total_block_bytes", "block_bytes_total", "total_bytes"]);
+      let uniqueBytes = metricFromRoots(roots, ["unique_block_bytes", "block_bytes_unique", "unique_bytes"]);
+      const duplicateBytes = metricFromRoots(roots, ["duplicate_block_bytes", "block_bytes_duplicate", "duplicate_bytes"]);
+      if (number(uniqueBytes) === null && number(totalBytes) !== null && number(duplicateBytes) !== null) {
+        uniqueBytes = Math.max(0, number(totalBytes) - number(duplicateBytes));
+      }
+      let ratio = metricFromRoots(roots, ["dedup_ratio", "deduplication_ratio", "block_dedup_ratio"]);
+      if (number(ratio) === null && number(totalBytes) !== null && number(uniqueBytes) > 0) {
+        ratio = number(totalBytes) / number(uniqueBytes);
+      }
+      return { distinctBlocks, totalBytes, uniqueBytes, duplicateBytes, ratio };
+    }
+
+    function classificationValue(bundle, className, variant) {
+      const variantAliases = VARIANT_ALIASES[variant] || [variant];
+      const classAliases = [className, `${className}_pdf`, `${className}_drawings`];
+      for (const root of bundle.countRoots) {
+        const classification = aliasValue(root, [
+          "pdf_by_drawing_type", "pdf_by_type", "pdf_classes", "pdf_classification", "pdf_categories"
+        ]);
+        const classNode = aliasValue(classification, classAliases);
+        const value = aliasValue(classNode, variantAliases);
+        if (present(value) && !isObject(value)) return value;
+      }
+      return undefined;
+    }
+
+    function distributionObject(bundle, aliases) {
+      for (const root of bundle.depthRoots) {
+        const value = aliasValue(root, aliases);
+        if (isObject(value)) return value;
+      }
+      return null;
+    }
+
+    function depthMetric(bundle, aliases) {
+      return metricFromRoots(bundle.depthRoots, aliases);
+    }
+
+    function mapMetric(container, mapAliases, scopeId) {
+      if (!isObject(container)) return undefined;
+      const map = aliasValue(container, mapAliases);
+      if (!isObject(map)) return undefined;
+      return scopedValue(map, scopeId);
+    }
+
+    function storageMetric(status, bundle, metric) {
+      const aliases = {
+        extractedBytes: ["extracted_bytes", "bytes_extracted", "uncompressed_bytes", "output_bytes"],
+        transferredBytes: ["compressed_source_bytes_transferred", "source_bytes_transferred", "bytes_transferred", "compressed_bytes"],
+        storedObjects: ["stored_object_count", "object_count", "objects", "uploaded_files", "stored_files"],
+        storedBytes: ["stored_bytes", "bytes_stored", "uploaded_bytes", "gcs_bytes"]
+      };
+      const direct = metricFromRoots(bundle.storageRoots, aliases[metric]);
+      if (present(direct)) return direct;
+
+      const mapAliases = {
+        extractedBytes: ["extracted_bytes_by_disk", "bytes_extracted_by_disk"],
+        transferredBytes: ["bytes_transferred_by_disk", "source_bytes_by_disk", "compressed_bytes_by_disk"],
+        storedObjects: ["object_count_by_disk", "stored_objects_by_disk", "uploaded_files_by_disk"],
+        storedBytes: ["stored_bytes_by_disk", "bytes_stored_by_disk", "uploaded_bytes_by_disk"]
+      };
+      for (const container of [status.gcs, status.aws_source, status.storage, status.s3, status.transfers]) {
+        const mapped = mapMetric(container, mapAliases[metric], bundle.id);
+        if (present(mapped)) return mapped;
+      }
+      return undefined;
+    }
+
+    function heartbeatValue(status) {
+      return pickPath(status, [
+        "last_update_iso", "status_last_updated", "heartbeat_at", "updated_at_iso",
+        ["heartbeat", "at"], ["status", "updated_at"]
+      ]);
+    }
+
+    function heartbeatAgeSeconds(status) {
+      const value = heartbeatValue(status);
+      if (!present(value)) return null;
+      const millis = typeof value === "number" ? value * 1000 : Date.parse(value);
+      return Number.isFinite(millis) ? Math.max(0, (Date.now() - millis) / 1000) : null;
+    }
+
+    function ageTextFromSeconds(seconds) {
+      if (number(seconds) === null) return "not available";
+      if (seconds < 60) return `${Math.round(seconds)}s`;
+      if (seconds < 7200) return `${(seconds / 60).toFixed(seconds < 600 ? 1 : 0)}m`;
+      if (seconds < 172800) return `${(seconds / 3600).toFixed(1)}h`;
+      return `${(seconds / 86400).toFixed(1)}d`;
+    }
+
+    function healthInfo(status) {
+      const age = heartbeatAgeSeconds(status);
+      const workerCount = number(pickPath(status, ["cloud_workers_alive", ["workers", "alive_count"]]));
+      const declared = normalize(pickPath(status, ["health", "state"]));
+      if (age !== null && age > STALL_AFTER_SECONDS) {
+        return { key: "stalled", label: "STALLED", age };
+      }
+      if (age === null) {
+        return { key: "waiting", label: "WAITING", age };
+      }
+      if (workerCount === 0 || ["stopped", "failed", "error", "stale"].includes(declared)) {
+        return { key: "stalled", label: "STALLED", age };
+      }
+      return { key: "alive", label: "ALIVE", age };
+    }
+
+    const integerFormat = new Intl.NumberFormat(undefined, { maximumFractionDigits: 0 });
+    const decimalFormat = new Intl.NumberFormat(undefined, { maximumFractionDigits: 2 });
+    const rateFormat = new Intl.NumberFormat(undefined, { maximumFractionDigits: 1 });
+
+    function formatCount(value, missing = "pending") {
+      const parsed = number(value);
+      return parsed === null ? missing : integerFormat.format(parsed);
+    }
+
+    function formatDecimal(value, digits = 2, missing = "pending") {
+      const parsed = number(value);
+      if (parsed === null) return missing;
+      return new Intl.NumberFormat(undefined, { maximumFractionDigits: digits }).format(parsed);
+    }
+
+    function formatBytes(value, missing = "pending") {
+      const parsed = number(value);
+      if (parsed === null) return missing;
+      if (parsed === 0) return "0 B";
+      const units = ["B", "KB", "MB", "GB", "TB", "PB"];
+      const index = Math.min(units.length - 1, Math.max(0, Math.floor(Math.log(Math.abs(parsed)) / Math.log(1000))));
+      const scaled = parsed / (1000 ** index);
+      return `${scaled.toLocaleString(undefined, { maximumFractionDigits: scaled >= 100 ? 0 : scaled >= 10 ? 1 : 2 })} ${units[index]}`;
+    }
+
+    function formatMoney(value, missing = "pending") {
+      const parsed = number(value);
+      if (parsed === null) return missing;
+      const digits = Math.abs(parsed) < .01 ? 4 : 2;
+      return `$${parsed.toLocaleString(undefined, { minimumFractionDigits: digits, maximumFractionDigits: digits })}`;
+    }
+
+    function formatPercent(value, missing = "pending") {
+      const parsed = number(value);
+      return parsed === null ? missing : `${parsed.toFixed(1)}%`;
+    }
+
+    function formatRatio(value, missing = "pending") {
+      const parsed = number(value);
+      return parsed === null ? missing : `${parsed.toFixed(2)}×`;
+    }
+
+    function formatDurationSeconds(value, missing = "pending") {
+      const seconds = number(value);
+      if (seconds === null) return missing;
+      if (seconds < 60) return `${Math.round(seconds)}s`;
+      const hours = Math.floor(seconds / 3600);
+      const minutes = Math.floor((seconds % 3600) / 60);
+      if (!hours) return `${minutes}m ${Math.round(seconds % 60)}s`;
+      return `${hours}h ${minutes}m`;
+    }
+
+    function formatTimestamp(value, missing = "not available") {
+      if (!present(value)) return missing;
+      const date = new Date(value);
+      if (!Number.isFinite(date.getTime())) return escapeHtml(value);
+      return escapeHtml(new Intl.DateTimeFormat(undefined, {
+        month: "short", day: "numeric", hour: "2-digit", minute: "2-digit",
+        second: "2-digit", timeZoneName: "short"
+      }).format(date));
+    }
+
+    function missing(value, formatter, fallback = "pending") {
+      return number(value) === null
+        ? `<span class="missing">${escapeHtml(fallback)}</span>`
+        : formatter(value);
+    }
+
+    function basename(value) {
+      if (!present(value)) return null;
+      const clean = String(value).split(/[?#]/)[0].replace(/\\/g, "/");
+      return clean.split("/").filter(Boolean).pop() || null;
+    }
+
+    function diskFromValue(value) {
+      const match = String(value ?? "").match(/(?:^|[\\/])(disk[\s_-]*[12])(?:[\\/]|$)/i);
+      if (!match) return null;
+      return normalize(match[1]).endsWith("1") ? "Disk 1" : "Disk 2";
+    }
+
+    function safeError(value) {
+      if (!present(value)) return null;
+      let output = String(value).split(/\r?\n/)[0];
+      output = output.replace(/\b(?:gs|s3):\/\/\S+/gi, "[object redacted]");
+      output = output.replace(/(?:[A-Za-z]:)?(?:[\\/][^\\/\s:]+){2,}/g, "[path redacted]");
+      output = output.replace(/\b(token|secret|password|api[_-]?key)\s*[:=]\s*\S+/gi, "$1=[redacted]");
+      return output.slice(0, 220);
+    }
+
+    function workerArray(status) {
+      for (const value of [status.current, status.workers, status.worker_activity, status.workerActivity]) {
+        if (Array.isArray(value)) return value.filter(isObject);
+      }
+      return [];
+    }
+
+    function normalizedStage(value) {
+      if (!present(value)) return "pending";
+      const normalized = normalize(value);
+      for (const stage of ["download", "extract", "hash", "upload", "checkpoint"]) {
+        if (normalized.includes(stage)) return stage;
+      }
+      return String(value);
+    }
+
+    function workerElapsed(worker) {
+      const explicit = aliasValue(worker, ["elapsed_seconds", "elapsed_s", "stage_elapsed_seconds", "elapsed"]);
+      if (number(explicit) !== null) return explicit;
+      const started = aliasValue(worker, ["started_at", "stage_started_at", "archive_started_at"]);
+      const millis = Date.parse(started);
+      return Number.isFinite(millis) ? Math.max(0, (Date.now() - millis) / 1000) : undefined;
+    }
+
+    function renderHeader(status) {
+      const bundle = buildBundle(status, "combined");
+      const total = archiveMetric(bundle, "total");
+      const done = archiveMetric(bundle, "done");
+      const remaining = archiveMetric(bundle, "remaining");
+      const progress = number(total) > 0 && number(done) !== null
+        ? Math.max(0, Math.min(100, number(done) / number(total) * 100))
+        : null;
+      const health = healthInfo(status);
+      const gce = isObject(status.gce) ? status.gce : {};
+      const workerCount = pickPath(status, ["cloud_workers_alive", ["gce", "worker_count"], ["workers", "alive_count"]]);
+      const state = pickPath(status, [["gce", "state"], "state"]);
+      const preGcp = archiveMetric(bundle, "doneBeforeGcp");
+      const onGcp = archiveMetric(bundle, "doneOnGcp");
+
+      return `<header class="hero">
+        <div class="hero-top">
+          <div>
+            <p class="eyebrow">Live public extraction status</p>
+            <h1>Deep CAD extraction across Disk 1 &amp; Disk 2</h1>
+            <p class="lede">A read-only view of archive processing, deduplication and GCS delivery from the active GCP pipeline.</p>
+          </div>
+          <span id="status-badge" class="status-badge ${health.key}">${health.label}</span>
+        </div>
+        <div class="freshness-line">
+          <span>Heartbeat <strong id="heartbeat-age">${escapeHtml(ageTextFromSeconds(health.age))} ago</strong></span>
+          <span>Last update <strong>${formatTimestamp(heartbeatValue(status))}</strong></span>
+          <span>Data pushed every ~20 seconds; page polls every 5 seconds</span>
+        </div>
+        <div class="progress-track" role="progressbar" aria-label="Archive completion"
+          aria-valuemin="0" aria-valuemax="100" aria-valuenow="${progress === null ? 0 : progress.toFixed(1)}">
+          <span style="width:${progress === null ? 0 : progress.toFixed(2)}%"></span>
+        </div>
+        <div class="progress-caption">
+          <span><strong>${progress === null ? "Progress pending" : `${progress.toFixed(1)}% complete`}</strong></span>
+          <span>${missing(done, formatCount)} of ${missing(total, formatCount)} archives</span>
+        </div>
+        <div class="hero-stats">
+          <div class="hero-stat"><span>Archives done</span><strong>${missing(done, formatCount)}</strong>
+            <small>${number(preGcp) === null ? "cutover split pending" : `${formatCount(preGcp)} before GCP cutover`}</small></div>
+          <div class="hero-stat"><span>Total archives</span><strong>${missing(total, formatCount)}</strong>
+            <small>${number(onGcp) === null ? "GCP split pending" : `${formatCount(onGcp)} completed on GCP`}</small></div>
+          <div class="hero-stat"><span>Remaining</span><strong>${missing(remaining, formatCount)}</strong>
+            <small>source archives</small></div>
+          <div class="hero-stat"><span>Workers alive</span><strong>${missing(workerCount, formatCount)}</strong>
+            <small>${present(state) ? escapeHtml(state) : "state pending"}</small></div>
+        </div>
+        <div class="infra-line">
+          <span class="chip">VM · ${escapeHtml(aliasValue(gce, ["instance_name", "name"]) || "not available")}</span>
+          <span class="chip">Type · ${escapeHtml(aliasValue(gce, ["machine_type", "type"]) || "not available")}</span>
+          <span class="chip">Zone · ${escapeHtml(aliasValue(gce, ["zone", "location"]) || "not available")}</span>
+          <span class="chip">Source · GCS _state/status.json</span>
+        </div>
+      </header>`;
+    }
+
+    function renderWorkers(status) {
+      const workers = workerArray(status);
+      const configured = number(pickPath(status, [["gce", "worker_count"], "cloud_workers_alive"]));
+      const cardCount = Math.max(workers.length, configured || 0);
+      let cards = "";
+
+      for (let index = 0; index < cardCount; index++) {
+        const worker = workers[index];
+        if (!worker) {
+          cards += `<article class="worker-card idle">
+            <div class="worker-top"><span class="worker-id">Worker ${index + 1}</span><span class="stage">pending</span></div>
+            <div class="archive-name"><span class="missing">Activity not available</span></div>
+            <dl class="worker-details">
+              <div><dt>Disk</dt><dd class="missing">pending</dd></div>
+              <div><dt>Source size</dt><dd class="missing">pending</dd></div>
+              <div><dt>Elapsed</dt><dd class="missing">pending</dd></div>
+              <div><dt>Bytes processed</dt><dd class="missing">pending</dd></div>
+              <div><dt>Nesting so far</dt><dd class="missing">pending</dd></div>
+            </dl>
+          </article>`;
+          continue;
+        }
+        const archiveRaw = aliasValue(worker, ["current_archive", "archive", "archive_path", "last_archive", "source"]);
+        const archiveName = basename(archiveRaw);
+        const disk = aliasValue(worker, ["disk", "source_disk", "dataset"]) || diskFromValue(archiveRaw);
+        const workerId = aliasValue(worker, ["worker_id", "id", "shard", "worker", "index"]);
+        const stage = normalizedStage(aliasValue(worker, ["stage", "state", "phase", "status"]));
+        const sourceBytes = aliasValue(worker, ["archive_bytes", "source_compressed_bytes", "compressed_size", "source_bytes"]);
+        const processed = aliasValue(worker, ["bytes_processed", "processed_bytes", "source_bytes_downloaded", "hashed_bytes", "uploaded_bytes"]);
+        const depth = aliasValue(worker, ["archive_nesting_depth", "nesting_depth", "max_depth_so_far", "current_depth", "max_depth"]);
+        const elapsed = workerElapsed(worker);
+        const alive = aliasValue(worker, ["alive"]) !== false;
+
+        cards += `<article class="worker-card${alive ? "" : " idle"}">
+          <div class="worker-top">
+            <span class="worker-id">Worker ${present(workerId) ? escapeHtml(workerId) : index + 1}</span>
+            <span class="stage">${escapeHtml(stage)}</span>
+          </div>
+          <div class="archive-name">${archiveName ? escapeHtml(archiveName) : '<span class="missing">Archive pending</span>'}</div>
+          <dl class="worker-details">
+            <div><dt>Disk</dt><dd>${present(disk) ? escapeHtml(disk) : '<span class="missing">not available</span>'}</dd></div>
+            <div><dt>Source size</dt><dd>${missing(sourceBytes, formatBytes)}</dd></div>
+            <div><dt>Elapsed</dt><dd>${missing(elapsed, formatDurationSeconds)}</dd></div>
+            <div><dt>Bytes processed</dt><dd>${missing(processed, formatBytes)}</dd></div>
+            <div><dt>Nesting so far</dt><dd>${missing(depth, formatCount)}</dd></div>
+            <div><dt>Worker update</dt><dd>${formatTimestamp(aliasValue(worker, ["updated_at", "heartbeat_at"]), "pending")}</dd></div>
+          </dl>
+        </article>`;
+      }
+
+      if (!cardCount) {
+        cards = `<div class="empty-state">Worker activity is not available in the current status schema.</div>`;
+      }
+
+      return `<section class="panel" aria-labelledby="workers-title">
+        <div class="section-heading">
+          <div><p class="eyebrow">Active work</p><h2 id="workers-title">Worker activity</h2>
+            <p>Only the disk label and archive basename are shown; source paths are never rendered.</p></div>
+          <span class="section-kicker">${formatCount(workers.length, "0")} reporting</span>
+        </div>
+        <div class="worker-grid">${cards}</div>
+      </section>`;
+    }
+
+    function archiveTable(bundle) {
+      const rows = [
+        ["Archives total", archiveMetric(bundle, "total")],
+        ["Done", archiveMetric(bundle, "done")],
+        ["Remaining", archiveMetric(bundle, "remaining")],
+        ["Failed", archiveMetric(bundle, "failed")],
+        ["Retried", archiveMetric(bundle, "retried")],
+        ["Skipped", archiveMetric(bundle, "skipped")]
+      ];
+      return `<div class="table-wrap"><table>
+        <thead><tr><th>Archive lifecycle</th><th>Count</th></tr></thead>
+        <tbody>${rows.map(([label, value]) =>
+          `<tr><td>${label}</td><td>${missing(value, formatCount)}</td></tr>`).join("")}</tbody>
+      </table></div>`;
+    }
+
+    function assetRow(bundle, category, label, className = "") {
+      return `<tr class="${className}"><td>${label}</td>
+        <td>${missing(countValue(bundle, category, "raw"), formatCount)}</td>
+        <td>${missing(countValue(bundle, category, "weak"), formatCount)}</td>
+        <td>${missing(countValue(bundle, category, "sha256"), formatCount)}</td></tr>`;
+    }
+
+    function extensionRow(bundle, family, extension) {
+      return `<tr class="sub-row"><td>${extension}</td>
+        <td>${missing(extensionValue(bundle, family, extension, "raw"), formatCount)}</td>
+        <td>${missing(extensionValue(bundle, family, extension, "weak"), formatCount)}</td>
+        <td>${missing(extensionValue(bundle, family, extension, "sha256"), formatCount)}</td></tr>`;
+    }
+
+    function assetTable(bundle) {
+      return `<div class="table-wrap"><table>
+        <thead><tr><th>Extracted asset</th><th>Raw</th><th>Weak name + size</th><th>SHA-256 distinct</th></tr></thead>
+        <tbody>
+          ${assetRow(bundle, "pdf", "All PDFs")}
+          ${assetRow(bundle, "cad_pdf", "CAD PDFs")}
+          ${assetRow(bundle, "other_pdf", "Non-CAD PDFs")}
+          ${assetRow(bundle, "2d", "2D total", "group-row")}
+          ${EXTENSIONS_2D.map(extension => extensionRow(bundle, "2d", extension)).join("")}
+          ${assetRow(bundle, "3d", "3D total", "group-row")}
+          ${EXTENSIONS_3D.map(extension => extensionRow(bundle, "3d", extension)).join("")}
+          ${assetRow(bundle, "nc1", "NC1")}
+        </tbody>
+      </table></div>`;
+    }
+
+    function blockTable(bundle) {
+      const block = blockMetrics(bundle);
+      return `<div class="table-wrap"><table>
+        <thead><tr><th>Block-level deduplication</th><th>Value</th></tr></thead>
+        <tbody>
+          <tr><td>Distinct block hashes</td><td>${missing(block.distinctBlocks, formatCount)}</td></tr>
+          <tr><td>Total block bytes</td><td>${missing(block.totalBytes, formatBytes)}</td></tr>
+          <tr><td>Unique block bytes</td><td>${missing(block.uniqueBytes, formatBytes)}</td></tr>
+          <tr><td>Duplicate block bytes</td><td>${missing(block.duplicateBytes, formatBytes)}</td></tr>
+          <tr><td>Dedup ratio (total ÷ unique)</td><td>${missing(block.ratio, formatRatio)}</td></tr>
+        </tbody>
+      </table></div>`;
+    }
+
+    function transferTable(status, bundle) {
+      const rows = [
+        ["Extracted bytes", storageMetric(status, bundle, "extractedBytes")],
+        ["Compressed source bytes transferred", storageMetric(status, bundle, "transferredBytes")],
+        ["Stored object count", storageMetric(status, bundle, "storedObjects"), "count"],
+        ["Stored object bytes", storageMetric(status, bundle, "storedBytes")]
+      ];
+      return `<div class="table-wrap"><table>
+        <thead><tr><th>Transfer &amp; storage</th><th>Value</th></tr></thead>
+        <tbody>${rows.map(([label, value, kind]) =>
+          `<tr><td>${label}</td><td>${missing(value, kind === "count" ? formatCount : formatBytes)}</td></tr>`).join("")}</tbody>
+      </table></div>`;
+    }
+
+    function percentage(part, other) {
+      const a = number(part);
+      const b = number(other);
+      return a === null || b === null || a + b === 0 ? null : a / (a + b) * 100;
+    }
+
+    function binaryCard(label, raw, rawOther, sha, shaOther) {
+      const rawPercent = percentage(raw, rawOther);
+      const shaPercent = percentage(sha, shaOther);
+      return `<div class="binary-card">
+        <div class="binary-top"><strong>${label}</strong><span>${formatPercent(rawPercent)}</span></div>
+        <div class="meter" aria-hidden="true"><span style="width:${number(rawPercent) === null ? 0 : rawPercent.toFixed(2)}%"></span></div>
+        <div class="binary-meta"><span>Raw ${missing(raw, formatCount)}</span><span>SHA ${missing(sha, formatCount)} · ${formatPercent(shaPercent)}</span></div>
+      </div>`;
+    }
+
+    function pdfSection(bundle) {
+      const cadRaw = countValue(bundle, "cad_pdf", "raw");
+      const otherRaw = countValue(bundle, "other_pdf", "raw");
+      const cadSha = countValue(bundle, "cad_pdf", "sha256");
+      const otherSha = countValue(bundle, "other_pdf", "sha256");
+      const classRows = PDF_CLASSES.map(([key, label]) => `<tr><td>${label}</td>
+        <td>${missing(classificationValue(bundle, key, "raw"), formatCount)}</td>
+        <td>${missing(classificationValue(bundle, key, "sha256"), formatCount)}</td></tr>`).join("");
+
+      return `<section class="data-section">
+        <div class="data-heading"><div><h3>PDF classification</h3></div>
+          <p>Raw observations vs byte-distinct SHA-256 files</p></div>
+        <div class="binary-grid">
+          ${binaryCard("CAD PDFs", cadRaw, otherRaw, cadSha, otherSha)}
+          ${binaryCard("Non-CAD PDFs", otherRaw, cadRaw, otherSha, cadSha)}
+        </div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Drawing class</th><th>Raw</th><th>SHA-256 distinct</th></tr></thead>
+          <tbody>${classRows}</tbody>
+        </table></div>
+        <p class="caption">Percentages use only the published CAD/non-CAD binary counts. Missing drawing classes are not inferred.</p>
+      </section>`;
+    }
+
+    function depthValue(distribution, depth, supplied) {
+      if (!supplied) return undefined;
+      const value = aliasValue(distribution, [String(depth), depth]);
+      return present(value) ? value : 0;
+    }
+
+    function depthSection(bundle) {
+      const finished = distributionObject(bundle, [
+        "finished_archive_max_depth_distribution", "finished_by_depth", "max_depth_distribution",
+        "finished_depth_distribution", "depth_counts"
+      ]);
+      const nodes = distributionObject(bundle, ["archive_nodes_by_depth", "nodes_by_depth", "nested_nodes_by_depth"]);
+      const finishedSupplied = isObject(finished) && Object.keys(finished).length > 0;
+      const nodesSupplied = isObject(nodes) && Object.keys(nodes).length > 0;
+      const measured = depthMetric(bundle, ["measured_finished_archives", "finished_archives_measured", "measured_archives"]);
+      const unopened = depthMetric(bundle, ["unopened_archives_not_measured", "unopened_not_measured", "unmeasured_unopened"]);
+      const cap = depthMetric(bundle, ["depth_cap", "max_depth_cap", "nesting_depth_cap"]);
+      const capHits = depthMetric(bundle, ["depth_cap_hits", "cap_hits", "archives_hitting_depth_cap"]);
+      let maximum = depthMetric(bundle, ["max_measured_depth", "maximum_measured_depth", "deepest"]);
+      if (number(maximum) === null && finishedSupplied) {
+        const observed = Object.entries(finished)
+          .filter(([, value]) => number(value) > 0)
+          .map(([key]) => number(key))
+          .filter(value => value !== null);
+        if (observed.length) maximum = Math.max(...observed);
+      }
+      const maxBucket = finishedSupplied
+        ? Math.max(0, ...Array.from({ length: 16 }, (_, depth) => number(depthValue(finished, depth, true)) || 0))
+        : 0;
+      const rows = Array.from({ length: 16 }, (_, depth) => {
+        const finishedCount = depthValue(finished, depth, finishedSupplied);
+        const nodeCount = depthValue(nodes, depth, nodesSupplied);
+        const width = maxBucket > 0 && number(finishedCount) !== null ? number(finishedCount) / maxBucket * 100 : 0;
+        return `<tr><td>Depth ${depth}</td>
+          <td>${missing(finishedCount, formatCount)}</td>
+          <td>${missing(nodeCount, formatCount)}</td>
+          <td><div class="mini-bar-track" aria-hidden="true"><span style="width:${width.toFixed(2)}%"></span></div></td></tr>`;
+      }).join("");
+
+      return `<section class="data-section">
+        <div class="data-heading"><div><h3>Exact measured nesting depth</h3></div>
+          <p>Finished archives only · exact depths 0–15</p></div>
+        <div class="depth-summary">
+          <div><span>Finished measured</span><strong>${missing(measured, formatCount)}</strong></div>
+          <div><span>Unopened / unmeasured</span><strong>${missing(unopened, formatCount)}</strong></div>
+          <div><span>Max measured depth</span><strong>${missing(maximum, formatCount)}</strong></div>
+          <div><span>Depth-cap hits</span><strong>${missing(capHits, formatCount)}</strong></div>
+        </div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Exact measured depth</th><th>Finished archive maximum</th><th>Archive nodes opened</th><th>Distribution</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table></div>
+        <p class="caption">Unopened archives have no measured nesting depth and are not included. The configured safety cap is
+          ${number(cap) === null ? '<span class="missing">pending</span>' : formatCount(cap)}; a depth-cap hit is not inferred from a bucket count.</p>
+      </section>`;
+    }
+
+    function backlogSection(bundle) {
+      const supplied = bundle.backlogArrays.length > 0;
+      const rows = supplied ? bundle.backlogArrays[0] : [];
+      let content;
+      if (!supplied) {
+        content = `<div class="empty-state">Size-bucket backlog is not available in the current status schema.</div>`;
+      } else if (!rows.length) {
+        content = `<div class="empty-state">No remaining size-bucket rows were reported.</div>`;
+      } else {
+        const body = rows.map(row => {
+          const label = aliasValue(row, ["label", "bucket", "range", "size_bucket", "name"]);
+          const remaining = aliasValue(row, ["remaining", "left", "count", "archives"]);
+          const bytes = aliasValue(row, ["bytes", "source_bytes", "compressed_bytes", "remaining_bytes"]);
+          const tb = aliasValue(row, ["tb", "source_tb", "terabytes"]);
+          const sourceSize = number(bytes) !== null
+            ? formatBytes(bytes)
+            : number(tb) !== null ? `${formatDecimal(tb, 3)} TB` : '<span class="missing">pending</span>';
+          return `<tr><td>${escapeHtml(label || "not available")}</td><td>${missing(remaining, formatCount)}</td>
+            <td>${sourceSize}</td><td><span class="missing">not measured</span></td></tr>`;
+        }).join("");
+        content = `<div class="table-wrap"><table>
+          <thead><tr><th>Archive size bucket</th><th>Remaining</th><th>Compressed source size</th><th>Exact depth</th></tr></thead>
+          <tbody>${body}</tbody>
+        </table></div>`;
+      }
+      return `<section class="data-section">
+        <div class="data-heading"><div><h3>Remaining backlog by archive size</h3></div>
+          <p>Unopened rows have no depth measurement</p></div>
+        ${content}
+      </section>`;
+    }
+
+    function scopeHasData(bundle) {
+      return [
+        archiveMetric(bundle, "total"),
+        countValue(bundle, "pdf", "raw"),
+        countValue(bundle, "2d", "raw"),
+        depthMetric(bundle, ["measured_finished_archives"])
+      ].some(value => number(value) !== null);
+    }
+
+    function renderScopePanel(status, definition) {
+      const bundle = buildBundle(status, definition.id);
+      const done = archiveMetric(bundle, "done");
+      const remaining = archiveMetric(bundle, "remaining");
+      const pdf = countValue(bundle, "pdf", "raw");
+      const hasData = scopeHasData(bundle);
+      const unavailableNote = hasData ? "" : `<div class="availability-note">
+        Per-disk metrics are pending in the current status schema. Combined values are not split or inferred.
+      </div>`;
+
+      return `<section id="panel-${definition.id}" class="tab-panel" role="tabpanel"
+        aria-labelledby="tab-${definition.id}" data-scope-panel="${definition.id}"
+        ${definition.id === selectedScope ? "" : "hidden"}>
+        <div class="scope-heading">
+          <div class="scope-title-wrap"><span class="scope-mark" aria-hidden="true">${definition.short}</span>
+            <div><h2>${definition.label}</h2><p>Truthful published counts; missing fields remain pending.</p></div></div>
+          <span class="chip">${hasData ? "status fields available" : "awaiting segmented fields"}</span>
+        </div>
+        ${unavailableNote}
+        <div class="scope-grid">
+          <div class="scope-stat"><span>Archives done</span><strong>${missing(done, formatCount)}</strong></div>
+          <div class="scope-stat"><span>Archives remaining</span><strong>${missing(remaining, formatCount)}</strong></div>
+          <div class="scope-stat"><span>PDF observations</span><strong>${missing(pdf, formatCount)}</strong></div>
+        </div>
+        <section class="data-section">
+          <div class="data-heading"><div><h3>Archive lifecycle</h3></div><p>Retries and skips are explicit only</p></div>
+          ${archiveTable(bundle)}
+        </section>
+        <section class="data-section">
+          <div class="data-heading"><div><h3>Extracted asset inventory</h3></div><p>Raw, weak name + size, and SHA-256</p></div>
+          ${assetTable(bundle)}
+        </section>
+        <section class="data-section">
+          <div class="data-heading"><div><h3>Block-level deduplication</h3></div><p>1 MiB blocks when supplied</p></div>
+          ${blockTable(bundle)}
+        </section>
+        <section class="data-section">
+          <div class="data-heading"><div><h3>Transfer &amp; storage footprint</h3></div><p>Per-disk values only when published</p></div>
+          ${transferTable(status, bundle)}
+        </section>
+        ${pdfSection(bundle)}
+        ${depthSection(bundle)}
+        ${backlogSection(bundle)}
+      </section>`;
+    }
+
+    function renderDatasetTabs(status) {
+      const tabs = SCOPE_DEFS.map(definition => `<button id="tab-${definition.id}" class="tab" type="button"
+        role="tab" aria-controls="panel-${definition.id}" aria-selected="${definition.id === selectedScope}"
+        tabindex="${definition.id === selectedScope ? 0 : -1}" data-scope-tab="${definition.id}">${definition.label}</button>`).join("");
+      const panels = SCOPE_DEFS.map(definition => renderScopePanel(status, definition)).join("");
+      return `<section id="main-content" class="panel" aria-labelledby="datasets-title">
+        <div class="section-heading">
+          <div><p class="eyebrow">Segmented inventory</p><h2 id="datasets-title">Disk-level extraction detail</h2>
+            <p>Use the tabs to inspect Disk 1, Disk 2, or the byte-distinct combined view.</p></div>
+        </div>
+        <div class="tabs" role="tablist" aria-label="Dataset scope">${tabs}</div>
+        ${panels}
+      </section>`;
+    }
+
+    function throughputValues(status) {
+      const roots = uniqueObjects([
+        status.throughput, status.rates, status.performance,
+        isObject(status.progress) ? status.progress.throughput : null
+      ]);
+      let archivesPerHour = metricFromRoots(roots, ["archives_per_hour", "archive_rate_per_hour", "archives_hour"]);
+      let compressedGbPerHour = metricFromRoots(roots, ["compressed_gb_per_hour", "source_gb_per_hour", "download_gb_per_hour"]);
+      const uploadGbPerHour = metricFromRoots(roots, ["gcs_upload_gb_per_hour", "upload_gb_per_hour", "stored_gb_per_hour"]);
+      const bytesRemaining = metricFromRoots(roots, ["bytes_remaining", "compressed_bytes_remaining", "source_bytes_remaining"]);
+      const etaSeconds = metricFromRoots(roots, ["eta_seconds", "remaining_seconds"]);
+      const etaAt = metricFromRoots(roots, ["eta_at", "estimated_completion_at"]);
+      const ordering = metricFromRoots(roots.concat([status]), ["ordering", "archive_order", "processing_order"]);
+      let archiveSource = number(archivesPerHour) === null ? "unavailable" : "reported";
+      let compressedSource = number(compressedGbPerHour) === null ? "unavailable" : "reported";
+
+      const uptimeHours = number(pickPath(status, [["compute", "uptime_hours"]]));
+      const combined = buildBundle(status, "combined");
+      const doneOnGcp = number(archiveMetric(combined, "doneOnGcp"));
+      const transferred = number(pickPath(status, [["aws_source", "bytes_transferred"]]));
+      if (number(archivesPerHour) === null && uptimeHours > 0 && doneOnGcp !== null) {
+        archivesPerHour = doneOnGcp / uptimeHours;
+        archiveSource = "cumulative";
+      }
+      if (number(compressedGbPerHour) === null && uptimeHours > 0 && transferred !== null) {
+        compressedGbPerHour = transferred / 1e9 / uptimeHours;
+        compressedSource = "cumulative";
+      }
+      return {
+        archivesPerHour, compressedGbPerHour, uploadGbPerHour, bytesRemaining,
+        etaSeconds, etaAt, ordering, archiveSource, compressedSource,
+        uploadSource: number(uploadGbPerHour) === null ? "unavailable" : "reported"
+      };
+    }
+
+    function throughputCard(label, value, formatter, source) {
+      return `<div class="throughput-card"><span>${label}</span>
+        <strong>${number(value) === null ? '<span class="missing">not available</span>' : formatter(value)}</strong>
+        <span class="metric-source">${source}</span></div>`;
+    }
+
+    function renderThroughput(status) {
+      const rates = throughputValues(status);
+      let eta = '<span class="missing">not available</span>';
+      let etaSource = "withheld";
+      if (number(rates.etaSeconds) !== null) {
+        eta = formatDurationSeconds(rates.etaSeconds);
+        etaSource = "reported";
+      } else if (present(rates.etaAt)) {
+        eta = formatTimestamp(rates.etaAt);
+        etaSource = "reported";
+      }
+      const orderNote = present(rates.ordering)
+        ? ` Reported processing order: ${escapeHtml(rates.ordering)}.`
+        : "";
+      return `<section class="panel" aria-labelledby="throughput-title">
+        <div class="section-heading">
+          <div><p class="eyebrow">Pace &amp; projection</p><h2 id="throughput-title">Throughput and ETA</h2>
+            <p>Cumulative rates are derived only from matching GCP counters and VM uptime.</p></div>
+        </div>
+        <div class="throughput-grid">
+          ${throughputCard("Archives / hour", rates.archivesPerHour, value => `${rateFormat.format(value)} /h`, rates.archiveSource)}
+          ${throughputCard("Compressed GB / hour", rates.compressedGbPerHour, value => `${rateFormat.format(value)} GB/h`, rates.compressedSource)}
+          ${throughputCard("GCS upload GB / hour", rates.uploadGbPerHour, value => `${rateFormat.format(value)} GB/h`, rates.uploadSource)}
+          ${throughputCard("Bytes remaining", rates.bytesRemaining, formatBytes, number(rates.bytesRemaining) === null ? "unavailable" : "reported")}
+          <div class="throughput-card"><span>ETA</span><strong>${eta}</strong><span class="metric-source">${etaSource}</span></div>
+        </div>
+        <div class="callout">No ETA is guessed from archive counts. Early or smallest-first processing can make cumulative averages optimistic.${orderNote}</div>
+      </section>`;
+    }
+
+    function recentArrays(status) {
+      const results = [];
+      const errors = [];
+      for (const value of [
+        status.recent_results, status.latest_results, pickPath(status, [["results", "recent"]]),
+        pickPath(status, [["archives", "recent_results"]])
+      ]) {
+        if (Array.isArray(value)) results.push(...value.filter(isObject));
+      }
+      for (const value of [
+        status.recent_errors, status.recent_failures, status.retries,
+        pickPath(status, [["errors", "recent"]]), pickPath(status, [["failures", "recent"]])
+      ]) {
+        if (Array.isArray(value)) errors.push(...value.filter(isObject));
+      }
+      return { results, errors };
+    }
+
+    function recentCard(row, forceError = false) {
+      const rawArchive = aliasValue(row, [
+        "archive_basename", "archive", "current_archive", "name", "key", "path", "result_object"
+      ]);
+      const name = basename(rawArchive);
+      const disk = aliasValue(row, ["disk", "source_disk"]) || diskFromValue(rawArchive);
+      const status = aliasValue(row, ["status", "state", "result"]) || (forceError ? "failure" : "finished");
+      const finished = aliasValue(row, ["finished_at", "updated_at", "timestamp", "at"]);
+      const error = safeError(aliasValue(row, ["error_summary", "error", "message", "reason"]));
+      return `<article class="recent-card${forceError || error ? " error" : ""}">
+        <div class="recent-meta">${escapeHtml(disk || "Disk not available")} · ${escapeHtml(status)}</div>
+        <div class="archive-name">${escapeHtml(name || "Archive basename not available")}</div>
+        <div class="recent-meta">${formatTimestamp(finished, "time not available")}</div>
+        ${error ? `<p class="error-summary">${escapeHtml(error)}</p>` : ""}
+      </article>`;
+    }
+
+    function renderRecent(status) {
+      const { results, errors } = recentArrays(status);
+      const cards = [];
+      for (const row of results.slice(0, 6)) cards.push(recentCard(row, false));
+      for (const row of errors.slice(0, 6)) cards.push(recentCard(row, true));
+
+      const lastResult = pickPath(status, ["last_result", ["results", "last_result"]]);
+      const proofObject = pickPath(status, ["proof_object", ["results", "proof_object"]]);
+      if (!cards.length && (present(lastResult) || present(proofObject))) {
+        cards.push(`<article class="recent-card">
+          <div class="recent-meta">Latest published checkpoint · finished</div>
+          <div class="archive-name">${escapeHtml(basename(lastResult) || "Result marker not available")}</div>
+          <div class="recent-meta">Latest extracted object: ${escapeHtml(basename(proofObject) || "not available")} ·
+            ${formatTimestamp(status.last_finished_at, "time not available")}</div>
+        </article>`);
+      }
+      if (!cards.length) return "";
+      return `<section class="panel" aria-labelledby="recent-title">
+        <div class="section-heading">
+          <div><p class="eyebrow">Latest outcomes</p><h2 id="recent-title">Recent results &amp; errors</h2>
+            <p>Public entries are reduced to disk, basename, status and a sanitized one-line summary.</p></div>
+        </div>
+        <div class="recent-grid">${cards.join("")}</div>
+      </section>`;
+    }
+
+    function renderCostCard(status) {
+      const gce = isObject(status.gce) ? status.gce : {};
+      const compute = isObject(status.compute) ? status.compute : {};
+      const disk = isObject(status.persistent_disk) ? status.persistent_disk : {};
+      const gcs = isObject(status.gcs) ? status.gcs : {};
+      const aws = isObject(status.aws_source) ? status.aws_source : {};
+      const costs = isObject(status.costs) ? status.costs : {};
+      const storedBytes = aliasValue(gcs, ["stored_bytes", "bytes"]);
+      const transferredBytes = aliasValue(aws, ["bytes_transferred", "transferred_bytes"]);
+      const combined = aliasValue(costs, ["combined_accrued_estimate_usd", "combined_estimate_usd", "accrued_estimate_usd"]);
+      return `<aside class="cost-card" aria-labelledby="cost-title">
+        <div class="cost-inner">
+          <div class="cost-heading"><div><p class="eyebrow">Cloud footprint</p><h2 id="cost-title">Running cost estimate</h2></div></div>
+          <div class="cost-total"><span>Combined accrued estimate</span><strong>${formatMoney(combined)}</strong></div>
+          <section class="cost-group"><h3>GCE compute</h3>
+            <div class="kv"><span>VM</span><strong>${escapeHtml(aliasValue(gce, ["instance_name", "name"]) || "not available")}</strong></div>
+            <div class="kv"><span>Rate</span><strong>${formatMoney(aliasValue(compute, ["hourly_estimate_usd", "hourly_usd"]))} / hr</strong></div>
+            <div class="kv"><span>Accrued</span><strong>${formatMoney(aliasValue(compute, ["accrued_estimate_usd", "accrued_usd"]))}</strong></div>
+            <div class="kv"><span>Uptime</span><strong>${number(compute.uptime_hours) === null ? "pending" : `${formatDecimal(compute.uptime_hours)} hr`}</strong></div>
+          </section>
+          <section class="cost-group"><h3>Persistent disk</h3>
+            <div class="kv"><span>Type / size</span><strong>${escapeHtml(aliasValue(disk, ["type"]) || "not available")} ·
+              ${number(aliasValue(disk, ["size_gb"])) === null ? "pending" : `${formatCount(disk.size_gb)} GB`}</strong></div>
+            <div class="kv"><span>Monthly</span><strong>${formatMoney(aliasValue(disk, ["monthly_estimate_usd", "monthly_usd"]))}</strong></div>
+            <div class="kv"><span>Accrued</span><strong>${formatMoney(aliasValue(disk, ["accrued_estimate_usd", "accrued_usd"]))}</strong></div>
+          </section>
+          <section class="cost-group"><h3>GCS storage</h3>
+            <div class="kv"><span>Objects</span><strong>${formatCount(aliasValue(gcs, ["object_count", "objects"]))}</strong></div>
+            <div class="kv"><span>Stored</span><strong>${formatBytes(storedBytes)}</strong></div>
+            <div class="kv"><span>Monthly</span><strong>${formatMoney(aliasValue(gcs, ["estimated_monthly_usd", "monthly_estimate_usd"]))}</strong></div>
+          </section>
+          <section class="cost-group"><h3>AWS source egress</h3>
+            <div class="kv"><span>Transferred</span><strong>${formatBytes(transferredBytes)}</strong></div>
+            <div class="kv"><span>Rate</span><strong>${formatMoney(aliasValue(aws, ["egress_rate_usd_per_gb", "rate_usd_per_gb"]))} / GB</strong></div>
+            <div class="kv"><span>Estimate</span><strong>${formatMoney(aliasValue(aws, ["running_egress_estimate_usd", "egress_estimate_usd"]))}</strong></div>
+          </section>
+          <div class="estimate-note">Estimates only — not a cloud invoice. Missing billing inputs remain pending.</div>
+          <div class="poll-line">
+            <span id="poll-state" class="poll-state">Live feed</span>
+            <span>5s poll · ~20s publish</span>
+          </div>
+        </div>
       </aside>`;
     }
 
-    function render(st){
-      const p=st.archives_combined||{}, counts=st.cloud_counts||{};
-      const raw=counts.raw||{}, weak=counts.weak||{}, sha=counts.sha256||{};
-      const workers=Array.isArray(st.current)?st.current:[], depth=st.cloud_depth||{};
-      const age=heartbeatAge(st.last_update_iso);
-      const alive=age!==null&&age<120&&Number(st.cloud_workers_alive)>0;
-      const pct=finite(p.total)&&Number(p.total)>0&&finite(p.done)
-        ?100*Number(p.done)/Number(p.total):null;
-      let h=costCard(st);
-      h+=`<div class="meta">Status: <span class="${alive?"alive":"stale"}">${alive?"ALIVE":"STALE / WAITING"}</span>
-        · heartbeat ${ageText(st.last_update_iso)} ago · source: GCS _state/status.json</div>
-        <div class="bar"><span style="width:${pct===null?0:Math.min(100,pct).toFixed(2)}%"></span></div>
-        <p>Archives <b>${fmt(p.done)} / ${fmt(p.total)}</b>${pct===null?"":` (${pct.toFixed(1)}%)`} ·
-        remaining ${fmt(p.remaining)} · active checkpoint failures ${fmt(p.failed)} · retries ${fmt(p.retries)} ·
-        done before GCP cutover ${fmt(p.done_local_before_cutover)} · done on GCP ${fmt(p.done_on_gcp)}</p>`;
+    function render(status) {
+      app.innerHTML = `<div class="shell">
+        ${renderHeader(status)}
+        <div class="page-grid">
+          <main class="main-column">
+            ${renderWorkers(status)}
+            ${renderDatasetTabs(status)}
+            ${renderThroughput(status)}
+            ${renderRecent(status)}
+          </main>
+          ${renderCostCard(status)}
+        </div>
+        <footer>Read-only public telemetry · Missing values are shown as pending or not available · Source paths are redacted to basenames</footer>
+      </div>`;
+      applySelectedScope(false);
+      updateLiveIndicators();
+    }
 
-      h+=`<h2>Current GCP archive workers (${fmt(workers.length)})</h2>
-        <table><tr><th>Worker</th><th>State</th><th>Current archive</th><th>Source size</th><th>Updated</th></tr>`;
-      for(const w of workers)h+=`<tr><td>${fmt(w.shard)}</td><td>${text(w.state)}</td>
-        <td class="mono">${text(w.current_archive||w.last_archive)}</td>
-        <td>${sizeGB(w.archive_bytes)}</td><td>${text(w.updated_at)}</td></tr>`;
-      if(!workers.length)h+=`<tr><td colspan="5">Waiting for worker status.</td></tr>`;
-      h+=`</table>`;
+    function renderInitialError(error) {
+      app.innerHTML = `<div class="shell"><div class="loading"><div class="loading-box">
+        <strong>Status is temporarily unavailable</strong>
+        <div>${escapeHtml(error.message || error)}. Retrying every 5 seconds.</div>
+      </div></div></div>`;
+    }
 
-      h+=`<h2>GCP extracted asset counts</h2>
-        <table><tr><th>Category</th><th>Raw</th><th>Weak unique (name, size)</th><th>SHA-256 unique</th></tr>`;
-      for(const [key,label] of [["pdf","All PDF"],["cad_pdf","CAD PDF"],["other_pdf","Non-CAD PDF"],["2d","2D"],["3d","3D"],["nc1","NC1"]])
-        h+=`<tr><td>${label}</td><td>${fmt(raw[key])}</td><td>${fmt(weak[key])}</td><td>${fmt(sha[key])}</td></tr>`;
-      h+=`<tr><td>1 MiB blocks</td><td>not available</td><td>not available</td><td>${fmt(counts.block_sha256)}</td></tr></table>`;
+    function applySelectedScope(shouldFocus) {
+      document.querySelectorAll("[data-scope-tab]").forEach(tab => {
+        const active = tab.dataset.scopeTab === selectedScope;
+        tab.setAttribute("aria-selected", String(active));
+        tab.tabIndex = active ? 0 : -1;
+        if (active && shouldFocus) tab.focus();
+      });
+      document.querySelectorAll("[data-scope-panel]").forEach(panel => {
+        panel.hidden = panel.dataset.scopePanel !== selectedScope;
+      });
+    }
 
-      const nodes=depth.archive_nodes_by_depth||{};
-      const maxima=depth.finished_archive_max_depth_distribution||{};
-      const levels=[...new Set([...Object.keys(nodes),...Object.keys(maxima)])]
-        .map(Number).filter(Number.isFinite).sort((a,b)=>a-b);
-      h+=`<h2>Exact measured nested depth for finished GCP archives</h2>
-        <p>Finished archives measured: ${fmt(depth.measured_finished_archives)} ·
-        unopened archives not measured: ${fmt(depth.unopened_archives_not_measured)} ·
-        safety cap: ${fmt(depth.depth_cap)}</p>
-        <table><tr><th>Exact depth</th><th>Archive nodes opened</th><th>Finished archives with this maximum</th></tr>`;
-      for(const d of levels)h+=`<tr><td>${d}</td><td>${fmt(nodes[d])}</td><td>${fmt(maxima[d])}</td></tr>`;
-      if(!levels.length)h+=`<tr><td colspan="3">Waiting for GCP depth measurements.</td></tr>`;
-      h+=`</table>`;
-
-      const remaining=st.remaining_by_size;
-      h+=`<h2>Remaining archives by source size</h2>`;
-      if(Array.isArray(remaining)&&remaining.length){
-        h+=`<table><tr><th>Archive size</th><th>Remaining</th><th>Source TB</th></tr>`;
-        for(const row of remaining)h+=`<tr><td>${text(row.label)}</td><td>${fmt(row.left)}</td><td>${decimal(row.tb,3)}</td></tr>`;
-        h+=`</table>`;
-      }else{
-        h+=`<p>Not available in the current GCP status.</p>`;
+    function setPollState() {
+      const element = document.getElementById("poll-state");
+      if (!element) return;
+      if (pollError) {
+        element.textContent = "Retrying";
+        element.classList.add("retrying");
+        element.title = pollError.message || String(pollError);
+      } else {
+        element.textContent = lastFetchAt ? `Checked ${ageTextFromSeconds((Date.now() - lastFetchAt) / 1000)} ago` : "Live feed";
+        element.classList.remove("retrying");
+        element.removeAttribute("title");
       }
+    }
 
-      const depthBySize=st.finished_depth_by_size;
-      if(Array.isArray(depthBySize)&&depthBySize.length){
-        const maximum=Math.max(0,...depthBySize.flatMap(row=>Object.keys(row.depth_counts||{}).map(Number)));
-        h+=`<h2>Finished archive depth by source size</h2><table><tr><th>Archive size</th><th>Finished</th>`;
-        for(let d=0;d<=maximum;d++)h+=`<th>Depth ${d}</th>`;
-        h+=`<th>Deepest</th></tr>`;
-        for(const row of depthBySize){
-          h+=`<tr><td>${text(row.label)}</td><td>${fmt(row.finished)}</td>`;
-          for(let d=0;d<=maximum;d++)h+=`<td>${fmt((row.depth_counts||{})[d])}</td>`;
-          h+=`<td>${fmt(row.deepest)}</td></tr>`;
+    function updateLiveIndicators() {
+      if (!latestStatus) return;
+      const health = healthInfo(latestStatus);
+      const badge = document.getElementById("status-badge");
+      const age = document.getElementById("heartbeat-age");
+      if (badge) {
+        badge.className = `status-badge ${health.key}`;
+        badge.textContent = health.label;
+      }
+      if (age) age.textContent = `${ageTextFromSeconds(health.age)} ago`;
+      setPollState();
+    }
+
+    app.addEventListener("click", event => {
+      const tab = event.target.closest("[data-scope-tab]");
+      if (!tab) return;
+      selectedScope = tab.dataset.scopeTab;
+      applySelectedScope(false);
+    });
+
+    app.addEventListener("keydown", event => {
+      const tab = event.target.closest("[data-scope-tab]");
+      if (!tab || !["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+      event.preventDefault();
+      const currentIndex = SCOPE_DEFS.findIndex(scope => scope.id === tab.dataset.scopeTab);
+      let nextIndex = currentIndex;
+      if (event.key === "ArrowLeft") nextIndex = (currentIndex - 1 + SCOPE_DEFS.length) % SCOPE_DEFS.length;
+      if (event.key === "ArrowRight") nextIndex = (currentIndex + 1) % SCOPE_DEFS.length;
+      if (event.key === "Home") nextIndex = 0;
+      if (event.key === "End") nextIndex = SCOPE_DEFS.length - 1;
+      selectedScope = SCOPE_DEFS[nextIndex].id;
+      applySelectedScope(true);
+    });
+
+    async function tick() {
+      try {
+        const separator = STATUS_URL.includes("?") ? "&" : "?";
+        const response = await fetch(`${STATUS_URL}${separator}t=${Date.now()}`, { cache: "no-store" });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const status = await response.json();
+        const payload = JSON.stringify(status);
+        latestStatus = status;
+        lastFetchAt = Date.now();
+        pollError = null;
+        if (payload !== lastPayload) {
+          lastPayload = payload;
+          render(status);
+        } else {
+          updateLiveIndicators();
         }
-        h+=`</table>`;
-      }
-
-      h+=`<h2>Latest GCP result proof</h2>
-        <p>Result object: <span class="mono">${text(st.last_result)}</span><br>
-        Extracted object: <span class="mono">${text(st.proof_object)}</span><br>
-        Finished: ${text(st.last_finished_at)}</p>
-        <p class="muted">The laptop publisher reads only the GCP status object and refreshes this page about every 20 seconds.</p>`;
-      document.getElementById("root").innerHTML=h;
-    }
-
-    async function tick(){
-      try{
-        const response=await fetch("https://raw.githubusercontent.com/dhigdec/cad-extract-status/main/status.json?t="+Date.now(),{cache:"no-store"});
-        if(!response.ok)throw Error(response.status);
-        render(await response.json());
-      }catch(error){
-        document.getElementById("root").innerHTML=`<p>Waiting for GCP status: ${esc(error)}</p>`;
+      } catch (error) {
+        pollError = error;
+        if (!latestStatus) renderInitialError(error);
+        setPollState();
       }
     }
+
     tick();
-    setInterval(tick,5000);
+    setInterval(tick, POLL_MS);
+    setInterval(updateLiveIndicators, 1000);
   </script>
 </body>
 </html>
