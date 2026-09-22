@@ -1,9 +1,9 @@
 {
   "source_of_truth": "gcp",
   "health": "alive",
-  "updated": "2026-09-22T02:17:08.097783Z",
-  "last_update_iso": "2026-09-22T02:17:08.097783Z",
-  "age_seconds": 13.2,
+  "updated": "2026-09-22T02:17:29.101053Z",
+  "last_update_iso": "2026-09-22T02:17:29.101053Z",
+  "age_seconds": 18.7,
   "worker_alive": true,
   "cloud_workers_alive": 4,
   "stalled": false,
@@ -11,7 +11,7 @@
     "schema": 2,
     "source_of_truth": "gcp",
     "state": "running",
-    "heartbeat_at": "2026-09-22T02:17:08.097783Z",
+    "heartbeat_at": "2026-09-22T02:17:29.101053Z",
     "gce": {
       "instance_name": "cad-disk-extract-gcp-1",
       "instance_id": "3363502215231462675",
@@ -23,20 +23,21 @@
     "progress": {
       "archives_total": 3620,
       "done_before_gcp": 987,
-      "done_on_gcp": 107,
-      "done": 1094,
-      "remaining": 2526,
+      "done_on_gcp": 122,
+      "done": 1109,
+      "remaining": 2511,
       "failed_active_checkpoints": 0,
       "retries": 0
     },
     "workers": [
       {
         "shard": 0,
-        "state": "ok",
-        "last_archive": "T07-MSSU Field House_Seq#3&4 dwgs for Approval - 25 July 14.zip",
-        "last_source_key": "Disk-2/Completed_Projects_Data/044_Doing Steel/MT14_028(MSSU Athletic Field House)/T07-MSSU Field House_Seq#3&4 dwgs for Approval - 25 July 14.zip",
-        "shard_remaining": 621,
-        "updated_at": "2026-09-22T02:17:07.966913Z",
+        "state": "extracting",
+        "current_archive": "3821_Heartland_T#012_SEQ#5 PARTIAL DRAWINGS FOR FABRICATION_16 DEC '13.zip",
+        "source_key": "Disk-2/Completed_Projects_Data/044_Doing Steel/MT13_034 (Heartland Rehabilitation Hospital)/3821_Heartland_T#012_SEQ#5 PARTIAL DRAWINGS FOR FABRICATION_16 DEC '13.zip",
+        "archive_bytes": 12648522,
+        "source_bytes_downloaded": 12648522,
+        "updated_at": "2026-09-22T02:17:24.408340Z",
         "pid": 3727,
         "alive": true,
         "exitcode": null
@@ -44,11 +45,11 @@
       {
         "shard": 1,
         "state": "extracting",
-        "current_archive": "Middle School_Seq-17 Partial & Roof Frames For Fab_07-03-14.zip",
-        "source_key": "Disk-2/Completed_Projects_Data/052_Rai Industrial LLC/MT14_006_Middle School/Middle School_Seq-17 Partial & Roof Frames For Fab_07-03-14.zip",
-        "archive_bytes": 11121591,
-        "source_bytes_downloaded": 11121591,
-        "updated_at": "2026-09-22T02:16:58.932086Z",
+        "current_archive": "MSSU Field House_Seq#5 Misc dwgs for App - 11 Sep 14.zip",
+        "source_key": "Disk-2/Completed_Projects_Data/044_Doing Steel/MT14_028(MSSU Athletic Field House)/MSSU Field House_Seq#5 Misc dwgs for App - 11 Sep 14.zip",
+        "archive_bytes": 11714511,
+        "source_bytes_downloaded": 11714511,
+        "updated_at": "2026-09-22T02:17:21.449810Z",
         "pid": 3728,
         "alive": true,
         "exitcode": null
@@ -67,12 +68,12 @@
       },
       {
         "shard": 3,
-        "state": "waiting_capacity",
-        "current_archive": "SLC Georgia_Seq-01 For_App_012315.zip",
-        "source_key": "Disk-2/Completed_Projects_Data/052_Rai Industrial LLC/MT14_069 (The University of Georgia in Athens)/SLC Georgia_Seq-01 For_App_012315.zip",
-        "archive_bytes": 11870656,
-        "shard_remaining": 607,
-        "updated_at": "2026-09-22T02:17:07.952181Z",
+        "state": "extracting",
+        "current_archive": "T#06_Partial Details  for Fab_11-22-13.zip",
+        "source_key": "Disk-2/Completed_Projects_Data/044_Doing Steel/MT13_035 (El Dorado)/T#06_Partial Details  for Fab_11-22-13.zip",
+        "archive_bytes": 12467889,
+        "source_bytes_downloaded": 12467889,
+        "updated_at": "2026-09-22T02:17:24.090735Z",
         "pid": 3730,
         "alive": true,
         "exitcode": null
@@ -80,49 +81,49 @@
     ],
     "counts": {
       "raw": {
-        "pdf": 2709,
-        "cad_pdf": 2018,
-        "other_pdf": 691,
-        "2d": 1010,
+        "pdf": 3033,
+        "cad_pdf": 2232,
+        "other_pdf": 801,
+        "2d": 1055,
         "3d": 10,
-        "nc1": 1969
+        "nc1": 2061
       },
       "weak": {
-        "pdf": 2580,
-        "cad_pdf": 1942,
-        "other_pdf": 638,
-        "2d": 982,
+        "pdf": 2904,
+        "cad_pdf": 2156,
+        "other_pdf": 748,
+        "2d": 1013,
         "3d": 10,
-        "nc1": 1743
+        "nc1": 1835
       },
       "sha256": {
-        "pdf": 2579,
-        "cad_pdf": 1942,
-        "other_pdf": 637,
-        "2d": 986,
+        "pdf": 2903,
+        "cad_pdf": 2156,
+        "other_pdf": 747,
+        "2d": 1031,
         "3d": 10,
-        "nc1": 1759
+        "nc1": 1851
       },
-      "block_sha256": 5589
+      "block_sha256": 6055
     },
     "nested_depth": {
-      "measured_finished_archives": 107,
-      "unopened_archives_not_measured": 2526,
+      "measured_finished_archives": 122,
+      "unopened_archives_not_measured": 2511,
       "archive_nodes_by_depth": {
-        "0": 107,
+        "0": 122,
         "1": 9
       },
       "finished_archive_max_depth_distribution": {
-        "0": 103,
+        "0": 118,
         "1": 4
       },
       "depth_cap": 15
     },
     "compute": {
-      "uptime_seconds": 229.1,
-      "uptime_hours": 0.0636,
+      "uptime_seconds": 250.1,
+      "uptime_hours": 0.0695,
       "hourly_estimate_usd": 1.65,
-      "accrued_estimate_usd": 0.105,
+      "accrued_estimate_usd": 0.1146,
       "estimate_label": "Estimate only; not a Google Cloud invoice"
     },
     "persistent_disk": {
@@ -130,7 +131,7 @@
       "type": "pd-ssd",
       "monthly_estimate_usd": 204.0,
       "hourly_estimate_usd": 0.2795,
-      "accrued_estimate_usd": 0.0178,
+      "accrued_estimate_usd": 0.0194,
       "estimate_label": "Estimate only; not a Google Cloud invoice"
     },
     "gcs": {
@@ -145,30 +146,31 @@
       "estimate_label": "Estimate only; not a Google Cloud invoice"
     },
     "aws_source": {
-      "bytes_transferred": 925016973,
-      "gb_transferred": 0.925017,
+      "bytes_transferred": 1128086152,
+      "gb_transferred": 1.128086,
       "egress_rate_usd_per_gb": 0.09,
-      "running_egress_estimate_usd": 0.0833,
+      "running_egress_estimate_usd": 0.1015,
       "estimate_label": "One-time AWS source transfer estimate; not destination storage"
     },
     "costs": {
-      "combined_accrued_estimate_usd": 0.206,
+      "combined_accrued_estimate_usd": 0.2356,
       "combined_hourly_compute_disk_usd": 1.9295,
       "label": "Estimates only; not cloud invoices"
     },
-    "last_result": "_state/results/f086a4da5124182ef5d047e76ace717d793427dc796bd310148ea4c1e42d9538.json",
-    "last_finished_at": "2026-09-22T02:16:58.002506Z",
-    "proof_object": "Disk-2/Completed_Projects_Data_052_Rai_Industrial_LLC_MT14_006_Middle_School_Middle_School-Seq-2_4_5_Revised_-For_Fab-072114.zip-f086a4da5124/Detail_Sheets/429.pdf",
-    "scratch_free_bytes": 1055678918656
+    "last_result": "_state/results/dab0a9e687e6b43016c45cbf5889d8f7f456b1b7acab1182b06ce4b84210e0f8.json",
+    "last_finished_at": "2026-09-22T02:17:09.261464Z",
+    "proof_object": "Disk-2/Completed_Projects_Data_056_Steel_Quest_MT14_039_DNV_IFC_Drawings.zip-aac456651efe/ARCH/131258_A212.pdf",
+    "scratch_free_bytes": 1055624155136
   },
   "current": [
     {
       "shard": 0,
-      "state": "ok",
-      "last_archive": "T07-MSSU Field House_Seq#3&4 dwgs for Approval - 25 July 14.zip",
-      "last_source_key": "Disk-2/Completed_Projects_Data/044_Doing Steel/MT14_028(MSSU Athletic Field House)/T07-MSSU Field House_Seq#3&4 dwgs for Approval - 25 July 14.zip",
-      "shard_remaining": 621,
-      "updated_at": "2026-09-22T02:17:07.966913Z",
+      "state": "extracting",
+      "current_archive": "3821_Heartland_T#012_SEQ#5 PARTIAL DRAWINGS FOR FABRICATION_16 DEC '13.zip",
+      "source_key": "Disk-2/Completed_Projects_Data/044_Doing Steel/MT13_034 (Heartland Rehabilitation Hospital)/3821_Heartland_T#012_SEQ#5 PARTIAL DRAWINGS FOR FABRICATION_16 DEC '13.zip",
+      "archive_bytes": 12648522,
+      "source_bytes_downloaded": 12648522,
+      "updated_at": "2026-09-22T02:17:24.408340Z",
       "pid": 3727,
       "alive": true,
       "exitcode": null
@@ -176,11 +178,11 @@
     {
       "shard": 1,
       "state": "extracting",
-      "current_archive": "Middle School_Seq-17 Partial & Roof Frames For Fab_07-03-14.zip",
-      "source_key": "Disk-2/Completed_Projects_Data/052_Rai Industrial LLC/MT14_006_Middle School/Middle School_Seq-17 Partial & Roof Frames For Fab_07-03-14.zip",
-      "archive_bytes": 11121591,
-      "source_bytes_downloaded": 11121591,
-      "updated_at": "2026-09-22T02:16:58.932086Z",
+      "current_archive": "MSSU Field House_Seq#5 Misc dwgs for App - 11 Sep 14.zip",
+      "source_key": "Disk-2/Completed_Projects_Data/044_Doing Steel/MT14_028(MSSU Athletic Field House)/MSSU Field House_Seq#5 Misc dwgs for App - 11 Sep 14.zip",
+      "archive_bytes": 11714511,
+      "source_bytes_downloaded": 11714511,
+      "updated_at": "2026-09-22T02:17:21.449810Z",
       "pid": 3728,
       "alive": true,
       "exitcode": null
@@ -199,18 +201,18 @@
     },
     {
       "shard": 3,
-      "state": "waiting_capacity",
-      "current_archive": "SLC Georgia_Seq-01 For_App_012315.zip",
-      "source_key": "Disk-2/Completed_Projects_Data/052_Rai Industrial LLC/MT14_069 (The University of Georgia in Athens)/SLC Georgia_Seq-01 For_App_012315.zip",
-      "archive_bytes": 11870656,
-      "shard_remaining": 607,
-      "updated_at": "2026-09-22T02:17:07.952181Z",
+      "state": "extracting",
+      "current_archive": "T#06_Partial Details  for Fab_11-22-13.zip",
+      "source_key": "Disk-2/Completed_Projects_Data/044_Doing Steel/MT13_035 (El Dorado)/T#06_Partial Details  for Fab_11-22-13.zip",
+      "archive_bytes": 12467889,
+      "source_bytes_downloaded": 12467889,
+      "updated_at": "2026-09-22T02:17:24.090735Z",
       "pid": 3730,
       "alive": true,
       "exitcode": null
     }
   ],
-  "current_archive": "Middle School_Seq-17 Partial & Roof Frames For Fab_07-03-14.zip",
+  "current_archive": "3821_Heartland_T#012_SEQ#5 PARTIAL DRAWINGS FOR FABRICATION_16 DEC '13.zip",
   "totals": {
     "updated_at": 1790042414.461885,
     "updated_at_iso": "2026-09-22T02:00:14Z",
@@ -1153,49 +1155,49 @@
   "depth_cap_hits": 0,
   "archives_combined": {
     "total": 3620,
-    "done": 1094,
-    "remaining": 2526,
+    "done": 1109,
+    "remaining": 2511,
     "failed": 0,
     "retries": 0,
     "done_local_before_cutover": 987,
-    "done_on_gcp": 107
+    "done_on_gcp": 122
   },
   "cloud_counts": {
     "raw": {
-      "pdf": 2709,
-      "cad_pdf": 2018,
-      "other_pdf": 691,
-      "2d": 1010,
+      "pdf": 3033,
+      "cad_pdf": 2232,
+      "other_pdf": 801,
+      "2d": 1055,
       "3d": 10,
-      "nc1": 1969
+      "nc1": 2061
     },
     "weak": {
-      "pdf": 2580,
-      "cad_pdf": 1942,
-      "other_pdf": 638,
-      "2d": 982,
+      "pdf": 2904,
+      "cad_pdf": 2156,
+      "other_pdf": 748,
+      "2d": 1013,
       "3d": 10,
-      "nc1": 1743
+      "nc1": 1835
     },
     "sha256": {
-      "pdf": 2579,
-      "cad_pdf": 1942,
-      "other_pdf": 637,
-      "2d": 986,
+      "pdf": 2903,
+      "cad_pdf": 2156,
+      "other_pdf": 747,
+      "2d": 1031,
       "3d": 10,
-      "nc1": 1759
+      "nc1": 1851
     },
-    "block_sha256": 5589
+    "block_sha256": 6055
   },
   "cloud_depth": {
-    "measured_finished_archives": 107,
-    "unopened_archives_not_measured": 2526,
+    "measured_finished_archives": 122,
+    "unopened_archives_not_measured": 2511,
     "archive_nodes_by_depth": {
-      "0": 107,
+      "0": 122,
       "1": 9
     },
     "finished_archive_max_depth_distribution": {
-      "0": 103,
+      "0": 118,
       "1": 4
     },
     "depth_cap": 15
@@ -1212,10 +1214,10 @@
     "estimate_label": "Estimate only; not a Google Cloud invoice"
   },
   "aws_source": {
-    "bytes_transferred": 925016973,
-    "gb_transferred": 0.925017,
+    "bytes_transferred": 1128086152,
+    "gb_transferred": 1.128086,
     "egress_rate_usd_per_gb": 0.09,
-    "running_egress_estimate_usd": 0.0833,
+    "running_egress_estimate_usd": 0.1015,
     "estimate_label": "One-time AWS source transfer estimate; not destination storage"
   }
 }
