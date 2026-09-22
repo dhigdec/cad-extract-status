@@ -862,6 +862,9 @@
   <script>
     "use strict";
 
+    // Prefer status-full.json (dedicated publisher). Workers still overwrite status.json
+    // with a thin schema that lacks disks.*.counts for Disk-1/Disk-2 tabs.
+    const LIVE_STATUS_FULL_URL = "https://cad-extract-status-874846752452.s3.ap-south-1.amazonaws.com/status-full.json";
     const LIVE_STATUS_URL = "https://cad-extract-status-874846752452.s3.ap-south-1.amazonaws.com/status.json";
     const FALLBACK_GITHUB_STATUS_URL = "https://raw.githubusercontent.com/dhigdec/cad-extract-status/main/status.json";
     const FALLBACK_GCS_STATUS_URL = "https://storage.googleapis.com/cad-extract-public-status-mlproject-501205/status.json";
@@ -2438,21 +2441,29 @@
       try {
         let status;
         let source;
-        // Prefer live AWS S3, then the GitHub-mirrored status.json (kept in-repo),
-        // and only then the legacy GCS snapshot (often missing weak/SHA/block).
+        // Prefer publisher-owned status-full.json (has disks.*.counts for all tabs),
+        // then status.json, then GitHub mirror, then legacy GCS.
         try {
-          status = await fetchStatus(LIVE_STATUS_URL);
-          source = "aws-s3";
-        } catch (primaryError) {
+          status = await fetchStatus(LIVE_STATUS_FULL_URL);
+          source = "aws-s3-full";
+          if (!status || !(status.disks && status.disks["Disk-1"] && status.disks["Disk-1"].counts)) {
+            throw new Error("status-full missing disks.*.counts");
+          }
+        } catch (fullError) {
           try {
-            status = await fetchStatus(FALLBACK_GITHUB_STATUS_URL);
-            source = "github-fallback";
-          } catch (githubError) {
+            status = await fetchStatus(LIVE_STATUS_URL);
+            source = "aws-s3";
+          } catch (primaryError) {
             try {
-              status = await fetchStatus(FALLBACK_GCS_STATUS_URL);
-              source = "gcs-fallback";
-            } catch (gcsError) {
-              throw new Error(`AWS/GitHub/GCS status failed (${primaryError.message}; ${githubError.message}; ${gcsError.message})`);
+              status = await fetchStatus(FALLBACK_GITHUB_STATUS_URL);
+              source = "github-fallback";
+            } catch (githubError) {
+              try {
+                status = await fetchStatus(FALLBACK_GCS_STATUS_URL);
+                source = "gcs-fallback";
+              } catch (gcsError) {
+                throw new Error(`AWS/GitHub/GCS status failed (${fullError.message}; ${primaryError.message}; ${githubError.message}; ${gcsError.message})`);
+              }
             }
           }
         }
