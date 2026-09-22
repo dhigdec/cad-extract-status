@@ -1147,8 +1147,11 @@
         addObject(archiveRoots, status.progress);
         addObject(countRoots, status.cloud_counts);
         addObject(countRoots, status.counts);
-        // Sum Disk-1 + Disk-2 when ec2_counts_delta has no combined object.
-        if (isObject(status.ec2_counts_delta)) {
+        // Only project flat EC2 deltas when richer disks/cloud counts are absent.
+        const hasRichCombined = countRootRichness(status.cloud_counts) > 0
+          || countRootRichness((status.disks && status.disks.combined && status.disks.combined.counts) || null) > 0
+          || countRootRichness((status.counts && status.counts.combined) || null) > 0;
+        if (!hasRichCombined && isObject(status.ec2_counts_delta)) {
           const combinedFlat = isObject(status.ec2_counts_delta.combined)
             ? status.ec2_counts_delta.combined
             : sumFlatCounts([status.ec2_counts_delta["Disk-1"], status.ec2_counts_delta["Disk-2"]]);
@@ -1217,14 +1220,43 @@
       return nodes;
     }
 
+    function countRootRichness(root) {
+      if (!isObject(root)) return 0;
+      let score = 0;
+      for (const key of ["2d", "3d", "nc1", "pdf"]) {
+        const node = root[key];
+        if (!isObject(node)) continue;
+        if (present(node.weak) || present(node.sha256)) score += 4;
+        if (isObject(node.by_ext) && Object.keys(node.by_ext).length) score += 8;
+        if (present(node.raw)) score += 1;
+      }
+      if (isObject(root.by_ext) && Object.keys(root.by_ext).length) score += 8;
+      return score;
+    }
+
+    function orderedCountRoots(bundle) {
+      return [...bundle.countRoots].sort((a, b) => countRootRichness(b) - countRootRichness(a));
+    }
+
     function countValue(bundle, category, variant) {
       const categoryAliases = CATEGORY_ALIASES[category] || [category];
       const variantAliases = VARIANT_ALIASES[variant] || [variant];
-      for (const root of bundle.countRoots) {
+      let fallback;
+      for (const root of orderedCountRoots(bundle)) {
         for (const node of categoryNodes(root, category)) {
-          if (!isObject(node) && variant === "raw" && number(node) !== null) return node;
+          if (!isObject(node) && variant === "raw" && number(node) !== null) {
+            if (fallback === undefined) fallback = node;
+            continue;
+          }
           const value = aliasValue(node, variantAliases);
-          if (present(value) && !isObject(value)) return value;
+          if (present(value) && !isObject(value)) {
+            // Prefer category nodes that also carry identity metrics / extensions.
+            if (variant === "raw" && isObject(node) && !(present(node.weak) || present(node.sha256) || isObject(node.by_ext))) {
+              if (fallback === undefined) fallback = value;
+              continue;
+            }
+            return value;
+          }
         }
         const bases = [root];
         for (const key of ["categories", "assets", "files", "file_counts", "fileCounts", "totals"]) {
@@ -1239,15 +1271,15 @@
           }
         }
       }
-      return undefined;
+      return fallback;
     }
 
     function extensionValue(bundle, family, extension, variant) {
       const variantAliases = VARIANT_ALIASES[variant] || [variant];
       const extensionAliases = [extension, extension.replace(".", "")];
-      for (const root of bundle.countRoots) {
+      for (const root of orderedCountRoots(bundle)) {
         const bases = [root];
-        for (const key of ["categories", "assets", "files", "file_counts", "fileCounts"]) {
+        for (const key of ["categories", "assets", "files", "file_counts", "fileCounts", "counts"]) {
           const child = aliasValue(root, [key]);
           if (isObject(child)) bases.push(child);
         }
@@ -1282,7 +1314,7 @@
 
     function blockMetrics(bundle) {
       const roots = blockRoot(bundle);
-      const distinctBlocks = metricFromRoots(roots, ["distinct_blocks", "block_sha256", "unique_blocks", "block_hashes"]);
+      const distinctBlocks = metricFromRoots(roots, ["distinct_blocks", "distinct", "block_sha256", "sha256", "unique_blocks", "block_hashes"]);
       const totalBytes = metricFromRoots(roots, ["total_block_bytes", "block_bytes_total", "total_bytes"]);
       let uniqueBytes = metricFromRoots(roots, ["unique_block_bytes", "block_bytes_unique", "unique_bytes"]);
       const duplicateBytes = metricFromRoots(roots, ["duplicate_block_bytes", "block_bytes_duplicate", "duplicate_bytes"]);
