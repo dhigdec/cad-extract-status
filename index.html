@@ -2743,55 +2743,14 @@
       try {
         let status;
         let source;
-        // Prefer live AWS status.json. Never overlay an older GitHub mirror when
-        // live already has present SHA/raw numbers (mirror can be hours stale).
-        const isStructurallyRich = (doc) => !!(doc && doc.disks && doc.disks["Disk-1"] && doc.disks["Disk-1"].counts
-          && doc.disks["Disk-2"] && doc.disks["Disk-2"].counts
-          && doc.disks.combined && doc.disks.combined.counts);
-        const livePdfRaw = (doc) => number((((((doc || {}).disks || {}).combined || {}).counts || {}).pdf || {}).raw
-          ?? ((((doc || {}).counts || {}).combined || {}).pdf || {}).raw
-          ?? (((doc || {}).cloud_counts || {}).pdf || {}).raw);
-        const mirrorSafeToOverlay = (live, mirror) => {
-          if (!statusHasIdentityMetrics(mirror)) return false;
-          // Refuse mirror that would lower live raw pdf floors or blank live SHA.
-          const liveRaw = livePdfRaw(live);
-          const mirrorRaw = livePdfRaw(mirror);
-          if (liveRaw !== null && mirrorRaw !== null && mirrorRaw < liveRaw) return false;
-          const liveSha = number((((((live || {}).disks || {}).combined || {}).counts || {})["2d"] || {}).sha256);
-          if (liveSha !== null) return false;
-          return true;
-        };
-
-        let sticky = null;
-        let liveS3Status = null;
+        // Live S3 is source of truth whenever fetch succeeds. GitHub/GCS only when S3 throws.
         try {
           status = await fetchLiveS3Status();
-          liveS3Status = status;
           source = "aws-s3";
-          if (!isStructurallyRich(status) || !statusHasIdentityMetrics(status)) {
-            try {
-              sticky = await fetchStatus(FALLBACK_GITHUB_STATUS_URL);
-              if (mirrorSafeToOverlay(status, sticky)) {
-                status = mergeIdentityCounts(status, sticky);
-                source = "aws-s3+github-identity";
-              } else if (!isStructurallyRich(status)) {
-                throw new Error("live status.json thin/missing per-disk counts");
-              }
-            } catch (stickyError) {
-              if (!isStructurallyRich(status)) throw stickyError;
-            }
-          }
         } catch (primaryError) {
-          if (liveS3Status) {
-            status = liveS3Status;
-            source = "aws-s3";
-          } else
           try {
             status = await fetchStatus(FALLBACK_GITHUB_STATUS_URL);
             source = "github-fallback";
-            if (!isStructurallyRich(status) && !statusHasIdentityMetrics(status)) {
-              throw new Error("github status missing per-disk counts");
-            }
           } catch (githubError) {
             try {
               status = await fetchStatus(FALLBACK_GCS_STATUS_URL);
@@ -2802,19 +2761,6 @@
           }
         }
         status = normalizeStatus(status);
-        // Re-apply sticky identity after normalize in case delta projection wiped cells.
-        if (sticky && statusHasIdentityMetrics(sticky) && !statusHasIdentityMetrics(status)) {
-          status = mergeIdentityCounts(status, sticky);
-          source = `${source}+post-normalize-identity`;
-        } else if (!statusHasIdentityMetrics(status)) {
-          try {
-            sticky = sticky || await fetchStatus(FALLBACK_GITHUB_STATUS_URL);
-            if (statusHasIdentityMetrics(sticky)) {
-              status = mergeIdentityCounts(status, sticky);
-              source = `${source}+post-normalize-identity`;
-            }
-          } catch (_) { /* keep normalized live status */ }
-        }
         const payload = `${source}:${JSON.stringify(status)}`;
         latestStatus = status;
         statusSource = source;
