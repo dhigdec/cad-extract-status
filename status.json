@@ -1,47 +1,180 @@
 {
-  "source_of_truth": "cloud-ec2",
-  "health": "ok",
-  "updated": "2026-09-22T02:13:30.053441Z",
-  "last_update_iso": "2026-09-22T02:13:30.053441Z",
-  "age_seconds": 2.1,
+  "source_of_truth": "gcp",
+  "health": "alive",
+  "updated": "2026-09-22T02:13:19.403819Z",
+  "last_update_iso": "2026-09-22T02:13:19.403819Z",
+  "age_seconds": 15.7,
   "worker_alive": true,
+  "cloud_workers_alive": 4,
   "stalled": false,
+  "cloud": {
+    "schema": 2,
+    "source_of_truth": "gcp",
+    "state": "running",
+    "heartbeat_at": "2026-09-22T02:13:19.403819Z",
+    "gce": {
+      "instance_name": "cad-disk-extract-gcp-1",
+      "instance_id": "3363502215231462675",
+      "machine_type": "c3-standard-22",
+      "zone": "asia-south1-b",
+      "state": "RUNNING",
+      "worker_count": 4
+    },
+    "progress": {
+      "archives_total": 3620,
+      "done_before_gcp": 987,
+      "done_on_gcp": 0,
+      "done": 987,
+      "remaining": 2633,
+      "failed_active_checkpoints": 0,
+      "retries": 0
+    },
+    "workers": [
+      {
+        "shard": 0,
+        "state": "starting",
+        "updated_at": "2026-09-22T02:13:19.297216Z",
+        "pid": 3727,
+        "alive": true,
+        "exitcode": null
+      },
+      {
+        "shard": 1,
+        "state": "starting",
+        "updated_at": "2026-09-22T02:13:19.297270Z",
+        "pid": 3728,
+        "alive": true,
+        "exitcode": null
+      },
+      {
+        "shard": 2,
+        "state": "starting",
+        "updated_at": "2026-09-22T02:13:19.297293Z",
+        "pid": 3729,
+        "alive": true,
+        "exitcode": null
+      },
+      {
+        "shard": 3,
+        "state": "starting",
+        "updated_at": "2026-09-22T02:13:19.297325Z",
+        "pid": 3730,
+        "alive": true,
+        "exitcode": null
+      }
+    ],
+    "counts": {
+      "raw": {
+        "pdf": 0,
+        "cad_pdf": 0,
+        "other_pdf": 0,
+        "2d": 0,
+        "3d": 0,
+        "nc1": 0
+      },
+      "weak": {
+        "pdf": 0,
+        "cad_pdf": 0,
+        "other_pdf": 0,
+        "2d": 0,
+        "3d": 0,
+        "nc1": 0
+      },
+      "sha256": {
+        "pdf": 0,
+        "cad_pdf": 0,
+        "other_pdf": 0,
+        "2d": 0,
+        "3d": 0,
+        "nc1": 0
+      },
+      "block_sha256": 0
+    },
+    "nested_depth": {
+      "measured_finished_archives": 0,
+      "unopened_archives_not_measured": 2633,
+      "archive_nodes_by_depth": {},
+      "finished_archive_max_depth_distribution": {},
+      "depth_cap": 15
+    },
+    "compute": {
+      "uptime_seconds": 0.4,
+      "uptime_hours": 0.0001,
+      "hourly_estimate_usd": 1.65,
+      "accrued_estimate_usd": 0.0002,
+      "estimate_label": "Estimate only; not a Google Cloud invoice"
+    },
+    "persistent_disk": {
+      "size_gb": 1000,
+      "type": "pd-ssd",
+      "monthly_estimate_usd": 204.0,
+      "hourly_estimate_usd": 0.2795,
+      "accrued_estimate_usd": 0.0,
+      "estimate_label": "Estimate only; not a Google Cloud invoice"
+    },
+    "gcs": {
+      "state": "ok",
+      "scanned_at": "2026-09-22T02:13:19.294930Z",
+      "bucket": "gs://cad-disk-extract-mlproject-501205/",
+      "object_count": 16,
+      "stored_bytes": 948549,
+      "stored_gb": 0.000949,
+      "estimated_monthly_usd": 0.0,
+      "rate_usd_per_gb_month": 0.023,
+      "estimate_label": "Estimate only; not a Google Cloud invoice"
+    },
+    "aws_source": {
+      "bytes_transferred": 0,
+      "gb_transferred": 0.0,
+      "egress_rate_usd_per_gb": 0.09,
+      "running_egress_estimate_usd": 0.0,
+      "estimate_label": "One-time AWS source transfer estimate; not destination storage"
+    },
+    "costs": {
+      "combined_accrued_estimate_usd": 0.0002,
+      "combined_hourly_compute_disk_usd": 1.9295,
+      "label": "Estimates only; not cloud invoices"
+    },
+    "last_result": null,
+    "last_finished_at": null,
+    "proof_object": null,
+    "scratch_free_bytes": 1055719022592
+  },
   "current": [
     {
       "shard": 0,
-      "state": "processing",
-      "archive": "369-RESERVOIR No-2.7z"
+      "state": "starting",
+      "updated_at": "2026-09-22T02:13:19.297216Z",
+      "pid": 3727,
+      "alive": true,
+      "exitcode": null
     },
     {
       "shard": 1,
-      "state": "processing",
-      "archive": "MT18_080 (St Francis Hospital ASC).7z"
+      "state": "starting",
+      "updated_at": "2026-09-22T02:13:19.297270Z",
+      "pid": 3728,
+      "alive": true,
+      "exitcode": null
     },
     {
       "shard": 2,
-      "state": "processing",
-      "archive": "8. 21-054 Quarry Park Phase 2.7z"
+      "state": "starting",
+      "updated_at": "2026-09-22T02:13:19.297293Z",
+      "pid": 3729,
+      "alive": true,
+      "exitcode": null
     },
     {
       "shard": 3,
-      "state": "processing",
-      "archive": "18298 Backup.7z"
+      "state": "starting",
+      "updated_at": "2026-09-22T02:13:19.297325Z",
+      "pid": 3730,
+      "alive": true,
+      "exitcode": null
     }
   ],
-  "current_archive": "369-RESERVOIR No-2.7z",
-  "last_finished": {
-    "disk": "Disk-2",
-    "name": "15-144_GMS_Seq# 1 Partial Dwgs  for FAB_T#010.zip",
-    "path": "Disk-2/Completed_Projects_Data/MT15_061 (The Greenwood Middle School)/08. Uploads/For FAB/T#010_SEQ#1 PARTIAL DWGS FOR FAB  _011816/15-144_GMS_Seq# 1 Partial Dwgs  for FAB_T#010.zip",
-    "status": "ok",
-    "size_mb": 6.71,
-    "elapsed_s": 160.4,
-    "max_depth": 0,
-    "pdf": 173,
-    "d2": 43,
-    "d3": 0,
-    "files": 400
-  },
+  "current_archive": null,
   "totals": {
     "updated_at": 1790042414.461885,
     "updated_at_iso": "2026-09-22T02:00:14Z",
@@ -982,360 +1115,65 @@
   "max_depth_seen": 1,
   "max_depth_cap": 15,
   "depth_cap_hits": 0,
-  "s3": {
-    "shifted": true,
-    "bucket": "annotationprod",
-    "prefix": "s3://annotationprod/cad-disk-extract/",
-    "destinations": {
-      "Disk-1": "s3://annotationprod/cad-disk-extract/Disk-1/",
-      "Disk-2": "s3://annotationprod/cad-disk-extract/Disk-2/"
-    },
-    "profile": "annotationprod-publish",
-    "stored_bytes": 12493706745,
-    "stored_gb": 12.493707,
-    "stored_bytes_by_disk": {
-      "Disk-1": 38274820,
-      "Disk-2": 474000456
-    },
-    "uploaded_files": 3992,
-    "uploaded_files_by_disk": {
-      "Disk-1": 167,
-      "Disk-2": 3825
-    },
-    "archives_uploaded": {
-      "Disk-1": 36,
-      "Disk-2": 119,
-      "combined": 155
-    },
-    "archives_pending_s3": 832,
-    "estimated_monthly_usd": 0.3123,
-    "cost_rate_usd_per_gb_month": 0.025,
-    "note": "Estimate = stored_GB uploaded by this job \u00d7 $0.025/GB-month (S3 Standard ap-south-1). Not the AWS invoice. Only cad-disk-extract/ is written; source buckets are read-only.",
-    "scope": "whole cad-disk-extract/ prefix measured from EC2",
-    "object_count": 75049,
-    "scanned_at": "2026-09-22T02:11:33.351180Z"
-  },
-  "s3_stored_bytes": 12493706745,
-  "s3_stored_gb": 12.493707,
-  "estimated_monthly_usd": 0.3123,
-  "local_baseline": {
-    "note": "Archives completed by the laptop run before cutover to EC2. Extraction, unzip and counting now happen on EC2 only.",
-    "health": "stalled",
-    "updated": "2026-09-22 02:00:14 UTC",
-    "archives": {
-      "Disk-1": {
-        "completed_ok": 101,
-        "failed": 0,
-        "skipped_too_large": 0,
-        "completed_total": 101,
-        "remaining": 1053,
-        "manifest_total": 1154
-      },
-      "Disk-2": {
-        "completed_ok": 886,
-        "failed": 0,
-        "skipped_too_large": 0,
-        "completed_total": 886,
-        "remaining": 1580,
-        "manifest_total": 2466
-      },
-      "combined": {
-        "completed_ok": 987,
-        "failed": 0,
-        "skipped_too_large": 0,
-        "completed_total": 987,
-        "remaining": 2633,
-        "manifest_total": 3620
-      }
-    }
-  },
-  "cloud": {
-    "schema": 1,
-    "state": "running",
-    "heartbeat_at": "2026-09-22T02:13:30.053441Z",
-    "run_id": "run-20260922T011906Z",
-    "instance_id": "i-08d525e127b68d899",
-    "instance_type": "c7i.4xlarge",
-    "availability_zone": "ap-south-1a",
-    "credential_expiry": "none",
-    "credential_stop_at": "2027-09-22T02:06:18.505333Z",
-    "progress": {
-      "manifest_total": 2647,
-      "completed_ok": 437,
-      "failed": 0,
-      "remaining": 2210,
-      "retries": 0
-    },
-    "counts": {
-      "raw": {
-        "pdf": 19170,
-        "cad_pdf": 11167,
-        "other_pdf": 8003,
-        "2d": 53561,
-        "3d": 348,
-        "nc1": 8230
-      },
-      "sha256": {
-        "pdf": 13726,
-        "cad_pdf": 7641,
-        "other_pdf": 6314,
-        "2d": 42821,
-        "3d": 289,
-        "nc1": 4513
-      },
-      "block_sha256": 66081,
-      "extensions": {
-        ".db1": {
-          "category": "3d",
-          "raw": 226,
-          "sha256": 198
-        },
-        ".dg": {
-          "category": "2d",
-          "raw": 37724,
-          "sha256": 30979
-        },
-        ".dpm": {
-          "category": "2d",
-          "raw": 9391,
-          "sha256": 6977
-        },
-        ".dwg": {
-          "category": "2d",
-          "raw": 2818,
-          "sha256": 2238
-        },
-        ".dxf": {
-          "category": "2d",
-          "raw": 3628,
-          "sha256": 2627
-        },
-        ".ifc": {
-          "category": "3d",
-          "raw": 111,
-          "sha256": 87
-        },
-        ".nc1": {
-          "category": "nc1",
-          "raw": 8230,
-          "sha256": 4513
-        },
-        ".pdf": {
-          "category": "pdf",
-          "raw": 19170,
-          "sha256": 13726
-        },
-        ".stp": {
-          "category": "3d",
-          "raw": 11,
-          "sha256": 4
-        }
-      }
-    },
-    "nested_depth": {
-      "measured_finished_archives": 437,
-      "unopened_archives_not_measured": 2210,
-      "archive_nodes_by_depth": {
-        "0": 437,
-        "1": 395,
-        "2": 5
-      },
-      "finished_archive_max_depth_distribution": {
-        "0": 321,
-        "1": 113,
-        "2": 3
-      }
-    },
-    "storage": {
-      "stored_bytes": 12819539800,
-      "stored_gb": 12.81954,
-      "stored_files": 81309,
-      "estimated_s3_monthly_usd": 0.3205
-    },
-    "compute": {
-      "hourly_ec2_estimate_usd": "0.93",
-      "uptime_seconds": 172.8,
-      "uptime_hours": 0.048,
-      "accrued_estimate_usd": 0.0446,
-      "estimate_label": "On-Demand estimate; excludes taxes and data transfer"
-    },
-    "ebs": {
-      "size_gb": 1000.0,
-      "volume_type": "gp3",
-      "iops": 6000,
-      "throughput_mibps": 500,
-      "rate_usd_per_gb_month": 0.0912,
-      "estimated_monthly_usd": 91.2,
-      "hourly_estimate_usd": 0.124932,
-      "accrued_estimate_usd": 0.006
-    },
-    "s3_prefix": {
-      "state": "ok",
-      "scanned_at": "2026-09-22T02:11:33.351180Z",
-      "prefix": "s3://annotationprod/cad-disk-extract/",
-      "object_count": 75049,
-      "stored_bytes": 12493706745,
-      "stored_gb": 12.493707,
-      "estimated_s3_monthly_usd": 0.3123,
-      "cost_rate_usd_per_gb_month": 0.025
-    },
-    "costs": {
-      "compute_accrued_usd": 0.0446,
-      "ebs_accrued_usd": 0.006,
-      "s3_estimated_monthly_usd": 0.3123,
-      "combined_accrued_usd": 0.0506,
-      "combined_hourly_usd": 1.0549,
-      "label": "ESTIMATE ONLY - computed from On-Demand list prices (EC2 + gp3 EBS + S3 Standard at $0.025/GB-month). This is not the AWS invoice."
-    },
-    "workers": [
-      {
-        "shard": 0,
-        "state": "processing",
-        "current_archive": "369-RESERVOIR No-2.7z",
-        "current_archive_id": "b1aae5ac2de06138",
-        "archive_index": 93,
-        "shard_total": 651,
-        "updated_at": "2026-09-22T02:12:49.573615Z",
-        "pid": 27858,
-        "returncode": null
-      },
-      {
-        "shard": 1,
-        "state": "processing",
-        "current_archive": "MT18_080 (St Francis Hospital ASC).7z",
-        "current_archive_id": "9821150992384d4c",
-        "archive_index": 106,
-        "shard_total": 676,
-        "updated_at": "2026-09-22T02:13:28.241289Z",
-        "pid": 27863,
-        "returncode": null
-      },
-      {
-        "shard": 2,
-        "state": "processing",
-        "current_archive": "8. 21-054 Quarry Park Phase 2.7z",
-        "current_archive_id": "c8688317549ba237",
-        "archive_index": 111,
-        "shard_total": 681,
-        "updated_at": "2026-09-22T02:13:05.704963Z",
-        "pid": 27872,
-        "returncode": null
-      },
-      {
-        "shard": 3,
-        "state": "processing",
-        "current_archive": "18298 Backup.7z",
-        "current_archive_id": "6d37d8acdb390666",
-        "archive_index": 127,
-        "shard_total": 639,
-        "updated_at": "2026-09-22T02:13:27.413514Z",
-        "pid": 27876,
-        "returncode": null
-      }
-    ],
-    "worker_processes_alive": 4,
-    "source_listing": {
-      "state": "listing",
-      "started_at": "2026-09-22T02:11:18.694637Z"
-    },
-    "last_checkpoint_at": "2026-09-22T02:13:28.185486Z",
-    "github_publisher": {
-      "repo": "dhigdec/cad-extract-status",
-      "last_push_success_at": null,
-      "last_error": "CalledProcessError"
-    },
-    "temporary_credential_limitation": "Workers stop five minutes before destination credential expiry. The instance remains running; new destination writes require refreshed credentials."
-  },
-  "cloud_workers_alive": 4,
   "archives_combined": {
     "total": 3620,
-    "done": 1423,
-    "remaining": 2197,
+    "done": 987,
+    "remaining": 2633,
     "failed": 0,
     "retries": 0,
-    "done_local_before_cutover": 986,
-    "done_on_ec2": 437,
-    "ec2_manifest_total": 2647,
-    "ec2_skipped_already_done_locally": 13
+    "done_local_before_cutover": 987,
+    "done_on_gcp": 0
   },
   "cloud_counts": {
     "raw": {
-      "pdf": 19170,
-      "cad_pdf": 11167,
-      "other_pdf": 8003,
-      "2d": 53561,
-      "3d": 348,
-      "nc1": 8230
+      "pdf": 0,
+      "cad_pdf": 0,
+      "other_pdf": 0,
+      "2d": 0,
+      "3d": 0,
+      "nc1": 0
+    },
+    "weak": {
+      "pdf": 0,
+      "cad_pdf": 0,
+      "other_pdf": 0,
+      "2d": 0,
+      "3d": 0,
+      "nc1": 0
     },
     "sha256": {
-      "pdf": 13726,
-      "cad_pdf": 7641,
-      "other_pdf": 6314,
-      "2d": 42821,
-      "3d": 289,
-      "nc1": 4513
+      "pdf": 0,
+      "cad_pdf": 0,
+      "other_pdf": 0,
+      "2d": 0,
+      "3d": 0,
+      "nc1": 0
     },
-    "block_sha256": 66081,
-    "extensions": {
-      ".db1": {
-        "category": "3d",
-        "raw": 226,
-        "sha256": 198
-      },
-      ".dg": {
-        "category": "2d",
-        "raw": 37724,
-        "sha256": 30979
-      },
-      ".dpm": {
-        "category": "2d",
-        "raw": 9391,
-        "sha256": 6977
-      },
-      ".dwg": {
-        "category": "2d",
-        "raw": 2818,
-        "sha256": 2238
-      },
-      ".dxf": {
-        "category": "2d",
-        "raw": 3628,
-        "sha256": 2627
-      },
-      ".ifc": {
-        "category": "3d",
-        "raw": 111,
-        "sha256": 87
-      },
-      ".nc1": {
-        "category": "nc1",
-        "raw": 8230,
-        "sha256": 4513
-      },
-      ".pdf": {
-        "category": "pdf",
-        "raw": 19170,
-        "sha256": 13726
-      },
-      ".stp": {
-        "category": "3d",
-        "raw": 11,
-        "sha256": 4
-      }
-    }
+    "block_sha256": 0
   },
   "cloud_depth": {
-    "measured_finished_archives": 437,
-    "unopened_archives_not_measured": 2210,
-    "archive_nodes_by_depth": {
-      "0": 437,
-      "1": 395,
-      "2": 5
-    },
-    "finished_archive_max_depth_distribution": {
-      "0": 321,
-      "1": 113,
-      "2": 3
-    }
+    "measured_finished_archives": 0,
+    "unopened_archives_not_measured": 2633,
+    "archive_nodes_by_depth": {},
+    "finished_archive_max_depth_distribution": {},
+    "depth_cap": 15
+  },
+  "gcs": {
+    "state": "ok",
+    "scanned_at": "2026-09-22T02:13:19.294930Z",
+    "bucket": "gs://cad-disk-extract-mlproject-501205/",
+    "object_count": 16,
+    "stored_bytes": 948549,
+    "stored_gb": 0.000949,
+    "estimated_monthly_usd": 0.0,
+    "rate_usd_per_gb_month": 0.023,
+    "estimate_label": "Estimate only; not a Google Cloud invoice"
+  },
+  "aws_source": {
+    "bytes_transferred": 0,
+    "gb_transferred": 0.0,
+    "egress_rate_usd_per_gb": 0.09,
+    "running_egress_estimate_usd": 0.0,
+    "estimate_label": "One-time AWS source transfer estimate; not destination storage"
   }
 }

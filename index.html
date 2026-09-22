@@ -1,551 +1,117 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Deep CAD count</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Deep CAD extraction</title>
   <style>
-    body { font-family: system-ui, sans-serif; margin: 1.25rem; color: #111; }
-    h1 { font-size: 1.25rem; margin: 0 0 0.5rem; }
-    h2 { font-size: 1rem; margin: 1.25rem 0 0.4rem; }
-    .meta { color: #444; margin-bottom: 0.75rem; }
-    .alive { color: #0a7; font-weight: 700; }
-    .stalled { color: #c40; font-weight: 700; }
-    table { border-collapse: collapse; margin-bottom: 0.5rem; }
-    th, td { border: 1px solid #ccc; padding: 4px 8px; text-align: right; }
-    th:first-child, td:first-child { text-align: left; }
-    th { background: #f3f3f3; }
-    .bar { background: #e5e5e5; height: 18px; width: 100%; max-width: 520px; }
-    .bar > span { display: block; height: 100%; background: #3a7; }
-    .bar-label { margin-top: 4px; }
-    .current { font-family: ui-monospace, monospace; font-size: 0.85rem; word-break: break-all; }
-    .err { color: #c40; }
-    .cost {
-      position: fixed; top: 12px; right: 12px; width: 330px;
-      max-height: calc(100vh - 48px); overflow-y: auto;
-      background: #111; color: #f5f5f5; padding: 12px 14px;
-      border-radius: 8px; font-size: 13px; line-height: 1.35;
-      box-shadow: 0 2px 10px rgba(0,0,0,.25); z-index: 2;
-    }
-    .cost h2 { color: #fff; margin: 0 0 6px; font-size: 13px; }
-    .cost .big { font-size: 1.35rem; font-weight: 700; margin: 4px 0 8px; }
-    .cost .muted { color: #bbb; font-size: 12px; }
-    .cost .section { color: #8fd; font-weight: 700; margin-top: 9px; }
-    .cost .kv { display: flex; justify-content: space-between; gap: 12px; margin-top: 2px; }
-    .cost .kv b { max-width: 205px; text-align: right; overflow-wrap: anywhere; }
-    .cost .warning {
-      color: #ffd37a; border-top: 1px solid #555; margin-top: 8px; padding-top: 7px;
-    }
-    .cost .waiting { color: #ffd37a; }
-    body { padding-right: 360px; }
+    body{font-family:system-ui,sans-serif;margin:20px;color:#111;padding-right:370px}
+    h1{font-size:1.3rem;margin:0 0 8px}h2{font-size:1rem;margin:22px 0 7px}
+    .meta{color:#444}.alive{color:#087;font-weight:700}.stale{color:#c40;font-weight:700}
+    table{border-collapse:collapse;width:auto;max-width:100%;margin-bottom:8px}
+    th,td{border:1px solid #ccc;padding:5px 8px;text-align:right}
+    th:first-child,td:first-child{text-align:left}th{background:#f3f3f3}
+    .bar{height:20px;background:#e5e5e5;max-width:700px;margin-top:10px}
+    .bar span{display:block;height:100%;background:#298f68}
+    .mono{font-family:ui-monospace,monospace;font-size:.85rem;word-break:break-all}
+    .card{position:fixed;right:12px;top:12px;width:330px;max-height:calc(100vh - 48px);
+      overflow:auto;background:#111;color:#f5f5f5;padding:13px 15px;border-radius:9px;
+      box-shadow:0 2px 12px #0005;font-size:13px;line-height:1.4}
+    .card h2{margin:0 0 7px;color:#fff}.card .big{font-size:1.3rem;font-weight:700}
+    .card .section{color:#8fd;font-weight:700;margin-top:10px}
+    .kv{display:flex;justify-content:space-between;gap:10px}.kv b{text-align:right}
+    .muted{color:#bbb;font-size:12px}.warning{color:#ffd37a;margin-top:8px}
+    @media(max-width:900px){body{padding-right:0}.card{position:static;width:auto;margin-bottom:18px}}
   </style>
 </head>
 <body>
-  <h1>Disk-1 / Disk-2 deep CAD count</h1>
+  <h1>Disk-1 / Disk-2 deep CAD extraction</h1>
   <div id="root">Loading…</div>
   <script>
-    const TYPES = ["shop","detail","gather","erection","construction","abm","approval","inputs","other"];
-    const CATS = [
-      ["pdf","PDF"],
-      ["2d","2D"],
-      ["3d","3D"],
-      ["nc1","NC1"],
-    ];
+    const fmt=x=>Number(x||0).toLocaleString();
+    const money=x=>Number(x||0).toFixed(Math.abs(Number(x||0))<.01?4:2);
+    const esc=x=>String(x??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+    const val=(o,...p)=>p.reduce((x,k)=>x&&x[k],o);
 
-    function n(obj, path) {
-      let cur = obj;
-      for (const k of path) {
-        if (cur == null) return 0;
-        cur = cur[k];
-      }
-      return typeof cur === "number" ? cur : 0;
-    }
-
-    const APPROX_EC2_HOURLY_USD = {
-      "c7i.4xlarge": 0.93,
-      "c6i.4xlarge": 0.82,
-    };
-
-    function fmt(x) { return Number(x || 0).toLocaleString(); }
-    function hasValue(x) { return x !== undefined && x !== null && x !== ""; }
-    function pick(...values) { return values.find(hasValue); }
-    function numberFrom(...values) {
-      for (const value of values) {
-        if (!hasValue(value)) continue;
-        const parsed = Number(value);
-        if (Number.isFinite(parsed)) return parsed;
-      }
-      return null;
-    }
-    function objectFrom(value) {
-      return value && typeof value === "object" && !Array.isArray(value) ? value : {};
-    }
-    function esc(value) {
-      return String(value == null ? "" : value).replace(
-        /[&<>"']/g,
-        ch => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch])
-      );
-    }
-    function money(value) {
-      const amount = Number(value || 0);
-      return amount !== 0 && Math.abs(amount) < 0.01
-        ? amount.toFixed(4)
-        : amount.toFixed(2);
-    }
-    function cloudStatusFrom(st) {
-      for (const candidate of [st.cloud_status, st.cloud, st.aws_status]) {
-        if (candidate && typeof candidate === "object") return candidate;
-      }
-      if (
-        hasValue(st.instance_id) || hasValue(st.instance_type) || st.compute ||
-        st.ec2 || hasValue(st.credential_expiry) || hasValue(st.heartbeat_at)
-      ) {
-        return st;
-      }
-      return {};
-    }
-
-    function renderCostCard(st, t, cloud) {
-      const hasCloud = Object.keys(cloud).length > 0;
-      const ec2 = objectFrom(cloud.ec2);
-      const instance = objectFrom(cloud.instance);
-      const compute = objectFrom(cloud.compute);
-      const storage = objectFrom(cloud.storage);
-      const costs = objectFrom(cloud.costs || cloud.cost || cloud.cloud_costs);
-
-      const instanceId = pick(
-        ec2.instance_id, ec2.id, instance.instance_id, instance.id, cloud.instance_id
-      );
-      const instanceType = pick(
-        ec2.instance_type, ec2.type, instance.instance_type, instance.type,
-        cloud.instance_type
-      );
-      const explicitEc2State = pick(
-        ec2.state, ec2.instance_state, instance.state, instance.instance_state,
-        cloud.ec2_state, cloud.instance_state
-      );
-      const reportedState = pick(cloud.state, cloud.status);
-      const stateLabel = explicitEc2State ||
-        (reportedState ? `${reportedState} (reported)` :
-          (hasCloud ? "not reported" : "not running · waiting for cloud status"));
-
-      const suppliedHourly = numberFrom(
-        compute.hourly_ec2_estimate_usd, compute.hourly_estimate_usd,
-        compute.estimated_hourly_usd, compute.estimated_usd_per_hour,
-        compute.hourly_cost_usd, compute.hourly_usd,
-        ec2.hourly_ec2_estimate_usd, ec2.hourly_estimate_usd,
-        cloud.hourly_ec2_estimate_usd, cloud.ec2_hourly_cost_usd
-      );
-      const mappedHourly = hasValue(instanceType)
-        ? APPROX_EC2_HOURLY_USD[String(instanceType).toLowerCase()]
-        : undefined;
-      const hourly = suppliedHourly ?? mappedHourly ?? 0;
-      const hourlySource = suppliedHourly != null
-        ? "status estimate"
-        : (mappedHourly != null ? "approx. type map" : "waiting for cloud status");
-
-      let uptimeHours = numberFrom(
-        compute.uptime_hours, ec2.uptime_hours, instance.uptime_hours,
-        cloud.uptime_hours
-      );
-      if (uptimeHours == null) {
-        const uptimeSeconds = numberFrom(
-          compute.uptime_seconds, ec2.uptime_seconds, instance.uptime_seconds,
-          cloud.uptime_seconds
-        );
-        if (uptimeSeconds != null) uptimeHours = uptimeSeconds / 3600;
-      }
-      if (uptimeHours == null && hasCloud) {
-        const startedAt = pick(
-          compute.started_at, ec2.started_at, ec2.launch_time,
-          instance.started_at, instance.launch_time, cloud.started_at
-        );
-        const startedMs = startedAt ? Date.parse(startedAt) : NaN;
-        if (Number.isFinite(startedMs)) {
-          uptimeHours = Math.max(0, (Date.now() - startedMs) / 3600000);
-        }
-      }
-      if (uptimeHours == null) uptimeHours = 0;
-
-      const suppliedComputeAccrued = numberFrom(
-        compute.accrued_estimate_usd, compute.accrued_compute_estimate_usd,
-        compute.accrued_usd, ec2.accrued_estimate_usd,
-        cloud.accrued_compute_estimate_usd, cloud.accrued_estimate_usd
-      );
-      const computeAccrued = suppliedComputeAccrued ?? hourly * uptimeHours;
-
-      const ebs = objectFrom(cloud.ebs || storage.ebs || ec2.ebs);
-      const ebsSizeGb = numberFrom(
-        ebs.size_gb, ebs.volume_size_gb, ebs.provisioned_gb,
-        storage.ebs_size_gb, ec2.ebs_size_gb, cloud.ebs_size_gb
-      );
-      const ebsRate = numberFrom(
-        ebs.rate_usd_per_gb_month, ebs.cost_rate_usd_per_gb_month,
-        storage.ebs_rate_usd_per_gb_month
-      );
-      let ebsMonthly = numberFrom(
-        ebs.estimated_monthly_usd, ebs.monthly_estimate_usd,
-        ebs.monthly_cost_usd, storage.ebs_monthly_cost_usd,
-        storage.ebs_estimated_monthly_usd, storage.ebs_monthly_estimate_usd,
-        cloud.ebs_monthly_cost_usd, cloud.ebs_estimated_monthly_usd,
-        cloud.ebs_monthly_estimate_usd
-      );
-      if (ebsMonthly == null && ebsSizeGb != null && ebsRate != null) {
-        ebsMonthly = ebsSizeGb * ebsRate;
-      }
-      let ebsAccrued = numberFrom(
-        ebs.accrued_estimate_usd, ebs.estimated_accrued_usd,
-        ebs.accrued_cost_usd, storage.ebs_accrued_cost_usd,
-        storage.ebs_accrued_estimate_usd, cloud.ebs_accrued_cost_usd,
-        cloud.ebs_accrued_estimate_usd
-      );
-      if (ebsAccrued == null && ebsMonthly != null) {
-        ebsAccrued = ebsMonthly * uptimeHours / 730;
-      }
-      const hasEbs = ebsSizeGb != null || ebsMonthly != null || ebsAccrued != null;
-
-      const localS3 = objectFrom(st.s3);
-      const totalsS3 = objectFrom(t.s3);
-      const cloudS3 = objectFrom(cloud.s3);
-      const nestedStorageS3 = objectFrom(storage.s3);
-      let storedGb = numberFrom(
-        cloudS3.stored_gb, nestedStorageS3.stored_gb, storage.s3_stored_gb,
-        storage.stored_gb, cloud.s3_stored_gb, cloud.stored_gb,
-        localS3.stored_gb, totalsS3.stored_gb, st.s3_stored_gb
-      );
-      const storedBytes = numberFrom(
-        cloudS3.stored_bytes, nestedStorageS3.stored_bytes, storage.s3_stored_bytes,
-        storage.stored_bytes, cloud.s3_stored_bytes, cloud.stored_bytes,
-        localS3.stored_bytes, totalsS3.stored_bytes, st.s3_stored_bytes
-      );
-      if (storedGb == null && storedBytes != null) storedGb = storedBytes / 1e9;
-      if (storedGb == null) storedGb = 0;
-      const storedObjects = numberFrom(
-        cloudS3.stored_object_count, cloudS3.object_count, cloudS3.stored_files,
-        nestedStorageS3.stored_files,
-        storage.s3_stored_object_count, storage.s3_object_count,
-        storage.s3_stored_objects, storage.stored_object_count,
-        storage.object_count, storage.stored_files, cloud.s3_stored_objects,
-        cloud.stored_files, cloud.object_count, localS3.stored_object_count,
-        localS3.object_count, localS3.stored_files, localS3.uploaded_files,
-        totalsS3.stored_object_count, totalsS3.object_count,
-        totalsS3.stored_files, totalsS3.uploaded_files, st.s3_stored_objects
-      ) ?? 0;
-      const s3Monthly = storedGb * 0.025;
-      const suppliedS3Accrued = numberFrom(
-        localS3.accrued_estimate_usd, cloudS3.accrued_estimate_usd,
-        nestedStorageS3.accrued_estimate_usd, storage.s3_accrued_estimate_usd,
-        costs.s3_accrued_estimate_usd
-      );
-      const s3Accrued = suppliedS3Accrued ?? s3Monthly * uptimeHours / 730;
-
-      const suppliedCombined = numberFrom(
-        costs.combined_accrued_estimate_usd, costs.current_accrued_estimate_usd,
-        costs.total_accrued_estimate_usd, cloud.combined_accrued_estimate_usd,
-        cloud.current_accrued_estimate_usd
-      );
-      const combined = suppliedCombined ??
-        computeAccrued + (ebsAccrued ?? 0) + s3Accrued;
-      const prefix = pick(
-        cloudS3.prefix, nestedStorageS3.prefix, storage.prefix,
-        localS3.prefix, totalsS3.prefix, "s3://annotationprod/cad-disk-extract/"
-      );
-      const lastUpdated = pick(
-        cloud.heartbeat_at, cloud.status_updated_at, cloud.last_updated_at,
-        cloud.last_updated,
-        cloud.updated_at, cloud.updated, cloud.mirror_file_updated_at,
-        st.last_update_iso, st.updated
-      );
-
-      const expiry = pick(
-        cloud.credential_expiry, cloud.credentials_expire_at,
-        objectFrom(cloud.credentials).expires_at
-      );
-      const credentialWarning = pick(
-        cloud.credential_warning, cloud.temporary_credential_limitation
-      );
-      let expiryTiming = "";
-      if (expiry) {
-        const expiryMs = Date.parse(expiry);
-        if (Number.isFinite(expiryMs)) {
-          const minutes = Math.round((expiryMs - Date.now()) / 60000);
-          expiryTiming = minutes <= 0
-            ? " · expired"
-            : ` · ${minutes} min remaining`;
-        }
-      }
-
-      const ebsText = hasEbs
-        ? `${ebsSizeGb == null ? "size not provided" : `${fmt(ebsSizeGb)} GB`} · ` +
-          `${ebsAccrued == null ? "accrued not provided" : `$${money(ebsAccrued)} accrued`} · ` +
-          `${ebsMonthly == null ? "monthly not provided" : `$${money(ebsMonthly)}/month`}`
-        : (hasCloud ? "not provided by cloud status" : "waiting for cloud status");
-
-      return `<aside class="cost">
-        <h2>Cloud cost estimate</h2>
-        <div class="${hasCloud ? "muted" : "waiting"}">${
-          hasCloud ? "Cloud status fields received" : "waiting for cloud status"
-        }</div>
-        <div class="big">$${money(combined)}<span style="font-size:12px;font-weight:500"> current accrued est.</span></div>
-
-        <div class="section">EC2 compute</div>
-        <div class="kv"><span>Instance ID</span><b>${esc(instanceId || "—")}</b></div>
-        <div class="kv"><span>Instance type</span><b>${esc(instanceType || "—")}</b></div>
-        <div class="kv"><span>EC2 state</span><b>${esc(stateLabel)}</b></div>
-        <div class="kv"><span>Compute rate</span><b>$${money(hourly)}/hour</b></div>
-        <div class="muted" style="text-align:right">${esc(hourlySource)}</div>
-        <div class="kv"><span>Uptime</span><b>${uptimeHours.toFixed(2)} hours</b></div>
-        <div class="kv"><span>Compute accrued</span><b>$${money(computeAccrued)} est.</b></div>
-
-        <div class="section">EBS</div>
-        <div>${esc(ebsText)}</div>
-
-        <div class="section">S3 Standard</div>
-        <div class="kv"><span>Stored objects</span><b>${fmt(storedObjects)}</b></div>
-        <div class="kv"><span>Stored under prefix</span><b>${storedGb.toFixed(storedGb < 1 ? 3 : 2)} GB</b></div>
-        <div class="kv"><span>Storage estimate</span><b>$${money(s3Monthly)}/month</b></div>
-        <div class="muted">At $0.025/GB-month · ${esc(prefix)}</div>
-
-        <div class="muted" style="margin-top:8px">
-          Combined estimate prorates current EBS/S3 monthly rates over reported EC2 uptime.
-          Estimate only—not an AWS invoice.
-        </div>
-        <div class="muted" style="margin-top:6px">Last updated: ${esc(lastUpdated || "not available")}</div>
-        ${expiry ? `<div class="warning"><b>Credential expiry:</b> ${esc(expiry)}${esc(expiryTiming)}</div>` : ""}
-        ${credentialWarning ? `<div class="warning">${esc(credentialWarning)}</div>` : ""}
+    function costCard(c){
+      const gce=c.gce||{}, comp=c.compute||{}, disk=c.persistent_disk||{};
+      const gcs=c.gcs||{}, aws=c.aws_source||{}, costs=c.costs||{};
+      const accrued=(Number(comp.accrued_estimate_usd)||0)+(Number(disk.accrued_estimate_usd)||0)
+        +(Number(aws.running_egress_estimate_usd)||0);
+      return `<aside class="card">
+        <h2>GCP pipeline cost estimates</h2>
+        <div class="big">$${money(costs.combined_accrued_estimate_usd??accrued)}
+          <span class="muted">current combined est.</span></div>
+        <div class="section">GCE compute</div>
+        <div class="kv"><span>Instance</span><b>${esc(gce.instance_name||"—")}</b></div>
+        <div class="kv"><span>Type / zone</span><b>${esc(gce.machine_type||"—")} · ${esc(gce.zone||"—")}</b></div>
+        <div class="kv"><span>State / workers</span><b>${esc(gce.state||c.state||"—")} · ${fmt(gce.worker_count)}</b></div>
+        <div class="kv"><span>Rate</span><b>$${money(comp.hourly_estimate_usd)}/hour</b></div>
+        <div class="kv"><span>Uptime / accrued</span><b>${Number(comp.uptime_hours||0).toFixed(2)}h · $${money(comp.accrued_estimate_usd)}</b></div>
+        <div class="section">Persistent disk</div>
+        <div class="kv"><span>Provisioned</span><b>${fmt(disk.size_gb)} GB ${esc(disk.type||"")}</b></div>
+        <div class="kv"><span>Monthly / accrued</span><b>$${money(disk.monthly_estimate_usd)} · $${money(disk.accrued_estimate_usd)}</b></div>
+        <div class="section">GCS Standard</div>
+        <div class="kv"><span>Bucket</span><b>${esc(gcs.bucket||"—")}</b></div>
+        <div class="kv"><span>Objects / stored</span><b>${fmt(gcs.object_count)} · ${Number(gcs.stored_gb||0).toFixed(3)} GB</b></div>
+        <div class="kv"><span>Monthly storage</span><b>$${money(gcs.estimated_monthly_usd)}</b></div>
+        <div class="section">AWS source transfer</div>
+        <div class="kv"><span>Transferred</span><b>${Number(aws.gb_transferred||0).toFixed(3)} GB</b></div>
+        <div class="kv"><span>One-time egress</span><b>$${money(aws.running_egress_estimate_usd)}</b></div>
+        <div class="muted">At $${money(aws.egress_rate_usd_per_gb||.09)}/GB. Source transfer—not destination storage.</div>
+        <div class="warning">All values are estimates, not cloud invoices.</div>
       </aside>`;
     }
 
-    function render(st) {
-      const t = st.totals || {};
-      const a = t.archives || {};
-      const c = t.counts || {};
-      const d1a = a["Disk-1"] || {};
-      const d2a = a["Disk-2"] || {};
-      const comb = a.combined || {};
-      const done = comb.completed_total || 0;
-      const total = comb.manifest_total || 3620;
-      const pct = total ? Math.min(100, (done / total) * 100) : 0;
-      const healthClass = st.health === "alive" ? "alive" : "stalled";
-      const healthLabel = st.health === "alive" ? "ALIVE" : "STALLED";
+    function render(st){
+      const c=st.cloud||{}, p=st.archives_combined||{}, counts=st.cloud_counts||{};
+      const raw=counts.raw||{}, weak=counts.weak||{}, sha=counts.sha256||{};
+      const pct=p.total?100*Number(p.done||0)/Number(p.total):0;
+      const workers=st.current||[], depth=st.cloud_depth||{};
+      let h=costCard(c);
+      h+=`<div class="meta">Status: <span class="${st.health==="alive"?"alive":"stale"}">${esc((st.health||"unknown").toUpperCase())}</span>
+        · heartbeat ${st.age_seconds==null?"?":st.age_seconds+"s"} ago · source: GCS status.json</div>
+        <div class="bar"><span style="width:${Math.min(100,pct).toFixed(2)}%"></span></div>
+        <p>Archives <b>${fmt(p.done)} / ${fmt(p.total)}</b> (${pct.toFixed(1)}%) ·
+        remaining ${fmt(p.remaining)} · active checkpoints ${fmt(p.failed)} · retries ${fmt(p.retries)} ·
+        local done before cutover ${fmt(p.done_local_before_cutover)} · GCP done ${fmt(p.done_on_gcp)}</p>`;
 
-      const s3 = st.s3 || t.s3 || {};
-      const cloud = cloudStatusFrom(st);
-      let html = "";
-      html += renderCostCard(st, t, cloud);
-      html += `<div class="meta">
-        Status: <span class="${healthClass}">${healthLabel}</span>
-        &nbsp;|&nbsp; last totals update: ${st.last_update_iso || "n/a"}
-        (${st.age_seconds == null ? "?" : st.age_seconds + "s ago"})
-        &nbsp;|&nbsp; worker pgrep: ${st.worker_alive ? "yes" : "no"}
-        &nbsp;|&nbsp; shifted: ${s3.shifted ? "yes" : "no"}
-      </div>`;
+      h+=`<h2>Four GCP archive workers</h2><table><tr><th>Worker</th><th>State</th><th>Current archive</th><th>Source size</th><th>Updated</th></tr>`;
+      for(const w of workers) h+=`<tr><td>${fmt(w.shard)}</td><td>${esc(w.state)}</td>
+        <td class="mono">${esc(w.current_archive||w.last_archive||"—")}</td>
+        <td>${(Number(w.archive_bytes||0)/1e9).toFixed(3)} GB</td><td>${esc(w.updated_at||"—")}</td></tr>`;
+      h+=`</table>`;
 
-      html += `<div class="bar"><span style="width:${pct.toFixed(1)}%"></span></div>`;
-      html += `<div class="bar-label">Archives ${fmt(done)} / ${fmt(total)} (${pct.toFixed(1)}%)</div>`;
+      h+=`<h2>GCP extracted asset counts</h2><table><tr><th>Category</th><th>Raw</th><th>Weak unique (name,size)</th><th>SHA-256 unique</th></tr>`;
+      for(const [key,label] of [["cad_pdf","CAD PDF"],["other_pdf","Other PDF"],["2d","2D"],["3d","3D"],["nc1","NC1"]])
+        h+=`<tr><td>${label}</td><td>${fmt(raw[key])}</td><td>${fmt(weak[key])}</td><td>${fmt(sha[key])}</td></tr>`;
+      h+=`<tr><td>1 MiB blocks</td><td>—</td><td>—</td><td>${fmt(counts.block_sha256)}</td></tr></table>`;
 
-      html += `<h2>Archives</h2>
-        <table>
-          <tr><th></th><th>Done</th><th>Total</th><th>Remaining</th><th>Failed</th><th>Skipped</th></tr>
-          <tr><td>Disk-1</td><td>${fmt(d1a.completed_total)}</td><td>${fmt(d1a.manifest_total)}</td>
-            <td>${fmt(d1a.remaining)}</td><td>${fmt(d1a.failed)}</td><td>${fmt(d1a.skipped_too_large)}</td></tr>
-          <tr><td>Disk-2</td><td>${fmt(d2a.completed_total)}</td><td>${fmt(d2a.manifest_total)}</td>
-            <td>${fmt(d2a.remaining)}</td><td>${fmt(d2a.failed)}</td><td>${fmt(d2a.skipped_too_large)}</td></tr>
-          <tr><td>Combined</td><td>${fmt(comb.completed_total)}</td><td>${fmt(comb.manifest_total)}</td>
-            <td>${fmt(comb.remaining)}</td><td>${fmt(comb.failed)}</td><td>${fmt(comb.skipped_too_large)}</td></tr>
-        </table>`;
+      const nodes=depth.archive_nodes_by_depth||{}, maxima=depth.finished_archive_max_depth_distribution||{};
+      const levels=[...new Set([...Object.keys(nodes),...Object.keys(maxima)])].map(Number).sort((a,b)=>a-b);
+      h+=`<h2>Exact measured nested depth on GCP</h2>
+        <p>Finished archives measured: ${fmt(depth.measured_finished_archives)} · unopened not measured: ${fmt(depth.unopened_archives_not_measured)} · safety cap: ${fmt(depth.depth_cap)}</p>
+        <table><tr><th>Exact depth</th><th>Archive nodes opened</th><th>Finished archives with this maximum</th></tr>`;
+      for(const d of levels) h+=`<tr><td>${d}</td><td>${fmt(nodes[d])}</td><td>${fmt(maxima[d])}</td></tr>`;
+      if(!levels.length) h+=`<tr><td colspan="3">No GCP result finished yet.</td></tr>`;
+      h+=`</table>`;
 
-      const buckets = st.remaining_by_size || [];
-      const depthSeen = st.max_depth_seen || t.max_depth_seen || 0;
-      html += `<h2>Archives still waiting, by size</h2>
-        <p>Exact unzip levels are measured per archive after it is opened; unopened archives are listed as not yet measured. Deepest exact depth seen so far across finished archives: <b>${fmt(depthSeen)}</b>.</p>
-        <table>
-          <tr><th>Size of archive</th><th>How many left</th><th>Total size</th><th>Exact unzip depth</th></tr>`;
-      for (const row of buckets) {
-        html += `<tr><td>${row.label}</td><td>${fmt(row.left)}</td><td>${Number(row.tb).toFixed(3)} TB</td><td>not yet measured</td></tr>`;
-      }
-      html += `</table>`;
-
-      const finishedDepth = st.finished_depth_by_size || [];
-      let maxDepthCol = 0;
-      for (const row of finishedDepth) {
-        const deepest = row.deepest;
-        if (deepest != null && deepest > maxDepthCol) maxDepthCol = deepest;
-        for (const k of Object.keys(row.depth_counts || {})) {
-          const d = Number(k);
-          if (!Number.isNaN(d) && d > maxDepthCol) maxDepthCol = d;
-        }
-      }
-      html += `<h2>Exact unzip depth of finished archives, by size</h2>
-        <p>Built only from archives that have already been opened. Each count is the exact nested depth measured for that archive (not a safety cap).</p>
-        <table>
-          <tr><th>Size of archive</th><th>Finished</th>`;
-      for (let d = 0; d <= maxDepthCol; d++) {
-        html += `<th>Depth ${d}</th>`;
-      }
-      html += `<th>Deepest exact</th></tr>`;
-      if (!finishedDepth.length) {
-        html += `<tr><td colspan="${3 + maxDepthCol + 1}">No finished archives yet.</td></tr>`;
-      } else {
-        for (const row of finishedDepth) {
-          const counts = row.depth_counts || {};
-          html += `<tr><td>${row.label}</td><td>${fmt(row.finished)}</td>`;
-          for (let d = 0; d <= maxDepthCol; d++) {
-            const c = counts[String(d)] || counts[d] || 0;
-            html += `<td>${row.finished ? fmt(c) : "—"}</td>`;
-          }
-          html += `<td>${row.deepest == null ? "—" : fmt(row.deepest)}</td></tr>`;
-        }
-      }
-      html += `</table>`;
-
-      html += `<h2>Asset counts (RAW vs DEDUPED sha256)</h2>
-        <table>
-          <tr>
-            <th>Channel</th>
-            <th colspan="2">Disk-1</th>
-            <th colspan="2">Disk-2</th>
-            <th colspan="2">Combined</th>
-          </tr>
-          <tr>
-            <th></th>
-            <th>RAW</th><th>DEDUPED</th>
-            <th>RAW</th><th>DEDUPED</th>
-            <th>RAW</th><th>DEDUPED</th>
-          </tr>`;
-      for (const [key, label] of CATS) {
-        html += `<tr><td>${label}</td>`;
-        for (const disk of ["Disk-1","Disk-2","combined"]) {
-          html += `<td>${fmt(n(c, [disk, key, "raw"]))}</td>`;
-          html += `<td>${fmt(n(c, [disk, key, "sha256"]))}</td>`;
-        }
-        html += `</tr>`;
-      }
-      html += `</table>`;
-
-      html += `<h2>PDF CAD vs other (binary)</h2>
-        <table>
-          <tr>
-            <th>Class</th>
-            <th colspan="2">Disk-1</th>
-            <th colspan="2">Disk-2</th>
-            <th colspan="2">Combined</th>
-          </tr>
-          <tr>
-            <th></th>
-            <th>RAW</th><th>sha256</th>
-            <th>RAW</th><th>sha256</th>
-            <th>RAW</th><th>sha256</th>
-          </tr>`;
-      for (const typ of ["cad_pdf", "other_pdf"]) {
-        html += `<tr><td>${typ}</td>`;
-        for (const disk of ["Disk-1","Disk-2","combined"]) {
-          const raw = n(c, [disk, "pdf_cad_binary", typ, "raw"]) || n(c, [disk, typ, "raw"]);
-          const sha = n(c, [disk, "pdf_cad_binary", typ, "sha256"]) || n(c, [disk, typ, "sha256"]);
-          html += `<td>${fmt(raw)}</td>`;
-          html += `<td>${fmt(sha)}</td>`;
-        }
-        html += `</tr>`;
-      }
-      html += `</table>`;
-
-      html += `<h2>PDF drawing types</h2>
-        <table>
-          <tr>
-            <th>Type</th>
-            <th colspan="2">Disk-1</th>
-            <th colspan="2">Disk-2</th>
-            <th colspan="2">Combined</th>
-          </tr>
-          <tr>
-            <th></th>
-            <th>RAW</th><th>sha256</th>
-            <th>RAW</th><th>sha256</th>
-            <th>RAW</th><th>sha256</th>
-          </tr>`;
-      for (const typ of TYPES) {
-        html += `<tr><td>${typ}</td>`;
-        for (const disk of ["Disk-1","Disk-2","combined"]) {
-          html += `<td>${fmt(n(c, [disk, "pdf_by_drawing_type", typ, "raw"]))}</td>`;
-          html += `<td>${fmt(n(c, [disk, "pdf_by_drawing_type", typ, "sha256"]))}</td>`;
-        }
-        html += `</tr>`;
-      }
-      html += `</table>`;
-
-      html += `<h2>PDF path flags</h2>
-        <table>
-          <tr>
-            <th>Flag</th>
-            <th colspan="2">Disk-1</th>
-            <th colspan="2">Disk-2</th>
-            <th colspan="2">Combined</th>
-          </tr>
-          <tr>
-            <th></th>
-            <th>RAW</th><th>sha256</th>
-            <th>RAW</th><th>sha256</th>
-            <th>RAW</th><th>sha256</th>
-          </tr>`;
-      for (const [flag, label] of [
-        ["client_final_uploads", "uploads (client-final)"],
-        ["superseded_void", "void (superseded)"],
-      ]) {
-        html += `<tr><td>${label}</td>`;
-        for (const disk of ["Disk-1","Disk-2","combined"]) {
-          html += `<td>${fmt(n(c, [disk, "pdf_path_flags", flag, "raw"]))}</td>`;
-          html += `<td>${fmt(n(c, [disk, "pdf_path_flags", flag, "sha256"]))}</td>`;
-        }
-        html += `</tr>`;
-      }
-      html += `</table>`;
-
-      html += `<h2>Nested zip depth</h2>
-        <p>Deepest exact nested zip depth measured so far: <b>${fmt(st.max_depth_seen || t.max_depth_seen)}</b>
-        &nbsp;|&nbsp; safety cap (not a measured depth): ${fmt(st.max_depth_cap || t.max_depth_cap)}
-        &nbsp;|&nbsp; cap hits: ${fmt(t.depth_cap_hits)}</p>`;
-
-      const cur = st.current || {};
-      const fin = st.last_finished || {};
-      html += `<h2>Now</h2>
-        <p><b>${esc(cur.disk) || "?"}</b>
-        &nbsp; ${esc(cur.size_label) || "?"}
-        &nbsp; archive ${fmt(cur.index)} / ${fmt(cur.total || total)}</p>
-        <p class="current"><b>${esc(cur.name) || "(waiting for next archive)"}</b></p>
-        <p class="current">${esc(cur.path)}</p>`;
-
-      html += `<h2>Last archive finished</h2>`;
-      if (!fin.name) {
-        html += `<p>None yet.</p>`;
-      } else {
-        html += `<p><b>${esc(fin.disk)}</b> ${fmt(fin.size_mb)} MB
-          &nbsp; ${esc(fin.status)}
-          &nbsp; ${fmt(fin.elapsed_s)}s
-          &nbsp; nested depth ${fmt(fin.max_depth)}</p>
-          <p class="current"><b>${esc(fin.name)}</b></p>
-          <table>
-            <tr><th>From this archive</th><th>Count</th></tr>
-            <tr><td>PDF</td><td>${fmt(fin.pdf)}</td></tr>
-            <tr><td>2D</td><td>${fmt(fin.d2)}</td></tr>
-            <tr><td>3D</td><td>${fmt(fin.d3)}</td></tr>
-            <tr><td>CAD files</td><td>${fmt(fin.files)}</td></tr>
-          </table>`;
-      }
-
-      document.getElementById("root").innerHTML = html;
+      const baseline=st.finished_depth_by_size||[];
+      const baselineMax=Math.max(0,...baseline.flatMap(r=>Object.keys(r.depth_counts||{}).map(Number)));
+      h+=`<h2>Exact pre-cutover depth by archive size</h2>
+        <p>Preserved measurements from archives completed before the GCP cutover.</p>
+        <table><tr><th>Archive size</th><th>Finished</th>`;
+      for(let d=0;d<=baselineMax;d++)h+=`<th>Depth ${d}</th>`;
+      h+=`<th>Deepest</th></tr>`;
+      for(const r of baseline){h+=`<tr><td>${esc(r.label)}</td><td>${fmt(r.finished)}</td>`;
+        for(let d=0;d<=baselineMax;d++)h+=`<td>${fmt((r.depth_counts||{})[d])}</td>`;
+        h+=`<td>${r.deepest==null?"—":fmt(r.deepest)}</td></tr>`}
+      h+=`</table><p class="muted">Public status refreshes from GCS about every 20 seconds.</p>`;
+      document.getElementById("root").innerHTML=h;
     }
-
-    async function tick() {
-      try {
-        const r = await fetch("status.json?t=" + Date.now(), { cache: "no-store" });
-        if (!r.ok) throw new Error("HTTP " + r.status);
-        render(await r.json());
-      } catch (e) {
-        document.getElementById("root").innerHTML =
-          `<p class="err">Could not load /status.json: ${e}</p>`;
-      }
-    }
-    tick();
-    setInterval(tick, 5000);
+    async function tick(){try{const r=await fetch("status.json?t="+Date.now(),{cache:"no-store"});if(!r.ok)throw Error(r.status);render(await r.json())}
+      catch(e){document.getElementById("root").innerHTML=`<p>Waiting for status: ${esc(e)}</p>`}}
+    tick();setInterval(tick,5000);
   </script>
 </body>
 </html>
