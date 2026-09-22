@@ -67,25 +67,31 @@
       const healthClass = st.health === "alive" ? "alive" : "stalled";
       const healthLabel = st.health === "alive" ? "ALIVE" : "STALLED";
 
-      const s3 = st.s3 || {};
-      const cadBytes = Number(s3.cad_bytes != null ? s3.cad_bytes : n(st, ["counts","combined","block","total_block_bytes"]));
-      const cadGb = Number(s3.cad_gb != null ? s3.cad_gb : cadBytes / 1e9);
-      const stored = Number(s3.stored_gb || 0);
-      const monthly = Number(s3.estimated_monthly_usd != null ? s3.estimated_monthly_usd : cadGb * 0.025);
+      const s3 = st.s3 || t.s3 || {};
+      const blockBytes = n(t, ["counts","combined","block","total_block_bytes"]);
+      const archiveBytes = n(t, ["throughput","processed_archive_bytes"]);
+      const cadGb = blockBytes / 1e9;
+      const storedGb = Number(s3.stored_gb != null ? s3.stored_gb : 0);
+      const monthly = Number(
+        s3.estimated_monthly_usd != null ? s3.estimated_monthly_usd : storedGb * 0.025
+      );
       let html = "";
       html += `<aside class="cost">
         <h2>S3 cloud cost</h2>
-        <div class="muted">${s3.shifted ? "Storing extracts in S3" : "Not shifted yet. This job is still local."}</div>
+        <div class="muted">${s3.shifted ? "Storing extracts in S3" : "Not shifted yet."}</div>
         <div class="big">$${monthly.toFixed(2)}<span style="font-size:12px;font-weight:500"> / month</span></div>
-        <div>Stored by this job: <b>${stored.toFixed(3)} GB</b></div>
+        <div>Stored by this job: <b>${storedGb.toFixed(3)} GB</b></div>
         <div>CAD bytes counted: <b>${cadGb.toFixed(3)} GB</b></div>
-        <div class="muted" style="margin-top:6px">${s3.note || "Estimate if the CAD bytes counted so far were kept in S3 Standard, ap-south-1, at $0.025/GB-month. Not the AWS bill. Nothing from this job is in S3 yet."}</div>
+        <div class="muted" style="margin-top:6px">${s3.note || "Estimate = stored_GB × $0.025/GB-month (S3 Standard ap-south-1). Not the AWS invoice."}</div>
+        <div class="muted" style="margin-top:6px">Prefix: ${s3.prefix || "s3://annotationprod/cad-disk-extract/"}</div>
+        <div class="muted">S3 archives kept: ${fmt((s3.archives_uploaded||{}).combined)} · pending keep: ${fmt(s3.archives_pending_s3)}</div>
       </aside>`;
       html += `<div class="meta">
         Status: <span class="${healthClass}">${healthLabel}</span>
         &nbsp;|&nbsp; last totals update: ${st.last_update_iso || "n/a"}
         (${st.age_seconds == null ? "?" : st.age_seconds + "s ago"})
         &nbsp;|&nbsp; worker pgrep: ${st.worker_alive ? "yes" : "no"}
+        &nbsp;|&nbsp; shifted: ${s3.shifted ? "yes" : "no"}
       </div>`;
 
       html += `<div class="bar"><span style="width:${pct.toFixed(1)}%"></span></div>`;
@@ -165,6 +171,30 @@
         for (const disk of ["Disk-1","Disk-2","combined"]) {
           html += `<td>${fmt(n(c, [disk, key, "raw"]))}</td>`;
           html += `<td>${fmt(n(c, [disk, key, "sha256"]))}</td>`;
+        }
+        html += `</tr>`;
+      }
+      html += `</table>`;
+
+      html += `<h2>PDF CAD vs other (binary)</h2>
+        <table>
+          <tr>
+            <th>Class</th>
+            <th colspan="2">Disk-1</th>
+            <th colspan="2">Disk-2</th>
+            <th colspan="2">Combined</th>
+          </tr>
+          <tr>
+            <th></th>
+            <th>RAW</th><th>sha256</th>
+            <th>RAW</th><th>sha256</th>
+            <th>RAW</th><th>sha256</th>
+          </tr>`;
+      for (const typ of ["cad_pdf", "other_pdf"]) {
+        html += `<tr><td>${typ}</td>`;
+        for (const disk of ["Disk-1","Disk-2","combined"]) {
+          html += `<td>${fmt(n(c, [disk, "pdf_cad_binary", typ, "raw"]))}</td>`;
+          html += `<td>${fmt(n(c, [disk, "pdf_cad_binary", typ, "sha256"]))}</td>`;
         }
         html += `</tr>`;
       }
