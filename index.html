@@ -709,6 +709,45 @@
       overflow-wrap: anywhere;
       font-variant-numeric: tabular-nums;
     }
+
+    .vm-grid {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    }
+    .vm-card {
+      padding: 14px 15px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: var(--surface-soft);
+    }
+    .vm-card h3 {
+      margin: 0 0 6px;
+      font-size: .95rem;
+      font-family: var(--mono);
+    }
+    .vm-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px 12px;
+      margin: 0 0 10px;
+      color: var(--text-soft);
+      font-size: .74rem;
+    }
+    .vm-workers {
+      display: grid;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .vm-worker-row {
+      padding: 8px 10px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--surface-raised);
+      font-size: .78rem;
+    }
+    .vm-worker-row strong { font-family: var(--mono); }
+
     .estimate-note {
       margin: 14px 0 0;
       padding: 10px 11px;
@@ -1426,68 +1465,101 @@
       </header>`;
     }
 
-    function renderWorkers(status) {
+    function vmEntries(status) {
+      const vms = isObject(status.vms) ? status.vms : {};
+      const entries = Object.entries(vms)
+        .filter(([, value]) => isObject(value))
+        .sort(([a], [b]) => a.localeCompare(b, undefined, { numeric: true }));
+      if (entries.length) return entries;
       const workers = workerArray(status);
-      const configured = number(pickPath(status, [["gce", "worker_count"], "cloud_workers_alive"]));
-      const cardCount = Math.max(workers.length, configured || 0);
+      if (!workers.length) return [];
+      const byVm = new Map();
+      for (const worker of workers) {
+        const name = aliasValue(worker, ["instance_name", "vm", "host"]) || "workers";
+        if (!byVm.has(name)) byVm.set(name, []);
+        byVm.get(name).push(worker);
+      }
+      return [...byVm.entries()].map(([name, list]) => [name, {
+        instance_name: name,
+        workers: list,
+        workers_alive: list.filter(w => aliasValue(w, ["alive"]) !== false).length,
+        workers_expected: list.length,
+        worker_count: list.length
+      }]);
+    }
+
+    function renderWorkerRow(worker, index) {
+      const archiveRaw = aliasValue(worker, [
+        "archive_basename", "current_archive", "archive_label", "archive", "archive_path", "last_archive", "source"
+      ]);
+      const archiveName = basename(archiveRaw) || (present(archiveRaw) ? String(archiveRaw) : null);
+      const disk = aliasValue(worker, ["disk", "source_disk", "dataset"]) || diskFromValue(archiveRaw);
+      const workerId = aliasValue(worker, ["worker_id", "id", "shard", "worker", "index"]);
+      const stage = normalizedStage(aliasValue(worker, ["stage", "state", "phase", "status"]));
+      const sourceBytes = aliasValue(worker, [
+        "compressed_bytes", "archive_bytes", "source_compressed_bytes", "compressed_size", "source_bytes"
+      ]);
+      const processed = aliasValue(worker, ["bytes_processed", "processed_bytes", "source_bytes_downloaded", "hashed_bytes", "uploaded_bytes"]);
+      const elapsed = workerElapsed(worker);
+      const alive = aliasValue(worker, ["alive"]) !== false;
+      return `
+            <article class="vm-worker-row${alive ? "" : " stalled"}">
+              <div><strong>${present(workerId) ? escapeHtml(workerId) : `worker-${index + 1}`}</strong> · ${escapeHtml(stage)}${alive ? "" : " · down"}</div>
+              <div>${archiveName ? escapeHtml(archiveName) : "<em>archive pending</em>"}</div>
+              <div class="kv">
+                <span>Disk</span><strong>${present(disk) ? escapeHtml(disk) : "n/a"}</strong>
+                <span>Compressed</span><strong>${missing(sourceBytes, formatBytes)}</strong>
+                <span>Elapsed</span><strong>${missing(elapsed, formatDurationSeconds)}</strong>
+                <span>Processed</span><strong>${missing(processed, formatBytes)}</strong>
+              </div>
+            </article>`;
+    }
+
+    function renderWorkers(status) {
+      const entries = vmEntries(status);
+      const flatWorkers = workerArray(status);
       let cards = "";
-
-      for (let index = 0; index < cardCount; index++) {
-        const worker = workers[index];
-        if (!worker) {
-          cards += `<article class="worker-card idle">
-            <div class="worker-top"><span class="worker-id">Worker ${index + 1}</span><span class="stage">pending</span></div>
-            <div class="archive-name"><span class="missing">Activity not available</span></div>
-            <dl class="worker-details">
-              <div><dt>Disk</dt><dd class="missing">pending</dd></div>
-              <div><dt>Source size</dt><dd class="missing">pending</dd></div>
-              <div><dt>Elapsed</dt><dd class="missing">pending</dd></div>
-              <div><dt>Bytes processed</dt><dd class="missing">pending</dd></div>
-              <div><dt>Nesting so far</dt><dd class="missing">pending</dd></div>
-            </dl>
-          </article>`;
-          continue;
-        }
-        const archiveRaw = aliasValue(worker, ["current_archive", "archive", "archive_path", "last_archive", "source"]);
-        const archiveName = basename(archiveRaw);
-        const disk = aliasValue(worker, ["disk", "source_disk", "dataset"]) || diskFromValue(archiveRaw);
-        const workerId = aliasValue(worker, ["worker_id", "id", "shard", "worker", "index"]);
-        const stage = normalizedStage(aliasValue(worker, ["stage", "state", "phase", "status"]));
-        const sourceBytes = aliasValue(worker, ["archive_bytes", "source_compressed_bytes", "compressed_size", "source_bytes"]);
-        const processed = aliasValue(worker, ["bytes_processed", "processed_bytes", "source_bytes_downloaded", "hashed_bytes", "uploaded_bytes"]);
-        const depth = aliasValue(worker, ["archive_nesting_depth", "nesting_depth", "max_depth_so_far", "current_depth", "max_depth"]);
-        const elapsed = workerElapsed(worker);
-        const alive = aliasValue(worker, ["alive"]) !== false;
-
-        cards += `<article class="worker-card${alive ? "" : " idle"}">
-          <div class="worker-top">
-            <span class="worker-id">Worker ${present(workerId) ? escapeHtml(workerId) : index + 1}</span>
-            <span class="stage">${escapeHtml(stage)}</span>
+      let reporting = 0;
+      for (const [name, vm] of entries) {
+        const workers = Array.isArray(vm.workers) ? vm.workers.filter(isObject) : flatWorkers.filter(w =>
+          (aliasValue(w, ["instance_name", "vm", "host"]) || name) === name
+        );
+        reporting += workers.length;
+        const alive = number(aliasValue(vm, ["workers_alive", "alive"])) ?? workers.filter(w => aliasValue(w, ["alive"]) !== false).length;
+        const expected = number(aliasValue(vm, ["workers_expected", "worker_count", "expected"])) ?? workers.length;
+        const costs = isObject(vm.costs) ? vm.costs : {};
+        const hourly = aliasValue(costs, ["hourly_compute_disk_estimate_usd", "hourly_estimate_usd"]);
+        const accrued = aliasValue(costs, ["accrued_compute_disk_estimate_usd", "accrued_estimate_usd"]);
+        cards += `
+          <section class="vm-card">
+            <h3>${escapeHtml(aliasValue(vm, ["instance_name", "name"]) || name)}</h3>
+            <div class="vm-meta">
+              <span>${escapeHtml(aliasValue(vm, ["machine_type", "type"]) || "type n/a")}</span>
+              <span>${escapeHtml(aliasValue(vm, ["zone"]) || "zone n/a")}</span>
+              <span>${escapeHtml(aliasValue(vm, ["state", "status"]) || "state n/a")}</span>
+              <span>workers ${formatCount(alive)} / ${formatCount(expected)}</span>
+              <span>est. ${formatMoney(hourly)}/hr · accrued ${formatMoney(accrued)}</span>
+            </div>
+            <div class="vm-workers">
+              ${workers.length ? workers.map((worker, index) => renderWorkerRow(worker, index)).join("") : "<em>No worker rows in feed yet</em>"}
+            </div>
+          </section>`;
+      }
+      if (!entries.length) {
+        cards = `<p class="lede">Worker activity is not available in the current status schema.</p>`;
+      }
+      return `
+        <section class="panel">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Active fleet</p>
+              <h2>VMs, workers & per-VM cost estimates</h2>
+              <p class="lede">Every running VM with live worker rows. Archive names are basenames or safe hashes; paths are never published. Dollar figures are estimates only.</p>
+            </div>
+            <div class="freshness-line"><span>${formatCount(entries.length, "0")} VMs</span><span>${formatCount(reporting, "0")} worker rows</span></div>
           </div>
-          <div class="archive-name">${archiveName ? escapeHtml(archiveName) : '<span class="missing">Archive pending</span>'}</div>
-          <dl class="worker-details">
-            <div><dt>Disk</dt><dd>${present(disk) ? escapeHtml(disk) : '<span class="missing">not available</span>'}</dd></div>
-            <div><dt>Source size</dt><dd>${missing(sourceBytes, formatBytes)}</dd></div>
-            <div><dt>Elapsed</dt><dd>${missing(elapsed, formatDurationSeconds)}</dd></div>
-            <div><dt>Bytes processed</dt><dd>${missing(processed, formatBytes)}</dd></div>
-            <div><dt>Nesting so far</dt><dd>${missing(depth, formatCount)}</dd></div>
-            <div><dt>Worker update</dt><dd>${formatTimestamp(aliasValue(worker, ["updated_at", "heartbeat_at"]), "pending")}</dd></div>
-          </dl>
-        </article>`;
-      }
-
-      if (!cardCount) {
-        cards = `<div class="empty-state">Worker activity is not available in the current status schema.</div>`;
-      }
-
-      return `<section class="panel" aria-labelledby="workers-title">
-        <div class="section-heading">
-          <div><p class="eyebrow">Active work</p><h2 id="workers-title">Worker activity</h2>
-            <p>Archive identities are reduced to safe labels; source paths are never published.</p></div>
-          <span class="section-kicker">${formatCount(workers.length, "0")} reporting</span>
-        </div>
-        <div class="worker-grid">${cards}</div>
-      </section>`;
+          <div class="vm-grid">${cards}</div>
+        </section>`;
     }
 
     function archiveTable(bundle) {
@@ -1911,39 +1983,57 @@
       const storedBytes = aliasValue(gcs, ["stored_bytes", "bytes"]);
       const transferredBytes = aliasValue(aws, ["bytes_transferred", "transferred_bytes"]);
       const combined = aliasValue(costs, ["combined_accrued_estimate_usd", "combined_estimate_usd", "accrued_estimate_usd"]);
-      return `<aside class="cost-card" aria-labelledby="cost-title">
-        <div class="cost-inner">
-          <div class="cost-heading"><div><p class="eyebrow">Cloud footprint</p><h2 id="cost-title">Running cost estimate</h2></div></div>
-          <div class="cost-total"><span>Combined accrued estimate</span><strong>${formatMoney(combined)}</strong></div>
-          <section class="cost-group"><h3>GCE compute</h3>
-            <div class="kv"><span>VM</span><strong>${escapeHtml(aliasValue(gce, ["instance_name", "name"]) || "not available")}</strong></div>
-            <div class="kv"><span>Rate</span><strong>${formatMoney(aliasValue(compute, ["hourly_estimate_usd", "hourly_usd"]))} / hr</strong></div>
-            <div class="kv"><span>Accrued</span><strong>${formatMoney(aliasValue(compute, ["accrued_estimate_usd", "accrued_usd"]))}</strong></div>
-            <div class="kv"><span>Uptime</span><strong>${number(compute.uptime_hours) === null ? "pending" : `${formatDecimal(compute.uptime_hours)} hr`}</strong></div>
-          </section>
-          <section class="cost-group"><h3>Persistent disk</h3>
-            <div class="kv"><span>Type / size</span><strong>${escapeHtml(aliasValue(disk, ["type"]) || "not available")} ·
-              ${number(aliasValue(disk, ["size_gb"])) === null ? "pending" : `${formatCount(disk.size_gb)} GB`}</strong></div>
-            <div class="kv"><span>Monthly</span><strong>${formatMoney(aliasValue(disk, ["monthly_estimate_usd", "monthly_usd"]))}</strong></div>
-            <div class="kv"><span>Accrued</span><strong>${formatMoney(aliasValue(disk, ["accrued_estimate_usd", "accrued_usd"]))}</strong></div>
-          </section>
-          <section class="cost-group"><h3>GCS storage</h3>
-            <div class="kv"><span>Objects</span><strong>${formatCount(aliasValue(gcs, ["object_count", "objects"]))}</strong></div>
-            <div class="kv"><span>Stored</span><strong>${formatBytes(storedBytes)}</strong></div>
-            <div class="kv"><span>Monthly</span><strong>${formatMoney(aliasValue(gcs, ["estimated_monthly_usd", "monthly_estimate_usd"]))}</strong></div>
-          </section>
-          <section class="cost-group"><h3>AWS source egress</h3>
-            <div class="kv"><span>Transferred</span><strong>${formatBytes(transferredBytes)}</strong></div>
-            <div class="kv"><span>Rate</span><strong>${formatMoney(aliasValue(aws, ["egress_rate_usd_per_gb", "rate_usd_per_gb"]))} / GB</strong></div>
-            <div class="kv"><span>Estimate</span><strong>${formatMoney(aliasValue(aws, ["running_egress_estimate_usd", "egress_estimate_usd"]))}</strong></div>
-          </section>
-          <div class="estimate-note">Estimates only — not a cloud invoice. Missing billing inputs remain pending.</div>
-          <div class="poll-line">
-            <span id="poll-state" class="poll-state">Live feed</span>
-            <span>5s poll · ~20s publish</span>
+      const poolHourly = aliasValue(costs, ["combined_hourly_compute_disk_usd", "hourly_compute_disk_usd"]);
+      const entries = vmEntries(status);
+      const vmRows = entries.map(([name, vm]) => {
+        const c = isObject(vm.costs) ? vm.costs : {};
+        return `<div class="kv"><span>${escapeHtml(aliasValue(vm, ["instance_name"]) || name)}</span><strong>${formatMoney(aliasValue(c, ["hourly_compute_disk_estimate_usd"]))}/hr · ${formatMoney(aliasValue(c, ["accrued_compute_disk_estimate_usd"]))}</strong></div>`;
+      }).join("");
+      return `
+        <aside class="cost-card">
+          <div class="cost-inner">
+            <div class="cost-heading">
+              <div>
+                <p class="eyebrow">Cloud footprint</p>
+                <h2>Running cost estimates</h2>
+              </div>
+            </div>
+            <p class="cost-total">Combined accrued estimate <strong>${formatMoney(combined)}</strong></p>
+            <div class="kv"><span>Pool compute+disk</span><strong>${formatMoney(poolHourly)} / hr <em>(estimate)</em></strong></div>
+            <h3>GCE compute</h3>
+            <div class="kv">
+              <span>VMs</span><strong>${escapeHtml(aliasValue(gce, ["instance_count"]) || entries.length || "n/a")}</strong>
+              <span>Rate</span><strong>${formatMoney(aliasValue(compute, ["hourly_estimate_usd", "hourly_usd"]))} / hr</strong>
+              <span>Accrued</span><strong>${formatMoney(aliasValue(compute, ["accrued_estimate_usd", "accrued_usd"]))}</strong>
+              <span>Uptime</span><strong>${number(compute.uptime_hours) === null ? "pending" : `${formatDecimal(compute.uptime_hours)} hr`}</strong>
+            </div>
+            <h3>Per-VM compute+disk</h3>
+            ${vmRows || "<em>Per-VM estimates pending</em>"}
+            <h3>Persistent disk</h3>
+            <div class="kv">
+              <span>Type / size</span><strong>${escapeHtml(aliasValue(disk, ["type"]) || "not available")} · ${number(aliasValue(disk, ["size_gb"])) === null ? "pending" : `${formatCount(disk.size_gb)} GB`}</strong>
+              <span>Monthly</span><strong>${formatMoney(aliasValue(disk, ["monthly_estimate_usd", "monthly_usd"]))}</strong>
+              <span>Accrued</span><strong>${formatMoney(aliasValue(disk, ["accrued_estimate_usd", "accrued_usd"]))}</strong>
+            </div>
+            <h3>GCS storage estimate</h3>
+            <div class="kv">
+              <span>Objects</span><strong>${formatCount(aliasValue(gcs, ["object_count", "objects"]))}</strong>
+              <span>Stored</span><strong>${formatBytes(storedBytes)}</strong>
+              <span>Monthly</span><strong>${formatMoney(aliasValue(gcs, ["estimated_monthly_usd", "monthly_estimate_usd"]))}</strong>
+            </div>
+            <h3>AWS egress estimate</h3>
+            <div class="kv">
+              <span>Transferred</span><strong>${formatBytes(transferredBytes)}</strong>
+              <span>Rate</span><strong>${formatMoney(aliasValue(aws, ["egress_rate_usd_per_gb", "rate_usd_per_gb"]))} / GB</strong>
+              <span>Estimate</span><strong>${formatMoney(aliasValue(aws, ["running_egress_estimate_usd", "egress_estimate_usd"]))}</strong>
+            </div>
+            <p class="estimate-note">${escapeHtml(aliasValue(costs, ["estimate_label", "label"]) || "Estimates only — not a cloud invoice. Missing billing inputs remain pending.")}</p>
+            <div class="poll-line">
+              <span>Live feed</span>
+              <span id="poll-state" class="poll-state">5s poll · ~20s publish</span>
+            </div>
           </div>
-        </div>
-      </aside>`;
+        </aside>`;
     }
 
     function render(status) {
