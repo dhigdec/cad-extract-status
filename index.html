@@ -863,7 +863,8 @@
     "use strict";
 
     // Only status.json is anonymously readable on the public bucket (status-full is private).
-    // GitHub mirrors sticky weak/SHA/extension identity for when thin aggregators race-overwrite S3.
+    // Do NOT overlay GitHub sticky SHA/weak when live S3 intentionally publishes null
+    // with computing_full_population_union — that painted the old 1956-archive recon floors.
     const LIVE_STATUS_URL = "https://cad-extract-status-874846752452.s3.ap-south-1.amazonaws.com/status.json";
     const FALLBACK_GITHUB_STATUS_URL = "https://raw.githubusercontent.com/dhigdec/cad-extract-status/main/status.json";
     const FALLBACK_GCS_STATUS_URL = "https://storage.googleapis.com/cad-extract-public-status-mlproject-501205/status.json";
@@ -1035,6 +1036,40 @@
         || (status || {}).cloud_counts
         || {};
       return countsNodeIsRich(counts["2d"]) || countsNodeIsRich(counts.pdf);
+    }
+
+    function identityComputingStatus(status) {
+      const counts = (((status || {}).disks || {}).combined || {}).counts
+        || (((status || {}).counts || {}).combined)
+        || (status || {}).cloud_counts
+        || {};
+      const twod = counts["2d"] || {};
+      const pdf = counts.pdf || {};
+      const dedup = (((status || {}).dedup || {}).sha256 || {}).status || "";
+      const statuses = [
+        twod.sha256_status, twod.weak_status, pdf.sha256_status, pdf.weak_status, dedup
+      ].map(value => String(value || ""));
+      return statuses.some(value => value.includes("computing_full_population_union"));
+    }
+
+    function shouldOverlayStickyIdentity(liveStatus) {
+      // Structurally rich live docs that intentionally null SHA/weak while the
+      // full-population union runs must NOT inherit GitHub/recon sticky floors.
+      if (!liveStatus) return true;
+      if (identityComputingStatus(liveStatus)) return false;
+      return !statusHasIdentityMetrics(liveStatus);
+    }
+
+    function identityMissingLabel(bundle, family, extension) {
+      const counts = (bundle && bundle.counts) || {};
+      const node = extension
+        ? ((((counts[family] || {}).by_ext) || {})[extension] || {})
+        : (counts[family] || {});
+      const st = String(node.sha256_status || node.weak_status
+        || (((bundle.root || {}).dedup || {}).sha256 || {}).status || "");
+      if (st.includes("computing_full_population_union")) return "updating";
+      if (identityComputingStatus(bundle.root || {})) return "updating";
+      return "pending";
     }
 
     function overlayIdentityNode(liveNode, stickyNode) {
@@ -1694,6 +1729,7 @@
 
     function statusSourceLabel() {
       if (statusSource === "aws-s3") return "Live AWS S3";
+      if (statusSource && statusSource.startsWith("aws-s3+github-identity")) return "Live AWS S3";
       if (statusSource === "gcs-fallback") return "GCS fallback";
       if (statusSource === "github-fallback" || statusSource === "fallback") return "GitHub fallback";
       return "Live status";
@@ -1937,17 +1973,19 @@
     }
 
     function assetRow(bundle, category, label, className = "") {
+      const pending = identityMissingLabel(bundle, category);
       return `<tr class="${className}"><td>${label}</td>
         <td>${missing(countValue(bundle, category, "raw"), formatCount)}</td>
-        <td>${missing(countValue(bundle, category, "weak"), formatCount)}</td>
-        <td>${missing(countValue(bundle, category, "sha256"), formatCount)}</td></tr>`;
+        <td>${missing(countValue(bundle, category, "weak"), formatCount, pending)}</td>
+        <td>${missing(countValue(bundle, category, "sha256"), formatCount, pending)}</td></tr>`;
     }
 
     function extensionRow(bundle, family, extension) {
+      const pending = identityMissingLabel(bundle, family, extension);
       return `<tr class="sub-row"><td>${extension}</td>
         <td>${missing(extensionValue(bundle, family, extension, "raw"), formatCount)}</td>
-        <td>${missing(extensionValue(bundle, family, extension, "weak"), formatCount)}</td>
-        <td>${missing(extensionValue(bundle, family, extension, "sha256"), formatCount)}</td></tr>`;
+        <td>${missing(extensionValue(bundle, family, extension, "weak"), formatCount, pending)}</td>
+        <td>${missing(extensionValue(bundle, family, extension, "sha256"), formatCount, pending)}</td></tr>`;
     }
 
     function assetTable(bundle) {
@@ -2558,17 +2596,34 @@
         try {
           status = await fetchStatus(LIVE_STATUS_URL);
           source = "aws-s3";
-          if (!isStructurallyRich(status) || !statusHasIdentityMetrics(status)) {
+          // Rich live docs with computing_full_population_union keep null SHA/weak.
+          // Only overlay GitHub sticky identity when the live doc is thin/missing structure.
+          if (!isStructurallyRich(status)) {
+            try {
+              sticky = await fetchStatus(FALLBACK_GITHUB_STATUS_URL);
+              if (statusHasIdentityMetrics(sticky) && shouldOverlayStickyIdentity(status)) {
+                status = mergeIdentityCounts(status, sticky);
+                source = "aws-s3+github-identity";
+              } else if (!isStructurallyRich(status) && !statusHasIdentityMetrics(sticky)) {
+                throw new Error("live status.json thin/missing per-disk counts");
+              } else if (!isStructurallyRich(status) && statusHasIdentityMetrics(sticky)) {
+                // Last resort for thin live docs only.
+                status = mergeIdentityCounts(status, sticky);
+                source = "aws-s3+github-identity";
+              }
+            } catch (stickyError) {
+              if (!isStructurallyRich(status)) throw stickyError;
+            }
+          } else if (shouldOverlayStickyIdentity(status)) {
+            // Structurally rich but missing identity AND not intentionally computing.
             try {
               sticky = await fetchStatus(FALLBACK_GITHUB_STATUS_URL);
               if (statusHasIdentityMetrics(sticky)) {
                 status = mergeIdentityCounts(status, sticky);
                 source = "aws-s3+github-identity";
-              } else if (!isStructurallyRich(status)) {
-                throw new Error("live status.json thin/missing per-disk counts");
               }
             } catch (stickyError) {
-              if (!isStructurallyRich(status)) throw stickyError;
+              /* keep live rich status */
             }
           }
         } catch (primaryError) {
@@ -2588,11 +2643,9 @@
           }
         }
         status = normalizeStatus(status);
-        // Re-apply sticky identity after normalize in case delta projection wiped cells.
-        if (sticky && statusHasIdentityMetrics(sticky) && !statusHasIdentityMetrics(status)) {
-          status = mergeIdentityCounts(status, sticky);
-          source = `${source}+post-normalize-identity`;
-        } else if (!statusHasIdentityMetrics(status)) {
+        // Re-apply sticky identity only when live is not intentionally computing
+        // and still lacks identity after normalize (never paint 46274/125514 floors).
+        if (shouldOverlayStickyIdentity(status)) {
           try {
             sticky = sticky || await fetchStatus(FALLBACK_GITHUB_STATUS_URL);
             if (statusHasIdentityMetrics(sticky)) {
