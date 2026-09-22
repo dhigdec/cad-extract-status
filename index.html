@@ -2441,18 +2441,23 @@
       try {
         let status;
         let source;
-        // Prefer publisher-owned status-full.json (has disks.*.counts for all tabs),
-        // then status.json, then GitHub mirror, then legacy GCS.
+        // Prefer publisher-owned status-full.json when publicly readable, then
+        // status.json. If workers overwrite status.json with the thin fleet schema
+        // (no disks.*.counts), fall back to the GitHub mirror which carries the
+        // last full Disk-1/Disk-2/Combined counts.
+        const isRich = (doc) => !!(doc && doc.disks && doc.disks["Disk-1"] && doc.disks["Disk-1"].counts
+          && doc.disks["Disk-2"] && doc.disks["Disk-2"].counts
+          && doc.disks.combined && doc.disks.combined.counts);
+
         try {
           status = await fetchStatus(LIVE_STATUS_FULL_URL);
           source = "aws-s3-full";
-          if (!status || !(status.disks && status.disks["Disk-1"] && status.disks["Disk-1"].counts)) {
-            throw new Error("status-full missing disks.*.counts");
-          }
+          if (!isRich(status)) throw new Error("status-full missing disks.*.counts");
         } catch (fullError) {
           try {
             status = await fetchStatus(LIVE_STATUS_URL);
             source = "aws-s3";
+            if (!isRich(status)) throw new Error("live status.json thin/missing per-disk counts");
           } catch (primaryError) {
             try {
               status = await fetchStatus(FALLBACK_GITHUB_STATUS_URL);
