@@ -862,8 +862,8 @@
   <script>
     "use strict";
 
-    // Live AWS status.json is the only anonymously-readable S3 key. The dedicated
-    // publisher also mirrors rich Disk-1/Disk-2/Combined counts into GitHub.
+    // Prefer publisher-owned status-full.json (workers race on status.json).
+    const LIVE_STATUS_FULL_URL = "https://cad-extract-status-874846752452.s3.ap-south-1.amazonaws.com/status-full.json";
     const LIVE_STATUS_URL = "https://cad-extract-status-874846752452.s3.ap-south-1.amazonaws.com/status.json";
     const FALLBACK_GITHUB_STATUS_URL = "https://raw.githubusercontent.com/dhigdec/cad-extract-status/main/status.json";
     const FALLBACK_GCS_STATUS_URL = "https://storage.googleapis.com/cad-extract-public-status-mlproject-501205/status.json";
@@ -1018,6 +1018,60 @@
       return isObject(byExt) && Object.keys(byExt).length > 0;
     }
 
+    function countsNodeIsRich(node) {
+      if (!isObject(node)) return false;
+      if (present(node.weak) || present(node.sha256)) return true;
+      if (isObject(node.by_ext)) {
+        for (const child of Object.values(node.by_ext)) {
+          if (isObject(child) && (present(child.weak) || present(child.sha256))) return true;
+        }
+      }
+      return false;
+    }
+
+    function statusHasIdentityMetrics(status) {
+      const counts = (((status || {}).disks || {}).combined || {}).counts
+        || (((status || {}).counts || {}).combined)
+        || (status || {}).cloud_counts
+        || {};
+      return countsNodeIsRich(counts["2d"]) || countsNodeIsRich(counts.pdf);
+    }
+
+    function mergeIdentityCounts(live, sticky) {
+      if (!isObject(live) || !isObject(sticky)) return live;
+      const next = live;
+      if (isObject(sticky.disks)) {
+        if (!isObject(next.disks)) next.disks = {};
+        for (const disk of Object.keys(sticky.disks)) {
+          const src = sticky.disks[disk];
+          if (!isObject(src) || !isObject(src.counts)) continue;
+          if (!isObject(next.disks[disk])) next.disks[disk] = {};
+          const liveTwoD = (next.disks[disk].counts || {})["2d"];
+          if (!countsNodeIsRich(liveTwoD) && countsNodeIsRich(src.counts["2d"])) {
+            next.disks[disk].counts = src.counts;
+          }
+        }
+      }
+      if (isObject(sticky.counts)) {
+        if (!isObject(next.counts)) next.counts = {};
+        for (const disk of Object.keys(sticky.counts)) {
+          const src = sticky.counts[disk];
+          if (!isObject(src)) continue;
+          if (!countsNodeIsRich((next.counts[disk] || {})["2d"]) && countsNodeIsRich(src["2d"])) {
+            next.counts[disk] = src;
+          }
+        }
+      }
+      if (isObject(sticky.cloud_counts)
+          && !countsNodeIsRich((next.cloud_counts || {})["2d"])
+          && countsNodeIsRich(sticky.cloud_counts["2d"])) {
+        next.cloud_counts = sticky.cloud_counts;
+      }
+      if (isObject(sticky.dedup)) next.dedup = sticky.dedup;
+      if (isObject(sticky.pending_reasons)) next.pending_reasons = sticky.pending_reasons;
+      return next;
+    }
+
     function normalizeStatus(status) {
       if (!isObject(status)) return status;
       const next = status;
@@ -1031,15 +1085,21 @@
           if (!nodes) continue;
           if (!isObject(next.disks[diskName])) next.disks[diskName] = {};
           // Prefer richer disks.*.counts if already present; otherwise use delta.
-          if (!isObject(next.disks[diskName].counts)) next.disks[diskName].counts = nodes;
+          // Thin writers may leave counts with raw-only / sha256:null — treat as missing.
+          const existing = next.disks[diskName].counts;
+          if (!isObject(existing) || !countsNodeIsRich(existing["2d"] || existing.pdf)) {
+            next.disks[diskName].counts = nodes;
+          }
         }
         if (!isObject(next.disks.combined)) next.disks.combined = {};
-        if (!isObject(next.disks.combined.counts)) {
+        if (!isObject(next.disks.combined.counts) || !countsNodeIsRich((next.disks.combined.counts || {})["2d"])) {
           const combinedFlat = isObject(delta.combined)
             ? delta.combined
             : sumFlatCounts([delta["Disk-1"], delta["Disk-2"]]);
           const nodes = flatCountsToNodes(combinedFlat);
-          if (nodes) next.disks.combined.counts = nodes;
+          if (nodes && !countsNodeIsRich((next.disks.combined.counts || {})["2d"])) {
+            next.disks.combined.counts = nodes;
+          }
         }
         if (!isObject(next.counts)) {
           const combinedFlat = isObject(delta.combined)
@@ -2440,22 +2500,34 @@
       try {
         let status;
         let source;
-        // Prefer live AWS status.json when it has disks.*.counts for all tabs.
-        // Aggregator workers still race-overwrite with a thin schema; fall back to
-        // the GitHub mirror (updated by the publisher) then legacy GCS.
-        const isRich = (doc) => !!(doc && doc.disks && doc.disks["Disk-1"] && doc.disks["Disk-1"].counts
+        // Prefer live AWS status.json when it carries numeric weak/SHA identity
+        // metrics. Thin racers may still publish disks.*.counts with sha256:null;
+        // overlay identity fields from the GitHub mirror, then fall back entirely.
+        const isStructurallyRich = (doc) => !!(doc && doc.disks && doc.disks["Disk-1"] && doc.disks["Disk-1"].counts
           && doc.disks["Disk-2"] && doc.disks["Disk-2"].counts
           && doc.disks.combined && doc.disks.combined.counts);
 
         try {
           status = await fetchStatus(LIVE_STATUS_URL);
           source = "aws-s3";
-          if (!isRich(status)) throw new Error("live status.json thin/missing per-disk counts");
+          if (!isStructurallyRich(status) || !statusHasIdentityMetrics(status)) {
+            try {
+              const sticky = await fetchStatus(FALLBACK_GITHUB_STATUS_URL);
+              if (statusHasIdentityMetrics(sticky)) {
+                status = mergeIdentityCounts(status, sticky);
+                source = "aws-s3+github-identity";
+              } else if (!isStructurallyRich(status)) {
+                throw new Error("live status.json thin/missing per-disk counts");
+              }
+            } catch (stickyError) {
+              if (!isStructurallyRich(status)) throw stickyError;
+            }
+          }
         } catch (primaryError) {
           try {
             status = await fetchStatus(FALLBACK_GITHUB_STATUS_URL);
             source = "github-fallback";
-            if (!isRich(status)) throw new Error("github status missing per-disk counts");
+            if (!isStructurallyRich(status)) throw new Error("github status missing per-disk counts");
           } catch (githubError) {
             try {
               status = await fetchStatus(FALLBACK_GCS_STATUS_URL);
