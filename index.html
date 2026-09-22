@@ -735,7 +735,7 @@
       border-radius: 50%;
       background: var(--good);
     }
-    .poll-state.retrying::before { background: var(--warn); }
+    .poll-state.retrying::before, .poll-state.fallback::before { background: var(--warn); }
     footer {
       padding: 7px 2px 0;
       color: var(--text-faint);
@@ -823,10 +823,8 @@
   <script>
     "use strict";
 
-    const LOCAL = location.protocol === "file:" || /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
-    const STATUS_URL = LOCAL
-      ? "status.json"
-      : "https://raw.githubusercontent.com/dhigdec/cad-extract-status/main/status.json";
+    const LIVE_STATUS_URL = "https://storage.googleapis.com/cad-extract-public-status-mlproject-501205/status.json";
+    const FALLBACK_STATUS_URL = "https://raw.githubusercontent.com/dhigdec/cad-extract-status/main/status.json";
     const POLL_MS = 5000;
     const STALL_AFTER_SECONDS = 120;
     const SCOPE_DEFS = [
@@ -866,6 +864,7 @@
     let lastPayload = "";
     let lastFetchAt = null;
     let pollError = null;
+    let statusSource = null;
 
     const app = document.getElementById("app");
     const isObject = value => value !== null && typeof value === "object" && !Array.isArray(value);
@@ -988,6 +987,9 @@
         for (const key of ["counts", "assets", "file_counts", "fileCounts", "totals"]) {
           addObject(countRoots, root[key]);
         }
+        const exact = root.cloud_results_exact;
+        addObject(countRoots, exact);
+        if (isObject(exact)) addObject(countRoots, exact.counts);
         for (const key of ["nested_depth", "nestedDepth", "depth", "depths"]) {
           addObject(depthRoots, root[key]);
         }
@@ -1366,6 +1368,10 @@
       return Number.isFinite(millis) ? Math.max(0, (Date.now() - millis) / 1000) : undefined;
     }
 
+    function statusSourceLabel() {
+      return statusSource === "fallback" ? "GitHub fallback" : "Live GCP";
+    }
+
     function renderHeader(status) {
       const bundle = buildBundle(status, "combined");
       const total = archiveMetric(bundle, "total");
@@ -1393,6 +1399,7 @@
         <div class="freshness-line">
           <span>Heartbeat <strong id="heartbeat-age">${escapeHtml(ageTextFromSeconds(health.age))} ago</strong></span>
           <span>Last update <strong>${formatTimestamp(heartbeatValue(status))}</strong></span>
+          <span>Source <strong>${statusSourceLabel()}</strong></span>
           <span>Data pushed every ~20 seconds; page polls every 5 seconds</span>
         </div>
         <div class="progress-track" role="progressbar" aria-label="Archive completion"
@@ -1417,7 +1424,7 @@
           <span class="chip">VM · ${escapeHtml(aliasValue(gce, ["instance_name", "name"]) || "not available")}</span>
           <span class="chip">Type · ${escapeHtml(aliasValue(gce, ["machine_type", "type"]) || "not available")}</span>
           <span class="chip">Zone · ${escapeHtml(aliasValue(gce, ["zone", "location"]) || "not available")}</span>
-          <span class="chip">Source · GCS _state/status.json</span>
+          <span class="chip">Feed · ${statusSourceLabel()}</span>
         </div>
       </header>`;
     }
@@ -1479,7 +1486,7 @@
       return `<section class="panel" aria-labelledby="workers-title">
         <div class="section-heading">
           <div><p class="eyebrow">Active work</p><h2 id="workers-title">Worker activity</h2>
-            <p>Only the disk label and archive basename are shown; source paths are never rendered.</p></div>
+            <p>Archive identities are reduced to safe labels; source paths are never published.</p></div>
           <span class="section-kicker">${formatCount(workers.length, "0")} reporting</span>
         </div>
         <div class="worker-grid">${cards}</div>
@@ -1765,10 +1772,16 @@
         isObject(status.progress) ? status.progress.throughput : null
       ]);
       let archivesPerHour = metricFromRoots(roots, ["archives_per_hour", "archive_rate_per_hour", "archives_hour"]);
-      let compressedGbPerHour = metricFromRoots(roots, ["compressed_gb_per_hour", "source_gb_per_hour", "download_gb_per_hour"]);
-      const uploadGbPerHour = metricFromRoots(roots, ["gcs_upload_gb_per_hour", "upload_gb_per_hour", "stored_gb_per_hour"]);
+      let compressedGbPerHour = metricFromRoots(roots, [
+        "compressed_gb_per_hour", "source_gb_per_hour", "source_archive_gb_per_hour", "download_gb_per_hour"
+      ]);
+      const uploadGbPerHour = metricFromRoots(roots, [
+        "gcs_upload_gb_per_hour", "upload_gb_per_hour", "stored_gb_per_hour", "stored_extracted_gb_per_hour"
+      ]);
       const bytesRemaining = metricFromRoots(roots, ["bytes_remaining", "compressed_bytes_remaining", "source_bytes_remaining"]);
-      const etaSeconds = metricFromRoots(roots, ["eta_seconds", "remaining_seconds"]);
+      let etaSeconds = metricFromRoots(roots, ["eta_seconds", "remaining_seconds"]);
+      const etaHours = metricFromRoots(roots, ["eta_hours_at_observed_archive_rate"]);
+      if (number(etaSeconds) === null && number(etaHours) !== null) etaSeconds = number(etaHours) * 3600;
       const etaAt = metricFromRoots(roots, ["eta_at", "estimated_completion_at"]);
       const ordering = metricFromRoots(roots.concat([status]), ["ordering", "archive_order", "processing_order"]);
       let archiveSource = number(archivesPerHour) === null ? "unavailable" : "reported";
@@ -1947,7 +1960,7 @@
           </main>
           ${renderCostCard(status)}
         </div>
-        <footer>Read-only public telemetry · Missing values are shown as pending or not available · Source paths are redacted to basenames</footer>
+        <footer>Read-only public telemetry · Missing values are shown as pending or not available · Source paths and archive identities are redacted</footer>
       </div>`;
       applySelectedScope(false);
       updateLiveIndicators();
@@ -1978,10 +1991,14 @@
       if (pollError) {
         element.textContent = "Retrying";
         element.classList.add("retrying");
+        element.classList.remove("fallback");
         element.title = pollError.message || String(pollError);
       } else {
-        element.textContent = lastFetchAt ? `Checked ${ageTextFromSeconds((Date.now() - lastFetchAt) / 1000)} ago` : "Live feed";
+        element.textContent = lastFetchAt
+          ? `${statusSourceLabel()} · checked ${ageTextFromSeconds((Date.now() - lastFetchAt) / 1000)} ago`
+          : statusSourceLabel();
         element.classList.remove("retrying");
+        element.classList.toggle("fallback", statusSource === "fallback");
         element.removeAttribute("title");
       }
     }
@@ -2020,14 +2037,31 @@
       applySelectedScope(true);
     });
 
+    async function fetchStatus(url) {
+      const separator = url.includes("?") ? "&" : "?";
+      const response = await fetch(`${url}${separator}t=${Date.now()}`, { cache: "no-store" });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      return response.json();
+    }
+
     async function tick() {
       try {
-        const separator = STATUS_URL.includes("?") ? "&" : "?";
-        const response = await fetch(`${STATUS_URL}${separator}t=${Date.now()}`, { cache: "no-store" });
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        const status = await response.json();
-        const payload = JSON.stringify(status);
+        let status;
+        let source;
+        try {
+          status = await fetchStatus(LIVE_STATUS_URL);
+          source = "live";
+        } catch (primaryError) {
+          try {
+            status = await fetchStatus(FALLBACK_STATUS_URL);
+            source = "fallback";
+          } catch (fallbackError) {
+            throw new Error(`Live GCP and GitHub fallback failed (${primaryError.message}; ${fallbackError.message})`);
+          }
+        }
+        const payload = `${source}:${JSON.stringify(status)}`;
         latestStatus = status;
+        statusSource = source;
         lastFetchAt = Date.now();
         pollError = null;
         if (payload !== lastPayload) {
