@@ -1774,6 +1774,43 @@
       ].some(value => number(value) !== null);
     }
 
+
+    function dedupCoverage(bundle) {
+      for (const root of bundle.roots) {
+        const value = root && root.dedup_coverage;
+        if (isObject(value)) return value;
+      }
+      return null;
+    }
+
+    function renderDedupCoverage(bundle) {
+      const coverage = dedupCoverage(bundle);
+      if (!coverage) {
+        return `<div class="data-card"><div class="data-heading"><div><h3>Dedup coverage</h3></div><p>Awaiting reducer coverage block</p></div><p class="missing">pending</p></div>`;
+      }
+      const rows = [
+        ["SHA-256 identities", coverage.sha256],
+        ["Weak name+size", coverage.weak_name_size],
+        ["Weak CAD/non-CAD PDF subtype", coverage.weak_pdf_subtype],
+        ["Distinct block hashes", coverage.block_distinct_hashes],
+        ["Duplicate block bytes", coverage.block_duplicate_bytes]
+      ];
+      const body = rows.map(([label, entry]) => {
+        const status = entry && entry.status ? String(entry.status) : "pending";
+        const covered = entry && number(entry.covered_archives);
+        const completed = entry && number(entry.completed_archives);
+        const reason = entry && entry.reason ? String(entry.reason) : "";
+        let detail = status;
+        if (covered !== null && completed !== null) {
+          detail += ` · ${formatCount(covered)}/${formatCount(completed)} archives`;
+        }
+        if (reason) detail += ` · ${escapeHtml(reason)}`;
+        const cls = status === "exact" ? "ok" : (status === "partial" ? "warn" : "missing");
+        return `<tr><td>${escapeHtml(label)}</td><td class="${cls}">${detail}</td></tr>`;
+      }).join("");
+      return `<div class="data-card"><div class="data-heading"><div><h3>Dedup coverage</h3></div><p>Exact vs honestly partial/pending</p></div><table><thead><tr><th>Metric</th><th>Status</th></tr></thead><tbody>${body}</tbody></table></div>`;
+    }
+
     function renderScopePanel(status, definition) {
       const bundle = buildBundle(status, definition.id);
       const done = archiveMetric(bundle, "done");
