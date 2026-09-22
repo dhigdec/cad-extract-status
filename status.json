@@ -1,21 +1,34 @@
 {
-  "health": "alive",
-  "updated": "2026-09-22 01:52:52 UTC",
-  "last_update_iso": "2026-09-22 01:52:52 UTC",
-  "age_seconds": 76.5,
-  "worker_alive": false,
+  "source_of_truth": "cloud-ec2",
+  "health": "ok",
+  "updated": "2026-09-22T01:54:12.169486Z",
+  "last_update_iso": "2026-09-22T01:54:12.169486Z",
+  "age_seconds": 19.0,
+  "worker_alive": true,
   "stalled": false,
-  "current": {
-    "line": ">>> (987/3620) Disk-2 6.7 MB  [count+upload]  Disk-2/Completed_Projects_Data/MT15_061 (The Greenwood Middle School)/08. Uploads/For FAB/T#010_SEQ#1 PARTIAL DWGS FOR FAB  _011816/15-144_GMS_Seq# 1 Partial Dwgs  for FAB_T#010.zip",
-    "index": 987,
-    "total": 3620,
-    "disk": "Disk-2",
-    "size_mb": 6.7,
-    "size_label": "6.7 MB",
-    "path": "[count+upload]  Disk-2/Completed_Projects_Data/MT15_061 (The Greenwood Middle School)/08. Uploads/For FAB/T#010_SEQ#1 PARTIAL DWGS FOR FAB  _011816/15-144_GMS_Seq# 1 Partial Dwgs  for FAB_T#010.zip",
-    "name": "15-144_GMS_Seq# 1 Partial Dwgs  for FAB_T#010.zip"
-  },
-  "current_archive": ">>> (987/3620) Disk-2 6.7 MB  [count+upload]  Disk-2/Completed_Projects_Data/MT15_061 (The Greenwood Middle School)/08. Uploads/For FAB/T#010_SEQ#1 PARTIAL DWGS FOR FAB  _011816/15-144_GMS_Seq# 1 Partial Dwgs  for FAB_T#010.zip",
+  "current": [
+    {
+      "shard": 0,
+      "state": "processing",
+      "archive": "3631_MD ANDERSON PROTON THERAPY CENTER_ABM.7z"
+    },
+    {
+      "shard": 1,
+      "state": "processing",
+      "archive": "2. Rankin Wellness Canopys.7z"
+    },
+    {
+      "shard": 2,
+      "state": "processing",
+      "archive": "SC STANDARDS.7z"
+    },
+    {
+      "shard": 3,
+      "state": "processing",
+      "archive": "LA Reservoir.7z"
+    }
+  ],
+  "current_archive": "3631_MD ANDERSON PROTON THERAPY CENTER_ABM.7z",
   "last_finished": {
     "disk": "Disk-2",
     "name": "OPs1.rar",
@@ -978,8 +991,8 @@
       "Disk-2": "s3://annotationprod/cad-disk-extract/Disk-2/"
     },
     "profile": "annotationprod-publish",
-    "stored_bytes": 500790788,
-    "stored_gb": 0.500791,
+    "stored_bytes": 3866691974,
+    "stored_gb": 3.866692,
     "stored_bytes_by_disk": {
       "Disk-1": 38274820,
       "Disk-2": 462515968
@@ -995,11 +1008,339 @@
       "combined": 154
     },
     "archives_pending_s3": 832,
-    "estimated_monthly_usd": 0.0125,
+    "estimated_monthly_usd": 0.0967,
     "cost_rate_usd_per_gb_month": 0.025,
-    "note": "Estimate = stored_GB uploaded by this job \u00d7 $0.025/GB-month (S3 Standard ap-south-1). Not the AWS invoice. Only cad-disk-extract/ is written; source buckets are read-only."
+    "note": "Estimate = stored_GB uploaded by this job \u00d7 $0.025/GB-month (S3 Standard ap-south-1). Not the AWS invoice. Only cad-disk-extract/ is written; source buckets are read-only.",
+    "scope": "whole cad-disk-extract/ prefix measured from EC2",
+    "object_count": 21414,
+    "scanned_at": "2026-09-22T01:52:26.831770Z"
   },
-  "s3_stored_bytes": 500790788,
-  "s3_stored_gb": 0.500791,
-  "estimated_monthly_usd": 0.0125
+  "s3_stored_bytes": 3866691974,
+  "s3_stored_gb": 3.866692,
+  "estimated_monthly_usd": 0.0967,
+  "local_baseline": {
+    "note": "Archives completed by the laptop run before cutover to EC2. Extraction, unzip and counting now happen on EC2 only.",
+    "health": "alive",
+    "updated": "2026-09-22 01:52:52 UTC",
+    "archives": {
+      "Disk-1": {
+        "completed_ok": 101,
+        "failed": 0,
+        "skipped_too_large": 0,
+        "completed_total": 101,
+        "remaining": 1053,
+        "manifest_total": 1154
+      },
+      "Disk-2": {
+        "completed_ok": 885,
+        "failed": 0,
+        "skipped_too_large": 0,
+        "completed_total": 885,
+        "remaining": 1581,
+        "manifest_total": 2466
+      },
+      "combined": {
+        "completed_ok": 986,
+        "failed": 0,
+        "skipped_too_large": 0,
+        "completed_total": 986,
+        "remaining": 2634,
+        "manifest_total": 3620
+      }
+    }
+  },
+  "cloud": {
+    "schema": 1,
+    "state": "running",
+    "heartbeat_at": "2026-09-22T01:54:12.169486Z",
+    "run_id": "run-20260922T011906Z",
+    "instance_id": "i-03cbb2e935bbb2445",
+    "instance_type": "c7i.4xlarge",
+    "availability_zone": "ap-south-1a",
+    "credential_expiry": "none",
+    "credential_stop_at": "2027-09-22T01:44:22.171928Z",
+    "progress": {
+      "manifest_total": 2647,
+      "completed_ok": 234,
+      "failed": 0,
+      "remaining": 2413,
+      "retries": 0
+    },
+    "counts": {
+      "raw": {
+        "pdf": 6904,
+        "cad_pdf": 4419,
+        "other_pdf": 2485,
+        "2d": 17620,
+        "3d": 155,
+        "nc1": 1968
+      },
+      "sha256": {
+        "pdf": 5416,
+        "cad_pdf": 3389,
+        "other_pdf": 2033,
+        "2d": 13731,
+        "3d": 146,
+        "nc1": 1310
+      },
+      "block_sha256": 22876,
+      "extensions": {
+        ".db1": {
+          "category": "3d",
+          "raw": 86,
+          "sha256": 82
+        },
+        ".dg": {
+          "category": "2d",
+          "raw": 12956,
+          "sha256": 9853
+        },
+        ".dpm": {
+          "category": "2d",
+          "raw": 2478,
+          "sha256": 1841
+        },
+        ".dwg": {
+          "category": "2d",
+          "raw": 1057,
+          "sha256": 1038
+        },
+        ".dxf": {
+          "category": "2d",
+          "raw": 1129,
+          "sha256": 999
+        },
+        ".ifc": {
+          "category": "3d",
+          "raw": 65,
+          "sha256": 60
+        },
+        ".nc1": {
+          "category": "nc1",
+          "raw": 1968,
+          "sha256": 1310
+        },
+        ".pdf": {
+          "category": "pdf",
+          "raw": 6904,
+          "sha256": 5416
+        },
+        ".stp": {
+          "category": "3d",
+          "raw": 4,
+          "sha256": 4
+        }
+      }
+    },
+    "nested_depth": {
+      "measured_finished_archives": 234,
+      "unopened_archives_not_measured": 2413,
+      "archive_nodes_by_depth": {
+        "0": 234,
+        "1": 134,
+        "2": 2
+      },
+      "finished_archive_max_depth_distribution": {
+        "0": 185,
+        "1": 48,
+        "2": 1
+      }
+    },
+    "storage": {
+      "stored_bytes": 4909854867,
+      "stored_gb": 4.909855,
+      "stored_files": 26647,
+      "estimated_s3_monthly_usd": 0.1227
+    },
+    "compute": {
+      "hourly_ec2_estimate_usd": "0.93",
+      "uptime_seconds": 346.0,
+      "uptime_hours": 0.0961,
+      "accrued_estimate_usd": 0.0894,
+      "estimate_label": "On-Demand estimate; excludes taxes and data transfer"
+    },
+    "ebs": {
+      "size_gb": 1000.0,
+      "volume_type": "gp3",
+      "iops": 6000,
+      "throughput_mibps": 500,
+      "rate_usd_per_gb_month": 0.0912,
+      "estimated_monthly_usd": 91.2,
+      "hourly_estimate_usd": 0.124932,
+      "accrued_estimate_usd": 0.012
+    },
+    "s3_prefix": {
+      "state": "ok",
+      "scanned_at": "2026-09-22T01:52:26.831770Z",
+      "prefix": "s3://annotationprod/cad-disk-extract/",
+      "object_count": 21414,
+      "stored_bytes": 3866691974,
+      "stored_gb": 3.866692,
+      "estimated_s3_monthly_usd": 0.0967,
+      "cost_rate_usd_per_gb_month": 0.025
+    },
+    "costs": {
+      "compute_accrued_usd": 0.0894,
+      "ebs_accrued_usd": 0.012,
+      "s3_estimated_monthly_usd": 0.0967,
+      "combined_accrued_usd": 0.1014,
+      "combined_hourly_usd": 1.0549,
+      "label": "ESTIMATE ONLY - computed from On-Demand list prices (EC2 + gp3 EBS + S3 Standard at $0.025/GB-month). This is not the AWS invoice."
+    },
+    "workers": [
+      {
+        "shard": 0,
+        "state": "processing",
+        "current_archive": "3631_MD ANDERSON PROTON THERAPY CENTER_ABM.7z",
+        "current_archive_id": "6c98a93f90b15742",
+        "archive_index": 56,
+        "shard_total": 651,
+        "updated_at": "2026-09-22T01:53:57.351068Z",
+        "pid": 4109,
+        "returncode": null
+      },
+      {
+        "shard": 1,
+        "state": "processing",
+        "current_archive": "2. Rankin Wellness Canopys.7z",
+        "current_archive_id": "e5097bcbc391300f",
+        "archive_index": 52,
+        "shard_total": 676,
+        "updated_at": "2026-09-22T01:53:28.052790Z",
+        "pid": 4110,
+        "returncode": null
+      },
+      {
+        "shard": 2,
+        "state": "processing",
+        "current_archive": "SC STANDARDS.7z",
+        "current_archive_id": "daf105009f3e0a9c",
+        "archive_index": 68,
+        "shard_total": 681,
+        "updated_at": "2026-09-22T01:54:08.061468Z",
+        "pid": 4111,
+        "returncode": null
+      },
+      {
+        "shard": 3,
+        "state": "processing",
+        "current_archive": "LA Reservoir.7z",
+        "current_archive_id": "404a9d7d15446466",
+        "archive_index": 58,
+        "shard_total": 639,
+        "updated_at": "2026-09-22T01:54:09.326505Z",
+        "pid": 4112,
+        "returncode": null
+      }
+    ],
+    "worker_processes_alive": 4,
+    "source_listing": {
+      "state": "complete",
+      "finished_at": "2026-09-22T01:51:32.285169Z",
+      "cloud_remaining": 2647,
+      "snapshot_remaining": 2647,
+      "missing_from_snapshot": 0,
+      "stale_in_snapshot": 0,
+      "matched_exactly": true
+    },
+    "last_checkpoint_at": "2026-09-22T01:53:56.761901Z",
+    "github_publisher": {
+      "repo": "dhigdec/cad-extract-status",
+      "last_push_success_at": null,
+      "last_error": "FileNotFoundError"
+    },
+    "temporary_credential_limitation": "Workers stop five minutes before destination credential expiry. The instance remains running; new destination writes require refreshed credentials."
+  },
+  "cloud_workers_alive": 4,
+  "archives_combined": {
+    "total": 3620,
+    "done": 1220,
+    "remaining": 2400,
+    "failed": 0,
+    "retries": 0,
+    "done_local_before_cutover": 986,
+    "done_on_ec2": 234,
+    "ec2_manifest_total": 2647,
+    "ec2_skipped_already_done_locally": 13
+  },
+  "cloud_counts": {
+    "raw": {
+      "pdf": 6904,
+      "cad_pdf": 4419,
+      "other_pdf": 2485,
+      "2d": 17620,
+      "3d": 155,
+      "nc1": 1968
+    },
+    "sha256": {
+      "pdf": 5416,
+      "cad_pdf": 3389,
+      "other_pdf": 2033,
+      "2d": 13731,
+      "3d": 146,
+      "nc1": 1310
+    },
+    "block_sha256": 22876,
+    "extensions": {
+      ".db1": {
+        "category": "3d",
+        "raw": 86,
+        "sha256": 82
+      },
+      ".dg": {
+        "category": "2d",
+        "raw": 12956,
+        "sha256": 9853
+      },
+      ".dpm": {
+        "category": "2d",
+        "raw": 2478,
+        "sha256": 1841
+      },
+      ".dwg": {
+        "category": "2d",
+        "raw": 1057,
+        "sha256": 1038
+      },
+      ".dxf": {
+        "category": "2d",
+        "raw": 1129,
+        "sha256": 999
+      },
+      ".ifc": {
+        "category": "3d",
+        "raw": 65,
+        "sha256": 60
+      },
+      ".nc1": {
+        "category": "nc1",
+        "raw": 1968,
+        "sha256": 1310
+      },
+      ".pdf": {
+        "category": "pdf",
+        "raw": 6904,
+        "sha256": 5416
+      },
+      ".stp": {
+        "category": "3d",
+        "raw": 4,
+        "sha256": 4
+      }
+    }
+  },
+  "cloud_depth": {
+    "measured_finished_archives": 234,
+    "unopened_archives_not_measured": 2413,
+    "archive_nodes_by_depth": {
+      "0": 234,
+      "1": 134,
+      "2": 2
+    },
+    "finished_archive_max_depth_distribution": {
+      "0": 185,
+      "1": 48,
+      "2": 1
+    }
+  }
 }

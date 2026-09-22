@@ -162,10 +162,27 @@ if cloud:
     workers = cloud.get("workers") or []
     prefix = cloud.get("s3_prefix") or {}
 
-    local_done = ((totals.get("archives") or {}).get("done") or 0)
+    cutover = {}
+    try:
+        with open(os.path.join(root, ".cutover.json")) as handle:
+            cutover = json.load(handle) or {}
+    except Exception:
+        cutover = {}
+
+    archives = totals.get("archives") or {}
+    local_done = cutover.get("local_done_at_cutover")
+    if local_done is None:
+        local_done = sum(
+            int(value.get("completed_ok") or 0)
+            for value in archives.values()
+            if isinstance(value, dict)
+        ) or int(archives.get("done") or 0)
+
     cloud_done = progress.get("completed_ok") or 0
     cloud_failed = progress.get("failed") or 0
     cloud_total = progress.get("manifest_total") or 0
+    grand_total = cutover.get("grand_total_archives") or (local_done + cloud_total)
+    preclaimed = cutover.get("overlap_preclaimed_skipped_by_cloud") or 0
 
     current = [
         {
@@ -191,13 +208,15 @@ if cloud:
         "current": active or current,
         "current_archive": (active[0].get("archive") if active else None),
         "archives_combined": {
-            "total": local_done + cloud_total,
+            "total": grand_total,
             "done": local_done + cloud_done,
-            "remaining": progress.get("remaining"),
+            "remaining": max(0, grand_total - local_done - cloud_done - cloud_failed),
             "failed": cloud_failed,
             "retries": progress.get("retries"),
             "done_local_before_cutover": local_done,
             "done_on_ec2": cloud_done,
+            "ec2_manifest_total": cloud_total,
+            "ec2_skipped_already_done_locally": preclaimed,
         },
         "cloud_counts": counts,
         "cloud_depth": cloud.get("nested_depth"),
