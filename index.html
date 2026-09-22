@@ -1407,6 +1407,37 @@
       return Number.isFinite(millis) ? Math.max(0, (Date.now() - millis) / 1000) : undefined;
     }
 
+    function fleetCostEstimates(status) {
+      const costEstimate = isObject(status.cost_estimate) ? status.cost_estimate : {};
+      const costs = isObject(status.costs) ? status.costs : {};
+      const compute = isObject(status.compute) ? status.compute : {};
+      let hourly = number(aliasValue(costEstimate, ["hourly_ec2_plus_ebs_usd"]))
+        ?? number(aliasValue(costs, ["combined_hourly_compute_disk_usd", "hourly_compute_disk_usd"]));
+      let accrued = number(aliasValue(costEstimate, ["accrued_ec2_plus_ebs_usd"]))
+        ?? number(aliasValue(costs, ["combined_accrued_estimate_usd", "accrued_estimate_usd"]));
+      let uptimeHours = number(aliasValue(costEstimate, ["uptime_hours"]))
+        ?? number(aliasValue(compute, ["uptime_hours"]));
+      const fleetStart = Date.parse(
+        aliasValue(costEstimate, ["fleet_start_utc"]) || aliasValue(compute, ["fleet_start_utc"]) || "2026-09-22T06:49:33Z"
+      );
+      if (!Number.isFinite(uptimeHours) && Number.isFinite(fleetStart)) {
+        uptimeHours = Math.max(0, (Date.now() - fleetStart) / 3600000);
+      }
+      if (hourly === null) {
+        const fleet = isObject(status.fleet) ? status.fleet : {};
+        if (Array.isArray(fleet.instances)) {
+          hourly = fleet.instances.reduce((sum, inst) => {
+            if (!isObject(inst)) return sum;
+            return sum + (number(inst.compute_hourly_estimate_usd) || 0) + (number(inst.ebs_hourly_estimate_usd) || 0);
+          }, 0);
+        }
+      }
+      if (accrued === null && hourly !== null && uptimeHours !== null) {
+        accrued = hourly * uptimeHours;
+      }
+      return { hourly, accrued, uptimeHours };
+    }
+
     function statusSourceLabel() {
       if (statusSource === "aws-s3") return "Live AWS S3";
       if (statusSource === "gcs-fallback") return "GCS fallback";
@@ -1442,10 +1473,9 @@
         ["archives", "combined", "ec2_new_ok"],
         ["disks", "combined", "archives", "ec2_new_ok"]
       ]);
-      const cost = isObject(status.cost_estimate) ? status.cost_estimate : {};
-      const costs = isObject(status.costs) ? status.costs : {};
-      const hourly = aliasValue(cost, ["hourly_ec2_plus_ebs_usd"]) ?? aliasValue(costs, ["combined_hourly_compute_disk_usd"]);
-      const accrued = aliasValue(cost, ["accrued_ec2_plus_ebs_usd"]) ?? aliasValue(costs, ["combined_accrued_estimate_usd"]);
+      const costHints = fleetCostEstimates(status);
+      const hourly = costHints.hourly;
+      const accrued = costHints.accrued;
 
       return `<header class="hero">
         <div class="hero-top">
@@ -2083,12 +2113,11 @@
       const aws = isObject(status.aws_source) ? status.aws_source : {};
       const costs = isObject(status.costs) ? status.costs : {};
       const costEstimate = isObject(status.cost_estimate) ? status.cost_estimate : {};
+      const costHints = fleetCostEstimates(status);
       const storedBytes = aliasValue(gcs, ["stored_bytes", "bytes"]);
       const transferredBytes = aliasValue(aws, ["bytes_transferred", "transferred_bytes"]);
-      const combined = aliasValue(costs, ["combined_accrued_estimate_usd", "combined_estimate_usd", "accrued_estimate_usd"])
-        ?? aliasValue(costEstimate, ["accrued_ec2_plus_ebs_usd"]);
-      const poolHourly = aliasValue(costs, ["combined_hourly_compute_disk_usd", "hourly_compute_disk_usd"])
-        ?? aliasValue(costEstimate, ["hourly_ec2_plus_ebs_usd"]);
+      const combined = costHints.accrued;
+      const poolHourly = costHints.hourly;
       const entries = vmEntries(status);
       const vmRows = entries.map(([name, vm]) => {
         const c = isObject(vm.costs) ? vm.costs : {};
@@ -2110,7 +2139,7 @@
               <span>VMs</span><strong>${escapeHtml(aliasValue(gce, ["instance_count"]) || entries.length || "n/a")}</strong>
               <span>Rate</span><strong>${formatMoney(aliasValue(compute, ["hourly_estimate_usd", "hourly_usd"]) ?? aliasValue(costEstimate, ["ec2_hourly_estimate_usd"]))} / hr</strong>
               <span>Accrued</span><strong>${formatMoney(aliasValue(compute, ["accrued_estimate_usd", "accrued_usd"]))}</strong>
-              <span>Uptime</span><strong>${number(compute.uptime_hours ?? costEstimate.uptime_hours) === null ? "pending" : `${formatDecimal(compute.uptime_hours ?? costEstimate.uptime_hours)} hr`}</strong>
+              <span>Uptime</span><strong>${number(compute.uptime_hours ?? costEstimate.uptime_hours ?? costHints.uptimeHours) === null ? "pending" : `${formatDecimal(compute.uptime_hours ?? costEstimate.uptime_hours ?? costHints.uptimeHours)} hr`}</strong>
             </div>
             <h3>Per-VM compute+disk</h3>
             ${vmRows || "<em>Per-VM estimates pending</em>"}
