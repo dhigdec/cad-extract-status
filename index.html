@@ -862,9 +862,8 @@
   <script>
     "use strict";
 
-    // Live AWS status.json is the only anonymously-readable S3 key. The dedicated
-    // publisher also mirrors rich Disk-1/Disk-2/Combined counts into GitHub.
-    const LIVE_STATUS_FULL_URL = "https://cad-extract-status-874846752452.s3.ap-south-1.amazonaws.com/status-full.json";
+    // Only status.json is anonymously readable on the public bucket (status-full is private).
+    // GitHub mirrors sticky weak/SHA/extension identity for when thin aggregators race-overwrite S3.
     const LIVE_STATUS_URL = "https://cad-extract-status-874846752452.s3.ap-south-1.amazonaws.com/status.json";
     const FALLBACK_GITHUB_STATUS_URL = "https://raw.githubusercontent.com/dhigdec/cad-extract-status/main/status.json";
     const FALLBACK_GCS_STATUS_URL = "https://storage.googleapis.com/cad-extract-public-status-mlproject-501205/status.json";
@@ -1019,6 +1018,86 @@
       return isObject(byExt) && Object.keys(byExt).length > 0;
     }
 
+    function countsNodeIsRich(node) {
+      if (!isObject(node)) return false;
+      if (present(node.weak) || present(node.sha256)) return true;
+      if (isObject(node.by_ext)) {
+        for (const child of Object.values(node.by_ext)) {
+          if (isObject(child) && (present(child.weak) || present(child.sha256))) return true;
+        }
+      }
+      return false;
+    }
+
+    function statusHasIdentityMetrics(status) {
+      const counts = (((status || {}).disks || {}).combined || {}).counts
+        || (((status || {}).counts || {}).combined)
+        || (status || {}).cloud_counts
+        || {};
+      return countsNodeIsRich(counts["2d"]) || countsNodeIsRich(counts.pdf);
+    }
+
+    function overlayIdentityNode(liveNode, stickyNode) {
+      if (!isObject(stickyNode)) return liveNode;
+      if (!isObject(liveNode)) return stickyNode;
+      const out = { ...liveNode };
+      for (const key of ["weak", "sha256", "weak_status", "sha256_status", "label"]) {
+        if (!present(out[key]) && present(stickyNode[key])) out[key] = stickyNode[key];
+      }
+      // Exact 0 must render as 0, never pending.
+      if (!present(out.weak) && stickyNode.weak === 0) out.weak = 0;
+      if (!present(out.sha256) && stickyNode.sha256 === 0) out.sha256 = 0;
+      if (isObject(stickyNode.by_ext)) {
+        const liveExt = isObject(out.by_ext) ? out.by_ext : {};
+        const merged = { ...liveExt };
+        for (const [ext, stickyExt] of Object.entries(stickyNode.by_ext)) {
+          merged[ext] = overlayIdentityNode(liveExt[ext], stickyExt);
+        }
+        out.by_ext = merged;
+      }
+      return out;
+    }
+
+    function overlayIdentityCounts(liveCounts, stickyCounts) {
+      if (!isObject(stickyCounts)) return liveCounts;
+      if (!isObject(liveCounts)) return stickyCounts;
+      const out = { ...liveCounts };
+      for (const [key, stickyNode] of Object.entries(stickyCounts)) {
+        if (key === "pdf_by_drawing_type" || key === "pdf_cad_binary" || key === "block") {
+          if (!isObject(out[key])) out[key] = stickyNode;
+          continue;
+        }
+        out[key] = overlayIdentityNode(out[key], stickyNode);
+      }
+      return out;
+    }
+
+    function mergeIdentityCounts(live, sticky) {
+      if (!isObject(live) || !isObject(sticky)) return live;
+      const next = live;
+      if (isObject(sticky.disks)) {
+        if (!isObject(next.disks)) next.disks = {};
+        for (const disk of Object.keys(sticky.disks)) {
+          const src = sticky.disks[disk];
+          if (!isObject(src) || !isObject(src.counts)) continue;
+          if (!isObject(next.disks[disk])) next.disks[disk] = {};
+          next.disks[disk].counts = overlayIdentityCounts(next.disks[disk].counts, src.counts);
+        }
+      }
+      if (isObject(sticky.counts)) {
+        if (!isObject(next.counts)) next.counts = {};
+        for (const disk of Object.keys(sticky.counts)) {
+          next.counts[disk] = overlayIdentityCounts(next.counts[disk], sticky.counts[disk]);
+        }
+      }
+      if (isObject(sticky.cloud_counts)) {
+        next.cloud_counts = overlayIdentityCounts(next.cloud_counts, sticky.cloud_counts);
+      }
+      if (isObject(sticky.dedup)) next.dedup = sticky.dedup;
+      if (isObject(sticky.pending_reasons)) next.pending_reasons = sticky.pending_reasons;
+      return next;
+    }
+
     function normalizeStatus(status) {
       if (!isObject(status)) return status;
       const next = status;
@@ -1032,15 +1111,21 @@
           if (!nodes) continue;
           if (!isObject(next.disks[diskName])) next.disks[diskName] = {};
           // Prefer richer disks.*.counts if already present; otherwise use delta.
-          if (!isObject(next.disks[diskName].counts)) next.disks[diskName].counts = nodes;
+          // Thin writers may leave counts with raw-only / sha256:null — treat as missing.
+          const existing = next.disks[diskName].counts;
+          if (!isObject(existing) || !countsNodeIsRich(existing["2d"] || existing.pdf)) {
+            next.disks[diskName].counts = nodes;
+          }
         }
         if (!isObject(next.disks.combined)) next.disks.combined = {};
-        if (!isObject(next.disks.combined.counts)) {
+        if (!isObject(next.disks.combined.counts) || !countsNodeIsRich((next.disks.combined.counts || {})["2d"])) {
           const combinedFlat = isObject(delta.combined)
             ? delta.combined
             : sumFlatCounts([delta["Disk-1"], delta["Disk-2"]]);
           const nodes = flatCountsToNodes(combinedFlat);
-          if (nodes) next.disks.combined.counts = nodes;
+          if (nodes && !countsNodeIsRich((next.disks.combined.counts || {})["2d"])) {
+            next.disks.combined.counts = nodes;
+          }
         }
         if (!isObject(next.counts)) {
           const combinedFlat = isObject(delta.combined)
@@ -2441,43 +2526,61 @@
       try {
         let status;
         let source;
-        // Prefer publisher-owned status-full.json (not raced by worker aggregators),
-        // then status.json when rich, then GitHub mirror, then legacy GCS.
-        const isRich = (doc) => !!(doc && doc.disks && doc.disks["Disk-1"] && doc.disks["Disk-1"].counts
+        // Prefer live AWS status.json when it carries numeric weak/SHA identity.
+        // Thin racers may still publish disks.*.counts with sha256:null; overlay
+        // identity fields from the GitHub mirror, then fall back entirely.
+        const isStructurallyRich = (doc) => !!(doc && doc.disks && doc.disks["Disk-1"] && doc.disks["Disk-1"].counts
           && doc.disks["Disk-2"] && doc.disks["Disk-2"].counts
           && doc.disks.combined && doc.disks.combined.counts);
-        const hasDepth = (doc) => !!(doc && (doc.nested_depth || doc.cloud_depth
-          || (doc.disks && doc.disks.combined && (doc.disks.combined.nested_depth || doc.disks.combined.depth))));
 
-        const trySources = [
-          ["aws-s3-full", LIVE_STATUS_FULL_URL],
-          ["aws-s3", LIVE_STATUS_URL],
-          ["github-fallback", FALLBACK_GITHUB_STATUS_URL],
-          ["gcs-fallback", FALLBACK_GCS_STATUS_URL],
-        ];
-        let lastError = null;
-        for (const [label, url] of trySources) {
+        let sticky = null;
+        try {
+          status = await fetchStatus(LIVE_STATUS_URL);
+          source = "aws-s3";
+          if (!isStructurallyRich(status) || !statusHasIdentityMetrics(status)) {
+            try {
+              sticky = await fetchStatus(FALLBACK_GITHUB_STATUS_URL);
+              if (statusHasIdentityMetrics(sticky)) {
+                status = mergeIdentityCounts(status, sticky);
+                source = "aws-s3+github-identity";
+              } else if (!isStructurallyRich(status)) {
+                throw new Error("live status.json thin/missing per-disk counts");
+              }
+            } catch (stickyError) {
+              if (!isStructurallyRich(status)) throw stickyError;
+            }
+          }
+        } catch (primaryError) {
           try {
-            const candidate = await fetchStatus(url);
-            if (isRich(candidate) || hasDepth(candidate)) {
-              status = candidate;
-              source = label;
-              lastError = null;
-              break;
+            status = await fetchStatus(FALLBACK_GITHUB_STATUS_URL);
+            source = "github-fallback";
+            if (!isStructurallyRich(status) && !statusHasIdentityMetrics(status)) {
+              throw new Error("github status missing per-disk counts");
             }
-            if (!status) {
-              status = candidate;
-              source = label;
+          } catch (githubError) {
+            try {
+              status = await fetchStatus(FALLBACK_GCS_STATUS_URL);
+              source = "gcs-fallback";
+            } catch (gcsError) {
+              throw new Error(`AWS/GitHub/GCS status failed (${primaryError.message}; ${githubError.message}; ${gcsError.message})`);
             }
-          } catch (err) {
-            lastError = err;
           }
         }
-        if (!status) {
-          throw new Error(`AWS/GitHub/GCS status failed (${lastError && lastError.message})`);
+        status = normalizeStatus(status);
+        // Re-apply sticky identity after normalize in case delta projection wiped cells.
+        if (sticky && statusHasIdentityMetrics(sticky) && !statusHasIdentityMetrics(status)) {
+          status = mergeIdentityCounts(status, sticky);
+          source = `${source}+post-normalize-identity`;
+        } else if (!statusHasIdentityMetrics(status)) {
+          try {
+            sticky = sticky || await fetchStatus(FALLBACK_GITHUB_STATUS_URL);
+            if (statusHasIdentityMetrics(sticky)) {
+              status = mergeIdentityCounts(status, sticky);
+              source = `${source}+post-normalize-identity`;
+            }
+          } catch (_) { /* keep normalized live status */ }
         }
         const payload = `${source}:${JSON.stringify(status)}`;
-        status = normalizeStatus(status);
         latestStatus = status;
         statusSource = source;
         lastFetchAt = Date.now();
