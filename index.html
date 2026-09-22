@@ -863,14 +863,15 @@
     "use strict";
 
     const LIVE_STATUS_URL = "https://cad-extract-status-874846752452.s3.ap-south-1.amazonaws.com/status.json";
+    const FALLBACK_GITHUB_STATUS_URL = "https://raw.githubusercontent.com/dhigdec/cad-extract-status/main/status.json";
     const FALLBACK_GCS_STATUS_URL = "https://storage.googleapis.com/cad-extract-public-status-mlproject-501205/status.json";
-    const FALLBACK_STATUS_URL = FALLBACK_GCS_STATUS_URL;
+    const FALLBACK_STATUS_URL = FALLBACK_GITHUB_STATUS_URL;
     const POLL_MS = 20000;
     const STALL_AFTER_SECONDS = 120;
     const SCOPE_DEFS = [
-      { id: "disk1", label: "Disk 1", short: "D1", aliases: ["Disk-1", "Disk 1", "disk1", "disk_1", "d1", "1"] },
-      { id: "disk2", label: "Disk 2", short: "D2", aliases: ["Disk-2", "Disk 2", "disk2", "disk_2", "d2", "2"] },
-      { id: "combined", label: "Combined", short: "Σ", aliases: ["combined", "all", "overall", "total", "totals"] }
+      { id: "disk1", label: "Disk 1", short: "D1", diskKey: "Disk-1", aliases: ["Disk-1", "Disk 1", "disk1", "disk_1", "d1"] },
+      { id: "disk2", label: "Disk 2", short: "D2", diskKey: "Disk-2", aliases: ["Disk-2", "Disk 2", "disk2", "disk_2", "d2"] },
+      { id: "combined", label: "Combined", short: "Σ", diskKey: "combined", aliases: ["combined", "all", "overall", "total", "totals"] }
     ];
     const CATEGORY_ALIASES = {
       pdf: ["pdf", "pdfs", "all_pdf", "all_pdfs"],
@@ -883,7 +884,7 @@
     const VARIANT_ALIASES = {
       raw: ["raw", "total", "observations", "files", "count"],
       weak: ["weak", "weak_distinct", "weak_unique", "name_size_distinct", "distinct_name_size"],
-      sha256: ["sha256", "sha", "sha_distinct", "sha256_distinct", "distinct_sha", "unique"]
+      sha256: ["sha256", "sha", "sha_distinct", "sha256_distinct", "distinct_sha"]
     };
     const PDF_CLASSES = [
       ["shop", "Shop"],
@@ -1106,6 +1107,18 @@
       if (Array.isArray(scoped)) target.push(scoped);
     }
 
+    function diskKeyForScope(scopeId) {
+      const definition = scopeDef(scopeId);
+      return definition.diskKey || (scopeId === "disk1" ? "Disk-1" : scopeId === "disk2" ? "Disk-2" : "combined");
+    }
+
+    function explicitDiskNode(status, scopeId) {
+      const key = diskKeyForScope(scopeId);
+      const disks = isObject(status.disks) ? status.disks : {};
+      if (isObject(disks[key])) return disks[key];
+      return undefined;
+    }
+
     function buildBundle(status, scopeId) {
       const roots = collectScopeRoots(status, scopeId);
       const archiveRoots = [];
@@ -1113,6 +1126,20 @@
       const depthRoots = [];
       const storageRoots = [];
       const backlogArrays = [];
+
+      // Prefer explicit disks.<Disk-N|combined>.{archives,counts} so every tab
+      // binds the same schema the AWS publisher writes.
+      const explicit = explicitDiskNode(status, scopeId);
+      if (isObject(explicit)) {
+        addObject(archiveRoots, explicit.archives);
+        addObject(countRoots, explicit.counts);
+        addObject(roots, explicit);
+      }
+      const scopedCounts = isObject(status.counts) ? scopedValue(status.counts, scopeId) : undefined;
+      addObject(countRoots, scopedCounts);
+      if (scopeId === "combined") {
+        addObject(countRoots, status.cloud_counts);
+      }
 
       for (const root of roots) {
         archiveRoots.push(root);
@@ -1197,7 +1224,7 @@
       const aliases = {
         total: ["total", "archives_total", "archive_total", "manifest_total", "total_archives"],
         done: ["done", "completed_ok", "archives_done", "archive_done", "finished", "successful"],
-        remaining: ["remaining", "archives_remaining", "archive_remaining", "left", "pending"],
+        remaining: ["remaining", "archives_remaining", "archive_remaining", "left"],
         failed: ["failed", "failures", "error", "errors", "failed_active_checkpoints"],
         retried: ["retried", "retries", "retry_count", "archives_retried"],
         skipped: ["skipped", "skipped_too_large", "skip_count", "archives_skipped"],
@@ -2411,19 +2438,21 @@
       try {
         let status;
         let source;
+        // Prefer live AWS S3, then the GitHub-mirrored status.json (kept in-repo),
+        // and only then the legacy GCS snapshot (often missing weak/SHA/block).
         try {
           status = await fetchStatus(LIVE_STATUS_URL);
           source = "aws-s3";
         } catch (primaryError) {
           try {
-            status = await fetchStatus(FALLBACK_GCS_STATUS_URL);
-            source = "gcs-fallback";
-          } catch (gcsError) {
+            status = await fetchStatus(FALLBACK_GITHUB_STATUS_URL);
+            source = "github-fallback";
+          } catch (githubError) {
             try {
-              status = await fetchStatus("https://raw.githubusercontent.com/dhigdec/cad-extract-status/main/status.json");
-              source = "github-fallback";
-            } catch (fallbackError) {
-              throw new Error(`AWS/GCS/GitHub status failed (${primaryError.message}; ${gcsError.message}; ${fallbackError.message})`);
+              status = await fetchStatus(FALLBACK_GCS_STATUS_URL);
+              source = "gcs-fallback";
+            } catch (gcsError) {
+              throw new Error(`AWS/GitHub/GCS status failed (${primaryError.message}; ${githubError.message}; ${gcsError.message})`);
             }
           }
         }
