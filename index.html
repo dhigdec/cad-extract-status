@@ -1855,7 +1855,9 @@
         ${pdfSection(bundle)}
         ${depthSection(bundle)}
         ${backlogSection(bundle)}
-      </section>`;
+      </section>
+          ${renderDedupCoverage(bundle)}
+`;
     }
 
     function renderDatasetTabs(status) {
