@@ -862,9 +862,8 @@
   <script>
     "use strict";
 
-    // Prefer status-full.json (dedicated publisher). Workers still overwrite status.json
-    // with a thin schema that lacks disks.*.counts for Disk-1/Disk-2 tabs.
-    const LIVE_STATUS_FULL_URL = "https://cad-extract-status-874846752452.s3.ap-south-1.amazonaws.com/status-full.json";
+    // Live AWS status.json is the only anonymously-readable S3 key. The dedicated
+    // publisher also mirrors rich Disk-1/Disk-2/Combined counts into GitHub.
     const LIVE_STATUS_URL = "https://cad-extract-status-874846752452.s3.ap-south-1.amazonaws.com/status.json";
     const FALLBACK_GITHUB_STATUS_URL = "https://raw.githubusercontent.com/dhigdec/cad-extract-status/main/status.json";
     const FALLBACK_GCS_STATUS_URL = "https://storage.googleapis.com/cad-extract-public-status-mlproject-501205/status.json";
@@ -2441,34 +2440,28 @@
       try {
         let status;
         let source;
-        // Prefer publisher-owned status-full.json when publicly readable, then
-        // status.json. If workers overwrite status.json with the thin fleet schema
-        // (no disks.*.counts), fall back to the GitHub mirror which carries the
-        // last full Disk-1/Disk-2/Combined counts.
+        // Prefer live AWS status.json when it has disks.*.counts for all tabs.
+        // Aggregator workers still race-overwrite with a thin schema; fall back to
+        // the GitHub mirror (updated by the publisher) then legacy GCS.
         const isRich = (doc) => !!(doc && doc.disks && doc.disks["Disk-1"] && doc.disks["Disk-1"].counts
           && doc.disks["Disk-2"] && doc.disks["Disk-2"].counts
           && doc.disks.combined && doc.disks.combined.counts);
 
         try {
-          status = await fetchStatus(LIVE_STATUS_FULL_URL);
-          source = "aws-s3-full";
-          if (!isRich(status)) throw new Error("status-full missing disks.*.counts");
-        } catch (fullError) {
+          status = await fetchStatus(LIVE_STATUS_URL);
+          source = "aws-s3";
+          if (!isRich(status)) throw new Error("live status.json thin/missing per-disk counts");
+        } catch (primaryError) {
           try {
-            status = await fetchStatus(LIVE_STATUS_URL);
-            source = "aws-s3";
-            if (!isRich(status)) throw new Error("live status.json thin/missing per-disk counts");
-          } catch (primaryError) {
+            status = await fetchStatus(FALLBACK_GITHUB_STATUS_URL);
+            source = "github-fallback";
+            if (!isRich(status)) throw new Error("github status missing per-disk counts");
+          } catch (githubError) {
             try {
-              status = await fetchStatus(FALLBACK_GITHUB_STATUS_URL);
-              source = "github-fallback";
-            } catch (githubError) {
-              try {
-                status = await fetchStatus(FALLBACK_GCS_STATUS_URL);
-                source = "gcs-fallback";
-              } catch (gcsError) {
-                throw new Error(`AWS/GitHub/GCS status failed (${fullError.message}; ${primaryError.message}; ${githubError.message}; ${gcsError.message})`);
-              }
+              status = await fetchStatus(FALLBACK_GCS_STATUS_URL);
+              source = "gcs-fallback";
+            } catch (gcsError) {
+              throw new Error(`AWS/GitHub/GCS status failed (${primaryError.message}; ${githubError.message}; ${gcsError.message})`);
             }
           }
         }
