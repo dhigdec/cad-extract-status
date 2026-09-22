@@ -1018,6 +1018,7 @@
       return isObject(byExt) && Object.keys(byExt).length > 0;
     }
 
+<<<<<<< Updated upstream
     // 1956-archive reconciliation floors — never overlay these onto full-population raw.
     const FORBIDDEN_SHA_FLOORS = new Set([125514, 46274, 216, 112347, 13167, 15067, 31207, 774, 542, 8258, 9470, 87164, 20622, 16]);
     const FORBIDDEN_WEAK_FLOORS = new Set([133112, 46703, 21592, 18417, 771, 18249, 7674, 9317, 89053, 27068]);
@@ -1029,16 +1030,37 @@
     function isComputingIdentity(node) {
       const st = identityStatusOf(node);
       return st.includes("computing_full_population_union") || st.includes("global_distinct");
+=======
+    function identityStatusText(node) {
+      if (!isObject(node)) return "";
+      return String(node.sha256_status || node.weak_status || "");
+    }
+
+    function countsNodeComputingUnion(node) {
+      const st = identityStatusText(node).toLowerCase();
+      return st.includes("computing_full_population_union")
+        || st.includes("computing")
+        || st.includes("pending_full_population");
+>>>>>>> Stashed changes
     }
 
     function countsNodeIsRich(node) {
       if (!isObject(node)) return false;
+<<<<<<< Updated upstream
       // Intentional null SHA/weak while full-population union runs is valid identity.
       if (isComputingIdentity(node)) return true;
       if (present(node.weak) || present(node.sha256)) return true;
       if (isObject(node.by_ext)) {
         for (const child of Object.values(node.by_ext)) {
           if (isObject(child) && (isComputingIdentity(child) || present(child.weak) || present(child.sha256))) return true;
+=======
+      // Intentional null SHA/weak while full-population union runs counts as rich.
+      if (countsNodeComputingUnion(node)) return true;
+      if (present(node.weak) || present(node.sha256)) return true;
+      if (isObject(node.by_ext)) {
+        for (const child of Object.values(node.by_ext)) {
+          if (isObject(child) && (countsNodeComputingUnion(child) || present(child.weak) || present(child.sha256))) return true;
+>>>>>>> Stashed changes
         }
       }
       return false;
@@ -1049,6 +1071,8 @@
         || (((status || {}).counts || {}).combined)
         || (status || {}).cloud_counts
         || {};
+      const dedup = (((status || {}).dedup || {}).sha256 || {}).status || "";
+      if (String(dedup).toLowerCase().includes("computing_full_population_union")) return true;
       return countsNodeIsRich(counts["2d"]) || countsNodeIsRich(counts.pdf);
     }
 
@@ -1104,7 +1128,11 @@
     }
 
     function mergeIdentityCounts(live, sticky) {
+      // Never overlay GitHub/GCS mirror SHA/weak onto a live doc that is intentionally
+      // computing full-population union (null + computing_* status). Those mirror
+      // numbers are stale 1956-archive distincts and must not appear beside live raws.
       if (!isObject(live) || !isObject(sticky)) return live;
+      if (statusHasIdentityMetrics(live)) return live;
       const next = live;
       if (isObject(sticky.disks)) {
         if (!isObject(next.disks)) next.disks = {};
@@ -1647,6 +1675,19 @@
         : formatter(value);
     }
 
+    function distinctCell(node, variant) {
+      // Render SHA/weak consistently: numeric when present, else "computing" when the
+      // full-population union is in progress (never fall back to stale mirror digits).
+      if (!isObject(node)) return missing(null, formatCount, "computing");
+      const n = number(node[variant]);
+      if (n !== null) return formatCount(n);
+      const st = identityStatusText(node).toLowerCase();
+      if (st.includes("computing") || st.includes("pending") || node[variant] === null || node[variant] === undefined) {
+        return `<span class="missing">computing</span>`;
+      }
+      return missing(null, formatCount, "computing");
+    }
+
     function basename(value) {
       if (!present(value)) return null;
       const clean = String(value).split(/[?#]/)[0].replace(/\\/g, "/");
@@ -1970,15 +2011,15 @@
     function assetRow(bundle, category, label, className = "") {
       return `<tr class="${className}"><td>${label}</td>
         <td>${missing(countValue(bundle, category, "raw"), formatCount)}</td>
-        <td>${missing(countValue(bundle, category, "weak"), formatCount)}</td>
-        <td>${missing(countValue(bundle, category, "sha256"), formatCount)}</td></tr>`;
+        <td>${missing(countValue(bundle, category, "weak"), formatCount, "computing")}</td>
+        <td>${missing(countValue(bundle, category, "sha256"), formatCount, "computing")}</td></tr>`;
     }
 
     function extensionRow(bundle, family, extension) {
       return `<tr class="sub-row"><td>${extension}</td>
         <td>${missing(extensionValue(bundle, family, extension, "raw"), formatCount)}</td>
-        <td>${missing(extensionValue(bundle, family, extension, "weak"), formatCount)}</td>
-        <td>${missing(extensionValue(bundle, family, extension, "sha256"), formatCount)}</td></tr>`;
+        <td>${missing(extensionValue(bundle, family, extension, "weak"), formatCount, "computing")}</td>
+        <td>${missing(extensionValue(bundle, family, extension, "sha256"), formatCount, "computing")}</td></tr>`;
     }
 
     function assetTable(bundle) {
@@ -2037,7 +2078,7 @@
       return `<div class="binary-card">
         <div class="binary-top"><strong>${label}</strong><span>${formatPercent(rawPercent)}</span></div>
         <div class="meter" aria-hidden="true"><span style="width:${number(rawPercent) === null ? 0 : rawPercent.toFixed(2)}%"></span></div>
-        <div class="binary-meta"><span>Raw ${missing(raw, formatCount)}</span><span>SHA ${missing(sha, formatCount)} · ${formatPercent(shaPercent)}</span></div>
+        <div class="binary-meta"><span>Raw ${missing(raw, formatCount)}</span><span>SHA ${missing(sha, formatCount, "computing")} · ${sha == null ? "computing" : formatPercent(shaPercent)}</span></div>
       </div>`;
     }
 
@@ -2048,7 +2089,7 @@
       const otherSha = countValue(bundle, "other_pdf", "sha256");
       const classRows = PDF_CLASSES.map(([key, label]) => `<tr><td>${label}</td>
         <td>${missing(classificationValue(bundle, key, "raw"), formatCount)}</td>
-        <td>${missing(classificationValue(bundle, key, "sha256"), formatCount)}</td></tr>`).join("");
+        <td>${missing(classificationValue(bundle, key, "sha256"), formatCount, "computing")}</td></tr>`).join("");
 
       return `<section class="data-section">
         <div class="data-heading"><div><h3>PDF classification</h3></div>
@@ -2578,9 +2619,15 @@
       try {
         let status;
         let source;
+<<<<<<< Updated upstream
         // Prefer live AWS status.json when it carries numeric weak/SHA identity.
         // Thin racers may still publish disks.*.counts with sha256:null; overlay
         // identity fields from the GitHub mirror, then fall back entirely.
+=======
+        // Prefer live AWS status.json. Do NOT overlay GitHub mirror SHA/weak onto a
+        // structurally rich live document — that mirror is stale and caused mixed
+        // "pending" vs old 1956 SHA digits. Only fall back to GitHub/GCS when live fails.
+>>>>>>> Stashed changes
         const isStructurallyRich = (doc) => !!(doc && doc.disks && doc.disks["Disk-1"] && doc.disks["Disk-1"].counts
           && doc.disks["Disk-2"] && doc.disks["Disk-2"].counts
           && doc.disks.combined && doc.disks.combined.counts);
@@ -2589,17 +2636,27 @@
         try {
           status = await fetchStatus(LIVE_STATUS_URL);
           source = "aws-s3";
-          if (!isStructurallyRich(status) || !statusHasIdentityMetrics(status)) {
+          if (!isStructurallyRich(status)) {
             try {
+<<<<<<< Updated upstream
               sticky = await fetchStatus(FALLBACK_GITHUB_STATUS_URL);
               if (statusHasIdentityMetrics(sticky)) {
                 status = mergeIdentityCounts(status, sticky);
                 source = "aws-s3+github-identity";
               } else if (!isStructurallyRich(status)) {
+=======
+              const sticky = await fetchStatus(FALLBACK_GITHUB_STATUS_URL);
+              if (isStructurallyRich(sticky)) {
+                // Structural fallback only — still refuse to merge numeric identity from mirror
+                // when live already said computing_full_population_union on dedup.
+                status = sticky;
+                source = "github-fallback";
+              } else {
+>>>>>>> Stashed changes
                 throw new Error("live status.json thin/missing per-disk counts");
               }
             } catch (stickyError) {
-              if (!isStructurallyRich(status)) throw stickyError;
+              throw stickyError;
             }
           }
         } catch (primaryError) {
