@@ -1,16 +1,16 @@
 {
   "source_of_truth": "cloud-ec2",
   "health": "ok",
-  "updated": "2026-09-22T02:12:02.415885Z",
-  "last_update_iso": "2026-09-22T02:12:02.415885Z",
-  "age_seconds": 5.5,
+  "updated": "2026-09-22T02:12:26.216673Z",
+  "last_update_iso": "2026-09-22T02:12:26.216673Z",
+  "age_seconds": 7.3,
   "worker_alive": true,
   "stalled": false,
   "current": [
     {
       "shard": 0,
       "state": "processing",
-      "archive": "BMT.7z"
+      "archive": "3456-BOP STEEL_SEQ#26_01062017.zip"
     },
     {
       "shard": 1,
@@ -28,7 +28,7 @@
       "archive": "22. Michelin 232 Warehouse.7z"
     }
   ],
-  "current_archive": "BMT.7z",
+  "current_archive": "3456-BOP STEEL_SEQ#26_01062017.zip",
   "last_finished": {
     "disk": "Disk-2",
     "name": "15-144_GMS_Seq# 1 Partial Dwgs  for FAB_T#010.zip",
@@ -1052,7 +1052,7 @@
   "cloud": {
     "schema": 1,
     "state": "running",
-    "heartbeat_at": "2026-09-22T02:12:02.415885Z",
+    "heartbeat_at": "2026-09-22T02:12:26.216673Z",
     "run_id": "run-20260922T011906Z",
     "instance_id": "i-08d525e127b68d899",
     "instance_type": "c7i.4xlarge",
@@ -1061,9 +1061,9 @@
     "credential_stop_at": "2027-09-22T02:06:18.505333Z",
     "progress": {
       "manifest_total": 2647,
-      "completed_ok": 416,
+      "completed_ok": 417,
       "failed": 0,
-      "remaining": 2231,
+      "remaining": 2230,
       "retries": 0
     },
     "counts": {
@@ -1071,29 +1071,29 @@
         "pdf": 17553,
         "cad_pdf": 9808,
         "other_pdf": 7745,
-        "2d": 44859,
-        "3d": 332,
+        "2d": 46661,
+        "3d": 334,
         "nc1": 6943
       },
       "sha256": {
         "pdf": 12723,
         "cad_pdf": 6765,
         "other_pdf": 6093,
-        "2d": 34667,
-        "3d": 274,
+        "2d": 36435,
+        "3d": 276,
         "nc1": 3743
       },
-      "block_sha256": 55832,
+      "block_sha256": 57608,
       "extensions": {
         ".db1": {
           "category": "3d",
-          "raw": 214,
-          "sha256": 186
+          "raw": 216,
+          "sha256": 188
         },
         ".dg": {
           "category": "2d",
-          "raw": 31244,
-          "sha256": 24916
+          "raw": 32994,
+          "sha256": 26632
         },
         ".dpm": {
           "category": "2d",
@@ -1102,13 +1102,13 @@
         },
         ".dwg": {
           "category": "2d",
-          "raw": 2759,
-          "sha256": 2183
+          "raw": 2810,
+          "sha256": 2234
         },
         ".dxf": {
           "category": "2d",
-          "raw": 3243,
-          "sha256": 2356
+          "raw": 3244,
+          "sha256": 2357
         },
         ".ifc": {
           "category": "3d",
@@ -1133,30 +1133,30 @@
       }
     },
     "nested_depth": {
-      "measured_finished_archives": 416,
-      "unopened_archives_not_measured": 2231,
+      "measured_finished_archives": 417,
+      "unopened_archives_not_measured": 2230,
       "archive_nodes_by_depth": {
-        "0": 416,
+        "0": 417,
         "1": 370,
         "2": 5
       },
       "finished_archive_max_depth_distribution": {
-        "0": 307,
+        "0": 308,
         "1": 106,
         "2": 3
       }
     },
     "storage": {
-      "stored_bytes": 11864001081,
-      "stored_gb": 11.864001,
-      "stored_files": 69687,
-      "estimated_s3_monthly_usd": 0.2966
+      "stored_bytes": 11957056137,
+      "stored_gb": 11.957056,
+      "stored_files": 71491,
+      "estimated_s3_monthly_usd": 0.2989
     },
     "compute": {
       "hourly_ec2_estimate_usd": "0.93",
-      "uptime_seconds": 85.2,
-      "uptime_hours": 0.0237,
-      "accrued_estimate_usd": 0.022,
+      "uptime_seconds": 109.0,
+      "uptime_hours": 0.0303,
+      "accrued_estimate_usd": 0.0281,
       "estimate_label": "On-Demand estimate; excludes taxes and data transfer"
     },
     "ebs": {
@@ -1167,7 +1167,7 @@
       "rate_usd_per_gb_month": 0.0912,
       "estimated_monthly_usd": 91.2,
       "hourly_estimate_usd": 0.124932,
-      "accrued_estimate_usd": 0.003
+      "accrued_estimate_usd": 0.0038
     },
     "s3_prefix": {
       "state": "ok",
@@ -1180,10 +1180,10 @@
       "cost_rate_usd_per_gb_month": 0.025
     },
     "costs": {
-      "compute_accrued_usd": 0.022,
-      "ebs_accrued_usd": 0.003,
+      "compute_accrued_usd": 0.0281,
+      "ebs_accrued_usd": 0.0038,
       "s3_estimated_monthly_usd": 0.3123,
-      "combined_accrued_usd": 0.025,
+      "combined_accrued_usd": 0.0319,
       "combined_hourly_usd": 1.0549,
       "label": "ESTIMATE ONLY - computed from On-Demand list prices (EC2 + gp3 EBS + S3 Standard at $0.025/GB-month). This is not the AWS invoice."
     },
@@ -1191,11 +1191,11 @@
       {
         "shard": 0,
         "state": "processing",
-        "current_archive": "BMT.7z",
-        "current_archive_id": "b279f86d87895985",
-        "archive_index": 87,
+        "current_archive": "3456-BOP STEEL_SEQ#26_01062017.zip",
+        "current_archive_id": "4aeef72c9acdcd18",
+        "archive_index": 88,
         "shard_total": 651,
-        "updated_at": "2026-09-22T02:11:19.831820Z",
+        "updated_at": "2026-09-22T02:12:23.594166Z",
         "pid": 27858,
         "returncode": null
       },
@@ -1238,7 +1238,7 @@
       "state": "listing",
       "started_at": "2026-09-22T02:11:18.694637Z"
     },
-    "last_checkpoint_at": "2026-09-22T02:11:49.995757Z",
+    "last_checkpoint_at": "2026-09-22T02:12:23.540279Z",
     "github_publisher": {
       "repo": "dhigdec/cad-extract-status",
       "last_push_success_at": null,
@@ -1249,12 +1249,12 @@
   "cloud_workers_alive": 4,
   "archives_combined": {
     "total": 3620,
-    "done": 1402,
-    "remaining": 2218,
+    "done": 1403,
+    "remaining": 2217,
     "failed": 0,
     "retries": 0,
     "done_local_before_cutover": 986,
-    "done_on_ec2": 416,
+    "done_on_ec2": 417,
     "ec2_manifest_total": 2647,
     "ec2_skipped_already_done_locally": 13
   },
@@ -1263,29 +1263,29 @@
       "pdf": 17553,
       "cad_pdf": 9808,
       "other_pdf": 7745,
-      "2d": 44859,
-      "3d": 332,
+      "2d": 46661,
+      "3d": 334,
       "nc1": 6943
     },
     "sha256": {
       "pdf": 12723,
       "cad_pdf": 6765,
       "other_pdf": 6093,
-      "2d": 34667,
-      "3d": 274,
+      "2d": 36435,
+      "3d": 276,
       "nc1": 3743
     },
-    "block_sha256": 55832,
+    "block_sha256": 57608,
     "extensions": {
       ".db1": {
         "category": "3d",
-        "raw": 214,
-        "sha256": 186
+        "raw": 216,
+        "sha256": 188
       },
       ".dg": {
         "category": "2d",
-        "raw": 31244,
-        "sha256": 24916
+        "raw": 32994,
+        "sha256": 26632
       },
       ".dpm": {
         "category": "2d",
@@ -1294,13 +1294,13 @@
       },
       ".dwg": {
         "category": "2d",
-        "raw": 2759,
-        "sha256": 2183
+        "raw": 2810,
+        "sha256": 2234
       },
       ".dxf": {
         "category": "2d",
-        "raw": 3243,
-        "sha256": 2356
+        "raw": 3244,
+        "sha256": 2357
       },
       ".ifc": {
         "category": "3d",
@@ -1325,15 +1325,15 @@
     }
   },
   "cloud_depth": {
-    "measured_finished_archives": 416,
-    "unopened_archives_not_measured": 2231,
+    "measured_finished_archives": 417,
+    "unopened_archives_not_measured": 2230,
     "archive_nodes_by_depth": {
-      "0": 416,
+      "0": 417,
       "1": 370,
       "2": 5
     },
     "finished_archive_max_depth_distribution": {
-      "0": 307,
+      "0": 308,
       "1": 106,
       "2": 3
     }
