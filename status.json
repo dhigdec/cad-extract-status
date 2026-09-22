@@ -3,12 +3,12 @@
     "by_disk": {
       "Disk-1": {
         "archives_total": 1154,
-        "done": 416,
-        "done_after_reconciliation": 82,
+        "done": 417,
+        "done_after_reconciliation": 83,
         "done_before_gcp": 334,
         "done_in_reconciliation_baseline": 334,
-        "done_on_gcp": 82,
-        "remaining": 738
+        "done_on_gcp": 83,
+        "remaining": 737
       },
       "Disk-2": {
         "archives_total": 2466,
@@ -20,25 +20,25 @@
         "remaining": 781
       }
     },
-    "done": 2101,
+    "done": 2102,
     "done_local_before_cutover": 1956,
-    "done_on_gcp": 145,
+    "done_on_gcp": 146,
     "failed": 3,
-    "remaining": 1519,
+    "remaining": 1518,
     "retries": 0,
     "total": 3620
   },
   "aws_source": {
-    "bytes_transferred": 105576483288,
+    "bytes_transferred": 106167461264,
     "egress_rate_usd_per_gb": 0.09,
     "estimate_label": "One-time AWS source transfer estimate; not destination storage",
-    "gb_transferred": 105.576483,
-    "running_egress_estimate_usd": 9.5019
+    "gb_transferred": 106.167461,
+    "running_egress_estimate_usd": 9.5551
   },
   "cloud_counts": {
     "raw": {
-      "2d": 387869,
-      "3d": 3574,
+      "2d": 391410,
+      "3d": 3576,
       "cad_pdf": 56817,
       "nc1": 39695,
       "other_pdf": 45480,
@@ -48,7 +48,7 @@
   },
   "cloud_depth": {
     "archive_nodes_by_depth": {
-      "0": 145,
+      "0": 146,
       "1": 674,
       "10": 0,
       "11": 0,
@@ -69,7 +69,7 @@
     "depth_cap": 15,
     "depth_cap_hits": 0,
     "distribution": {
-      "0": 1754,
+      "0": 1755,
       "1": 323,
       "10": 0,
       "11": 0,
@@ -87,7 +87,7 @@
       "9": 0
     },
     "finished_archive_max_depth_distribution": {
-      "0": 1754,
+      "0": 1755,
       "1": 323,
       "10": 0,
       "11": 0,
@@ -105,31 +105,31 @@
       "9": 0
     },
     "max_measured_depth": 4,
-    "measured_finished_archives": 2101,
+    "measured_finished_archives": 2102,
     "unmeasured_finished_baseline": 0,
-    "unopened_archives_not_measured": 1519
+    "unopened_archives_not_measured": 1518
   },
   "cloud_workers_alive": 19,
   "compute": {
-    "accrued_estimate_usd": 11.3381,
-    "current_instance_accrued_estimate_usd": 10.4755,
+    "accrued_estimate_usd": 11.5628,
+    "current_instance_accrued_estimate_usd": 10.7002,
     "estimate_label": "Estimate only; aggregate across active VMs, not a Google Cloud invoice",
     "hourly_estimate_usd": 13.2,
     "instance_count": 3,
     "prior_pipeline_accrued_estimate_usd": 0.8626,
-    "uptime_hours": 2.5411,
-    "uptime_seconds": 9148.1
+    "uptime_hours": 2.5922,
+    "uptime_seconds": 9332.1
   },
   "costs": {
-    "combined_accrued_estimate_usd": 22.7603,
+    "combined_accrued_estimate_usd": 23.0762,
     "combined_hourly_compute_disk_usd": 15.4356,
     "instance_count": 3,
     "label": "Estimates only; compute and disk are summed per VM; AWS egress is counted once"
   },
   "counts": {
     "raw": {
-      "2d": 387869,
-      "3d": 3574,
+      "2d": 391410,
+      "3d": 3576,
       "cad_pdf": 56817,
       "nc1": 39695,
       "other_pdf": 45480,
@@ -180,12 +180,13 @@
     },
     {
       "alive": true,
-      "current_archive": "GODDARD SCHOOL.zip",
+      "archive_bytes": 300282225,
+      "current_archive": "MT21_041 (CS179 East Side Access).7z",
       "exitcode": null,
       "shard": 4,
-      "shard_remaining": 218,
-      "state": "claimed_elsewhere",
-      "updated_at": "2026-09-22T03:57:17.015889Z"
+      "source_bytes_downloaded": 300282225,
+      "state": "extracting",
+      "updated_at": "2026-09-22T03:57:28.114365Z"
     },
     {
       "alive": true,
@@ -279,13 +280,13 @@
     },
     {
       "alive": true,
-      "archive_bytes": 290695751,
-      "current_archive": "3456-PIPE RACK_04282017.zip",
+      "archive_bytes": 317716018,
+      "current_archive": "BG Hotel tower_Job_06042018.7z",
       "exitcode": null,
       "shard": 6,
-      "source_bytes_downloaded": 290695751,
+      "source_bytes_downloaded": 317716018,
       "state": "extracting",
-      "updated_at": "2026-09-22T03:50:28.856530Z"
+      "updated_at": "2026-09-22T03:58:12.921520Z"
     },
     {
       "alive": true,
@@ -449,14 +450,14 @@
   "disks": {
     "Disk-1": {
       "archives": {
-        "done": 416,
-        "done_after_reconciliation": 82,
+        "done": 417,
+        "done_after_reconciliation": 83,
         "done_before_gcp": 334,
         "done_in_reconciliation_baseline": 334,
-        "done_on_gcp": 82,
+        "done_on_gcp": 83,
         "failed": 0,
         "failed_unresolved": 0,
-        "remaining": 738,
+        "remaining": 737,
         "retried": 0,
         "skipped": 0,
         "total": 1154
@@ -470,11 +471,11 @@
         "stored_files_reported": 175510
       },
       "bytes": {
-        "extracted": 56891641410,
-        "extracted_bytes": 56891641410,
-        "source_bytes_transferred": 42367129383,
-        "source_compressed_done": 42367129383,
-        "source_compressed_remaining": 6079826080503,
+        "extracted": 57216985065,
+        "extracted_bytes": 57216985065,
+        "source_bytes_transferred": 42657825134,
+        "source_compressed_done": 42657825134,
+        "source_compressed_remaining": 6079535384752,
         "stored": 60085390971,
         "stored_bytes": 60085390971
       },
@@ -483,8 +484,8 @@
           "2d": {
             "by_ext": {
               ".dg": {
-                "sha256": 205565,
-                "weak": 207569
+                "sha256": 205690,
+                "weak": 207694
               },
               ".dpm": {
                 "sha256": 41232,
@@ -499,14 +500,14 @@
                 "weak": 8132
               }
             },
-            "sha256": 264193,
-            "weak": 284477
+            "sha256": 264318,
+            "weak": 284602
           },
           "3d": {
             "by_ext": {
               ".db1": {
-                "sha256": 824,
-                "weak": 814
+                "sha256": 826,
+                "weak": 816
               },
               ".glb": {
                 "sha256": 0,
@@ -541,11 +542,11 @@
                 "weak": 8
               }
             },
-            "sha256": 1123,
-            "weak": 1111
+            "sha256": 1125,
+            "weak": 1113
           },
           "block": {
-            "distinct_blocks": 323237
+            "distinct_blocks": 323560
           },
           "cad_pdf": {
             "sha256": 12820,
@@ -576,20 +577,20 @@
             "weak": 24794
           }
         },
-        "extracted_bytes": 56891641410,
-        "finished_archives": 416,
+        "extracted_bytes": 57216985065,
+        "finished_archives": 417,
         "retry_events": 0,
         "scope": "reconciliation baseline plus post-baseline GCP results",
-        "source_compressed_bytes": 42367129383,
-        "stored_files_reported": 430420
+        "source_compressed_bytes": 42657825134,
+        "stored_files_reported": 433963
       },
       "counts": {
         "2d": {
           "by_ext": {
             ".dg": {
-              "raw": 265363,
-              "sha256": 205565,
-              "weak": 207569
+              "raw": 268904,
+              "sha256": 205690,
+              "weak": 207694
             },
             ".dpm": {
               "raw": 68802,
@@ -607,18 +608,18 @@
               "weak": 8132
             }
           },
-          "raw": 369276,
-          "sha256": 264193,
+          "raw": 372817,
+          "sha256": 264318,
           "sha256_status": "exact",
-          "weak": 284477,
+          "weak": 284602,
           "weak_status": "exact"
         },
         "3d": {
           "by_ext": {
             ".db1": {
-              "raw": 966,
-              "sha256": 824,
-              "weak": 814
+              "raw": 968,
+              "sha256": 826,
+              "weak": 816
             },
             ".glb": {
               "raw": 0,
@@ -661,14 +662,14 @@
               "weak": 8
             }
           },
-          "raw": 1450,
-          "sha256": 1123,
+          "raw": 1452,
+          "sha256": 1125,
           "sha256_status": "exact",
-          "weak": 1111,
+          "weak": 1113,
           "weak_status": "exact"
         },
         "block": {
-          "distinct_blocks": 323237,
+          "distinct_blocks": 323560,
           "distinct_hashes_status": "exact",
           "duplicate_bytes": null,
           "duplicate_bytes_status": "pending"
@@ -786,8 +787,8 @@
       },
       "dedup_coverage": {
         "block_distinct_hashes": {
-          "completed_archives": 416,
-          "covered_archives": 416,
+          "completed_archives": 417,
+          "covered_archives": 417,
           "status": "exact"
         },
         "block_duplicate_bytes": {
@@ -795,13 +796,13 @@
           "status": "pending"
         },
         "sha256": {
-          "completed_archives": 416,
-          "covered_archives": 416,
+          "completed_archives": 417,
+          "covered_archives": 417,
           "status": "exact"
         },
         "weak_name_size": {
-          "completed_archives": 416,
-          "covered_archives": 416,
+          "completed_archives": 417,
+          "covered_archives": 417,
           "reason": "actual weak-key identities were unioned across all selected results",
           "status": "exact"
         },
@@ -812,7 +813,7 @@
       },
       "depth": {
         "archive_nodes_by_depth": {
-          "0": 82,
+          "0": 83,
           "1": 476,
           "10": 0,
           "11": 0,
@@ -833,7 +834,7 @@
         "depth_cap": 15,
         "depth_cap_hits": 0,
         "distribution": {
-          "0": 269,
+          "0": 270,
           "1": 138,
           "10": 0,
           "11": 0,
@@ -851,7 +852,7 @@
           "9": 0
         },
         "finished_archive_max_depth_distribution": {
-          "0": 269,
+          "0": 270,
           "1": 138,
           "10": 0,
           "11": 0,
@@ -869,9 +870,9 @@
           "9": 0
         },
         "max_measured_depth": 4,
-        "measured_finished_archives": 416,
+        "measured_finished_archives": 417,
         "unmeasured_finished_baseline": 0,
-        "unopened_archives_not_measured": 738
+        "unopened_archives_not_measured": 737
       },
       "provenance": {
         "archive_identity": "SHA-256 of the exact original S3 key joined through the canonical manifest; basename matching is forbidden",
@@ -1331,14 +1332,14 @@
     },
     "combined": {
       "archives": {
-        "done": 2101,
-        "done_after_reconciliation": 145,
+        "done": 2102,
+        "done_after_reconciliation": 146,
         "done_before_gcp": 1956,
         "done_in_reconciliation_baseline": 1956,
-        "done_on_gcp": 145,
+        "done_on_gcp": 146,
         "failed": 8,
         "failed_unresolved": 0,
-        "remaining": 1519,
+        "remaining": 1518,
         "retried": 0,
         "skipped": 0,
         "total": 3620
@@ -1352,11 +1353,11 @@
         "stored_files_reported": 239641
       },
       "bytes": {
-        "extracted": 88691522258,
-        "extracted_bytes": 88691522258,
-        "source_bytes_transferred": 105190832260,
-        "source_compressed_done": 105190832260,
-        "source_compressed_remaining": 9268945074131,
+        "extracted": 89016865913,
+        "extracted_bytes": 89016865913,
+        "source_bytes_transferred": 105481528011,
+        "source_compressed_done": 105481528011,
+        "source_compressed_remaining": 9268654378380,
         "stored": 89756343565,
         "stored_bytes": 89756343565
       },
@@ -1365,8 +1366,8 @@
           "2d": {
             "by_ext": {
               ".dg": {
-                "sha256": 211369,
-                "weak": 213377
+                "sha256": 211494,
+                "weak": 213502
               },
               ".dpm": {
                 "sha256": 41232,
@@ -1381,14 +1382,14 @@
                 "weak": 12436
               }
             },
-            "sha256": 278152,
-            "weak": 297964
+            "sha256": 278277,
+            "weak": 298089
           },
           "3d": {
             "by_ext": {
               ".db1": {
-                "sha256": 858,
-                "weak": 846
+                "sha256": 860,
+                "weak": 848
               },
               ".glb": {
                 "sha256": 0,
@@ -1423,11 +1424,11 @@
                 "weak": 190
               }
             },
-            "sha256": 2887,
-            "weak": 2879
+            "sha256": 2889,
+            "weak": 2881
           },
           "block": {
-            "distinct_blocks": 405413
+            "distinct_blocks": 405736
           },
           "cad_pdf": {
             "sha256": 36882,
@@ -1458,20 +1459,20 @@
             "weak": 66187
           }
         },
-        "extracted_bytes": 88691522258,
-        "finished_archives": 2101,
+        "extracted_bytes": 89016865913,
+        "finished_archives": 2102,
         "retry_events": 0,
         "scope": "reconciliation baseline plus post-baseline GCP results",
-        "source_compressed_bytes": 105190832260,
-        "stored_files_reported": 518967
+        "source_compressed_bytes": 105481528011,
+        "stored_files_reported": 522510
       },
       "counts": {
         "2d": {
           "by_ext": {
             ".dg": {
-              "raw": 272998,
-              "sha256": 211369,
-              "weak": 213377
+              "raw": 276539,
+              "sha256": 211494,
+              "weak": 213502
             },
             ".dpm": {
               "raw": 68802,
@@ -1489,18 +1490,18 @@
               "weak": 12436
             }
           },
-          "raw": 387869,
-          "sha256": 278152,
+          "raw": 391410,
+          "sha256": 278277,
           "sha256_status": "exact",
-          "weak": 297964,
+          "weak": 298089,
           "weak_status": "exact"
         },
         "3d": {
           "by_ext": {
             ".db1": {
-              "raw": 1000,
-              "sha256": 858,
-              "weak": 846
+              "raw": 1002,
+              "sha256": 860,
+              "weak": 848
             },
             ".glb": {
               "raw": 0,
@@ -1543,14 +1544,14 @@
               "weak": 190
             }
           },
-          "raw": 3574,
-          "sha256": 2887,
+          "raw": 3576,
+          "sha256": 2889,
           "sha256_status": "exact",
-          "weak": 2879,
+          "weak": 2881,
           "weak_status": "exact"
         },
         "block": {
-          "distinct_blocks": 405413,
+          "distinct_blocks": 405736,
           "distinct_hashes_status": "exact",
           "duplicate_bytes": null,
           "duplicate_bytes_status": "pending"
@@ -1668,8 +1669,8 @@
       },
       "dedup_coverage": {
         "block_distinct_hashes": {
-          "completed_archives": 2101,
-          "covered_archives": 2101,
+          "completed_archives": 2102,
+          "covered_archives": 2102,
           "status": "exact"
         },
         "block_duplicate_bytes": {
@@ -1677,13 +1678,13 @@
           "status": "pending"
         },
         "sha256": {
-          "completed_archives": 2101,
-          "covered_archives": 2101,
+          "completed_archives": 2102,
+          "covered_archives": 2102,
           "status": "exact"
         },
         "weak_name_size": {
-          "completed_archives": 2101,
-          "covered_archives": 2101,
+          "completed_archives": 2102,
+          "covered_archives": 2102,
           "reason": "actual weak-key identities were unioned across all selected results",
           "status": "exact"
         },
@@ -1694,7 +1695,7 @@
       },
       "depth": {
         "archive_nodes_by_depth": {
-          "0": 145,
+          "0": 146,
           "1": 674,
           "10": 0,
           "11": 0,
@@ -1715,7 +1716,7 @@
         "depth_cap": 15,
         "depth_cap_hits": 0,
         "distribution": {
-          "0": 1754,
+          "0": 1755,
           "1": 323,
           "10": 0,
           "11": 0,
@@ -1733,7 +1734,7 @@
           "9": 0
         },
         "finished_archive_max_depth_distribution": {
-          "0": 1754,
+          "0": 1755,
           "1": 323,
           "10": 0,
           "11": 0,
@@ -1751,9 +1752,9 @@
           "9": 0
         },
         "max_measured_depth": 4,
-        "measured_finished_archives": 2101,
+        "measured_finished_archives": 2102,
         "unmeasured_finished_baseline": 0,
-        "unopened_archives_not_measured": 1519
+        "unopened_archives_not_measured": 1518
       },
       "provenance": {
         "archive_identity": "union of canonical SHA-256 original-key identities across the disjoint disk manifests",
@@ -1805,12 +1806,12 @@
     "stored_gb": 90.100009
   },
   "health": "alive",
-  "last_finished_at": "2026-09-22T03:57:16.185691Z",
-  "last_result": "_state/results/96f14b0597d923b781570d6b2ff86fea0f68bc45ed97ad301b17ffa74cfae954.json",
-  "last_update_iso": "2026-09-22T03:57:26.245587Z",
+  "last_finished_at": "2026-09-22T03:58:00.930579Z",
+  "last_result": "_state/results/a313548797fa8af3fb12efc681779f44d9f1fc7f9c8ce6c8e73ce98280bc5cae.json",
+  "last_update_iso": "2026-09-22T03:58:30.062928Z",
   "nested_depth": {
     "archive_nodes_by_depth": {
-      "0": 145,
+      "0": 146,
       "1": 674,
       "10": 0,
       "11": 0,
@@ -1831,7 +1832,7 @@
     "depth_cap": 15,
     "depth_cap_hits": 0,
     "distribution": {
-      "0": 1754,
+      "0": 1755,
       "1": 323,
       "10": 0,
       "11": 0,
@@ -1849,7 +1850,7 @@
       "9": 0
     },
     "finished_archive_max_depth_distribution": {
-      "0": 1754,
+      "0": 1755,
       "1": 323,
       "10": 0,
       "11": 0,
@@ -1867,21 +1868,21 @@
       "9": 0
     },
     "max_measured_depth": 4,
-    "measured_finished_archives": 2101,
+    "measured_finished_archives": 2102,
     "unmeasured_finished_baseline": 0,
-    "unopened_archives_not_measured": 1519
+    "unopened_archives_not_measured": 1518
   },
   "per_disk": {
     "Disk-1": {
       "archives": {
-        "done": 416,
-        "done_after_reconciliation": 82,
+        "done": 417,
+        "done_after_reconciliation": 83,
         "done_before_gcp": 334,
         "done_in_reconciliation_baseline": 334,
-        "done_on_gcp": 82,
+        "done_on_gcp": 83,
         "failed": 0,
         "failed_unresolved": 0,
-        "remaining": 738,
+        "remaining": 737,
         "retried": 0,
         "skipped": 0,
         "total": 1154
@@ -1895,11 +1896,11 @@
         "stored_files_reported": 175510
       },
       "bytes": {
-        "extracted": 56891641410,
-        "extracted_bytes": 56891641410,
-        "source_bytes_transferred": 42367129383,
-        "source_compressed_done": 42367129383,
-        "source_compressed_remaining": 6079826080503,
+        "extracted": 57216985065,
+        "extracted_bytes": 57216985065,
+        "source_bytes_transferred": 42657825134,
+        "source_compressed_done": 42657825134,
+        "source_compressed_remaining": 6079535384752,
         "stored": 60085390971,
         "stored_bytes": 60085390971
       },
@@ -1908,8 +1909,8 @@
           "2d": {
             "by_ext": {
               ".dg": {
-                "sha256": 205565,
-                "weak": 207569
+                "sha256": 205690,
+                "weak": 207694
               },
               ".dpm": {
                 "sha256": 41232,
@@ -1924,14 +1925,14 @@
                 "weak": 8132
               }
             },
-            "sha256": 264193,
-            "weak": 284477
+            "sha256": 264318,
+            "weak": 284602
           },
           "3d": {
             "by_ext": {
               ".db1": {
-                "sha256": 824,
-                "weak": 814
+                "sha256": 826,
+                "weak": 816
               },
               ".glb": {
                 "sha256": 0,
@@ -1966,11 +1967,11 @@
                 "weak": 8
               }
             },
-            "sha256": 1123,
-            "weak": 1111
+            "sha256": 1125,
+            "weak": 1113
           },
           "block": {
-            "distinct_blocks": 323237
+            "distinct_blocks": 323560
           },
           "cad_pdf": {
             "sha256": 12820,
@@ -2001,20 +2002,20 @@
             "weak": 24794
           }
         },
-        "extracted_bytes": 56891641410,
-        "finished_archives": 416,
+        "extracted_bytes": 57216985065,
+        "finished_archives": 417,
         "retry_events": 0,
         "scope": "reconciliation baseline plus post-baseline GCP results",
-        "source_compressed_bytes": 42367129383,
-        "stored_files_reported": 430420
+        "source_compressed_bytes": 42657825134,
+        "stored_files_reported": 433963
       },
       "counts": {
         "2d": {
           "by_ext": {
             ".dg": {
-              "raw": 265363,
-              "sha256": 205565,
-              "weak": 207569
+              "raw": 268904,
+              "sha256": 205690,
+              "weak": 207694
             },
             ".dpm": {
               "raw": 68802,
@@ -2032,18 +2033,18 @@
               "weak": 8132
             }
           },
-          "raw": 369276,
-          "sha256": 264193,
+          "raw": 372817,
+          "sha256": 264318,
           "sha256_status": "exact",
-          "weak": 284477,
+          "weak": 284602,
           "weak_status": "exact"
         },
         "3d": {
           "by_ext": {
             ".db1": {
-              "raw": 966,
-              "sha256": 824,
-              "weak": 814
+              "raw": 968,
+              "sha256": 826,
+              "weak": 816
             },
             ".glb": {
               "raw": 0,
@@ -2086,14 +2087,14 @@
               "weak": 8
             }
           },
-          "raw": 1450,
-          "sha256": 1123,
+          "raw": 1452,
+          "sha256": 1125,
           "sha256_status": "exact",
-          "weak": 1111,
+          "weak": 1113,
           "weak_status": "exact"
         },
         "block": {
-          "distinct_blocks": 323237,
+          "distinct_blocks": 323560,
           "distinct_hashes_status": "exact",
           "duplicate_bytes": null,
           "duplicate_bytes_status": "pending"
@@ -2211,8 +2212,8 @@
       },
       "dedup_coverage": {
         "block_distinct_hashes": {
-          "completed_archives": 416,
-          "covered_archives": 416,
+          "completed_archives": 417,
+          "covered_archives": 417,
           "status": "exact"
         },
         "block_duplicate_bytes": {
@@ -2220,13 +2221,13 @@
           "status": "pending"
         },
         "sha256": {
-          "completed_archives": 416,
-          "covered_archives": 416,
+          "completed_archives": 417,
+          "covered_archives": 417,
           "status": "exact"
         },
         "weak_name_size": {
-          "completed_archives": 416,
-          "covered_archives": 416,
+          "completed_archives": 417,
+          "covered_archives": 417,
           "reason": "actual weak-key identities were unioned across all selected results",
           "status": "exact"
         },
@@ -2237,7 +2238,7 @@
       },
       "depth": {
         "archive_nodes_by_depth": {
-          "0": 82,
+          "0": 83,
           "1": 476,
           "10": 0,
           "11": 0,
@@ -2258,7 +2259,7 @@
         "depth_cap": 15,
         "depth_cap_hits": 0,
         "distribution": {
-          "0": 269,
+          "0": 270,
           "1": 138,
           "10": 0,
           "11": 0,
@@ -2276,7 +2277,7 @@
           "9": 0
         },
         "finished_archive_max_depth_distribution": {
-          "0": 269,
+          "0": 270,
           "1": 138,
           "10": 0,
           "11": 0,
@@ -2294,9 +2295,9 @@
           "9": 0
         },
         "max_measured_depth": 4,
-        "measured_finished_archives": 416,
+        "measured_finished_archives": 417,
         "unmeasured_finished_baseline": 0,
-        "unopened_archives_not_measured": 738
+        "unopened_archives_not_measured": 737
       },
       "provenance": {
         "archive_identity": "SHA-256 of the exact original S3 key joined through the canonical manifest; basename matching is forbidden",
@@ -2756,8 +2757,8 @@
     }
   },
   "persistent_disk": {
-    "accrued_estimate_usd": 1.9203,
-    "current_disk_accrued_estimate_usd": 1.7742,
+    "accrued_estimate_usd": 1.9583,
+    "current_disk_accrued_estimate_usd": 1.8122,
     "disk_count": 3,
     "estimate_label": "Estimate only; aggregate across active disks, not a Google Cloud invoice",
     "hourly_estimate_usd": 2.2356,
@@ -2771,12 +2772,12 @@
     "by_disk": {
       "Disk-1": {
         "archives_total": 1154,
-        "done": 416,
-        "done_after_reconciliation": 82,
+        "done": 417,
+        "done_after_reconciliation": 83,
         "done_before_gcp": 334,
         "done_in_reconciliation_baseline": 334,
-        "done_on_gcp": 82,
-        "remaining": 738
+        "done_on_gcp": 83,
+        "remaining": 737
       },
       "Disk-2": {
         "archives_total": 2466,
@@ -2788,13 +2789,13 @@
         "remaining": 781
       }
     },
-    "done": 2101,
-    "done_after_reconciliation": 145,
+    "done": 2102,
+    "done_after_reconciliation": 146,
     "done_before_gcp": 1956,
     "done_in_reconciliation_baseline": 1956,
-    "done_on_gcp": 145,
+    "done_on_gcp": 146,
     "failed_active_checkpoints": 3,
-    "remaining": 1519,
+    "remaining": 1518,
     "retries": 0
   },
   "proof_object": null,
@@ -2803,13 +2804,13 @@
   "source_of_truth": "gcp",
   "source_status_uri": "gs://cad-disk-extract-mlproject-501205/_state/status-reduced.json",
   "state": "running",
-  "status_last_updated": "2026-09-22T03:57:26.245587Z",
+  "status_last_updated": "2026-09-22T03:58:30.062928Z",
   "status_reducer": {
     "full_reconcile_interval_seconds": 1800,
     "incremental_source": "projects/mlproject-501205/subscriptions/cad-status-results-reducer-v1",
     "last_full_reconcile_at": "2026-09-22T03:42:51.002002Z",
     "primary_dedup_fields": "SHA-256 and distinct block hashes exact; weak name+size published with explicit coverage; duplicate block bytes pending",
-    "processed_result_records": 1114,
+    "processed_result_records": 1115,
     "reconciliation_baseline": "gs://cad-disk-extract-mlproject-501205/_state/reconciliation/baseline_per_disk.json",
     "reconciliation_baseline_id": "8eda8735157fa6d619c334a367a0a1c8d1e41d6d39142d124c1cc59914046a19",
     "rejected_result_records": 0,
@@ -2817,6 +2818,6 @@
     "revision": "disk-schema-v2+historical-reconciliation-v1",
     "schema": 1,
     "service": "cad-status-reducer.service",
-    "updated_at": "2026-09-22T03:57:26.191984Z"
+    "updated_at": "2026-09-22T03:58:29.987076Z"
   }
 }
