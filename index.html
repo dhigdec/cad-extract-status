@@ -193,8 +193,10 @@
       for (const typ of ["cad_pdf", "other_pdf"]) {
         html += `<tr><td>${typ}</td>`;
         for (const disk of ["Disk-1","Disk-2","combined"]) {
-          html += `<td>${fmt(n(c, [disk, "pdf_cad_binary", typ, "raw"]))}</td>`;
-          html += `<td>${fmt(n(c, [disk, "pdf_cad_binary", typ, "sha256"]))}</td>`;
+          const raw = n(c, [disk, "pdf_cad_binary", typ, "raw"]) || n(c, [disk, typ, "raw"]);
+          const sha = n(c, [disk, "pdf_cad_binary", typ, "sha256"]) || n(c, [disk, typ, "sha256"]);
+          html += `<td>${fmt(raw)}</td>`;
+          html += `<td>${fmt(sha)}</td>`;
         }
         html += `</tr>`;
       }
