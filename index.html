@@ -863,7 +863,6 @@
     "use strict";
 
     const LIVE_STATUS_URL = "https://cad-extract-status-874846752452.s3.ap-south-1.amazonaws.com/status.json";
-    const LIVE_STATUS_ENRICHED_URL = "https://cad-extract-status-874846752452.s3.ap-south-1.amazonaws.com/status-enriched.json";
     const FALLBACK_GCS_STATUS_URL = "https://storage.googleapis.com/cad-extract-public-status-mlproject-501205/status.json";
     const FALLBACK_STATUS_URL = FALLBACK_GCS_STATUS_URL;
     const POLL_MS = 20000;
@@ -2415,32 +2414,16 @@
         try {
           status = await fetchStatus(LIVE_STATUS_URL);
           source = "aws-s3";
-          if (!statusHasAssetExtensions(status)) {
-            try {
-              const enriched = await fetchStatus(LIVE_STATUS_ENRICHED_URL);
-              if (statusHasAssetExtensions(enriched)) {
-                status = enriched;
-                source = "aws-s3-enriched";
-              }
-            } catch (enrichedError) {
-              /* keep primary status.json payload */
-            }
-          }
         } catch (primaryError) {
           try {
-            status = await fetchStatus(LIVE_STATUS_ENRICHED_URL);
-            source = "aws-s3-enriched";
-          } catch (enrichedPrimaryError) {
+            status = await fetchStatus(FALLBACK_GCS_STATUS_URL);
+            source = "gcs-fallback";
+          } catch (gcsError) {
             try {
-              status = await fetchStatus(FALLBACK_GCS_STATUS_URL);
-              source = "gcs-fallback";
-            } catch (gcsError) {
-              try {
-                status = await fetchStatus("https://raw.githubusercontent.com/dhigdec/cad-extract-status/main/status.json");
-                source = "github-fallback";
-              } catch (fallbackError) {
-                throw new Error(`AWS/GCS/GitHub status failed (${primaryError.message}; ${gcsError.message}; ${fallbackError.message})`);
-              }
+              status = await fetchStatus("https://raw.githubusercontent.com/dhigdec/cad-extract-status/main/status.json");
+              source = "github-fallback";
+            } catch (fallbackError) {
+              throw new Error(`AWS/GCS/GitHub status failed (${primaryError.message}; ${gcsError.message}; ${fallbackError.message})`);
             }
           }
         }
