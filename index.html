@@ -20,7 +20,8 @@
     .current { font-family: ui-monospace, monospace; font-size: 0.85rem; word-break: break-all; }
     .err { color: #c40; }
     .cost {
-      position: fixed; top: 12px; right: 12px; width: 250px;
+      position: fixed; top: 12px; right: 12px; width: 330px;
+      max-height: calc(100vh - 48px); overflow-y: auto;
       background: #111; color: #f5f5f5; padding: 12px 14px;
       border-radius: 8px; font-size: 13px; line-height: 1.35;
       box-shadow: 0 2px 10px rgba(0,0,0,.25); z-index: 2;
@@ -28,7 +29,14 @@
     .cost h2 { color: #fff; margin: 0 0 6px; font-size: 13px; }
     .cost .big { font-size: 1.35rem; font-weight: 700; margin: 4px 0 8px; }
     .cost .muted { color: #bbb; font-size: 12px; }
-    body { padding-right: 280px; }
+    .cost .section { color: #8fd; font-weight: 700; margin-top: 9px; }
+    .cost .kv { display: flex; justify-content: space-between; gap: 12px; margin-top: 2px; }
+    .cost .kv b { max-width: 205px; text-align: right; overflow-wrap: anywhere; }
+    .cost .warning {
+      color: #ffd37a; border-top: 1px solid #555; margin-top: 8px; padding-top: 7px;
+    }
+    .cost .waiting { color: #ffd37a; }
+    body { padding-right: 360px; }
   </style>
 </head>
 <body>
@@ -52,7 +60,257 @@
       return typeof cur === "number" ? cur : 0;
     }
 
+    const APPROX_EC2_HOURLY_USD = {
+      "c7i.4xlarge": 0.93,
+      "c6i.4xlarge": 0.82,
+    };
+
     function fmt(x) { return Number(x || 0).toLocaleString(); }
+    function hasValue(x) { return x !== undefined && x !== null && x !== ""; }
+    function pick(...values) { return values.find(hasValue); }
+    function numberFrom(...values) {
+      const value = pick(...values);
+      if (!hasValue(value)) return null;
+      const parsed = Number(value);
+      return Number.isFinite(parsed) ? parsed : null;
+    }
+    function objectFrom(value) {
+      return value && typeof value === "object" && !Array.isArray(value) ? value : {};
+    }
+    function esc(value) {
+      return String(value == null ? "" : value).replace(
+        /[&<>"']/g,
+        ch => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch])
+      );
+    }
+    function money(value) {
+      const amount = Number(value || 0);
+      return amount !== 0 && Math.abs(amount) < 0.01
+        ? amount.toFixed(4)
+        : amount.toFixed(2);
+    }
+    function cloudStatusFrom(st) {
+      for (const candidate of [st.cloud_status, st.cloud, st.aws_status]) {
+        if (candidate && typeof candidate === "object") return candidate;
+      }
+      if (
+        hasValue(st.instance_id) || hasValue(st.instance_type) || st.compute ||
+        st.ec2 || hasValue(st.credential_expiry) || hasValue(st.heartbeat_at)
+      ) {
+        return st;
+      }
+      return {};
+    }
+
+    function renderCostCard(st, t, cloud) {
+      const hasCloud = Object.keys(cloud).length > 0;
+      const ec2 = objectFrom(cloud.ec2);
+      const instance = objectFrom(cloud.instance);
+      const compute = objectFrom(cloud.compute);
+      const storage = objectFrom(cloud.storage);
+      const costs = objectFrom(cloud.costs || cloud.cost || cloud.cloud_costs);
+
+      const instanceId = pick(
+        ec2.instance_id, ec2.id, instance.instance_id, instance.id, cloud.instance_id
+      );
+      const instanceType = pick(
+        ec2.instance_type, ec2.type, instance.instance_type, instance.type,
+        cloud.instance_type
+      );
+      const explicitEc2State = pick(
+        ec2.state, ec2.instance_state, instance.state, instance.instance_state,
+        cloud.ec2_state, cloud.instance_state
+      );
+      const reportedState = pick(cloud.state, cloud.status);
+      const stateLabel = explicitEc2State ||
+        (reportedState ? `${reportedState} (reported)` :
+          (hasCloud ? "not reported" : "not running · waiting for cloud status"));
+
+      const suppliedHourly = numberFrom(
+        compute.hourly_ec2_estimate_usd, compute.hourly_estimate_usd,
+        compute.estimated_hourly_usd, compute.estimated_usd_per_hour,
+        compute.hourly_cost_usd, compute.hourly_usd,
+        ec2.hourly_ec2_estimate_usd, ec2.hourly_estimate_usd,
+        cloud.hourly_ec2_estimate_usd, cloud.ec2_hourly_cost_usd
+      );
+      const mappedHourly = hasValue(instanceType)
+        ? APPROX_EC2_HOURLY_USD[String(instanceType).toLowerCase()]
+        : undefined;
+      const hourly = suppliedHourly ?? mappedHourly ?? 0;
+      const hourlySource = suppliedHourly != null
+        ? "status estimate"
+        : (mappedHourly != null ? "approx. type map" : "waiting for cloud status");
+
+      let uptimeHours = numberFrom(
+        compute.uptime_hours, ec2.uptime_hours, instance.uptime_hours,
+        cloud.uptime_hours
+      );
+      if (uptimeHours == null) {
+        const uptimeSeconds = numberFrom(
+          compute.uptime_seconds, ec2.uptime_seconds, instance.uptime_seconds,
+          cloud.uptime_seconds
+        );
+        if (uptimeSeconds != null) uptimeHours = uptimeSeconds / 3600;
+      }
+      if (uptimeHours == null && hasCloud) {
+        const startedAt = pick(
+          compute.started_at, ec2.started_at, ec2.launch_time,
+          instance.started_at, instance.launch_time, cloud.started_at
+        );
+        const startedMs = startedAt ? Date.parse(startedAt) : NaN;
+        if (Number.isFinite(startedMs)) {
+          uptimeHours = Math.max(0, (Date.now() - startedMs) / 3600000);
+        }
+      }
+      if (uptimeHours == null) uptimeHours = 0;
+
+      const suppliedComputeAccrued = numberFrom(
+        compute.accrued_estimate_usd, compute.accrued_compute_estimate_usd,
+        compute.accrued_usd, ec2.accrued_estimate_usd,
+        cloud.accrued_compute_estimate_usd, cloud.accrued_estimate_usd
+      );
+      const computeAccrued = suppliedComputeAccrued ?? hourly * uptimeHours;
+
+      const ebs = objectFrom(cloud.ebs || storage.ebs || ec2.ebs);
+      const ebsSizeGb = numberFrom(
+        ebs.size_gb, ebs.volume_size_gb, ebs.provisioned_gb,
+        storage.ebs_size_gb, ec2.ebs_size_gb, cloud.ebs_size_gb
+      );
+      const ebsRate = numberFrom(
+        ebs.rate_usd_per_gb_month, ebs.cost_rate_usd_per_gb_month,
+        storage.ebs_rate_usd_per_gb_month
+      );
+      let ebsMonthly = numberFrom(
+        ebs.estimated_monthly_usd, ebs.monthly_estimate_usd,
+        ebs.monthly_cost_usd, storage.ebs_monthly_cost_usd,
+        storage.ebs_estimated_monthly_usd, storage.ebs_monthly_estimate_usd,
+        cloud.ebs_monthly_cost_usd, cloud.ebs_estimated_monthly_usd,
+        cloud.ebs_monthly_estimate_usd
+      );
+      if (ebsMonthly == null && ebsSizeGb != null && ebsRate != null) {
+        ebsMonthly = ebsSizeGb * ebsRate;
+      }
+      let ebsAccrued = numberFrom(
+        ebs.accrued_estimate_usd, ebs.estimated_accrued_usd,
+        ebs.accrued_cost_usd, storage.ebs_accrued_cost_usd,
+        storage.ebs_accrued_estimate_usd, cloud.ebs_accrued_cost_usd,
+        cloud.ebs_accrued_estimate_usd
+      );
+      if (ebsAccrued == null && ebsMonthly != null) {
+        ebsAccrued = ebsMonthly * uptimeHours / 730;
+      }
+      const hasEbs = ebsSizeGb != null || ebsMonthly != null || ebsAccrued != null;
+
+      const localS3 = objectFrom(st.s3);
+      const totalsS3 = objectFrom(t.s3);
+      const cloudS3 = objectFrom(cloud.s3);
+      const nestedStorageS3 = objectFrom(storage.s3);
+      let storedGb = numberFrom(
+        localS3.stored_gb, totalsS3.stored_gb, cloudS3.stored_gb,
+        nestedStorageS3.stored_gb, storage.s3_stored_gb, storage.stored_gb,
+        st.s3_stored_gb, cloud.s3_stored_gb, cloud.stored_gb
+      );
+      const storedBytes = numberFrom(
+        localS3.stored_bytes, totalsS3.stored_bytes, cloudS3.stored_bytes,
+        nestedStorageS3.stored_bytes, storage.s3_stored_bytes, storage.stored_bytes,
+        st.s3_stored_bytes, cloud.s3_stored_bytes, cloud.stored_bytes
+      );
+      if (storedGb == null && storedBytes != null) storedGb = storedBytes / 1e9;
+      if (storedGb == null) storedGb = 0;
+      const storedObjects = numberFrom(
+        localS3.stored_object_count, localS3.object_count, localS3.stored_files,
+        localS3.uploaded_files, totalsS3.stored_object_count, totalsS3.object_count,
+        totalsS3.stored_files, totalsS3.uploaded_files, cloudS3.stored_object_count,
+        cloudS3.object_count, cloudS3.stored_files, nestedStorageS3.stored_files,
+        storage.s3_stored_object_count, storage.s3_object_count,
+        storage.s3_stored_objects, storage.stored_object_count,
+        storage.object_count, storage.stored_files, st.s3_stored_objects,
+        cloud.s3_stored_objects, cloud.stored_files, cloud.object_count
+      ) ?? 0;
+      const s3Monthly = storedGb * 0.025;
+      const suppliedS3Accrued = numberFrom(
+        localS3.accrued_estimate_usd, cloudS3.accrued_estimate_usd,
+        nestedStorageS3.accrued_estimate_usd, storage.s3_accrued_estimate_usd,
+        costs.s3_accrued_estimate_usd
+      );
+      const s3Accrued = suppliedS3Accrued ?? s3Monthly * uptimeHours / 730;
+
+      const suppliedCombined = numberFrom(
+        costs.combined_accrued_estimate_usd, costs.current_accrued_estimate_usd,
+        costs.total_accrued_estimate_usd, cloud.combined_accrued_estimate_usd,
+        cloud.current_accrued_estimate_usd
+      );
+      const combined = suppliedCombined ??
+        computeAccrued + (ebsAccrued ?? 0) + s3Accrued;
+      const prefix = pick(
+        localS3.prefix, totalsS3.prefix, cloudS3.prefix, nestedStorageS3.prefix,
+        storage.prefix, "s3://annotationprod/cad-disk-extract/"
+      );
+      const lastUpdated = pick(
+        cloud.heartbeat_at, cloud.status_updated_at, cloud.last_updated_at,
+        cloud.last_updated,
+        cloud.updated_at, cloud.updated, cloud.mirror_file_updated_at,
+        st.last_update_iso, st.updated
+      );
+
+      const expiry = pick(
+        cloud.credential_expiry, cloud.credentials_expire_at,
+        objectFrom(cloud.credentials).expires_at
+      );
+      const credentialWarning = pick(
+        cloud.credential_warning, cloud.temporary_credential_limitation
+      );
+      let expiryTiming = "";
+      if (expiry) {
+        const expiryMs = Date.parse(expiry);
+        if (Number.isFinite(expiryMs)) {
+          const minutes = Math.round((expiryMs - Date.now()) / 60000);
+          expiryTiming = minutes <= 0
+            ? " · expired"
+            : ` · ${minutes} min remaining`;
+        }
+      }
+
+      const ebsText = hasEbs
+        ? `${ebsSizeGb == null ? "size not provided" : `${fmt(ebsSizeGb)} GB`} · ` +
+          `${ebsAccrued == null ? "accrued not provided" : `$${money(ebsAccrued)} accrued`} · ` +
+          `${ebsMonthly == null ? "monthly not provided" : `$${money(ebsMonthly)}/month`}`
+        : (hasCloud ? "not provided by cloud status" : "waiting for cloud status");
+
+      return `<aside class="cost">
+        <h2>Cloud cost estimate</h2>
+        <div class="${hasCloud ? "muted" : "waiting"}">${
+          hasCloud ? "Cloud status fields received" : "waiting for cloud status"
+        }</div>
+        <div class="big">$${money(combined)}<span style="font-size:12px;font-weight:500"> current accrued est.</span></div>
+
+        <div class="section">EC2 compute</div>
+        <div class="kv"><span>Instance ID</span><b>${esc(instanceId || "—")}</b></div>
+        <div class="kv"><span>Instance type</span><b>${esc(instanceType || "—")}</b></div>
+        <div class="kv"><span>EC2 state</span><b>${esc(stateLabel)}</b></div>
+        <div class="kv"><span>Compute rate</span><b>$${money(hourly)}/hour</b></div>
+        <div class="muted" style="text-align:right">${esc(hourlySource)}</div>
+        <div class="kv"><span>Uptime</span><b>${uptimeHours.toFixed(2)} hours</b></div>
+        <div class="kv"><span>Compute accrued</span><b>$${money(computeAccrued)} est.</b></div>
+
+        <div class="section">EBS</div>
+        <div>${esc(ebsText)}</div>
+
+        <div class="section">S3 Standard</div>
+        <div class="kv"><span>Stored objects</span><b>${fmt(storedObjects)}</b></div>
+        <div class="kv"><span>Stored under prefix</span><b>${storedGb.toFixed(storedGb < 1 ? 3 : 2)} GB</b></div>
+        <div class="kv"><span>Storage estimate</span><b>$${money(s3Monthly)}/month</b></div>
+        <div class="muted">At $0.025/GB-month · ${esc(prefix)}</div>
+
+        <div class="muted" style="margin-top:8px">
+          Combined estimate prorates current EBS/S3 monthly rates over reported EC2 uptime.
+          Estimate only—not an AWS invoice.
+        </div>
+        <div class="muted" style="margin-top:6px">Last updated: ${esc(lastUpdated || "not available")}</div>
+        ${expiry ? `<div class="warning"><b>Credential expiry:</b> ${esc(expiry)}${esc(expiryTiming)}</div>` : ""}
+        ${credentialWarning ? `<div class="warning">${esc(credentialWarning)}</div>` : ""}
+      </aside>`;
+    }
 
     function render(st) {
       const t = st.totals || {};
@@ -68,24 +326,9 @@
       const healthLabel = st.health === "alive" ? "ALIVE" : "STALLED";
 
       const s3 = st.s3 || t.s3 || {};
-      const blockBytes = n(t, ["counts","combined","block","total_block_bytes"]);
-      const archiveBytes = n(t, ["throughput","processed_archive_bytes"]);
-      const cadGb = blockBytes / 1e9;
-      const storedGb = Number(s3.stored_gb != null ? s3.stored_gb : 0);
-      const monthly = Number(
-        s3.estimated_monthly_usd != null ? s3.estimated_monthly_usd : storedGb * 0.025
-      );
+      const cloud = cloudStatusFrom(st);
       let html = "";
-      html += `<aside class="cost">
-        <h2>S3 cloud cost</h2>
-        <div class="muted">${s3.shifted ? "Storing extracts in S3" : "Not shifted yet."}</div>
-        <div class="big">$${monthly.toFixed(2)}<span style="font-size:12px;font-weight:500"> / month</span></div>
-        <div>Stored by this job: <b>${storedGb.toFixed(3)} GB</b></div>
-        <div>CAD bytes counted: <b>${cadGb.toFixed(3)} GB</b></div>
-        <div class="muted" style="margin-top:6px">${s3.note || "Estimate = stored_GB × $0.025/GB-month (S3 Standard ap-south-1). Not the AWS invoice."}</div>
-        <div class="muted" style="margin-top:6px">Prefix: ${s3.prefix || "s3://annotationprod/cad-disk-extract/"}</div>
-        <div class="muted">S3 archives kept: ${fmt((s3.archives_uploaded||{}).combined)} · pending keep: ${fmt(s3.archives_pending_s3)}</div>
-      </aside>`;
+      html += renderCostCard(st, t, cloud);
       html += `<div class="meta">
         Status: <span class="${healthClass}">${healthLabel}</span>
         &nbsp;|&nbsp; last totals update: ${st.last_update_iso || "n/a"}
@@ -260,7 +503,6 @@
 
       const cur = st.current || {};
       const fin = st.last_finished || {};
-      const esc = (s) => String(s || "").replace(/</g, "&lt;");
       html += `<h2>Now</h2>
         <p><b>${esc(cur.disk) || "?"}</b>
         &nbsp; ${esc(cur.size_label) || "?"}
