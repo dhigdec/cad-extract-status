@@ -1,1 +1,154 @@
-{"schema":2,"source_of_truth":"gcp","state":"running","heartbeat_at":"2026-09-22T02:41:35.924727Z","gce":{"instance_name":"cad-disk-extract-gcp-1","instance_id":"3363502215231462675","machine_type":"c3-standard-22","zone":"asia-south1-b","state":"RUNNING","worker_count":4},"progress":{"archives_total":3620,"done_before_gcp":987,"done_on_gcp":508,"done":1495,"remaining":2125,"failed_active_checkpoints":0,"retries":0},"workers":[{"shard":0,"state":"extracting","current_archive":"21-054 Quarry Park Phase II.7z","source_key":"Disk-1/TEKLA-HYD/JOBS-2019-2020/ESP/21-054 Quarry Park Phase II.7z","archive_bytes":51774382,"source_bytes_downloaded":51774382,"updated_at":"2026-09-22T02:41:09.402990Z","pid":3727,"alive":true,"exitcode":null},{"shard":1,"state":"extracting","current_archive":"DON'T DELETE.7z","source_key":"Disk-1/TEKLA-HYD/JOBS-2015-2016/10.10.40.51_Server_Backup/TEKLA-TEAM/10.10.40.59-DATA/USA/PROJECTS/DON'T DELETE.7z","archive_bytes":47513421,"source_bytes_downloaded":47513421,"updated_at":"2026-09-22T02:39:37.839099Z","pid":3728,"alive":true,"exitcode":null},{"shard":2,"state":"extracting","current_archive":"SHEPARD STEEL.7z","source_key":"Disk-1/TEKLA-HYD/JOBS-2015-2016/10.10.40.51_Server_Backup/TEKLA-TEAM/10.10.40.59-DATA/USA/PROJECTS/SHEPARD STEEL.7z","archive_bytes":47133415,"source_bytes_downloaded":47133415,"updated_at":"2026-09-22T02:40:41.461323Z","pid":3729,"alive":true,"exitcode":null},{"shard":3,"state":"extracting","current_archive":"BRIDGE 2.09-01-26-12.zip","source_key":"Disk-2/Jobs & Data_Files_Completed_On_Server12/Jobs Files/FTP Data 19-3-2014/FTP Data 21-3-2014-10.10.40.4/FTP6/liaromatis/UPLOADS FROM MOLDTEK/BRIDGE 2.09-01-26-12.zip","archive_bytes":49453381,"source_bytes_downloaded":49453381,"updated_at":"2026-09-22T02:39:44.626285Z","pid":3730,"alive":true,"exitcode":null}],"counts":{"raw":{"pdf":14295,"cad_pdf":9398,"other_pdf":4897,"2d":24025,"3d":214,"nc1":5141},"weak":{"pdf":11996,"cad_pdf":8022,"other_pdf":3980,"2d":20209,"3d":190,"nc1":3917},"sha256":{"pdf":11981,"cad_pdf":8061,"other_pdf":3955,"2d":18979,"3d":194,"nc1":4000},"block_sha256":38305},"nested_depth":{"measured_finished_archives":508,"unopened_archives_not_measured":2125,"archive_nodes_by_depth":{"0":508,"1":222,"2":7},"finished_archive_max_depth_distribution":{"0":428,"1":76,"2":4},"depth_cap":15},"compute":{"uptime_seconds":1696.9,"uptime_hours":0.4714,"hourly_estimate_usd":1.65,"accrued_estimate_usd":0.7778,"estimate_label":"Estimate only; not a Google Cloud invoice"},"persistent_disk":{"size_gb":1000,"type":"pd-ssd","monthly_estimate_usd":204.0,"hourly_estimate_usd":0.2795,"accrued_estimate_usd":0.1317,"estimate_label":"Estimate only; not a Google Cloud invoice"},"gcs":{"state":"ok","scanned_at":"2026-09-22T02:40:37.694805Z","bucket":"gs://cad-disk-extract-mlproject-501205/","object_count":45218,"stored_bytes":7908631140,"stored_gb":7.908631,"estimated_monthly_usd":0.1819,"rate_usd_per_gb_month":0.023,"estimate_label":"Estimate only; not a Google Cloud invoice"},"aws_source":{"bytes_transferred":10882770784,"gb_transferred":10.882771,"egress_rate_usd_per_gb":0.09,"running_egress_estimate_usd":0.9794,"estimate_label":"One-time AWS source transfer estimate; not destination storage"},"costs":{"combined_accrued_estimate_usd":1.8889,"combined_hourly_compute_disk_usd":1.9295,"label":"Estimates only; not cloud invoices"},"last_result":"_state/results/3645fecf5d513930b573d11c2efcf1ca7b46f8e4d40e4e0c307b1247a9f15b18.json","last_finished_at":"2026-09-22T02:41:07.214218Z","proof_object":"Disk-1/TEKLA-HYD_JOBS-2015-2016_10.10.40.51_Server_Backup_TEKLA-TEAM_10.10.40.59-DATA_USA_PROJECTS_SCHUFF_STEEL_6._3456_-_SJEC_7._SUBMITTALS_Model_Uploads_Submittal_models_Rar_Files_3456--3645fecf5d51/SJEC-BOP_STEEL_SEQ_53/SJEC-BOP_STEEL_SEQ_53.db1","scratch_free_bytes":1055159672832}
+{
+  "archives_combined": {
+    "done": 1495,
+    "done_local_before_cutover": 987,
+    "done_on_gcp": 508,
+    "failed": 0,
+    "remaining": 2125,
+    "retries": 0,
+    "total": 3620
+  },
+  "aws_source": {
+    "bytes_transferred": 10882770784,
+    "egress_rate_usd_per_gb": 0.09,
+    "estimate_label": "One-time AWS source transfer estimate; not destination storage",
+    "gb_transferred": 10.882771,
+    "running_egress_estimate_usd": 0.9794
+  },
+  "cloud_counts": {
+    "block_sha256": 38305,
+    "raw": {
+      "2d": 24025,
+      "3d": 214,
+      "cad_pdf": 9398,
+      "nc1": 5141,
+      "other_pdf": 4897,
+      "pdf": 14295
+    },
+    "sha256": {
+      "2d": 18979,
+      "3d": 194,
+      "cad_pdf": 8061,
+      "nc1": 4000,
+      "other_pdf": 3955,
+      "pdf": 11981
+    },
+    "weak": {
+      "2d": 20209,
+      "3d": 190,
+      "cad_pdf": 8022,
+      "nc1": 3917,
+      "other_pdf": 3980,
+      "pdf": 11996
+    }
+  },
+  "cloud_depth": {
+    "archive_nodes_by_depth": {
+      "0": 508,
+      "1": 222,
+      "2": 7
+    },
+    "depth_cap": 15,
+    "finished_archive_max_depth_distribution": {
+      "0": 428,
+      "1": 76,
+      "2": 4
+    },
+    "measured_finished_archives": 508,
+    "unopened_archives_not_measured": 2125
+  },
+  "cloud_workers_alive": 4,
+  "compute": {
+    "accrued_estimate_usd": 0.7778,
+    "estimate_label": "Estimate only; not a Google Cloud invoice",
+    "hourly_estimate_usd": 1.65,
+    "uptime_hours": 0.4714,
+    "uptime_seconds": 1696.9
+  },
+  "costs": {
+    "combined_accrued_estimate_usd": 1.8889,
+    "combined_hourly_compute_disk_usd": 1.9295,
+    "label": "Estimates only; not cloud invoices"
+  },
+  "current": [
+    {
+      "alive": true,
+      "archive_bytes": 51774382,
+      "current_archive": "21-054 Quarry Park Phase II.7z",
+      "exitcode": null,
+      "shard": 0,
+      "source_bytes_downloaded": 51774382,
+      "state": "extracting",
+      "updated_at": "2026-09-22T02:41:09.402990Z"
+    },
+    {
+      "alive": true,
+      "archive_bytes": 47513421,
+      "current_archive": "DON'T DELETE.7z",
+      "exitcode": null,
+      "shard": 1,
+      "source_bytes_downloaded": 47513421,
+      "state": "extracting",
+      "updated_at": "2026-09-22T02:39:37.839099Z"
+    },
+    {
+      "alive": true,
+      "archive_bytes": 47133415,
+      "current_archive": "SHEPARD STEEL.7z",
+      "exitcode": null,
+      "shard": 2,
+      "source_bytes_downloaded": 47133415,
+      "state": "extracting",
+      "updated_at": "2026-09-22T02:40:41.461323Z"
+    },
+    {
+      "alive": true,
+      "archive_bytes": 49453381,
+      "current_archive": "BRIDGE 2.09-01-26-12.zip",
+      "exitcode": null,
+      "shard": 3,
+      "source_bytes_downloaded": 49453381,
+      "state": "extracting",
+      "updated_at": "2026-09-22T02:39:44.626285Z"
+    }
+  ],
+  "finished_depth_by_size": null,
+  "gce": {
+    "instance_id": "3363502215231462675",
+    "instance_name": "cad-disk-extract-gcp-1",
+    "machine_type": "c3-standard-22",
+    "state": "RUNNING",
+    "worker_count": 4,
+    "zone": "asia-south1-b"
+  },
+  "gcs": {
+    "bucket": "gs://cad-disk-extract-mlproject-501205/",
+    "estimate_label": "Estimate only; not a Google Cloud invoice",
+    "estimated_monthly_usd": 0.1819,
+    "object_count": 45218,
+    "rate_usd_per_gb_month": 0.023,
+    "scanned_at": "2026-09-22T02:40:37.694805Z",
+    "state": "ok",
+    "stored_bytes": 7908631140,
+    "stored_gb": 7.908631
+  },
+  "health": "alive",
+  "last_finished_at": "2026-09-22T02:41:07.214218Z",
+  "last_result": "_state/results/3645fecf5d513930b573d11c2efcf1ca7b46f8e4d40e4e0c307b1247a9f15b18.json",
+  "last_update_iso": "2026-09-22T02:41:35.924727Z",
+  "persistent_disk": {
+    "accrued_estimate_usd": 0.1317,
+    "estimate_label": "Estimate only; not a Google Cloud invoice",
+    "hourly_estimate_usd": 0.2795,
+    "monthly_estimate_usd": 204.0,
+    "size_gb": 1000,
+    "type": "pd-ssd"
+  },
+  "proof_object": "Disk-1/TEKLA-HYD_JOBS-2015-2016_10.10.40.51_Server_Backup_TEKLA-TEAM_10.10.40.59-DATA_USA_PROJECTS_SCHUFF_STEEL_6._3456_-_SJEC_7._SUBMITTALS_Model_Uploads_Submittal_models_Rar_Files_3456--3645fecf5d51/SJEC-BOP_STEEL_SEQ_53/SJEC-BOP_STEEL_SEQ_53.db1",
+  "remaining_by_size": null,
+  "schema": 3,
+  "source_of_truth": "gcp",
+  "source_status_uri": "gs://cad-disk-extract-mlproject-501205/_state/status.json",
+  "state": "running",
+  "status_last_updated": "2026-09-22T02:41:35.924727Z"
+}
