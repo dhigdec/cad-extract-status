@@ -1484,7 +1484,23 @@
       if (number(ratio) === null && number(totalBytes) !== null && number(uniqueBytes) > 0) {
         ratio = number(totalBytes) / number(uniqueBytes);
       }
-      return { distinctBlocks, totalBytes, uniqueBytes, duplicateBytes, ratio };
+      let blockNode = null;
+      for (const root of roots) {
+        if (isObject(root)) {
+          blockNode = root;
+          break;
+        }
+      }
+      return { distinctBlocks, totalBytes, uniqueBytes, duplicateBytes, ratio, blockNode };
+    }
+
+    function blockMetricCell(value, blockNode, statusKey, formatter) {
+      if (number(value) !== null) return formatter(value);
+      const status = blockNode && String(blockNode[statusKey] || "");
+      if (status.includes("not_measured")) {
+        return `<span class="missing" title="Historical results lack per-occurrence block lengths">not measured</span>`;
+      }
+      return missing(value, formatter);
     }
 
     function classificationValue(bundle, className, variant) {
@@ -2090,14 +2106,18 @@
 
     function blockTable(bundle) {
       const block = blockMetrics(bundle);
+      const node = block.blockNode;
+      const ratioCell = number(block.ratio) !== null
+        ? formatRatio(block.ratio)
+        : blockMetricCell(block.ratio, node, "unique_status", formatRatio);
       return `<div class="table-wrap"><table>
         <thead><tr><th>Block-level deduplication</th><th>Value</th></tr></thead>
         <tbody>
           <tr><td>Distinct block hashes</td><td>${missing(block.distinctBlocks, formatCount)}</td></tr>
           <tr><td>Total block bytes</td><td>${missing(block.totalBytes, formatBytes)}</td></tr>
-          <tr><td>Unique block bytes</td><td>${missing(block.uniqueBytes, formatBytes)}</td></tr>
-          <tr><td>Duplicate block bytes</td><td>${missing(block.duplicateBytes, formatBytes)}</td></tr>
-          <tr><td>Dedup ratio (total ÷ unique)</td><td>${missing(block.ratio, formatRatio)}</td></tr>
+          <tr><td>Unique block bytes</td><td>${blockMetricCell(block.uniqueBytes, node, "unique_status", formatBytes)}</td></tr>
+          <tr><td>Duplicate block bytes</td><td>${blockMetricCell(block.duplicateBytes, node, "duplicate_status", formatBytes)}</td></tr>
+          <tr><td>Dedup ratio (total ÷ unique)</td><td>${ratioCell}</td></tr>
         </tbody>
       </table></div>`;
     }
@@ -2276,10 +2296,16 @@
         ["Duplicate block bytes", coverage.block_duplicate_bytes]
       ];
       const body = rows.map(([label, entry]) => {
-        const status = entry && entry.status ? String(entry.status) : "pending";
-        const covered = entry && number(entry.covered_archives);
-        const completed = entry && number(entry.completed_archives);
-        const reason = entry && entry.reason ? String(entry.reason) : "";
+        if (!isObject(entry)) {
+          const missingLabel = label.includes("Weak")
+            ? "not in these results yet"
+            : "not measured";
+          return `<tr><td>${escapeHtml(label)}</td><td class="missing">${escapeHtml(missingLabel)}</td></tr>`;
+        }
+        const status = entry.status ? String(entry.status) : "not available";
+        const covered = number(entry.covered_archives ?? entry.archives_with_hashes);
+        const completed = number(entry.completed_archives ?? entry.archives_in_raw);
+        const reason = entry.reason ? String(entry.reason) : "";
         let detail = status;
         if (covered !== null && completed !== null) {
           detail += ` · ${formatCount(covered)}/${formatCount(completed)} archives`;
