@@ -970,11 +970,99 @@
       return aliasValue(container, definition.aliases);
     }
 
+    function flatCountsToNodes(flat) {
+      if (!isObject(flat)) return null;
+      const counts = {};
+      for (const [key, value] of Object.entries(flat)) {
+        if (key === "note" || key === "label") continue;
+        if (number(value) !== null) counts[key] = { raw: number(value) };
+        else if (isObject(value) && (present(value.raw) || present(value.sha256) || present(value.weak))) {
+          counts[key] = value;
+        }
+      }
+      if (!Object.keys(counts).length) return null;
+      if (counts.cad_pdf || counts.other_pdf) {
+        counts.pdf_cad_binary = {
+          cad_pdf: counts.cad_pdf || { raw: null },
+          other_pdf: counts.other_pdf || { raw: null }
+        };
+      }
+      return counts;
+    }
+
+    function sumFlatCounts(parts) {
+      const out = {};
+      for (const part of parts) {
+        if (!isObject(part)) continue;
+        for (const [key, value] of Object.entries(part)) {
+          if (key === "note" || key === "label") continue;
+          const n = number(value);
+          if (n === null) continue;
+          out[key] = (out[key] || 0) + n;
+        }
+      }
+      return out;
+    }
+
+    // Project AWS fleet payloads (ec2_counts_delta / archives) into disks.* so existing
+    // Disk 1 / Disk 2 / Combined count tables bind without pending placeholders.
+    function normalizeStatus(status) {
+      if (!isObject(status)) return status;
+      const next = status;
+      if (!isObject(next.disks)) next.disks = {};
+
+      const delta = next.ec2_counts_delta;
+      if (isObject(delta)) {
+        for (const diskName of ["Disk-1", "Disk-2"]) {
+          const flat = delta[diskName];
+          const nodes = flatCountsToNodes(flat);
+          if (!nodes) continue;
+          if (!isObject(next.disks[diskName])) next.disks[diskName] = {};
+          // Prefer richer disks.*.counts if already present; otherwise use delta.
+          if (!isObject(next.disks[diskName].counts)) next.disks[diskName].counts = nodes;
+        }
+        if (!isObject(next.disks.combined)) next.disks.combined = {};
+        if (!isObject(next.disks.combined.counts)) {
+          const combinedFlat = isObject(delta.combined)
+            ? delta.combined
+            : sumFlatCounts([delta["Disk-1"], delta["Disk-2"]]);
+          const nodes = flatCountsToNodes(combinedFlat);
+          if (nodes) next.disks.combined.counts = nodes;
+        }
+        if (!isObject(next.counts)) {
+          const combinedFlat = isObject(delta.combined)
+            ? delta.combined
+            : sumFlatCounts([delta["Disk-1"], delta["Disk-2"]]);
+          next.counts = flatCountsToNodes(combinedFlat) || next.counts;
+        }
+      }
+
+      if (isObject(next.archives)) {
+        for (const diskName of ["Disk-1", "Disk-2", "combined"]) {
+          const arch = next.archives[diskName];
+          if (!isObject(arch)) continue;
+          if (!isObject(next.disks[diskName])) next.disks[diskName] = {};
+          if (!isObject(next.disks[diskName].archives)) next.disks[diskName].archives = arch;
+        }
+      }
+
+      // Promote fleet.workers_alive for older header helpers.
+      if (!present(next.workers_alive) && isObject(next.fleet) && present(next.fleet.workers_alive)) {
+        next.workers_alive = next.fleet.workers_alive;
+        next.cloud_workers_alive = next.fleet.workers_alive;
+      }
+      if (!present(next.workers_configured) && isObject(next.fleet) && present(next.fleet.workers_configured)) {
+        next.workers_configured = next.fleet.workers_configured;
+      }
+      return next;
+    }
+
     function collectScopeRoots(status, scopeId) {
       const roots = [];
       const containers = [
         status.disks, status.by_disk, status.byDisk, status.per_disk, status.perDisk,
-        status.disk_stats, status.diskStats, status.scopes, status.datasets
+        status.disk_stats, status.diskStats, status.scopes, status.datasets,
+        status.ec2_counts_delta
       ];
       for (const container of containers) {
         const scoped = scopedValue(container, scopeId);
@@ -1041,7 +1129,7 @@
       for (const container of [status.archives, status.archive, status.archive_counts, status.progress]) {
         addScopedObject(archiveRoots, container, scopeId);
       }
-      for (const container of [status.counts, status.cloud_counts, status.file_counts, status.assets]) {
+      for (const container of [status.counts, status.cloud_counts, status.file_counts, status.assets, status.ec2_counts_delta]) {
         addScopedObject(countRoots, container, scopeId);
       }
       for (const container of [status.nested_depth, status.cloud_depth, status.depth, status.depths]) {
@@ -1059,6 +1147,14 @@
         addObject(archiveRoots, status.progress);
         addObject(countRoots, status.cloud_counts);
         addObject(countRoots, status.counts);
+        // Sum Disk-1 + Disk-2 when ec2_counts_delta has no combined object.
+        if (isObject(status.ec2_counts_delta)) {
+          const combinedFlat = isObject(status.ec2_counts_delta.combined)
+            ? status.ec2_counts_delta.combined
+            : sumFlatCounts([status.ec2_counts_delta["Disk-1"], status.ec2_counts_delta["Disk-2"]]);
+          const nodes = flatCountsToNodes(combinedFlat);
+          if (nodes) addObject(countRoots, nodes);
+        }
         addObject(depthRoots, status.cloud_depth);
         addObject(depthRoots, status.nested_depth);
         addObject(storageRoots, status.gcs);
@@ -1094,7 +1190,9 @@
         retried: ["retried", "retries", "retry_count", "archives_retried"],
         skipped: ["skipped", "skipped_too_large", "skip_count", "archives_skipped"],
         doneOnGcp: ["done_on_gcp", "completed_on_gcp", "gcp_done"],
-        doneBeforeGcp: ["done_local_before_cutover", "done_before_gcp", "pre_gcp_done"]
+        doneBeforeGcp: [
+          "done_local_before_cutover", "done_before_gcp", "pre_gcp_done", "baseline_completed_ok"
+        ]
       };
       return metricFromRoots(bundle.archiveRoots, aliases[metric] || [metric]);
     }
@@ -2287,6 +2385,7 @@
           }
         }
         const payload = `${source}:${JSON.stringify(status)}`;
+        status = normalizeStatus(status);
         latestStatus = status;
         statusSource = source;
         lastFetchAt = Date.now();
