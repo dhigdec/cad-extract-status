@@ -164,7 +164,7 @@
 
     async function tick(){
       try{
-        const response=await fetch("status.json?t="+Date.now(),{cache:"no-store"});
+        const response=await fetch("https://raw.githubusercontent.com/dhigdec/cad-extract-status/main/status.json?t="+Date.now(),{cache:"no-store"});
         if(!response.ok)throw Error(response.status);
         render(await response.json());
       }catch(error){
