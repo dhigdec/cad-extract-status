@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>GCP CAD Extraction Status · Disk 1, Disk 2 &amp; Combined</title>
+  <title>AWS CAD Extraction Status · Disk 1, Disk 2 &amp; Combined</title>
   <style>
     :root {
       color-scheme: light dark;
@@ -865,7 +865,7 @@
     const LIVE_STATUS_URL = "https://cad-extract-status-874846752452.s3.ap-south-1.amazonaws.com/status.json";
     const FALLBACK_GCS_STATUS_URL = "https://storage.googleapis.com/cad-extract-public-status-mlproject-501205/status.json";
     const FALLBACK_STATUS_URL = FALLBACK_GCS_STATUS_URL;
-    const POLL_MS = 5000;
+    const POLL_MS = 20000;
     const STALL_AFTER_SECONDS = 120;
     const SCOPE_DEFS = [
       { id: "disk1", label: "Disk 1", short: "D1", aliases: ["Disk-1", "Disk 1", "disk1", "disk_1", "d1", "1"] },
@@ -1278,7 +1278,9 @@
 
     function healthInfo(status) {
       const age = heartbeatAgeSeconds(status);
-      const workerCount = number(pickPath(status, ["cloud_workers_alive", ["workers", "alive_count"]]));
+      const workerCount = number(pickPath(status, [
+        "cloud_workers_alive", "workers_alive", ["fleet", "workers_alive"], ["workers", "alive_count"]
+      ]));
       const declared = normalize(pickPath(status, ["health", "state"]));
       if (age !== null && age > STALL_AFTER_SECONDS) {
         return { key: "stalled", label: "STALLED", age };
@@ -1406,7 +1408,10 @@
     }
 
     function statusSourceLabel() {
-      return statusSource === "fallback" ? "GitHub fallback" : "Live GCP";
+      if (statusSource === "aws-s3") return "Live AWS S3";
+      if (statusSource === "gcs-fallback") return "GCS fallback";
+      if (statusSource === "github-fallback" || statusSource === "fallback") return "GitHub fallback";
+      return "Live status";
     }
 
     function renderHeader(status) {
@@ -1419,17 +1424,35 @@
         : null;
       const health = healthInfo(status);
       const gce = isObject(status.gce) ? status.gce : {};
-      const workerCount = pickPath(status, ["cloud_workers_alive", ["gce", "worker_count"], ["workers", "alive_count"]]);
+      const workerCount = pickPath(status, [
+        "cloud_workers_alive", "workers_alive", ["fleet", "workers_alive"],
+        ["gce", "worker_count"], ["workers", "alive_count"]
+      ]);
+      const workersConfigured = pickPath(status, [
+        "workers_configured", ["fleet", "workers_configured"]
+      ]);
       const state = pickPath(status, [["gce", "state"], "state"]);
-      const preGcp = archiveMetric(bundle, "doneBeforeGcp");
-      const onGcp = archiveMetric(bundle, "doneOnGcp");
+      const fleet = isObject(status.fleet) ? status.fleet : {};
+      const instanceCount = number(fleet.instance_count) ?? (Array.isArray(fleet.instances) ? fleet.instances.length : null);
+      const baselineDone = archiveMetric(bundle, "doneBeforeGcp") ?? pickPath(status, [
+        ["archives", "combined", "baseline_completed_ok"],
+        ["disks", "combined", "archives", "baseline_completed_ok"]
+      ]);
+      const ec2New = pickPath(status, [
+        ["archives", "combined", "ec2_new_ok"],
+        ["disks", "combined", "archives", "ec2_new_ok"]
+      ]);
+      const cost = isObject(status.cost_estimate) ? status.cost_estimate : {};
+      const costs = isObject(status.costs) ? status.costs : {};
+      const hourly = aliasValue(cost, ["hourly_ec2_plus_ebs_usd"]) ?? aliasValue(costs, ["combined_hourly_compute_disk_usd"]);
+      const accrued = aliasValue(cost, ["accrued_ec2_plus_ebs_usd"]) ?? aliasValue(costs, ["combined_accrued_estimate_usd"]);
 
       return `<header class="hero">
         <div class="hero-top">
           <div>
             <p class="eyebrow">Live public extraction status</p>
             <h1>Deep CAD extraction across Disk 1 &amp; Disk 2</h1>
-            <p class="lede">A read-only view of archive processing, deduplication and GCS delivery from the active GCP pipeline.</p>
+            <p class="lede">A read-only view of the live AWS EC2 extraction fleet, archive progress, and estimated compute costs.</p>
           </div>
           <span id="status-badge" class="status-badge ${health.key}">${health.label}</span>
         </div>
@@ -1437,7 +1460,7 @@
           <span>Heartbeat <strong id="heartbeat-age">${escapeHtml(ageTextFromSeconds(health.age))} ago</strong></span>
           <span>Last update <strong>${formatTimestamp(heartbeatValue(status))}</strong></span>
           <span>Source <strong>${statusSourceLabel()}</strong></span>
-          <span>Data pushed every ~20 seconds; page polls every 5 seconds</span>
+          <span>Data pushed every ~20 seconds; page polls every 20 seconds</span>
         </div>
         <div class="progress-track" role="progressbar" aria-label="Archive completion"
           aria-valuemin="0" aria-valuemax="100" aria-valuenow="${progress === null ? 0 : progress.toFixed(1)}">
@@ -1449,18 +1472,18 @@
         </div>
         <div class="hero-stats">
           <div class="hero-stat"><span>Archives done</span><strong>${missing(done, formatCount)}</strong>
-            <small>${number(preGcp) === null ? "cutover split pending" : `${formatCount(preGcp)} before GCP cutover`}</small></div>
+            <small>${number(baselineDone) === null ? "baseline pending" : `${formatCount(baselineDone)} baseline + ${formatCount(ec2New)} EC2`}</small></div>
           <div class="hero-stat"><span>Total archives</span><strong>${missing(total, formatCount)}</strong>
-            <small>${number(onGcp) === null ? "GCP split pending" : `${formatCount(onGcp)} completed on GCP`}</small></div>
+            <small>${number(instanceCount) === null ? "fleet size pending" : `${formatCount(instanceCount)} EC2 instances`}</small></div>
           <div class="hero-stat"><span>Remaining</span><strong>${missing(remaining, formatCount)}</strong>
             <small>source archives</small></div>
           <div class="hero-stat"><span>Workers alive</span><strong>${missing(workerCount, formatCount)}</strong>
-            <small>${present(state) ? escapeHtml(state) : "state pending"}</small></div>
+            <small>${number(workersConfigured) === null ? (present(state) ? escapeHtml(state) : "state pending") : `${formatCount(workersConfigured)} configured`}</small></div>
         </div>
         <div class="infra-line">
-          <span class="chip">VM · ${escapeHtml(aliasValue(gce, ["instance_name", "name"]) || "not available")}</span>
-          <span class="chip">Type · ${escapeHtml(aliasValue(gce, ["machine_type", "type"]) || "not available")}</span>
-          <span class="chip">Zone · ${escapeHtml(aliasValue(gce, ["zone", "location"]) || "not available")}</span>
+          <span class="chip">Platform · AWS EC2</span>
+          <span class="chip">Region · ${escapeHtml(status.region || aliasValue(gce, ["region"]) || "ap-south-1")}</span>
+          <span class="chip">Est. · ${formatMoney(hourly)}/hr · accrued ${formatMoney(accrued)}</span>
           <span class="chip">Feed · ${statusSourceLabel()}</span>
         </div>
       </header>`;
@@ -1472,6 +1495,45 @@
         .filter(([, value]) => isObject(value))
         .sort(([a], [b]) => a.localeCompare(b, undefined, { numeric: true }));
       if (entries.length) return entries;
+
+      const fleet = isObject(status.fleet) ? status.fleet : {};
+      if (Array.isArray(fleet.instances)) {
+        return fleet.instances
+          .filter(isObject)
+          .map(inst => {
+            const name = aliasValue(inst, ["name", "instance_name", "id"]) || "instance";
+            const workersObj = isObject(inst.workers) ? inst.workers : {};
+            const workers = Object.entries(workersObj).map(([wid, meta]) => {
+              const row = isObject(meta) ? { ...meta } : {};
+              row.worker_id = row.worker_id || wid;
+              row.instance_name = name;
+              if (!present(row.current_archive) && present(row.current)) row.current_archive = row.current;
+              if (!present(row.state)) row.state = row.alive === false ? "down" : "running";
+              return row;
+            });
+            const hourly = (number(inst.compute_hourly_estimate_usd) || 0) + (number(inst.ebs_hourly_estimate_usd) || 0);
+            const compute = isObject(status.compute) ? status.compute : {};
+            const uptimeHours = number(compute.uptime_hours);
+            const accrued = uptimeHours === null ? null : hourly * uptimeHours;
+            return [name, {
+              instance_name: name,
+              machine_type: aliasValue(inst, ["type", "machine_type"]),
+              type: aliasValue(inst, ["type", "machine_type"]),
+              zone: aliasValue(inst, ["az", "zone"]),
+              state: aliasValue(inst, ["state", "status"]) || "running",
+              workers_alive: inst.workers_alive,
+              workers_expected: inst.workers_configured,
+              worker_count: inst.workers_configured,
+              workers,
+              costs: {
+                hourly_compute_disk_estimate_usd: hourly || null,
+                accrued_compute_disk_estimate_usd: accrued
+              }
+            }];
+          })
+          .sort(([a], [b]) => a.localeCompare(b, undefined, { numeric: true }));
+      }
+
       const workers = workerArray(status);
       if (!workers.length) return [];
       const byVm = new Map();
@@ -2020,10 +2082,13 @@
       const gcs = isObject(status.gcs) ? status.gcs : {};
       const aws = isObject(status.aws_source) ? status.aws_source : {};
       const costs = isObject(status.costs) ? status.costs : {};
+      const costEstimate = isObject(status.cost_estimate) ? status.cost_estimate : {};
       const storedBytes = aliasValue(gcs, ["stored_bytes", "bytes"]);
       const transferredBytes = aliasValue(aws, ["bytes_transferred", "transferred_bytes"]);
-      const combined = aliasValue(costs, ["combined_accrued_estimate_usd", "combined_estimate_usd", "accrued_estimate_usd"]);
-      const poolHourly = aliasValue(costs, ["combined_hourly_compute_disk_usd", "hourly_compute_disk_usd"]);
+      const combined = aliasValue(costs, ["combined_accrued_estimate_usd", "combined_estimate_usd", "accrued_estimate_usd"])
+        ?? aliasValue(costEstimate, ["accrued_ec2_plus_ebs_usd"]);
+      const poolHourly = aliasValue(costs, ["combined_hourly_compute_disk_usd", "hourly_compute_disk_usd"])
+        ?? aliasValue(costEstimate, ["hourly_ec2_plus_ebs_usd"]);
       const entries = vmEntries(status);
       const vmRows = entries.map(([name, vm]) => {
         const c = isObject(vm.costs) ? vm.costs : {};
@@ -2040,19 +2105,19 @@
             </div>
             <p class="cost-total">Combined accrued estimate <strong>${formatMoney(combined)}</strong></p>
             <div class="kv"><span>Pool compute+disk</span><strong>${formatMoney(poolHourly)} / hr <em>(estimate)</em></strong></div>
-            <h3>GCE compute</h3>
+            <h3>EC2 compute</h3>
             <div class="kv">
               <span>VMs</span><strong>${escapeHtml(aliasValue(gce, ["instance_count"]) || entries.length || "n/a")}</strong>
-              <span>Rate</span><strong>${formatMoney(aliasValue(compute, ["hourly_estimate_usd", "hourly_usd"]))} / hr</strong>
+              <span>Rate</span><strong>${formatMoney(aliasValue(compute, ["hourly_estimate_usd", "hourly_usd"]) ?? aliasValue(costEstimate, ["ec2_hourly_estimate_usd"]))} / hr</strong>
               <span>Accrued</span><strong>${formatMoney(aliasValue(compute, ["accrued_estimate_usd", "accrued_usd"]))}</strong>
-              <span>Uptime</span><strong>${number(compute.uptime_hours) === null ? "pending" : `${formatDecimal(compute.uptime_hours)} hr`}</strong>
+              <span>Uptime</span><strong>${number(compute.uptime_hours ?? costEstimate.uptime_hours) === null ? "pending" : `${formatDecimal(compute.uptime_hours ?? costEstimate.uptime_hours)} hr`}</strong>
             </div>
             <h3>Per-VM compute+disk</h3>
             ${vmRows || "<em>Per-VM estimates pending</em>"}
-            <h3>Persistent disk</h3>
+            <h3>EBS gp3</h3>
             <div class="kv">
-              <span>Type / size</span><strong>${escapeHtml(aliasValue(disk, ["type"]) || "not available")} · ${number(aliasValue(disk, ["size_gb"])) === null ? "pending" : `${formatCount(disk.size_gb)} GB`}</strong>
-              <span>Monthly</span><strong>${formatMoney(aliasValue(disk, ["monthly_estimate_usd", "monthly_usd"]))}</strong>
+              <span>Type / size</span><strong>${escapeHtml(aliasValue(disk, ["type"]) || "gp3")} · ${number(aliasValue(disk, ["size_gb"])) === null ? "fleet volumes" : `${formatCount(disk.size_gb)} GB`}</strong>
+              <span>Hourly</span><strong>${formatMoney(aliasValue(disk, ["hourly_estimate_usd"]) ?? aliasValue(costEstimate, ["gp3_hourly_estimate_usd"]))}</strong>
               <span>Accrued</span><strong>${formatMoney(aliasValue(disk, ["accrued_estimate_usd", "accrued_usd"]))}</strong>
             </div>
             <h3>GCS storage estimate</h3>
@@ -2067,10 +2132,10 @@
               <span>Rate</span><strong>${formatMoney(aliasValue(aws, ["egress_rate_usd_per_gb", "rate_usd_per_gb"]))} / GB</strong>
               <span>Estimate</span><strong>${formatMoney(aliasValue(aws, ["running_egress_estimate_usd", "egress_estimate_usd"]))}</strong>
             </div>
-            <p class="estimate-note">${escapeHtml(aliasValue(costs, ["estimate_label", "label"]) || "Estimates only — not a cloud invoice. Missing billing inputs remain pending.")}</p>
+            <p class="estimate-note">${escapeHtml(aliasValue(costs, ["estimate_label", "label"]) || aliasValue(costEstimate, ["label"]) || "Estimates only — not a cloud invoice. Missing billing inputs remain pending.")}</p>
             <div class="poll-line">
               <span>Live feed</span>
-              <span id="poll-state" class="poll-state">5s poll · ~20s publish</span>
+              <span id="poll-state" class="poll-state">20s poll · ~20s publish</span>
             </div>
           </div>
         </aside>`;
