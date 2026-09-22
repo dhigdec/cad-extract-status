@@ -1701,9 +1701,28 @@
 
     function renderHeader(status) {
       const bundle = buildBundle(status, "combined");
-      const total = archiveMetric(bundle, "total");
-      const done = archiveMetric(bundle, "done");
-      const remaining = archiveMetric(bundle, "remaining");
+      const total = archiveMetric(bundle, "total") ?? 3620;
+      const baselineDone = archiveMetric(bundle, "doneBeforeGcp") ?? pickPath(status, [
+        ["archives", "combined", "baseline_completed_ok"],
+        ["disks", "combined", "archives", "baseline_completed_ok"]
+      ]);
+      const ec2New = pickPath(status, [
+        ["archives", "combined", "ec2_new_ok"],
+        ["disks", "combined", "archives", "ec2_new_ok"]
+      ]);
+      // Hero done MUST be full baseline + ec2_new (subtitle components), never the
+      // partial per-disk sum (~987+ec2 ≈ 1933) that some publishers still emit.
+      let done = archiveMetric(bundle, "done");
+      let remaining = archiveMetric(bundle, "remaining");
+      if (number(baselineDone) !== null && number(ec2New) !== null) {
+        const ledgerDone = number(baselineDone) + number(ec2New);
+        if (number(done) === null || number(done) < ledgerDone) {
+          done = ledgerDone;
+        }
+        if (number(total) > 0) {
+          remaining = Math.max(0, number(total) - number(done));
+        }
+      }
       const progress = number(total) > 0 && number(done) !== null
         ? Math.max(0, Math.min(100, number(done) / number(total) * 100))
         : null;
@@ -1719,14 +1738,6 @@
       const state = pickPath(status, [["gce", "state"], "state"]);
       const fleet = isObject(status.fleet) ? status.fleet : {};
       const instanceCount = number(fleet.instance_count) ?? (Array.isArray(fleet.instances) ? fleet.instances.length : null);
-      const baselineDone = archiveMetric(bundle, "doneBeforeGcp") ?? pickPath(status, [
-        ["archives", "combined", "baseline_completed_ok"],
-        ["disks", "combined", "archives", "baseline_completed_ok"]
-      ]);
-      const ec2New = pickPath(status, [
-        ["archives", "combined", "ec2_new_ok"],
-        ["disks", "combined", "archives", "ec2_new_ok"]
-      ]);
       const costHints = fleetCostEstimates(status);
       const hourly = costHints.hourly;
       const accrued = costHints.accrued;
@@ -2188,9 +2199,19 @@
         </section>
         <section class="data-section">
           <div class="data-heading"><div><h3>Extracted asset inventory</h3></div>
-            <p>${(countValue(bundle, "2d", "weak") != null || countValue(bundle, "2d", "sha256") != null)
-            ? "Raw totals include baseline + new EC2; weak/SHA are exact for the reconciliation baseline set"
-            : "Raw totals; weak/SHA stay pending until baseline hash identities are published"}</p></div>
+            <p>${(() => {
+              const shaStatus = (((bundle.counts || {})["2d"] || {}).sha256_status) || (((bundle.root || {}).dedup || {}).sha256 || {}).status || "";
+              const cov = (bundle.root && bundle.root.dedup_coverage) || (bundle.root && bundle.root.dedup) || null;
+              const shaCov = cov && (cov.sha256 || cov);
+              if (String(shaStatus).includes("global_distinct") || String(shaStatus).includes("set_union")) {
+                return "Raw and SHA-256 are global distinct over the same finished archives (baseline + EC2); Combined is true set-union";
+              }
+              if (shaCov && shaCov.archives_with_hashes != null && shaCov.archives_in_raw != null
+                  && Number(shaCov.archives_with_hashes) !== Number(shaCov.archives_in_raw)) {
+                return `SHA coverage ${shaCov.archives_with_hashes}/${shaCov.archives_in_raw} archives — not paired as full-population distinct`;
+              }
+              return "Raw totals include baseline + new EC2; SHA/weak publish only when they cover that same archive population";
+            })()}</p></div>
           ${assetTable(bundle)}
         </section>
         <section class="data-section">
