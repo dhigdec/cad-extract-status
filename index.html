@@ -987,9 +987,6 @@
         for (const key of ["counts", "assets", "file_counts", "fileCounts", "totals"]) {
           addObject(countRoots, root[key]);
         }
-        const exact = root.cloud_results_exact;
-        addObject(countRoots, exact);
-        if (isObject(exact)) addObject(countRoots, exact.counts);
         for (const key of ["nested_depth", "nestedDepth", "depth", "depths"]) {
           addObject(depthRoots, root[key]);
         }
@@ -1734,7 +1731,8 @@
           ${archiveTable(bundle)}
         </section>
         <section class="data-section">
-          <div class="data-heading"><div><h3>Extracted asset inventory</h3></div><p>Raw, weak name + size, and SHA-256</p></div>
+          <div class="data-heading"><div><h3>Extracted asset inventory</h3></div>
+            <p>Raw totals; cross-cutover weak/SHA stay pending without baseline hashes</p></div>
           ${assetTable(bundle)}
         </section>
         <section class="data-section">
