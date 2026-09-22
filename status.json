@@ -3,53 +3,53 @@
     "by_disk": {
       "Disk-1": {
         "archives_total": 1154,
-        "done": 478,
-        "done_after_reconciliation": 144,
+        "done": 479,
+        "done_after_reconciliation": 145,
         "done_before_gcp": 334,
         "done_in_reconciliation_baseline": 334,
-        "done_on_gcp": 144,
-        "remaining": 676
+        "done_on_gcp": 145,
+        "remaining": 675
       },
       "Disk-2": {
         "archives_total": 2466,
-        "done": 1766,
-        "done_after_reconciliation": 144,
+        "done": 1768,
+        "done_after_reconciliation": 146,
         "done_before_gcp": 1622,
         "done_in_reconciliation_baseline": 1622,
-        "done_on_gcp": 144,
-        "remaining": 700
+        "done_on_gcp": 146,
+        "remaining": 698
       }
     },
-    "done": 2244,
+    "done": 2247,
     "done_local_before_cutover": 1956,
-    "done_on_gcp": 288,
-    "failed": 5,
-    "remaining": 1376,
+    "done_on_gcp": 291,
+    "failed": 6,
+    "remaining": 1373,
     "retries": 1,
     "total": 3620
   },
   "aws_source": {
-    "bytes_transferred": 164846834739,
+    "bytes_transferred": 166288877771,
     "egress_rate_usd_per_gb": 0.09,
     "estimate_label": "One-time AWS source transfer estimate; not destination storage",
-    "gb_transferred": 164.846835,
-    "running_egress_estimate_usd": 14.8362
+    "gb_transferred": 166.288878,
+    "running_egress_estimate_usd": 14.966
   },
   "cloud_counts": {
     "raw": {
-      "2d": 620630,
-      "3d": 3876,
-      "cad_pdf": 79628,
-      "nc1": 52536,
-      "other_pdf": 66931,
-      "pdf": 146559
+      "2d": 621002,
+      "3d": 3879,
+      "cad_pdf": 81949,
+      "nc1": 53204,
+      "other_pdf": 67589,
+      "pdf": 149538
     },
     "scope": "all-run reconciliation baseline plus non-overlapping new GCP result records"
   },
   "cloud_depth": {
     "archive_nodes_by_depth": {
-      "0": 288,
-      "1": 1363,
+      "0": 291,
+      "1": 1398,
       "10": 0,
       "11": 0,
       "12": 0,
@@ -70,7 +70,7 @@
     "depth_cap_hits": 0,
     "distribution": {
       "0": 1827,
-      "1": 387,
+      "1": 390,
       "10": 0,
       "11": 0,
       "12": 0,
@@ -88,7 +88,7 @@
     },
     "finished_archive_max_depth_distribution": {
       "0": 1827,
-      "1": 387,
+      "1": 390,
       "10": 0,
       "11": 0,
       "12": 0,
@@ -105,35 +105,35 @@
       "9": 0
     },
     "max_measured_depth": 4,
-    "measured_finished_archives": 2244,
+    "measured_finished_archives": 2247,
     "unmeasured_finished_baseline": 0,
-    "unopened_archives_not_measured": 1376
+    "unopened_archives_not_measured": 1373
   },
-  "cloud_workers_alive": 48,
+  "cloud_workers_alive": 47,
   "compute": {
-    "accrued_estimate_usd": 20.1271,
-    "current_instance_accrued_estimate_usd": 19.2645,
+    "accrued_estimate_usd": 20.4685,
+    "current_instance_accrued_estimate_usd": 19.6059,
     "estimate_label": "Estimate only; aggregate across active VMs, not a Google Cloud invoice",
     "hourly_estimate_usd": 19.8,
     "instance_count": 4,
     "prior_pipeline_accrued_estimate_usd": 0.8626,
-    "uptime_hours": 4.4373,
-    "uptime_seconds": 15974.3
+    "uptime_hours": 4.5062,
+    "uptime_seconds": 16222.0
   },
   "costs": {
-    "combined_accrued_estimate_usd": 38.3721,
+    "combined_accrued_estimate_usd": 38.9012,
     "combined_hourly_compute_disk_usd": 23.1534,
     "instance_count": 4,
     "label": "Estimates only; compute and disk are summed per VM; AWS egress is counted once"
   },
   "counts": {
     "raw": {
-      "2d": 620630,
-      "3d": 3876,
-      "cad_pdf": 79628,
-      "nc1": 52536,
-      "other_pdf": 66931,
-      "pdf": 146559
+      "2d": 621002,
+      "3d": 3879,
+      "cad_pdf": 81949,
+      "nc1": 53204,
+      "other_pdf": 67589,
+      "pdf": 149538
     },
     "scope": "all-run reconciliation baseline plus non-overlapping new GCP result records"
   },
@@ -200,13 +200,12 @@
     },
     {
       "alive": true,
-      "archive_bytes": 533836244,
-      "current_archive": "32.Travis Middle School Package A.7z",
+      "current_archive": "Excelsior BIM.7z",
       "exitcode": null,
       "shard": 6,
-      "source_bytes_downloaded": 533836244,
-      "state": "extracting",
-      "updated_at": "2026-09-22T04:30:59.232702Z"
+      "shard_remaining": 187,
+      "state": "claimed_elsewhere",
+      "updated_at": "2026-09-22T04:32:18.030675Z"
     },
     {
       "alive": true,
@@ -280,12 +279,13 @@
     },
     {
       "alive": true,
-      "current_archive": "MT14_050 (SimLearn Nation Center).7z",
+      "archive_bytes": 555576391,
+      "current_archive": "Excelsior BIM.7z",
       "exitcode": null,
       "shard": 6,
-      "shard_remaining": 186,
-      "state": "claimed_elsewhere",
-      "updated_at": "2026-09-22T04:31:03.555854Z"
+      "source_bytes_downloaded": 555576391,
+      "state": "extracting",
+      "updated_at": "2026-09-22T04:31:36.013739Z"
     },
     {
       "alive": true,
@@ -304,7 +304,7 @@
       "exitcode": null,
       "shard": 0,
       "state": "uploading",
-      "updated_at": "2026-09-22T04:31:25.361073Z"
+      "updated_at": "2026-09-22T04:32:27.150498Z"
     },
     {
       "alive": true,
@@ -313,7 +313,7 @@
       "exitcode": null,
       "shard": 1,
       "state": "uploading",
-      "updated_at": "2026-09-22T04:31:25.458727Z"
+      "updated_at": "2026-09-22T04:32:27.204712Z"
     },
     {
       "alive": true,
@@ -322,7 +322,7 @@
       "exitcode": null,
       "shard": 2,
       "state": "uploading",
-      "updated_at": "2026-09-22T04:31:25.428806Z"
+      "updated_at": "2026-09-22T04:32:27.270120Z"
     },
     {
       "alive": true,
@@ -331,7 +331,7 @@
       "exitcode": null,
       "shard": 3,
       "state": "uploading",
-      "updated_at": "2026-09-22T04:31:25.389958Z"
+      "updated_at": "2026-09-22T04:32:27.151255Z"
     },
     {
       "alive": true,
@@ -340,7 +340,7 @@
       "exitcode": null,
       "shard": 4,
       "state": "uploading",
-      "updated_at": "2026-09-22T04:31:25.375240Z"
+      "updated_at": "2026-09-22T04:32:27.203316Z"
     },
     {
       "alive": true,
@@ -349,7 +349,7 @@
       "exitcode": null,
       "shard": 5,
       "state": "uploading",
-      "updated_at": "2026-09-22T04:31:25.441974Z"
+      "updated_at": "2026-09-22T04:32:27.190560Z"
     },
     {
       "alive": true,
@@ -358,7 +358,7 @@
       "exitcode": null,
       "shard": 6,
       "state": "uploading",
-      "updated_at": "2026-09-22T04:31:25.442475Z"
+      "updated_at": "2026-09-22T04:32:27.176161Z"
     },
     {
       "alive": true,
@@ -367,7 +367,7 @@
       "exitcode": null,
       "shard": 7,
       "state": "uploading",
-      "updated_at": "2026-09-22T04:31:25.317828Z"
+      "updated_at": "2026-09-22T04:32:27.210984Z"
     },
     {
       "alive": true,
@@ -376,7 +376,7 @@
       "exitcode": null,
       "shard": 8,
       "state": "uploading",
-      "updated_at": "2026-09-22T04:31:25.365618Z"
+      "updated_at": "2026-09-22T04:32:27.278419Z"
     },
     {
       "alive": true,
@@ -385,7 +385,7 @@
       "exitcode": null,
       "shard": 9,
       "state": "uploading",
-      "updated_at": "2026-09-22T04:31:25.434628Z"
+      "updated_at": "2026-09-22T04:32:27.250014Z"
     },
     {
       "alive": true,
@@ -394,7 +394,7 @@
       "exitcode": null,
       "shard": 10,
       "state": "uploading",
-      "updated_at": "2026-09-22T04:31:25.344742Z"
+      "updated_at": "2026-09-22T04:32:27.174940Z"
     },
     {
       "alive": true,
@@ -403,7 +403,7 @@
       "exitcode": null,
       "shard": 11,
       "state": "uploading",
-      "updated_at": "2026-09-22T04:31:25.371684Z"
+      "updated_at": "2026-09-22T04:32:27.190656Z"
     },
     {
       "alive": true,
@@ -412,7 +412,7 @@
       "exitcode": null,
       "shard": 12,
       "state": "uploading",
-      "updated_at": "2026-09-22T04:31:25.377509Z"
+      "updated_at": "2026-09-22T04:32:27.251102Z"
     },
     {
       "alive": true,
@@ -421,7 +421,7 @@
       "exitcode": null,
       "shard": 13,
       "state": "uploading",
-      "updated_at": "2026-09-22T04:31:25.369903Z"
+      "updated_at": "2026-09-22T04:32:27.291715Z"
     },
     {
       "alive": true,
@@ -430,16 +430,14 @@
       "exitcode": null,
       "shard": 14,
       "state": "uploading",
-      "updated_at": "2026-09-22T04:31:25.378582Z"
+      "updated_at": "2026-09-22T04:32:27.163837Z"
     },
     {
-      "alive": true,
-      "archive_bytes": 615848930,
-      "current_archive": "26. 22117 Cambrex.7z",
-      "exitcode": null,
+      "alive": false,
+      "exitcode": 0,
       "shard": 15,
-      "state": "uploading",
-      "updated_at": "2026-09-22T04:31:25.407312Z"
+      "state": "drained",
+      "updated_at": "2026-09-22T04:31:29.625699Z"
     },
     {
       "alive": true,
@@ -533,13 +531,13 @@
     },
     {
       "alive": true,
-      "archive_bytes": 427079273,
-      "current_archive": "MT13_043 (Church Of The Highlands NC).7z",
+      "archive_bytes": 502481515,
+      "current_archive": "174 back up.7z",
       "exitcode": null,
       "shard": 9,
-      "source_bytes_downloaded": 427079273,
+      "source_bytes_downloaded": 502481515,
       "state": "extracting",
-      "updated_at": "2026-09-22T04:21:09.427821Z"
+      "updated_at": "2026-09-22T04:32:11.726442Z"
     },
     {
       "alive": true,
@@ -605,14 +603,14 @@
   "disks": {
     "Disk-1": {
       "archives": {
-        "done": 478,
-        "done_after_reconciliation": 144,
+        "done": 479,
+        "done_after_reconciliation": 145,
         "done_before_gcp": 334,
         "done_in_reconciliation_baseline": 334,
-        "done_on_gcp": 144,
+        "done_on_gcp": 145,
         "failed": 0,
         "failed_unresolved": 0,
-        "remaining": 676,
+        "remaining": 675,
         "retried": 1,
         "skipped": 0,
         "total": 1154
@@ -626,13 +624,13 @@
         "stored_files_reported": 175510
       },
       "bytes": {
-        "extracted": 87454243082,
-        "extracted_bytes": 87454243082,
-        "source_bytes_transferred": 65117124284,
-        "source_compressed_done": 65117124284,
-        "source_compressed_remaining": 6057076085602,
-        "stored": 94517909729,
-        "stored_bytes": 94517909729
+        "extracted": 88041030228,
+        "extracted_bytes": 88041030228,
+        "source_bytes_transferred": 65650960528,
+        "source_compressed_done": 65650960528,
+        "source_compressed_remaining": 6056542249358,
+        "stored": 100988646392,
+        "stored_bytes": 100988646392
       },
       "cloud_results_exact": {
         "counts": {
@@ -651,12 +649,12 @@
                 "weak": 11766
               },
               ".dxf": {
-                "sha256": 14158,
-                "weak": 12467
+                "sha256": 14187,
+                "weak": 12496
               }
             },
-            "sha256": 379986,
-            "weak": 405187
+            "sha256": 380015,
+            "weak": 405216
           },
           "3d": {
             "by_ext": {
@@ -701,43 +699,43 @@
             "weak": 1355
           },
           "block": {
-            "distinct_blocks": 462224
+            "distinct_blocks": 463053
           },
           "cad_pdf": {
-            "sha256": 15622,
-            "weak": 15536
+            "sha256": 15754,
+            "weak": 15668
           },
           "nc1": {
             "by_ext": {
               ".nc1": {
-                "sha256": 14172,
-                "weak": 13507
+                "sha256": 14240,
+                "weak": 13575
               }
             },
-            "sha256": 14172,
-            "weak": 13507
+            "sha256": 14240,
+            "weak": 13575
           },
           "other_pdf": {
-            "sha256": 17475,
-            "weak": 17269
+            "sha256": 17759,
+            "weak": 17553
           },
           "pdf": {
             "by_ext": {
               ".pdf": {
-                "sha256": 32339,
-                "weak": 32529
+                "sha256": 32755,
+                "weak": 32945
               }
             },
-            "sha256": 32339,
-            "weak": 32529
+            "sha256": 32755,
+            "weak": 32945
           }
         },
-        "extracted_bytes": 87454243082,
-        "finished_archives": 478,
+        "extracted_bytes": 88041030228,
+        "finished_archives": 479,
         "retry_events": 1,
         "scope": "reconciliation baseline plus post-baseline GCP results",
-        "source_compressed_bytes": 65117124284,
-        "stored_files_reported": 674762
+        "source_compressed_bytes": 65650960528,
+        "stored_files_reported": 675280
       },
       "counts": {
         "2d": {
@@ -758,15 +756,15 @@
               "weak": 11766
             },
             ".dxf": {
-              "raw": 33735,
-              "sha256": 14158,
-              "weak": 12467
+              "raw": 33764,
+              "sha256": 14187,
+              "weak": 12496
             }
           },
-          "raw": 597716,
-          "sha256": 379986,
+          "raw": 597745,
+          "sha256": 380015,
           "sha256_status": "exact",
-          "weak": 405187,
+          "weak": 405216,
           "weak_status": "exact"
         },
         "3d": {
@@ -824,46 +822,46 @@
           "weak_status": "exact"
         },
         "block": {
-          "distinct_blocks": 462224,
+          "distinct_blocks": 463053,
           "distinct_hashes_status": "exact",
           "duplicate_bytes": null,
           "duplicate_bytes_status": "pending"
         },
         "cad_pdf": {
-          "raw": 24992,
-          "sha256": 15622,
+          "raw": 25126,
+          "sha256": 15754,
           "sha256_status": "exact",
-          "weak": 15536,
+          "weak": 15668,
           "weak_status": "partial"
         },
         "nc1": {
           "by_ext": {
             ".nc1": {
-              "raw": 24980,
-              "sha256": 14172,
-              "weak": 13507
+              "raw": 25048,
+              "sha256": 14240,
+              "weak": 13575
             }
           },
-          "raw": 24980,
-          "sha256": 14172,
+          "raw": 25048,
+          "sha256": 14240,
           "sha256_status": "exact",
-          "weak": 13507,
+          "weak": 13575,
           "weak_status": "exact"
         },
         "other_pdf": {
-          "raw": 26079,
-          "sha256": 17475,
+          "raw": 26366,
+          "sha256": 17759,
           "sha256_status": "exact",
-          "weak": 17269,
+          "weak": 17553,
           "weak_status": "partial"
         },
         "pdf": {
           "by_class": {
             "abm": {
-              "raw": 589
+              "raw": 590
             },
             "approval": {
-              "raw": 1186
+              "raw": 1192
             },
             "construction": {
               "raw": 3267
@@ -872,42 +870,42 @@
               "raw": 1346
             },
             "erection": {
-              "raw": 1575
+              "raw": 1591
             },
             "gather": {
               "raw": 996
             },
             "inputs": {
-              "raw": 6193
+              "raw": 6382
             },
             "other": {
-              "raw": 20140
+              "raw": 20251
             },
             "shop": {
-              "raw": 15779
+              "raw": 15877
             }
           },
           "by_ext": {
             ".pdf": {
-              "raw": 51071,
-              "sha256": 32339,
-              "weak": 32529
+              "raw": 51492,
+              "sha256": 32755,
+              "weak": 32945
             }
           },
-          "cad_raw": 24992,
-          "other_raw": 26079,
-          "raw": 51071,
-          "sha256": 32339,
+          "cad_raw": 25126,
+          "other_raw": 26366,
+          "raw": 51492,
+          "sha256": 32755,
           "sha256_status": "exact",
-          "weak": 32529,
+          "weak": 32945,
           "weak_status": "exact"
         },
         "pdf_by_drawing_type": {
           "abm": {
-            "raw": 589
+            "raw": 590
           },
           "approval": {
-            "raw": 1186
+            "raw": 1192
           },
           "construction": {
             "raw": 3267
@@ -916,34 +914,34 @@
             "raw": 1346
           },
           "erection": {
-            "raw": 1575
+            "raw": 1591
           },
           "gather": {
             "raw": 996
           },
           "inputs": {
-            "raw": 6193
+            "raw": 6382
           },
           "other": {
-            "raw": 20140
+            "raw": 20251
           },
           "shop": {
-            "raw": 15779
+            "raw": 15877
           }
         },
         "pdf_cad_binary": {
           "cad_pdf": {
-            "raw": 24992
+            "raw": 25126
           },
           "other_pdf": {
-            "raw": 26079
+            "raw": 26366
           }
         }
       },
       "dedup_coverage": {
         "block_distinct_hashes": {
-          "completed_archives": 478,
-          "covered_archives": 478,
+          "completed_archives": 479,
+          "covered_archives": 479,
           "status": "exact"
         },
         "block_duplicate_bytes": {
@@ -951,13 +949,13 @@
           "status": "pending"
         },
         "sha256": {
-          "completed_archives": 478,
-          "covered_archives": 478,
+          "completed_archives": 479,
+          "covered_archives": 479,
           "status": "exact"
         },
         "weak_name_size": {
-          "completed_archives": 478,
-          "covered_archives": 478,
+          "completed_archives": 479,
+          "covered_archives": 479,
           "reason": "actual weak-key identities were unioned across all selected results",
           "status": "exact"
         },
@@ -968,8 +966,8 @@
       },
       "depth": {
         "archive_nodes_by_depth": {
-          "0": 144,
-          "1": 810,
+          "0": 145,
+          "1": 812,
           "10": 0,
           "11": 0,
           "12": 0,
@@ -990,7 +988,7 @@
         "depth_cap_hits": 0,
         "distribution": {
           "0": 302,
-          "1": 164,
+          "1": 165,
           "10": 0,
           "11": 0,
           "12": 0,
@@ -1008,7 +1006,7 @@
         },
         "finished_archive_max_depth_distribution": {
           "0": 302,
-          "1": 164,
+          "1": 165,
           "10": 0,
           "11": 0,
           "12": 0,
@@ -1025,9 +1023,9 @@
           "9": 0
         },
         "max_measured_depth": 4,
-        "measured_finished_archives": 478,
+        "measured_finished_archives": 479,
         "unmeasured_finished_baseline": 0,
-        "unopened_archives_not_measured": 676
+        "unopened_archives_not_measured": 675
       },
       "provenance": {
         "archive_identity": "SHA-256 of the exact original S3 key joined through the canonical manifest; basename matching is forbidden",
@@ -1038,22 +1036,22 @@
         "primary_raw_scope": "immutable all-run reconciliation baseline plus non-overlapping new GCP result records"
       },
       "storage": {
-        "bytes": 94517909729,
+        "bytes": 100988646392,
         "destination": "gs://cad-disk-extract-mlproject-501205/Disk-1/",
-        "measured_at": "2026-09-22T04:27:09.775191Z",
-        "objects": 744097
+        "measured_at": "2026-09-22T04:31:34.302884Z",
+        "objects": 801503
       }
     },
     "Disk-2": {
       "archives": {
-        "done": 1766,
-        "done_after_reconciliation": 144,
+        "done": 1768,
+        "done_after_reconciliation": 146,
         "done_before_gcp": 1622,
         "done_in_reconciliation_baseline": 1622,
-        "done_on_gcp": 144,
+        "done_on_gcp": 146,
         "failed": 8,
         "failed_unresolved": 0,
-        "remaining": 700,
+        "remaining": 698,
         "retried": 0,
         "skipped": 0,
         "total": 2466
@@ -1067,13 +1065,13 @@
         "stored_files_reported": 64131
       },
       "bytes": {
-        "extracted": 53874107759,
-        "extracted_bytes": 53874107759,
-        "source_bytes_transferred": 98218657938,
-        "source_compressed_done": 98218657938,
-        "source_compressed_remaining": 3153724038567,
-        "stored": 52170283689,
-        "stored_bytes": 52170283689
+        "extracted": 55167716791,
+        "extracted_bytes": 55167716791,
+        "source_bytes_transferred": 99196340009,
+        "source_compressed_done": 99196340009,
+        "source_compressed_remaining": 3152746356496,
+        "stored": 58421721013,
+        "stored_bytes": 58421721013
       },
       "cloud_results_exact": {
         "counts": {
@@ -1088,16 +1086,16 @@
                 "weak": 0
               },
               ".dwg": {
-                "sha256": 3688,
-                "weak": 3546
+                "sha256": 3713,
+                "weak": 3571
               },
               ".dxf": {
-                "sha256": 6968,
-                "weak": 6575
+                "sha256": 7226,
+                "weak": 6826
               }
             },
-            "sha256": 16460,
-            "weak": 15929
+            "sha256": 16743,
+            "weak": 16205
           },
           "3d": {
             "by_ext": {
@@ -1114,8 +1112,8 @@
                 "weak": 0
               },
               ".ifc": {
-                "sha256": 49,
-                "weak": 50
+                "sha256": 51,
+                "weak": 52
               },
               ".obj": {
                 "sha256": 0,
@@ -1138,47 +1136,47 @@
                 "weak": 183
               }
             },
-            "sha256": 1774,
-            "weak": 1778
+            "sha256": 1776,
+            "weak": 1780
           },
           "block": {
-            "distinct_blocks": 113821
+            "distinct_blocks": 116647
           },
           "cad_pdf": {
-            "sha256": 32408,
-            "weak": 28293
+            "sha256": 33524,
+            "weak": 29321
           },
           "nc1": {
             "by_ext": {
               ".nc1": {
-                "sha256": 17181,
-                "weak": 16851
+                "sha256": 17630,
+                "weak": 17296
               }
             },
-            "sha256": 17181,
-            "weak": 16851
+            "sha256": 17630,
+            "weak": 17296
           },
           "other_pdf": {
-            "sha256": 23697,
-            "weak": 22419
+            "sha256": 23946,
+            "weak": 22704
           },
           "pdf": {
             "by_ext": {
               ".pdf": {
-                "sha256": 55590,
-                "weak": 56588
+                "sha256": 56948,
+                "weak": 57894
               }
             },
-            "sha256": 55590,
-            "weak": 56588
+            "sha256": 56948,
+            "weak": 57894
           }
         },
-        "extracted_bytes": 53874107759,
-        "finished_archives": 1766,
+        "extracted_bytes": 55167716791,
+        "finished_archives": 1768,
         "retry_events": 0,
         "scope": "reconciliation baseline plus post-baseline GCP results",
-        "source_compressed_bytes": 98218657938,
-        "stored_files_reported": 134371
+        "source_compressed_bytes": 99196340009,
+        "stored_files_reported": 137875
       },
       "counts": {
         "2d": {
@@ -1194,20 +1192,20 @@
               "weak": 0
             },
             ".dwg": {
-              "raw": 4375,
-              "sha256": 3688,
-              "weak": 3546
+              "raw": 4407,
+              "sha256": 3713,
+              "weak": 3571
             },
             ".dxf": {
-              "raw": 10904,
-              "sha256": 6968,
-              "weak": 6575
+              "raw": 11215,
+              "sha256": 7226,
+              "weak": 6826
             }
           },
-          "raw": 22914,
-          "sha256": 16460,
+          "raw": 23257,
+          "sha256": 16743,
           "sha256_status": "exact",
-          "weak": 15929,
+          "weak": 16205,
           "weak_status": "exact"
         },
         "3d": {
@@ -1228,9 +1226,9 @@
               "weak": 0
             },
             ".ifc": {
-              "raw": 91,
-              "sha256": 49,
-              "weak": 50
+              "raw": 94,
+              "sha256": 51,
+              "weak": 52
             },
             ".obj": {
               "raw": 0,
@@ -1258,44 +1256,44 @@
               "weak": 183
             }
           },
-          "raw": 2147,
-          "sha256": 1774,
+          "raw": 2150,
+          "sha256": 1776,
           "sha256_status": "exact",
-          "weak": 1778,
+          "weak": 1780,
           "weak_status": "exact"
         },
         "block": {
-          "distinct_blocks": 113821,
+          "distinct_blocks": 116647,
           "distinct_hashes_status": "exact",
           "duplicate_bytes": null,
           "duplicate_bytes_status": "pending"
         },
         "cad_pdf": {
-          "raw": 54636,
-          "sha256": 32408,
+          "raw": 56823,
+          "sha256": 33524,
           "sha256_status": "exact",
-          "weak": 28293,
+          "weak": 29321,
           "weak_status": "partial"
         },
         "nc1": {
           "by_ext": {
             ".nc1": {
-              "raw": 27556,
-              "sha256": 17181,
-              "weak": 16851
+              "raw": 28156,
+              "sha256": 17630,
+              "weak": 17296
             }
           },
-          "raw": 27556,
-          "sha256": 17181,
+          "raw": 28156,
+          "sha256": 17630,
           "sha256_status": "exact",
-          "weak": 16851,
+          "weak": 17296,
           "weak_status": "exact"
         },
         "other_pdf": {
-          "raw": 40852,
-          "sha256": 23697,
+          "raw": 41223,
+          "sha256": 23946,
           "sha256_status": "exact",
-          "weak": 22419,
+          "weak": 22704,
           "weak_status": "partial"
         },
         "pdf": {
@@ -1304,43 +1302,43 @@
               "raw": 321
             },
             "approval": {
-              "raw": 1059
+              "raw": 1072
             },
             "construction": {
               "raw": 76
             },
             "detail": {
-              "raw": 27030
+              "raw": 27878
             },
             "erection": {
-              "raw": 6376
+              "raw": 6520
             },
             "gather": {
-              "raw": 11602
+              "raw": 12526
             },
             "inputs": {
-              "raw": 6941
+              "raw": 6990
             },
             "other": {
-              "raw": 39486
+              "raw": 39892
             },
             "shop": {
-              "raw": 2597
+              "raw": 2771
             }
           },
           "by_ext": {
             ".pdf": {
-              "raw": 95488,
-              "sha256": 55590,
-              "weak": 56588
+              "raw": 98046,
+              "sha256": 56948,
+              "weak": 57894
             }
           },
-          "cad_raw": 54636,
-          "other_raw": 40852,
-          "raw": 95488,
-          "sha256": 55590,
+          "cad_raw": 56823,
+          "other_raw": 41223,
+          "raw": 98046,
+          "sha256": 56948,
           "sha256_status": "exact",
-          "weak": 56588,
+          "weak": 57894,
           "weak_status": "exact"
         },
         "pdf_by_drawing_type": {
@@ -1348,43 +1346,43 @@
             "raw": 321
           },
           "approval": {
-            "raw": 1059
+            "raw": 1072
           },
           "construction": {
             "raw": 76
           },
           "detail": {
-            "raw": 27030
+            "raw": 27878
           },
           "erection": {
-            "raw": 6376
+            "raw": 6520
           },
           "gather": {
-            "raw": 11602
+            "raw": 12526
           },
           "inputs": {
-            "raw": 6941
+            "raw": 6990
           },
           "other": {
-            "raw": 39486
+            "raw": 39892
           },
           "shop": {
-            "raw": 2597
+            "raw": 2771
           }
         },
         "pdf_cad_binary": {
           "cad_pdf": {
-            "raw": 54636
+            "raw": 56823
           },
           "other_pdf": {
-            "raw": 40852
+            "raw": 41223
           }
         }
       },
       "dedup_coverage": {
         "block_distinct_hashes": {
-          "completed_archives": 1766,
-          "covered_archives": 1766,
+          "completed_archives": 1768,
+          "covered_archives": 1768,
           "status": "exact"
         },
         "block_duplicate_bytes": {
@@ -1392,13 +1390,13 @@
           "status": "pending"
         },
         "sha256": {
-          "completed_archives": 1766,
-          "covered_archives": 1766,
+          "completed_archives": 1768,
+          "covered_archives": 1768,
           "status": "exact"
         },
         "weak_name_size": {
-          "completed_archives": 1766,
-          "covered_archives": 1766,
+          "completed_archives": 1768,
+          "covered_archives": 1768,
           "reason": "actual weak-key identities were unioned across all selected results",
           "status": "exact"
         },
@@ -1409,8 +1407,8 @@
       },
       "depth": {
         "archive_nodes_by_depth": {
-          "0": 144,
-          "1": 553,
+          "0": 146,
+          "1": 586,
           "10": 0,
           "11": 0,
           "12": 0,
@@ -1431,7 +1429,7 @@
         "depth_cap_hits": 0,
         "distribution": {
           "0": 1525,
-          "1": 223,
+          "1": 225,
           "10": 0,
           "11": 0,
           "12": 0,
@@ -1449,7 +1447,7 @@
         },
         "finished_archive_max_depth_distribution": {
           "0": 1525,
-          "1": 223,
+          "1": 225,
           "10": 0,
           "11": 0,
           "12": 0,
@@ -1466,9 +1464,9 @@
           "9": 0
         },
         "max_measured_depth": 3,
-        "measured_finished_archives": 1766,
+        "measured_finished_archives": 1768,
         "unmeasured_finished_baseline": 0,
-        "unopened_archives_not_measured": 700
+        "unopened_archives_not_measured": 698
       },
       "provenance": {
         "archive_identity": "SHA-256 of the exact original S3 key joined through the canonical manifest; basename matching is forbidden",
@@ -1479,22 +1477,22 @@
         "primary_raw_scope": "immutable all-run reconciliation baseline plus non-overlapping new GCP result records"
       },
       "storage": {
-        "bytes": 52170283689,
+        "bytes": 58421721013,
         "destination": "gs://cad-disk-extract-mlproject-501205/Disk-2/",
-        "measured_at": "2026-09-22T04:27:09.775191Z",
-        "objects": 143404
+        "measured_at": "2026-09-22T04:31:34.302884Z",
+        "objects": 161877
       }
     },
     "combined": {
       "archives": {
-        "done": 2244,
-        "done_after_reconciliation": 288,
+        "done": 2247,
+        "done_after_reconciliation": 291,
         "done_before_gcp": 1956,
         "done_in_reconciliation_baseline": 1956,
-        "done_on_gcp": 288,
+        "done_on_gcp": 291,
         "failed": 8,
         "failed_unresolved": 0,
-        "remaining": 1376,
+        "remaining": 1373,
         "retried": 1,
         "skipped": 0,
         "total": 3620
@@ -1508,13 +1506,13 @@
         "stored_files_reported": 239641
       },
       "bytes": {
-        "extracted": 141328350841,
-        "extracted_bytes": 141328350841,
-        "source_bytes_transferred": 163335782222,
-        "source_compressed_done": 163335782222,
-        "source_compressed_remaining": 9210800124169,
-        "stored": 146688193418,
-        "stored_bytes": 146688193418
+        "extracted": 143208747019,
+        "extracted_bytes": 143208747019,
+        "source_bytes_transferred": 164847300537,
+        "source_compressed_done": 164847300537,
+        "source_compressed_remaining": 9209288605854,
+        "stored": 159410367405,
+        "stored_bytes": 159410367405
       },
       "cloud_results_exact": {
         "counts": {
@@ -1529,16 +1527,16 @@
                 "weak": 85191
               },
               ".dwg": {
-                "sha256": 15500,
-                "weak": 15312
+                "sha256": 15525,
+                "weak": 15337
               },
               ".dxf": {
-                "sha256": 21126,
-                "weak": 19042
+                "sha256": 21413,
+                "weak": 19322
               }
             },
-            "sha256": 396446,
-            "weak": 421116
+            "sha256": 396758,
+            "weak": 421421
           },
           "3d": {
             "by_ext": {
@@ -1555,8 +1553,8 @@
                 "weak": 0
               },
               ".ifc": {
-                "sha256": 435,
-                "weak": 436
+                "sha256": 437,
+                "weak": 438
               },
               ".obj": {
                 "sha256": 0,
@@ -1579,47 +1577,47 @@
                 "weak": 192
               }
             },
-            "sha256": 3142,
-            "weak": 3133
+            "sha256": 3144,
+            "weak": 3135
           },
           "block": {
-            "distinct_blocks": 576005
+            "distinct_blocks": 579660
           },
           "cad_pdf": {
-            "sha256": 48020,
-            "weak": 43820
+            "sha256": 49268,
+            "weak": 44980
           },
           "nc1": {
             "by_ext": {
               ".nc1": {
-                "sha256": 31353,
-                "weak": 30356
+                "sha256": 31870,
+                "weak": 30869
               }
             },
-            "sha256": 31353,
-            "weak": 30356
+            "sha256": 31870,
+            "weak": 30869
           },
           "other_pdf": {
-            "sha256": 41148,
-            "weak": 39663
+            "sha256": 41681,
+            "weak": 40232
           },
           "pdf": {
             "by_ext": {
               ".pdf": {
-                "sha256": 87895,
-                "weak": 89083
+                "sha256": 89669,
+                "weak": 90805
               }
             },
-            "sha256": 87895,
-            "weak": 89083
+            "sha256": 89669,
+            "weak": 90805
           }
         },
-        "extracted_bytes": 141328350841,
-        "finished_archives": 2244,
+        "extracted_bytes": 143208747019,
+        "finished_archives": 2247,
         "retry_events": 1,
         "scope": "reconciliation baseline plus post-baseline GCP results",
-        "source_compressed_bytes": 163335782222,
-        "stored_files_reported": 809133
+        "source_compressed_bytes": 164847300537,
+        "stored_files_reported": 813155
       },
       "counts": {
         "2d": {
@@ -1635,20 +1633,20 @@
               "weak": 85191
             },
             ".dwg": {
-              "raw": 37726,
-              "sha256": 15500,
-              "weak": 15312
+              "raw": 37758,
+              "sha256": 15525,
+              "weak": 15337
             },
             ".dxf": {
-              "raw": 44639,
-              "sha256": 21126,
-              "weak": 19042
+              "raw": 44979,
+              "sha256": 21413,
+              "weak": 19322
             }
           },
-          "raw": 620630,
-          "sha256": 396446,
+          "raw": 621002,
+          "sha256": 396758,
           "sha256_status": "exact",
-          "weak": 421116,
+          "weak": 421421,
           "weak_status": "exact"
         },
         "3d": {
@@ -1669,9 +1667,9 @@
               "weak": 0
             },
             ".ifc": {
-              "raw": 670,
-              "sha256": 435,
-              "weak": 436
+              "raw": 673,
+              "sha256": 437,
+              "weak": 438
             },
             ".obj": {
               "raw": 0,
@@ -1699,133 +1697,133 @@
               "weak": 192
             }
           },
-          "raw": 3876,
-          "sha256": 3142,
+          "raw": 3879,
+          "sha256": 3144,
           "sha256_status": "exact",
-          "weak": 3133,
+          "weak": 3135,
           "weak_status": "exact"
         },
         "block": {
-          "distinct_blocks": 576005,
+          "distinct_blocks": 579660,
           "distinct_hashes_status": "exact",
           "duplicate_bytes": null,
           "duplicate_bytes_status": "pending"
         },
         "cad_pdf": {
-          "raw": 79628,
-          "sha256": 48020,
+          "raw": 81949,
+          "sha256": 49268,
           "sha256_status": "exact",
-          "weak": 43820,
+          "weak": 44980,
           "weak_status": "partial"
         },
         "nc1": {
           "by_ext": {
             ".nc1": {
-              "raw": 52536,
-              "sha256": 31353,
-              "weak": 30356
+              "raw": 53204,
+              "sha256": 31870,
+              "weak": 30869
             }
           },
-          "raw": 52536,
-          "sha256": 31353,
+          "raw": 53204,
+          "sha256": 31870,
           "sha256_status": "exact",
-          "weak": 30356,
+          "weak": 30869,
           "weak_status": "exact"
         },
         "other_pdf": {
-          "raw": 66931,
-          "sha256": 41148,
+          "raw": 67589,
+          "sha256": 41681,
           "sha256_status": "exact",
-          "weak": 39663,
+          "weak": 40232,
           "weak_status": "partial"
         },
         "pdf": {
           "by_class": {
             "abm": {
-              "raw": 910
+              "raw": 911
             },
             "approval": {
-              "raw": 2245
+              "raw": 2264
             },
             "construction": {
               "raw": 3343
             },
             "detail": {
-              "raw": 28376
+              "raw": 29224
             },
             "erection": {
-              "raw": 7951
+              "raw": 8111
             },
             "gather": {
-              "raw": 12598
+              "raw": 13522
             },
             "inputs": {
-              "raw": 13134
+              "raw": 13372
             },
             "other": {
-              "raw": 59626
+              "raw": 60143
             },
             "shop": {
-              "raw": 18376
+              "raw": 18648
             }
           },
           "by_ext": {
             ".pdf": {
-              "raw": 146559,
-              "sha256": 87895,
-              "weak": 89083
+              "raw": 149538,
+              "sha256": 89669,
+              "weak": 90805
             }
           },
-          "cad_raw": 79628,
-          "other_raw": 66931,
-          "raw": 146559,
-          "sha256": 87895,
+          "cad_raw": 81949,
+          "other_raw": 67589,
+          "raw": 149538,
+          "sha256": 89669,
           "sha256_status": "exact",
-          "weak": 89083,
+          "weak": 90805,
           "weak_status": "exact"
         },
         "pdf_by_drawing_type": {
           "abm": {
-            "raw": 910
+            "raw": 911
           },
           "approval": {
-            "raw": 2245
+            "raw": 2264
           },
           "construction": {
             "raw": 3343
           },
           "detail": {
-            "raw": 28376
+            "raw": 29224
           },
           "erection": {
-            "raw": 7951
+            "raw": 8111
           },
           "gather": {
-            "raw": 12598
+            "raw": 13522
           },
           "inputs": {
-            "raw": 13134
+            "raw": 13372
           },
           "other": {
-            "raw": 59626
+            "raw": 60143
           },
           "shop": {
-            "raw": 18376
+            "raw": 18648
           }
         },
         "pdf_cad_binary": {
           "cad_pdf": {
-            "raw": 79628
+            "raw": 81949
           },
           "other_pdf": {
-            "raw": 66931
+            "raw": 67589
           }
         }
       },
       "dedup_coverage": {
         "block_distinct_hashes": {
-          "completed_archives": 2244,
-          "covered_archives": 2244,
+          "completed_archives": 2247,
+          "covered_archives": 2247,
           "status": "exact"
         },
         "block_duplicate_bytes": {
@@ -1833,13 +1831,13 @@
           "status": "pending"
         },
         "sha256": {
-          "completed_archives": 2244,
-          "covered_archives": 2244,
+          "completed_archives": 2247,
+          "covered_archives": 2247,
           "status": "exact"
         },
         "weak_name_size": {
-          "completed_archives": 2244,
-          "covered_archives": 2244,
+          "completed_archives": 2247,
+          "covered_archives": 2247,
           "reason": "actual weak-key identities were unioned across all selected results",
           "status": "exact"
         },
@@ -1850,8 +1848,8 @@
       },
       "depth": {
         "archive_nodes_by_depth": {
-          "0": 288,
-          "1": 1363,
+          "0": 291,
+          "1": 1398,
           "10": 0,
           "11": 0,
           "12": 0,
@@ -1872,7 +1870,7 @@
         "depth_cap_hits": 0,
         "distribution": {
           "0": 1827,
-          "1": 387,
+          "1": 390,
           "10": 0,
           "11": 0,
           "12": 0,
@@ -1890,7 +1888,7 @@
         },
         "finished_archive_max_depth_distribution": {
           "0": 1827,
-          "1": 387,
+          "1": 390,
           "10": 0,
           "11": 0,
           "12": 0,
@@ -1907,9 +1905,9 @@
           "9": 0
         },
         "max_measured_depth": 4,
-        "measured_finished_archives": 2244,
+        "measured_finished_archives": 2247,
         "unmeasured_finished_baseline": 0,
-        "unopened_archives_not_measured": 1376
+        "unopened_archives_not_measured": 1373
       },
       "provenance": {
         "archive_identity": "union of canonical SHA-256 original-key identities across the disjoint disk manifests",
@@ -1918,10 +1916,10 @@
         "primary_raw_scope": "immutable all-run reconciliation baseline plus non-overlapping new GCP result records"
       },
       "storage": {
-        "bytes": 146688193418,
+        "bytes": 159410367405,
         "destination": "gs://cad-disk-extract-mlproject-501205/Disk-1/ + gs://cad-disk-extract-mlproject-501205/Disk-2/",
-        "measured_at": "2026-09-22T04:27:09.775191Z",
-        "objects": 887501
+        "measured_at": "2026-09-22T04:31:34.302884Z",
+        "objects": 963380
       }
     }
   },
@@ -1941,33 +1939,33 @@
     "bucket": "gs://cad-disk-extract-mlproject-501205/",
     "by_prefix": {
       "Disk-1/": {
-        "object_count": 744097,
-        "stored_bytes": 94517909729,
-        "stored_gb": 94.51791
+        "object_count": 801503,
+        "stored_bytes": 100988646392,
+        "stored_gb": 100.988646
       },
       "Disk-2/": {
-        "object_count": 143404,
-        "stored_bytes": 52170283689,
-        "stored_gb": 52.170284
+        "object_count": 161877,
+        "stored_bytes": 58421721013,
+        "stored_gb": 58.421721
       }
     },
     "estimate_label": "Estimate only; not a Google Cloud invoice",
-    "estimated_monthly_usd": 3.385,
-    "object_count": 890109,
+    "estimated_monthly_usd": 3.6779,
+    "object_count": 966053,
     "rate_usd_per_gb_month": 0.023,
-    "scanned_at": "2026-09-22T04:27:09.775191Z",
+    "scanned_at": "2026-09-22T04:31:34.302884Z",
     "state": "ok",
-    "stored_bytes": 147174194573,
-    "stored_gb": 147.174195
+    "stored_bytes": 159908885078,
+    "stored_gb": 159.908885
   },
   "health": "alive",
-  "last_finished_at": "2026-09-22T04:31:14.285812Z",
-  "last_result": "_state/results/a676645a7e024114837ad227a4dbfdd008ab5308150783f205b8b5dc82cc4fce.json",
-  "last_update_iso": "2026-09-22T04:31:26.949035Z",
+  "last_finished_at": "2026-09-22T04:32:17.238242Z",
+  "last_result": "_state/results/0d1a0c5153584d00bc8a0201fe458cd10a843af0090955cf623355e59a354e8e.json",
+  "last_update_iso": "2026-09-22T04:32:28.952350Z",
   "nested_depth": {
     "archive_nodes_by_depth": {
-      "0": 288,
-      "1": 1363,
+      "0": 291,
+      "1": 1398,
       "10": 0,
       "11": 0,
       "12": 0,
@@ -1988,7 +1986,7 @@
     "depth_cap_hits": 0,
     "distribution": {
       "0": 1827,
-      "1": 387,
+      "1": 390,
       "10": 0,
       "11": 0,
       "12": 0,
@@ -2006,7 +2004,7 @@
     },
     "finished_archive_max_depth_distribution": {
       "0": 1827,
-      "1": 387,
+      "1": 390,
       "10": 0,
       "11": 0,
       "12": 0,
@@ -2023,21 +2021,21 @@
       "9": 0
     },
     "max_measured_depth": 4,
-    "measured_finished_archives": 2244,
+    "measured_finished_archives": 2247,
     "unmeasured_finished_baseline": 0,
-    "unopened_archives_not_measured": 1376
+    "unopened_archives_not_measured": 1373
   },
   "per_disk": {
     "Disk-1": {
       "archives": {
-        "done": 478,
-        "done_after_reconciliation": 144,
+        "done": 479,
+        "done_after_reconciliation": 145,
         "done_before_gcp": 334,
         "done_in_reconciliation_baseline": 334,
-        "done_on_gcp": 144,
+        "done_on_gcp": 145,
         "failed": 0,
         "failed_unresolved": 0,
-        "remaining": 676,
+        "remaining": 675,
         "retried": 1,
         "skipped": 0,
         "total": 1154
@@ -2051,13 +2049,13 @@
         "stored_files_reported": 175510
       },
       "bytes": {
-        "extracted": 87454243082,
-        "extracted_bytes": 87454243082,
-        "source_bytes_transferred": 65117124284,
-        "source_compressed_done": 65117124284,
-        "source_compressed_remaining": 6057076085602,
-        "stored": 94517909729,
-        "stored_bytes": 94517909729
+        "extracted": 88041030228,
+        "extracted_bytes": 88041030228,
+        "source_bytes_transferred": 65650960528,
+        "source_compressed_done": 65650960528,
+        "source_compressed_remaining": 6056542249358,
+        "stored": 100988646392,
+        "stored_bytes": 100988646392
       },
       "cloud_results_exact": {
         "counts": {
@@ -2076,12 +2074,12 @@
                 "weak": 11766
               },
               ".dxf": {
-                "sha256": 14158,
-                "weak": 12467
+                "sha256": 14187,
+                "weak": 12496
               }
             },
-            "sha256": 379986,
-            "weak": 405187
+            "sha256": 380015,
+            "weak": 405216
           },
           "3d": {
             "by_ext": {
@@ -2126,43 +2124,43 @@
             "weak": 1355
           },
           "block": {
-            "distinct_blocks": 462224
+            "distinct_blocks": 463053
           },
           "cad_pdf": {
-            "sha256": 15622,
-            "weak": 15536
+            "sha256": 15754,
+            "weak": 15668
           },
           "nc1": {
             "by_ext": {
               ".nc1": {
-                "sha256": 14172,
-                "weak": 13507
+                "sha256": 14240,
+                "weak": 13575
               }
             },
-            "sha256": 14172,
-            "weak": 13507
+            "sha256": 14240,
+            "weak": 13575
           },
           "other_pdf": {
-            "sha256": 17475,
-            "weak": 17269
+            "sha256": 17759,
+            "weak": 17553
           },
           "pdf": {
             "by_ext": {
               ".pdf": {
-                "sha256": 32339,
-                "weak": 32529
+                "sha256": 32755,
+                "weak": 32945
               }
             },
-            "sha256": 32339,
-            "weak": 32529
+            "sha256": 32755,
+            "weak": 32945
           }
         },
-        "extracted_bytes": 87454243082,
-        "finished_archives": 478,
+        "extracted_bytes": 88041030228,
+        "finished_archives": 479,
         "retry_events": 1,
         "scope": "reconciliation baseline plus post-baseline GCP results",
-        "source_compressed_bytes": 65117124284,
-        "stored_files_reported": 674762
+        "source_compressed_bytes": 65650960528,
+        "stored_files_reported": 675280
       },
       "counts": {
         "2d": {
@@ -2183,15 +2181,15 @@
               "weak": 11766
             },
             ".dxf": {
-              "raw": 33735,
-              "sha256": 14158,
-              "weak": 12467
+              "raw": 33764,
+              "sha256": 14187,
+              "weak": 12496
             }
           },
-          "raw": 597716,
-          "sha256": 379986,
+          "raw": 597745,
+          "sha256": 380015,
           "sha256_status": "exact",
-          "weak": 405187,
+          "weak": 405216,
           "weak_status": "exact"
         },
         "3d": {
@@ -2249,46 +2247,46 @@
           "weak_status": "exact"
         },
         "block": {
-          "distinct_blocks": 462224,
+          "distinct_blocks": 463053,
           "distinct_hashes_status": "exact",
           "duplicate_bytes": null,
           "duplicate_bytes_status": "pending"
         },
         "cad_pdf": {
-          "raw": 24992,
-          "sha256": 15622,
+          "raw": 25126,
+          "sha256": 15754,
           "sha256_status": "exact",
-          "weak": 15536,
+          "weak": 15668,
           "weak_status": "partial"
         },
         "nc1": {
           "by_ext": {
             ".nc1": {
-              "raw": 24980,
-              "sha256": 14172,
-              "weak": 13507
+              "raw": 25048,
+              "sha256": 14240,
+              "weak": 13575
             }
           },
-          "raw": 24980,
-          "sha256": 14172,
+          "raw": 25048,
+          "sha256": 14240,
           "sha256_status": "exact",
-          "weak": 13507,
+          "weak": 13575,
           "weak_status": "exact"
         },
         "other_pdf": {
-          "raw": 26079,
-          "sha256": 17475,
+          "raw": 26366,
+          "sha256": 17759,
           "sha256_status": "exact",
-          "weak": 17269,
+          "weak": 17553,
           "weak_status": "partial"
         },
         "pdf": {
           "by_class": {
             "abm": {
-              "raw": 589
+              "raw": 590
             },
             "approval": {
-              "raw": 1186
+              "raw": 1192
             },
             "construction": {
               "raw": 3267
@@ -2297,42 +2295,42 @@
               "raw": 1346
             },
             "erection": {
-              "raw": 1575
+              "raw": 1591
             },
             "gather": {
               "raw": 996
             },
             "inputs": {
-              "raw": 6193
+              "raw": 6382
             },
             "other": {
-              "raw": 20140
+              "raw": 20251
             },
             "shop": {
-              "raw": 15779
+              "raw": 15877
             }
           },
           "by_ext": {
             ".pdf": {
-              "raw": 51071,
-              "sha256": 32339,
-              "weak": 32529
+              "raw": 51492,
+              "sha256": 32755,
+              "weak": 32945
             }
           },
-          "cad_raw": 24992,
-          "other_raw": 26079,
-          "raw": 51071,
-          "sha256": 32339,
+          "cad_raw": 25126,
+          "other_raw": 26366,
+          "raw": 51492,
+          "sha256": 32755,
           "sha256_status": "exact",
-          "weak": 32529,
+          "weak": 32945,
           "weak_status": "exact"
         },
         "pdf_by_drawing_type": {
           "abm": {
-            "raw": 589
+            "raw": 590
           },
           "approval": {
-            "raw": 1186
+            "raw": 1192
           },
           "construction": {
             "raw": 3267
@@ -2341,34 +2339,34 @@
             "raw": 1346
           },
           "erection": {
-            "raw": 1575
+            "raw": 1591
           },
           "gather": {
             "raw": 996
           },
           "inputs": {
-            "raw": 6193
+            "raw": 6382
           },
           "other": {
-            "raw": 20140
+            "raw": 20251
           },
           "shop": {
-            "raw": 15779
+            "raw": 15877
           }
         },
         "pdf_cad_binary": {
           "cad_pdf": {
-            "raw": 24992
+            "raw": 25126
           },
           "other_pdf": {
-            "raw": 26079
+            "raw": 26366
           }
         }
       },
       "dedup_coverage": {
         "block_distinct_hashes": {
-          "completed_archives": 478,
-          "covered_archives": 478,
+          "completed_archives": 479,
+          "covered_archives": 479,
           "status": "exact"
         },
         "block_duplicate_bytes": {
@@ -2376,13 +2374,13 @@
           "status": "pending"
         },
         "sha256": {
-          "completed_archives": 478,
-          "covered_archives": 478,
+          "completed_archives": 479,
+          "covered_archives": 479,
           "status": "exact"
         },
         "weak_name_size": {
-          "completed_archives": 478,
-          "covered_archives": 478,
+          "completed_archives": 479,
+          "covered_archives": 479,
           "reason": "actual weak-key identities were unioned across all selected results",
           "status": "exact"
         },
@@ -2393,8 +2391,8 @@
       },
       "depth": {
         "archive_nodes_by_depth": {
-          "0": 144,
-          "1": 810,
+          "0": 145,
+          "1": 812,
           "10": 0,
           "11": 0,
           "12": 0,
@@ -2415,7 +2413,7 @@
         "depth_cap_hits": 0,
         "distribution": {
           "0": 302,
-          "1": 164,
+          "1": 165,
           "10": 0,
           "11": 0,
           "12": 0,
@@ -2433,7 +2431,7 @@
         },
         "finished_archive_max_depth_distribution": {
           "0": 302,
-          "1": 164,
+          "1": 165,
           "10": 0,
           "11": 0,
           "12": 0,
@@ -2450,9 +2448,9 @@
           "9": 0
         },
         "max_measured_depth": 4,
-        "measured_finished_archives": 478,
+        "measured_finished_archives": 479,
         "unmeasured_finished_baseline": 0,
-        "unopened_archives_not_measured": 676
+        "unopened_archives_not_measured": 675
       },
       "provenance": {
         "archive_identity": "SHA-256 of the exact original S3 key joined through the canonical manifest; basename matching is forbidden",
@@ -2463,22 +2461,22 @@
         "primary_raw_scope": "immutable all-run reconciliation baseline plus non-overlapping new GCP result records"
       },
       "storage": {
-        "bytes": 94517909729,
+        "bytes": 100988646392,
         "destination": "gs://cad-disk-extract-mlproject-501205/Disk-1/",
-        "measured_at": "2026-09-22T04:27:09.775191Z",
-        "objects": 744097
+        "measured_at": "2026-09-22T04:31:34.302884Z",
+        "objects": 801503
       }
     },
     "Disk-2": {
       "archives": {
-        "done": 1766,
-        "done_after_reconciliation": 144,
+        "done": 1768,
+        "done_after_reconciliation": 146,
         "done_before_gcp": 1622,
         "done_in_reconciliation_baseline": 1622,
-        "done_on_gcp": 144,
+        "done_on_gcp": 146,
         "failed": 8,
         "failed_unresolved": 0,
-        "remaining": 700,
+        "remaining": 698,
         "retried": 0,
         "skipped": 0,
         "total": 2466
@@ -2492,13 +2490,13 @@
         "stored_files_reported": 64131
       },
       "bytes": {
-        "extracted": 53874107759,
-        "extracted_bytes": 53874107759,
-        "source_bytes_transferred": 98218657938,
-        "source_compressed_done": 98218657938,
-        "source_compressed_remaining": 3153724038567,
-        "stored": 52170283689,
-        "stored_bytes": 52170283689
+        "extracted": 55167716791,
+        "extracted_bytes": 55167716791,
+        "source_bytes_transferred": 99196340009,
+        "source_compressed_done": 99196340009,
+        "source_compressed_remaining": 3152746356496,
+        "stored": 58421721013,
+        "stored_bytes": 58421721013
       },
       "cloud_results_exact": {
         "counts": {
@@ -2513,16 +2511,16 @@
                 "weak": 0
               },
               ".dwg": {
-                "sha256": 3688,
-                "weak": 3546
+                "sha256": 3713,
+                "weak": 3571
               },
               ".dxf": {
-                "sha256": 6968,
-                "weak": 6575
+                "sha256": 7226,
+                "weak": 6826
               }
             },
-            "sha256": 16460,
-            "weak": 15929
+            "sha256": 16743,
+            "weak": 16205
           },
           "3d": {
             "by_ext": {
@@ -2539,8 +2537,8 @@
                 "weak": 0
               },
               ".ifc": {
-                "sha256": 49,
-                "weak": 50
+                "sha256": 51,
+                "weak": 52
               },
               ".obj": {
                 "sha256": 0,
@@ -2563,47 +2561,47 @@
                 "weak": 183
               }
             },
-            "sha256": 1774,
-            "weak": 1778
+            "sha256": 1776,
+            "weak": 1780
           },
           "block": {
-            "distinct_blocks": 113821
+            "distinct_blocks": 116647
           },
           "cad_pdf": {
-            "sha256": 32408,
-            "weak": 28293
+            "sha256": 33524,
+            "weak": 29321
           },
           "nc1": {
             "by_ext": {
               ".nc1": {
-                "sha256": 17181,
-                "weak": 16851
+                "sha256": 17630,
+                "weak": 17296
               }
             },
-            "sha256": 17181,
-            "weak": 16851
+            "sha256": 17630,
+            "weak": 17296
           },
           "other_pdf": {
-            "sha256": 23697,
-            "weak": 22419
+            "sha256": 23946,
+            "weak": 22704
           },
           "pdf": {
             "by_ext": {
               ".pdf": {
-                "sha256": 55590,
-                "weak": 56588
+                "sha256": 56948,
+                "weak": 57894
               }
             },
-            "sha256": 55590,
-            "weak": 56588
+            "sha256": 56948,
+            "weak": 57894
           }
         },
-        "extracted_bytes": 53874107759,
-        "finished_archives": 1766,
+        "extracted_bytes": 55167716791,
+        "finished_archives": 1768,
         "retry_events": 0,
         "scope": "reconciliation baseline plus post-baseline GCP results",
-        "source_compressed_bytes": 98218657938,
-        "stored_files_reported": 134371
+        "source_compressed_bytes": 99196340009,
+        "stored_files_reported": 137875
       },
       "counts": {
         "2d": {
@@ -2619,20 +2617,20 @@
               "weak": 0
             },
             ".dwg": {
-              "raw": 4375,
-              "sha256": 3688,
-              "weak": 3546
+              "raw": 4407,
+              "sha256": 3713,
+              "weak": 3571
             },
             ".dxf": {
-              "raw": 10904,
-              "sha256": 6968,
-              "weak": 6575
+              "raw": 11215,
+              "sha256": 7226,
+              "weak": 6826
             }
           },
-          "raw": 22914,
-          "sha256": 16460,
+          "raw": 23257,
+          "sha256": 16743,
           "sha256_status": "exact",
-          "weak": 15929,
+          "weak": 16205,
           "weak_status": "exact"
         },
         "3d": {
@@ -2653,9 +2651,9 @@
               "weak": 0
             },
             ".ifc": {
-              "raw": 91,
-              "sha256": 49,
-              "weak": 50
+              "raw": 94,
+              "sha256": 51,
+              "weak": 52
             },
             ".obj": {
               "raw": 0,
@@ -2683,44 +2681,44 @@
               "weak": 183
             }
           },
-          "raw": 2147,
-          "sha256": 1774,
+          "raw": 2150,
+          "sha256": 1776,
           "sha256_status": "exact",
-          "weak": 1778,
+          "weak": 1780,
           "weak_status": "exact"
         },
         "block": {
-          "distinct_blocks": 113821,
+          "distinct_blocks": 116647,
           "distinct_hashes_status": "exact",
           "duplicate_bytes": null,
           "duplicate_bytes_status": "pending"
         },
         "cad_pdf": {
-          "raw": 54636,
-          "sha256": 32408,
+          "raw": 56823,
+          "sha256": 33524,
           "sha256_status": "exact",
-          "weak": 28293,
+          "weak": 29321,
           "weak_status": "partial"
         },
         "nc1": {
           "by_ext": {
             ".nc1": {
-              "raw": 27556,
-              "sha256": 17181,
-              "weak": 16851
+              "raw": 28156,
+              "sha256": 17630,
+              "weak": 17296
             }
           },
-          "raw": 27556,
-          "sha256": 17181,
+          "raw": 28156,
+          "sha256": 17630,
           "sha256_status": "exact",
-          "weak": 16851,
+          "weak": 17296,
           "weak_status": "exact"
         },
         "other_pdf": {
-          "raw": 40852,
-          "sha256": 23697,
+          "raw": 41223,
+          "sha256": 23946,
           "sha256_status": "exact",
-          "weak": 22419,
+          "weak": 22704,
           "weak_status": "partial"
         },
         "pdf": {
@@ -2729,43 +2727,43 @@
               "raw": 321
             },
             "approval": {
-              "raw": 1059
+              "raw": 1072
             },
             "construction": {
               "raw": 76
             },
             "detail": {
-              "raw": 27030
+              "raw": 27878
             },
             "erection": {
-              "raw": 6376
+              "raw": 6520
             },
             "gather": {
-              "raw": 11602
+              "raw": 12526
             },
             "inputs": {
-              "raw": 6941
+              "raw": 6990
             },
             "other": {
-              "raw": 39486
+              "raw": 39892
             },
             "shop": {
-              "raw": 2597
+              "raw": 2771
             }
           },
           "by_ext": {
             ".pdf": {
-              "raw": 95488,
-              "sha256": 55590,
-              "weak": 56588
+              "raw": 98046,
+              "sha256": 56948,
+              "weak": 57894
             }
           },
-          "cad_raw": 54636,
-          "other_raw": 40852,
-          "raw": 95488,
-          "sha256": 55590,
+          "cad_raw": 56823,
+          "other_raw": 41223,
+          "raw": 98046,
+          "sha256": 56948,
           "sha256_status": "exact",
-          "weak": 56588,
+          "weak": 57894,
           "weak_status": "exact"
         },
         "pdf_by_drawing_type": {
@@ -2773,43 +2771,43 @@
             "raw": 321
           },
           "approval": {
-            "raw": 1059
+            "raw": 1072
           },
           "construction": {
             "raw": 76
           },
           "detail": {
-            "raw": 27030
+            "raw": 27878
           },
           "erection": {
-            "raw": 6376
+            "raw": 6520
           },
           "gather": {
-            "raw": 11602
+            "raw": 12526
           },
           "inputs": {
-            "raw": 6941
+            "raw": 6990
           },
           "other": {
-            "raw": 39486
+            "raw": 39892
           },
           "shop": {
-            "raw": 2597
+            "raw": 2771
           }
         },
         "pdf_cad_binary": {
           "cad_pdf": {
-            "raw": 54636
+            "raw": 56823
           },
           "other_pdf": {
-            "raw": 40852
+            "raw": 41223
           }
         }
       },
       "dedup_coverage": {
         "block_distinct_hashes": {
-          "completed_archives": 1766,
-          "covered_archives": 1766,
+          "completed_archives": 1768,
+          "covered_archives": 1768,
           "status": "exact"
         },
         "block_duplicate_bytes": {
@@ -2817,13 +2815,13 @@
           "status": "pending"
         },
         "sha256": {
-          "completed_archives": 1766,
-          "covered_archives": 1766,
+          "completed_archives": 1768,
+          "covered_archives": 1768,
           "status": "exact"
         },
         "weak_name_size": {
-          "completed_archives": 1766,
-          "covered_archives": 1766,
+          "completed_archives": 1768,
+          "covered_archives": 1768,
           "reason": "actual weak-key identities were unioned across all selected results",
           "status": "exact"
         },
@@ -2834,8 +2832,8 @@
       },
       "depth": {
         "archive_nodes_by_depth": {
-          "0": 144,
-          "1": 553,
+          "0": 146,
+          "1": 586,
           "10": 0,
           "11": 0,
           "12": 0,
@@ -2856,7 +2854,7 @@
         "depth_cap_hits": 0,
         "distribution": {
           "0": 1525,
-          "1": 223,
+          "1": 225,
           "10": 0,
           "11": 0,
           "12": 0,
@@ -2874,7 +2872,7 @@
         },
         "finished_archive_max_depth_distribution": {
           "0": 1525,
-          "1": 223,
+          "1": 225,
           "10": 0,
           "11": 0,
           "12": 0,
@@ -2891,9 +2889,9 @@
           "9": 0
         },
         "max_measured_depth": 3,
-        "measured_finished_archives": 1766,
+        "measured_finished_archives": 1768,
         "unmeasured_finished_baseline": 0,
-        "unopened_archives_not_measured": 700
+        "unopened_archives_not_measured": 698
       },
       "provenance": {
         "archive_identity": "SHA-256 of the exact original S3 key joined through the canonical manifest; basename matching is forbidden",
@@ -2904,16 +2902,16 @@
         "primary_raw_scope": "immutable all-run reconciliation baseline plus non-overlapping new GCP result records"
       },
       "storage": {
-        "bytes": 52170283689,
+        "bytes": 58421721013,
         "destination": "gs://cad-disk-extract-mlproject-501205/Disk-2/",
-        "measured_at": "2026-09-22T04:27:09.775191Z",
-        "objects": 143404
+        "measured_at": "2026-09-22T04:31:34.302884Z",
+        "objects": 161877
       }
     }
   },
   "persistent_disk": {
-    "accrued_estimate_usd": 3.4088,
-    "current_disk_accrued_estimate_usd": 3.2627,
+    "accrued_estimate_usd": 3.4667,
+    "current_disk_accrued_estimate_usd": 3.3206,
     "disk_count": 4,
     "estimate_label": "Estimate only; aggregate across active disks, not a Google Cloud invoice",
     "hourly_estimate_usd": 3.3534,
@@ -2927,30 +2925,30 @@
     "by_disk": {
       "Disk-1": {
         "archives_total": 1154,
-        "done": 478,
-        "done_after_reconciliation": 144,
+        "done": 479,
+        "done_after_reconciliation": 145,
         "done_before_gcp": 334,
         "done_in_reconciliation_baseline": 334,
-        "done_on_gcp": 144,
-        "remaining": 676
+        "done_on_gcp": 145,
+        "remaining": 675
       },
       "Disk-2": {
         "archives_total": 2466,
-        "done": 1766,
-        "done_after_reconciliation": 144,
+        "done": 1768,
+        "done_after_reconciliation": 146,
         "done_before_gcp": 1622,
         "done_in_reconciliation_baseline": 1622,
-        "done_on_gcp": 144,
-        "remaining": 700
+        "done_on_gcp": 146,
+        "remaining": 698
       }
     },
-    "done": 2244,
-    "done_after_reconciliation": 288,
+    "done": 2247,
+    "done_after_reconciliation": 291,
     "done_before_gcp": 1956,
     "done_in_reconciliation_baseline": 1956,
-    "done_on_gcp": 288,
-    "failed_active_checkpoints": 5,
-    "remaining": 1376,
+    "done_on_gcp": 291,
+    "failed_active_checkpoints": 6,
+    "remaining": 1373,
     "retries": 1
   },
   "proof_object": null,
@@ -2959,13 +2957,13 @@
   "source_of_truth": "gcp",
   "source_status_uri": "gs://cad-disk-extract-mlproject-501205/_state/status-reduced.json",
   "state": "running",
-  "status_last_updated": "2026-09-22T04:31:26.949035Z",
+  "status_last_updated": "2026-09-22T04:32:28.952350Z",
   "status_reducer": {
     "full_reconcile_interval_seconds": 1800,
     "incremental_source": "projects/mlproject-501205/subscriptions/cad-status-results-reducer-v1",
     "last_full_reconcile_at": "2026-09-22T04:21:45.656869Z",
     "primary_dedup_fields": "SHA-256 and distinct block hashes exact; weak name+size published with explicit coverage; duplicate block bytes pending",
-    "processed_result_records": 1257,
+    "processed_result_records": 1260,
     "reconciliation_baseline": "gs://cad-disk-extract-mlproject-501205/_state/reconciliation/baseline_per_disk.json",
     "reconciliation_baseline_id": "8eda8735157fa6d619c334a367a0a1c8d1e41d6d39142d124c1cc59914046a19",
     "rejected_result_records": 0,
@@ -2973,6 +2971,6 @@
     "revision": "disk-schema-v2+historical-reconciliation-v1",
     "schema": 1,
     "service": "cad-status-reducer.service",
-    "updated_at": "2026-09-22T04:31:26.822817Z"
+    "updated_at": "2026-09-22T04:32:28.870769Z"
   }
 }
