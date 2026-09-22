@@ -530,6 +530,7 @@
     }
     .sub-row td:first-child { padding-left: 28px; color: var(--text-soft); }
     .missing { color: var(--text-faint); font-style: italic; font-weight: 450; }
+    .sha-partial .cov-hint { color: var(--text-faint); font-weight: 450; font-style: normal; white-space: nowrap; }
     .number-strong { color: var(--text); font-weight: 750; }
     .mono { font-family: var(--mono); }
 
@@ -1650,6 +1651,80 @@
         : formatter(value);
     }
 
+    function categoryMetricNode(bundle, category) {
+      for (const root of orderedCountRoots(bundle)) {
+        for (const node of categoryNodes(root, category)) {
+          if (isObject(node)) return node;
+        }
+      }
+      return null;
+    }
+
+    function extensionMetricNode(bundle, family, extension) {
+      const extensionAliases = [extension, extension.replace(".", "")];
+      for (const root of orderedCountRoots(bundle)) {
+        const familyNode = aliasValue(root, CATEGORY_ALIASES[family]);
+        if (isObject(familyNode)) {
+          const extensions = aliasValue(familyNode, ["by_ext", "by_extension", "extensions"]);
+          const extensionNode = aliasValue(extensions, extensionAliases);
+          if (isObject(extensionNode)) return extensionNode;
+        }
+      }
+      return null;
+    }
+
+    function shaCoverageFromContext(node, bundle) {
+      if (isObject(node) && isObject(node.sha256_coverage)) return node.sha256_coverage;
+      const coverage = dedupCoverage(bundle);
+      const entry = coverage && coverage.sha256;
+      if (!isObject(entry)) return null;
+      const archivesInSha = number(entry.archives_with_hashes ?? entry.archives_in_sha ?? entry.completed_archives);
+      const archivesDone = number(entry.archives_in_raw ?? entry.completed_archives);
+      if (archivesInSha === null || archivesDone === null) return null;
+      const exact = entry.exact_vs_live === true || entry.status === "exact";
+      return { archives_in_sha: archivesInSha, archives_done: archivesDone, exact };
+    }
+
+    function formatWeakDistinctCell(bundle, category, extension = null) {
+      const node = extension ? extensionMetricNode(bundle, category, extension) : categoryMetricNode(bundle, category);
+      const value = extension
+        ? extensionValue(bundle, category, extension, "weak")
+        : countValue(bundle, category, "weak");
+      if (present(value)) return formatCount(value);
+      const status = node && String(node.weak_status || "");
+      if (
+        status === "not_in_ec2_results_yet"
+        || status === "partial_archives_with_weak_lists_only"
+        || status === "ec2_omit_weak_lists"
+      ) {
+        return `<span class="missing" title="EC2 extract results do not include name+size lists">not in these results yet</span>`;
+      }
+      if (present(countValue(bundle, category, "raw")) || (extension && present(extensionValue(bundle, category, extension, "raw")))) {
+        return `<span class="missing" title="EC2 extract results do not include name+size lists">not in these results yet</span>`;
+      }
+      return `<span class="missing">not available</span>`;
+    }
+
+    function formatShaDistinctCell(bundle, category, extension = null) {
+      if (!extension && (category === "cad_pdf" || category === "other_pdf")) {
+        return `<span class="missing" title="CAD/non-CAD subtype SHA withheld (not a true cross-disk union)">withheld</span>`;
+      }
+      const node = extension ? extensionMetricNode(bundle, category, extension) : categoryMetricNode(bundle, category);
+      const sha = extension
+        ? extensionValue(bundle, category, extension, "sha256")
+        : countValue(bundle, category, "sha256");
+      if (!present(sha)) {
+        return `<span class="missing" title="Withheld until union has real cross-disk distincts">withheld</span>`;
+      }
+      const status = node && String(node.sha256_status || "");
+      if (status === "computing_full_population_union") {
+        return `<span class="missing">union running</span>`;
+      }
+      const cov = shaCoverageFromContext(node, bundle);
+      if (!cov || cov.exact === true) return formatCount(sha);
+      return `<span class="sha-partial">${formatCount(sha)} <small class="cov-hint">(${formatCount(cov.archives_in_sha)} / ${formatCount(cov.archives_done)} archives)</small></span>`;
+    }
+
     function basename(value) {
       if (!present(value)) return null;
       const clean = String(value).split(/[?#]/)[0].replace(/\\/g, "/");
@@ -1982,25 +2057,18 @@
       return `SHA coverage ${integerFormat.format(withH)}/${integerFormat.format(inRaw)} finished archives (partial — distinct over covered archives only)`;
     }
 
-    function formatShaCell(bundle, value) {
-      const n = number(value);
-      if (n === null) return missing(value, formatCount);
-      // Always show a present SHA number, including 0 — never "pending".
-      return integerFormat.format(n);
-    }
-
     function assetRow(bundle, category, label, className = "") {
       return `<tr class="${className}"><td>${label}</td>
         <td>${missing(countValue(bundle, category, "raw"), formatCount)}</td>
-        <td>${missing(countValue(bundle, category, "weak"), formatCount)}</td>
-        <td>${formatShaCell(bundle, countValue(bundle, category, "sha256"))}</td></tr>`;
+        <td>${formatWeakDistinctCell(bundle, category)}</td>
+        <td>${formatShaDistinctCell(bundle, category)}</td></tr>`;
     }
 
     function extensionRow(bundle, family, extension) {
       return `<tr class="sub-row"><td>${extension}</td>
         <td>${missing(extensionValue(bundle, family, extension, "raw"), formatCount)}</td>
-        <td>${missing(extensionValue(bundle, family, extension, "weak"), formatCount)}</td>
-        <td>${formatShaCell(bundle, extensionValue(bundle, family, extension, "sha256"))}</td></tr>`;
+        <td>${formatWeakDistinctCell(bundle, family, extension)}</td>
+        <td>${formatShaDistinctCell(bundle, family, extension)}</td></tr>`;
     }
 
     function assetTable(bundle) {
@@ -2054,13 +2122,13 @@
       return a === null || b === null || a + b === 0 ? null : a / (a + b) * 100;
     }
 
-    function binaryCard(label, raw, rawOther, sha, shaOther) {
+    function binaryCard(label, raw, rawOther, shaDisplay, shaForPercent = null, shaOtherForPercent = null) {
       const rawPercent = percentage(raw, rawOther);
-      const shaPercent = percentage(sha, shaOther);
+      const shaPercent = percentage(shaForPercent, shaOtherForPercent);
       return `<div class="binary-card">
         <div class="binary-top"><strong>${label}</strong><span>${formatPercent(rawPercent)}</span></div>
         <div class="meter" aria-hidden="true"><span style="width:${number(rawPercent) === null ? 0 : rawPercent.toFixed(2)}%"></span></div>
-        <div class="binary-meta"><span>Raw ${missing(raw, formatCount)}</span><span>SHA ${missing(sha, formatCount)} · ${formatPercent(shaPercent)}</span></div>
+        <div class="binary-meta"><span>Raw ${missing(raw, formatCount)}</span><span>SHA ${shaDisplay} · ${formatPercent(shaPercent)}</span></div>
       </div>`;
     }
 
@@ -2077,8 +2145,8 @@
         <div class="data-heading"><div><h3>PDF classification</h3></div>
           <p>Raw observations vs byte-distinct SHA-256 files</p></div>
         <div class="binary-grid">
-          ${binaryCard("CAD PDFs", cadRaw, otherRaw, cadSha, otherSha)}
-          ${binaryCard("Non-CAD PDFs", otherRaw, cadRaw, otherSha, cadSha)}
+          ${binaryCard("CAD PDFs", cadRaw, otherRaw, formatShaDistinctCell(bundle, "cad_pdf"))}
+          ${binaryCard("Non-CAD PDFs", otherRaw, cadRaw, formatShaDistinctCell(bundle, "other_pdf"))}
         </div>
         <div class="table-wrap"><table>
           <thead><tr><th>Drawing class</th><th>Raw</th><th>SHA-256 distinct</th></tr></thead>
