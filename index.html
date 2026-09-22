@@ -1841,7 +1841,7 @@
     }
 
     function statusSourceLabel() {
-      if (statusSource === "aws-s3") return "Live AWS S3";
+      if (statusSource && String(statusSource).startsWith("aws-s3")) return "Live AWS S3";
       if (statusSource === "gcs-fallback") return "GCS fallback";
       if (statusSource === "github-fallback" || statusSource === "fallback") return "GitHub fallback";
       return "Live status";
@@ -2664,7 +2664,7 @@
           ? `${statusSourceLabel()} · checked ${ageTextFromSeconds((Date.now() - lastFetchAt) / 1000)} ago`
           : statusSourceLabel();
         element.classList.remove("retrying");
-        element.classList.toggle("fallback", statusSource === "fallback");
+        element.classList.toggle("fallback", statusSource === "github-fallback" || statusSource === "fallback");
         element.removeAttribute("title");
       }
     }
@@ -2703,11 +2703,40 @@
       applySelectedScope(true);
     });
 
-    async function fetchStatus(url) {
+    const LIVE_STATUS_URL_ALT = "https://cad-extract-status-874846752452.s3.amazonaws.com/status.json";
+
+    function sleep(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    async function fetchStatus(url, { credentials = "omit" } = {}) {
       const separator = url.includes("?") ? "&" : "?";
-      const response = await fetch(`${url}${separator}t=${Date.now()}`, { cache: "no-store" });
+      const response = await fetch(`${url}${separator}t=${Date.now()}`, {
+        cache: "no-store",
+        mode: "cors",
+        credentials
+      });
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       return response.json();
+    }
+
+    async function fetchLiveS3Status() {
+      const urls = [LIVE_STATUS_URL, LIVE_STATUS_URL_ALT];
+      const credentialModes = ["include", "omit"];
+      let lastError = null;
+      for (const url of urls) {
+        for (const credentials of credentialModes) {
+          for (let attempt = 0; attempt < 2; attempt += 1) {
+            try {
+              return await fetchStatus(url, { credentials });
+            } catch (error) {
+              lastError = error;
+              if (attempt === 0) await sleep(350);
+            }
+          }
+        }
+      }
+      throw lastError || new Error("live S3 status fetch failed");
     }
 
     async function tick() {
@@ -2734,8 +2763,10 @@
         };
 
         let sticky = null;
+        let liveS3Status = null;
         try {
-          status = await fetchStatus(LIVE_STATUS_URL);
+          status = await fetchLiveS3Status();
+          liveS3Status = status;
           source = "aws-s3";
           if (!isStructurallyRich(status) || !statusHasIdentityMetrics(status)) {
             try {
@@ -2751,6 +2782,10 @@
             }
           }
         } catch (primaryError) {
+          if (liveS3Status) {
+            status = liveS3Status;
+            source = "aws-s3";
+          } else
           try {
             status = await fetchStatus(FALLBACK_GITHUB_STATUS_URL);
             source = "github-fallback";
