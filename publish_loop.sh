@@ -277,7 +277,8 @@ publish_once() {
 
 acquire_lock || exit 0
 echo "$$" >"$PIDFILE"
-trap cleanup EXIT INT TERM HUP
+trap cleanup EXIT
+trap 'cleanup; exit 0' INT TERM HUP
 
 while true; do
   publish_once || true
