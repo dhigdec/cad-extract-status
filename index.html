@@ -2032,7 +2032,9 @@
         </section>
         <section class="data-section">
           <div class="data-heading"><div><h3>Extracted asset inventory</h3></div>
-            <p>Raw totals; cross-cutover weak/SHA stay pending without baseline hashes</p></div>
+            <p>${(countValue(bundle, "2d", "weak") != null || countValue(bundle, "2d", "sha256") != null)
+            ? "Raw totals include baseline + new EC2; weak/SHA are exact for the reconciliation baseline set"
+            : "Raw totals; weak/SHA stay pending until baseline hash identities are published"}</p></div>
           ${assetTable(bundle)}
         </section>
         <section class="data-section">
