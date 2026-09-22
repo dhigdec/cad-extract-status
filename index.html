@@ -3,9 +3,9 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Deep CAD extraction</title>
+  <title>GCP deep CAD extraction</title>
   <style>
-    body{font-family:system-ui,sans-serif;margin:20px;color:#111;padding-right:370px}
+    body{font-family:system-ui,sans-serif;margin:20px;color:#111;padding-right:405px}
     h1{font-size:1.3rem;margin:0 0 8px}h2{font-size:1rem;margin:22px 0 7px}
     .meta{color:#444}.alive{color:#087;font-weight:700}.stale{color:#c40;font-weight:700}
     table{border-collapse:collapse;width:auto;max-width:100%;margin-bottom:8px}
@@ -14,104 +14,165 @@
     .bar{height:20px;background:#e5e5e5;max-width:700px;margin-top:10px}
     .bar span{display:block;height:100%;background:#298f68}
     .mono{font-family:ui-monospace,monospace;font-size:.85rem;word-break:break-all}
-    .card{position:fixed;right:12px;top:12px;width:330px;max-height:calc(100vh - 48px);
+    .card{position:fixed;right:12px;top:12px;width:365px;max-height:calc(100vh - 48px);
       overflow:auto;background:#111;color:#f5f5f5;padding:13px 15px;border-radius:9px;
       box-shadow:0 2px 12px #0005;font-size:13px;line-height:1.4}
     .card h2{margin:0 0 7px;color:#fff}.card .big{font-size:1.3rem;font-weight:700}
     .card .section{color:#8fd;font-weight:700;margin-top:10px}
-    .kv{display:flex;justify-content:space-between;gap:10px}.kv b{text-align:right}
-    .muted{color:#bbb;font-size:12px}.warning{color:#ffd37a;margin-top:8px}
-    @media(max-width:900px){body{padding-right:0}.card{position:static;width:auto;margin-bottom:18px}}
+    .kv{display:flex;justify-content:space-between;gap:10px}.kv b{text-align:right;word-break:break-word}
+    .muted{color:#666;font-size:12px}.card .muted{color:#bbb}.warning{color:#ffd37a;margin-top:8px}
+    @media(max-width:960px){body{padding-right:0}.card{position:static;width:auto;margin-bottom:18px}}
   </style>
 </head>
 <body>
-  <h1>Disk-1 / Disk-2 deep CAD extraction</h1>
+  <h1>Disk-1 / Disk-2 deep CAD extraction on GCP</h1>
   <div id="root">Loading…</div>
   <script>
-    const fmt=x=>Number(x||0).toLocaleString();
-    const money=x=>Number(x||0).toFixed(Math.abs(Number(x||0))<.01?4:2);
+    const present=x=>x!==null&&x!==undefined&&x!=="";
+    const finite=x=>present(x)&&Number.isFinite(Number(x));
+    const fmt=x=>finite(x)?Number(x).toLocaleString():"not available";
+    const decimal=(x,d=3)=>finite(x)?Number(x).toFixed(d):"not available";
+    const money=x=>finite(x)?`$${Number(x).toFixed(Math.abs(Number(x))<.01?4:2)}`:"pending";
     const esc=x=>String(x??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-    const val=(o,...p)=>p.reduce((x,k)=>x&&x[k],o);
+    const text=(x,fallback="not available")=>present(x)?esc(x):fallback;
+    const heartbeatAge=x=>{
+      if(!present(x))return null;
+      const millis=Date.parse(x);
+      return Number.isFinite(millis)?Math.max(0,(Date.now()-millis)/1000):null;
+    };
+    const ageText=x=>{
+      const seconds=heartbeatAge(x);
+      if(seconds===null)return "not available";
+      if(seconds<120)return `${Math.round(seconds)}s`;
+      if(seconds<7200)return `${(seconds/60).toFixed(1)}m`;
+      return `${(seconds/3600).toFixed(1)}h`;
+    };
+    const sizeGB=bytes=>finite(bytes)?`${(Number(bytes)/1e9).toFixed(3)} GB`:"not available";
 
-    function costCard(c){
-      const gce=c.gce||{}, comp=c.compute||{}, disk=c.persistent_disk||{};
-      const gcs=c.gcs||{}, aws=c.aws_source||{}, costs=c.costs||{};
-      const accrued=(Number(comp.accrued_estimate_usd)||0)+(Number(disk.accrued_estimate_usd)||0)
-        +(Number(aws.running_egress_estimate_usd)||0);
+    function costCard(st){
+      const gce=st.gce||{}, comp=st.compute||{}, disk=st.persistent_disk||{};
+      const gcs=st.gcs||{}, aws=st.aws_source||{}, costs=st.costs||{};
+      const workerCount=finite(st.cloud_workers_alive)?fmt(st.cloud_workers_alive):fmt(gce.worker_count);
+      const stored=finite(gcs.stored_gb)?`${decimal(gcs.stored_gb,3)} GB`:"not available";
+      const transferred=finite(aws.bytes_transferred)
+        ?`${fmt(aws.bytes_transferred)} bytes${finite(aws.gb_transferred)?` (${decimal(aws.gb_transferred,3)} GB)`:""}`
+        :(finite(aws.gb_transferred)?`${decimal(aws.gb_transferred,3)} GB`:"not available");
+      const computeRate=finite(comp.hourly_estimate_usd)?`${money(comp.hourly_estimate_usd)}/hour`:"pending";
+      const egressRate=finite(aws.egress_rate_usd_per_gb)?`${money(aws.egress_rate_usd_per_gb)}/GB`:"pending";
       return `<aside class="card">
-        <h2>GCP pipeline cost estimates</h2>
-        <div class="big">$${money(costs.combined_accrued_estimate_usd??accrued)}
-          <span class="muted">current combined est.</span></div>
-        <div class="section">GCE compute</div>
-        <div class="kv"><span>Instance</span><b>${esc(gce.instance_name||"—")}</b></div>
-        <div class="kv"><span>Type / zone</span><b>${esc(gce.machine_type||"—")} · ${esc(gce.zone||"—")}</b></div>
-        <div class="kv"><span>State / workers</span><b>${esc(gce.state||c.state||"—")} · ${fmt(gce.worker_count)}</b></div>
-        <div class="kv"><span>Rate</span><b>$${money(comp.hourly_estimate_usd)}/hour</b></div>
-        <div class="kv"><span>Uptime / accrued</span><b>${Number(comp.uptime_hours||0).toFixed(2)}h · $${money(comp.accrued_estimate_usd)}</b></div>
+        <h2>GCP pipeline · estimates</h2>
+        <div class="big">${money(costs.combined_accrued_estimate_usd)}
+          <span class="muted">combined accrued estimate</span></div>
+        <div class="section">GCE VM</div>
+        <div class="kv"><span>Name</span><b>${text(gce.instance_name)}</b></div>
+        <div class="kv"><span>Type / zone</span><b>${text(gce.machine_type)} · ${text(gce.zone)}</b></div>
+        <div class="kv"><span>State / workers</span><b>${text(gce.state||st.state)} · ${workerCount}</b></div>
+        <div class="kv"><span>Uptime</span><b>${finite(comp.uptime_hours)?`${decimal(comp.uptime_hours,2)}h`:"pending"}</b></div>
+        <div class="kv"><span>Rate / accrued</span><b>${computeRate} · ${money(comp.accrued_estimate_usd)}</b></div>
+        <div class="section">GCS bucket</div>
+        <div class="kv"><span>Bucket</span><b>${text(gcs.bucket)}</b></div>
+        <div class="kv"><span>Objects / stored</span><b>${fmt(gcs.object_count)} · ${stored}</b></div>
+        <div class="kv"><span>Monthly estimate</span><b>${money(gcs.estimated_monthly_usd)}</b></div>
         <div class="section">Persistent disk</div>
-        <div class="kv"><span>Provisioned</span><b>${fmt(disk.size_gb)} GB ${esc(disk.type||"")}</b></div>
-        <div class="kv"><span>Monthly / accrued</span><b>$${money(disk.monthly_estimate_usd)} · $${money(disk.accrued_estimate_usd)}</b></div>
-        <div class="section">GCS Standard</div>
-        <div class="kv"><span>Bucket</span><b>${esc(gcs.bucket||"—")}</b></div>
-        <div class="kv"><span>Objects / stored</span><b>${fmt(gcs.object_count)} · ${Number(gcs.stored_gb||0).toFixed(3)} GB</b></div>
-        <div class="kv"><span>Monthly storage</span><b>$${money(gcs.estimated_monthly_usd)}</b></div>
-        <div class="section">AWS source transfer</div>
-        <div class="kv"><span>Transferred</span><b>${Number(aws.gb_transferred||0).toFixed(3)} GB</b></div>
-        <div class="kv"><span>One-time egress</span><b>$${money(aws.running_egress_estimate_usd)}</b></div>
-        <div class="muted">At $${money(aws.egress_rate_usd_per_gb||.09)}/GB. Source transfer—not destination storage.</div>
-        <div class="warning">All values are estimates, not cloud invoices.</div>
+        <div class="kv"><span>Type / size</span><b>${text(disk.type)} · ${finite(disk.size_gb)?`${fmt(disk.size_gb)} GB`:"not available"}</b></div>
+        <div class="kv"><span>Monthly / accrued</span><b>${money(disk.monthly_estimate_usd)} · ${money(disk.accrued_estimate_usd)}</b></div>
+        <div class="section">AWS source transfer only</div>
+        <div class="kv"><span>Transferred</span><b>${transferred}</b></div>
+        <div class="kv"><span>One-time egress estimate</span><b>${money(aws.running_egress_estimate_usd)}</b></div>
+        <div class="muted">Rate from status: ${egressRate}. This is source transfer, not destination storage.</div>
+        <div class="section">Status freshness</div>
+        <div class="kv"><span>Last updated</span><b>${text(st.status_last_updated)}</b></div>
+        <div class="kv"><span>Heartbeat age</span><b>${ageText(st.last_update_iso)}</b></div>
+        <div class="warning">Estimates only; not a cloud invoice. Missing rates or costs remain pending.</div>
       </aside>`;
     }
 
     function render(st){
-      const c=st.cloud||{}, p=st.archives_combined||{}, counts=st.cloud_counts||{};
+      const p=st.archives_combined||{}, counts=st.cloud_counts||{};
       const raw=counts.raw||{}, weak=counts.weak||{}, sha=counts.sha256||{};
-      const pct=p.total?100*Number(p.done||0)/Number(p.total):0;
-      const workers=st.current||[], depth=st.cloud_depth||{};
-      let h=costCard(c);
-      h+=`<div class="meta">Status: <span class="${st.health==="alive"?"alive":"stale"}">${esc((st.health||"unknown").toUpperCase())}</span>
-        · heartbeat ${st.age_seconds==null?"?":st.age_seconds+"s"} ago · source: GCS status.json</div>
-        <div class="bar"><span style="width:${Math.min(100,pct).toFixed(2)}%"></span></div>
-        <p>Archives <b>${fmt(p.done)} / ${fmt(p.total)}</b> (${pct.toFixed(1)}%) ·
-        remaining ${fmt(p.remaining)} · active checkpoints ${fmt(p.failed)} · retries ${fmt(p.retries)} ·
-        local done before cutover ${fmt(p.done_local_before_cutover)} · GCP done ${fmt(p.done_on_gcp)}</p>`;
+      const workers=Array.isArray(st.current)?st.current:[], depth=st.cloud_depth||{};
+      const age=heartbeatAge(st.last_update_iso);
+      const alive=age!==null&&age<120&&Number(st.cloud_workers_alive)>0;
+      const pct=finite(p.total)&&Number(p.total)>0&&finite(p.done)
+        ?100*Number(p.done)/Number(p.total):null;
+      let h=costCard(st);
+      h+=`<div class="meta">Status: <span class="${alive?"alive":"stale"}">${alive?"ALIVE":"STALE / WAITING"}</span>
+        · heartbeat ${ageText(st.last_update_iso)} ago · source: GCS _state/status.json</div>
+        <div class="bar"><span style="width:${pct===null?0:Math.min(100,pct).toFixed(2)}%"></span></div>
+        <p>Archives <b>${fmt(p.done)} / ${fmt(p.total)}</b>${pct===null?"":` (${pct.toFixed(1)}%)`} ·
+        remaining ${fmt(p.remaining)} · active checkpoint failures ${fmt(p.failed)} · retries ${fmt(p.retries)} ·
+        done before GCP cutover ${fmt(p.done_local_before_cutover)} · done on GCP ${fmt(p.done_on_gcp)}</p>`;
 
-      h+=`<h2>Four GCP archive workers</h2><table><tr><th>Worker</th><th>State</th><th>Current archive</th><th>Source size</th><th>Updated</th></tr>`;
-      for(const w of workers) h+=`<tr><td>${fmt(w.shard)}</td><td>${esc(w.state)}</td>
-        <td class="mono">${esc(w.current_archive||w.last_archive||"—")}</td>
-        <td>${(Number(w.archive_bytes||0)/1e9).toFixed(3)} GB</td><td>${esc(w.updated_at||"—")}</td></tr>`;
+      h+=`<h2>Current GCP archive workers (${fmt(workers.length)})</h2>
+        <table><tr><th>Worker</th><th>State</th><th>Current archive</th><th>Source size</th><th>Updated</th></tr>`;
+      for(const w of workers)h+=`<tr><td>${fmt(w.shard)}</td><td>${text(w.state)}</td>
+        <td class="mono">${text(w.current_archive||w.last_archive)}</td>
+        <td>${sizeGB(w.archive_bytes)}</td><td>${text(w.updated_at)}</td></tr>`;
+      if(!workers.length)h+=`<tr><td colspan="5">Waiting for worker status.</td></tr>`;
       h+=`</table>`;
 
-      h+=`<h2>GCP extracted asset counts</h2><table><tr><th>Category</th><th>Raw</th><th>Weak unique (name,size)</th><th>SHA-256 unique</th></tr>`;
-      for(const [key,label] of [["cad_pdf","CAD PDF"],["other_pdf","Other PDF"],["2d","2D"],["3d","3D"],["nc1","NC1"]])
+      h+=`<h2>GCP extracted asset counts</h2>
+        <table><tr><th>Category</th><th>Raw</th><th>Weak unique (name, size)</th><th>SHA-256 unique</th></tr>`;
+      for(const [key,label] of [["pdf","All PDF"],["cad_pdf","CAD PDF"],["other_pdf","Non-CAD PDF"],["2d","2D"],["3d","3D"],["nc1","NC1"]])
         h+=`<tr><td>${label}</td><td>${fmt(raw[key])}</td><td>${fmt(weak[key])}</td><td>${fmt(sha[key])}</td></tr>`;
-      h+=`<tr><td>1 MiB blocks</td><td>—</td><td>—</td><td>${fmt(counts.block_sha256)}</td></tr></table>`;
+      h+=`<tr><td>1 MiB blocks</td><td>not available</td><td>not available</td><td>${fmt(counts.block_sha256)}</td></tr></table>`;
 
-      const nodes=depth.archive_nodes_by_depth||{}, maxima=depth.finished_archive_max_depth_distribution||{};
-      const levels=[...new Set([...Object.keys(nodes),...Object.keys(maxima)])].map(Number).sort((a,b)=>a-b);
-      h+=`<h2>Exact measured nested depth on GCP</h2>
-        <p>Finished archives measured: ${fmt(depth.measured_finished_archives)} · unopened not measured: ${fmt(depth.unopened_archives_not_measured)} · safety cap: ${fmt(depth.depth_cap)}</p>
+      const nodes=depth.archive_nodes_by_depth||{};
+      const maxima=depth.finished_archive_max_depth_distribution||{};
+      const levels=[...new Set([...Object.keys(nodes),...Object.keys(maxima)])]
+        .map(Number).filter(Number.isFinite).sort((a,b)=>a-b);
+      h+=`<h2>Exact measured nested depth for finished GCP archives</h2>
+        <p>Finished archives measured: ${fmt(depth.measured_finished_archives)} ·
+        unopened archives not measured: ${fmt(depth.unopened_archives_not_measured)} ·
+        safety cap: ${fmt(depth.depth_cap)}</p>
         <table><tr><th>Exact depth</th><th>Archive nodes opened</th><th>Finished archives with this maximum</th></tr>`;
-      for(const d of levels) h+=`<tr><td>${d}</td><td>${fmt(nodes[d])}</td><td>${fmt(maxima[d])}</td></tr>`;
-      if(!levels.length) h+=`<tr><td colspan="3">No GCP result finished yet.</td></tr>`;
+      for(const d of levels)h+=`<tr><td>${d}</td><td>${fmt(nodes[d])}</td><td>${fmt(maxima[d])}</td></tr>`;
+      if(!levels.length)h+=`<tr><td colspan="3">Waiting for GCP depth measurements.</td></tr>`;
       h+=`</table>`;
 
-      const baseline=st.finished_depth_by_size||[];
-      const baselineMax=Math.max(0,...baseline.flatMap(r=>Object.keys(r.depth_counts||{}).map(Number)));
-      h+=`<h2>Exact pre-cutover depth by archive size</h2>
-        <p>Preserved measurements from archives completed before the GCP cutover.</p>
-        <table><tr><th>Archive size</th><th>Finished</th>`;
-      for(let d=0;d<=baselineMax;d++)h+=`<th>Depth ${d}</th>`;
-      h+=`<th>Deepest</th></tr>`;
-      for(const r of baseline){h+=`<tr><td>${esc(r.label)}</td><td>${fmt(r.finished)}</td>`;
-        for(let d=0;d<=baselineMax;d++)h+=`<td>${fmt((r.depth_counts||{})[d])}</td>`;
-        h+=`<td>${r.deepest==null?"—":fmt(r.deepest)}</td></tr>`}
-      h+=`</table><p class="muted">Public status refreshes from GCS about every 20 seconds.</p>`;
+      const remaining=st.remaining_by_size;
+      h+=`<h2>Remaining archives by source size</h2>`;
+      if(Array.isArray(remaining)&&remaining.length){
+        h+=`<table><tr><th>Archive size</th><th>Remaining</th><th>Source TB</th></tr>`;
+        for(const row of remaining)h+=`<tr><td>${text(row.label)}</td><td>${fmt(row.left)}</td><td>${decimal(row.tb,3)}</td></tr>`;
+        h+=`</table>`;
+      }else{
+        h+=`<p>Not available in the current GCP status.</p>`;
+      }
+
+      const depthBySize=st.finished_depth_by_size;
+      if(Array.isArray(depthBySize)&&depthBySize.length){
+        const maximum=Math.max(0,...depthBySize.flatMap(row=>Object.keys(row.depth_counts||{}).map(Number)));
+        h+=`<h2>Finished archive depth by source size</h2><table><tr><th>Archive size</th><th>Finished</th>`;
+        for(let d=0;d<=maximum;d++)h+=`<th>Depth ${d}</th>`;
+        h+=`<th>Deepest</th></tr>`;
+        for(const row of depthBySize){
+          h+=`<tr><td>${text(row.label)}</td><td>${fmt(row.finished)}</td>`;
+          for(let d=0;d<=maximum;d++)h+=`<td>${fmt((row.depth_counts||{})[d])}</td>`;
+          h+=`<td>${fmt(row.deepest)}</td></tr>`;
+        }
+        h+=`</table>`;
+      }
+
+      h+=`<h2>Latest GCP result proof</h2>
+        <p>Result object: <span class="mono">${text(st.last_result)}</span><br>
+        Extracted object: <span class="mono">${text(st.proof_object)}</span><br>
+        Finished: ${text(st.last_finished_at)}</p>
+        <p class="muted">The laptop publisher reads only the GCP status object and refreshes this page about every 20 seconds.</p>`;
       document.getElementById("root").innerHTML=h;
     }
-    async function tick(){try{const r=await fetch("status.json?t="+Date.now(),{cache:"no-store"});if(!r.ok)throw Error(r.status);render(await r.json())}
-      catch(e){document.getElementById("root").innerHTML=`<p>Waiting for status: ${esc(e)}</p>`}}
-    tick();setInterval(tick,5000);
+
+    async function tick(){
+      try{
+        const response=await fetch("status.json?t="+Date.now(),{cache:"no-store"});
+        if(!response.ok)throw Error(response.status);
+        render(await response.json());
+      }catch(error){
+        document.getElementById("root").innerHTML=`<p>Waiting for GCP status: ${esc(error)}</p>`;
+      }
+    }
+    tick();
+    setInterval(tick,5000);
   </script>
 </body>
 </html>
