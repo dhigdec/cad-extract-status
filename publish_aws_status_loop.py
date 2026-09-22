@@ -29,12 +29,20 @@ PRIVATE_BUCKET = "annotationprod"
 PRIVATE_KEY = "cad-disk-extract/_state/ec2-status.json"
 PUBLIC_BUCKET = "cad-extract-status-874846752452"
 PUBLIC_KEY = "status.json"
+# Workers (aggregator) still overwrite status.json with the thin schema; this
+# object is publisher-only so the page can bind Disk-1/Disk-2/Combined reliably.
+PUBLIC_FULL_KEY = "status-full.json"
 CLAIMS_PREFIX = "cad-disk-extract/_state/ec2-claims/"
 RESULTS_PREFIX = "cad-disk-extract/_state/ec2-results/"
 LEGACY_RESULTS_PREFIX = "cad-disk-extract/_state/results/"
 SKIP_KEY = "cad-disk-extract/_control/ec2-skip-done.json"
 RECON_SUMMARY_KEY = "cad-disk-extract/_state/reconciliation/summary.json"
 MERGE_RULES_KEY = "cad-disk-extract/_control/final-merge-rules.json"
+PREBUILT_BASELINE_KEY = "cad-disk-extract/_control/historical_baseline_v3.json"
+HEARTBEAT_KEY = "cad-disk-extract/_state/status-publisher-heartbeat.json"
+DEPTH_INDEX_KEY = "cad-disk-extract/_state/ec2-depth-index.json"
+DEPTH_SIDECAR_PREFIX = "cad-disk-extract/_state/ec2-depth/"
+DEPTH_CAP = 15
 
 FLEET_START = dt.datetime(2026, 9, 22, 6, 49, 33, tzinfo=dt.timezone.utc)
 INTERVAL = int(os.environ.get("INTERVAL", "20"))
@@ -397,6 +405,34 @@ def recon_assets(summary: dict) -> dict:
     }
 
 
+def load_prebuilt_baseline(client) -> dict | None:
+    """Prefer S3 historical_baseline_v3 (already split by Disk-1/Disk-2 source_key)."""
+    try:
+        doc = get_json(client, PREBUILT_BASELINE_KEY)
+    except Exception as exc:
+        log(f"prebuilt baseline miss: {type(exc).__name__}: {exc}")
+        return None
+    ids = doc.get("ids_list") or []
+    archives = doc.get("baseline_archives") or {}
+    if not ids or not archives.get("Disk-1") or not archives.get("Disk-2"):
+        log("prebuilt baseline incomplete; will rebuild")
+        return None
+    # Combined archive done MUST equal Disk-1 + Disk-2 (no skip_count inflation).
+    d1 = int(archives.get("Disk-1") or 0)
+    d2 = int(archives.get("Disk-2") or 0)
+    archives["combined"] = d1 + d2
+    doc["baseline_archives"] = archives
+    doc["skip_count"] = int(doc.get("skip_count") or (d1 + d2))
+    doc["ids"] = set(ids)
+    doc["schema"] = BASELINE_SCHEMA
+    doc["built_at_epoch"] = float(doc.get("built_at_epoch") or time.time())
+    log(
+        "using prebuilt historical_baseline_v3 skip=%s d1=%s d2=%s combined=%s"
+        % (doc["skip_count"], d1, d2, archives["combined"])
+    )
+    return doc
+
+
 def build_historical_baseline(client) -> dict:
     CACHE_DIR.mkdir(exist_ok=True)
     if BASELINE_CACHE.exists():
@@ -406,9 +442,22 @@ def build_historical_baseline(client) -> dict:
             if age < 3600 and cached.get("schema") == BASELINE_SCHEMA:
                 log(f"using cached historical baseline age_s={int(age)}")
                 cached["ids"] = set(cached.get("ids_list") or [])
+                arch = cached.get("baseline_archives") or {}
+                d1 = int(arch.get("Disk-1") or 0)
+                d2 = int(arch.get("Disk-2") or 0)
+                if d1 and d2:
+                    arch["combined"] = d1 + d2
+                    cached["baseline_archives"] = arch
                 return cached
         except Exception:
             pass
+
+    prebuilt = load_prebuilt_baseline(client)
+    if prebuilt is not None:
+        serializable = dict(prebuilt)
+        serializable.pop("ids", None)
+        BASELINE_CACHE.write_text(json.dumps(serializable))
+        return prebuilt
 
     log("building historical baseline v2 from skip + reconciliation + results_only")
     skip = load_skip(client)
@@ -482,10 +531,13 @@ def build_historical_baseline(client) -> dict:
     elif c_total is not None:
         block["combined"]["total_block_bytes"] = int(c_total) + int(c_extra)
 
+    d1 = int(skip["by_disk"]["Disk-1"])
+    d2 = int(skip["by_disk"]["Disk-2"])
     baseline_archives = {
-        "Disk-1": int(skip["by_disk"]["Disk-1"]),
-        "Disk-2": int(skip["by_disk"]["Disk-2"]),
-        "combined": int(skip["skip_count"]),
+        "Disk-1": d1,
+        "Disk-2": d2,
+        # Combined done baseline is the sum of per-disk splits (not an inflated union).
+        "combined": d1 + d2,
     }
 
     out = {
@@ -544,6 +596,7 @@ def build_historical_baseline(client) -> dict:
 
 _COUNT_CACHE = {"claims": 0, "results": 0, "at": 0.0}
 _EC2_CACHE = {"keys": set(), "by_disk": {}, "raw": {}, "extensions": {}, "block_bytes": {}, "pdf_classes": {}, "recent": [], "at": 0.0}
+_EC2_DOC_CACHE: dict[str, dict] = {}
 _BASELINE = None
 _BASELINE_LOCK = threading.Lock()
 
@@ -567,12 +620,15 @@ def refresh_counts(client, ttl: float = 30.0) -> tuple[int, int]:
 
 
 def refresh_ec2_new(client, skip_ids: set[str], private: dict | None = None, ttl: float = 15.0) -> dict:
-    """New EC2 ok counts by disk, excluding skip-list identities.
+    """Merge new EC2 ok counts.
 
-    Fast path: when result key stems have zero overlap with the skip set, trust
-    private aggregator ec2_new_ok + ec2_counts_delta (workers never re-extract
-    skip-list archives). Avoids downloading multi-MB result bodies every 20s.
+    Raw family totals: prefer private ec2_counts_delta when result stems have zero
+    skip-list overlap (workers never re-extract skip archives).
+
+    Extensions: ALWAYS summed from ec2-results bodies (private status has no
+    extension histograms). Per-key body cache avoids re-downloading unchanged results.
     """
+    global _EC2_DOC_CACHE
     now = time.time()
     keys = set(list_keys(client, RESULTS_PREFIX))
     if (
@@ -588,86 +644,104 @@ def refresh_ec2_new(client, skip_ids: set[str], private: dict | None = None, ttl
     priv_arch = private.get("archives") if isinstance(private.get("archives"), dict) else {}
     priv_delta = private.get("ec2_counts_delta") if isinstance(private.get("ec2_counts_delta"), dict) else {}
 
-    by_disk = {"Disk-1": 0, "Disk-2": 0, "combined": 0}
-    raw = {"Disk-1": empty_raw(), "Disk-2": empty_raw(), "combined": empty_raw()}
-    extensions = {"Disk-1": empty_ext(), "Disk-2": empty_ext(), "combined": empty_ext()}
-    block_bytes = {"Disk-1": 0, "Disk-2": 0, "combined": 0}
-    pdf_classes = {"Disk-1": {}, "Disk-2": {}, "combined": {}}
+    # Drop cache entries for deleted keys.
+    for stale in list(_EC2_DOC_CACHE.keys()):
+        if stale not in keys:
+            _EC2_DOC_CACHE.pop(stale, None)
+
+    missing = [k for k in sorted(keys) if k not in _EC2_DOC_CACHE]
+
+    def load(key: str):
+        try:
+            return key, get_json(client, key)
+        except Exception as exc:
+            return key, {"_error": str(exc)}
+
+    if missing:
+        with ThreadPoolExecutor(max_workers=12) as pool:
+            for key, doc in pool.map(load, missing):
+                if not isinstance(doc, dict) or doc.get("_error"):
+                    _EC2_DOC_CACHE[key] = {"_error": True}
+                    continue
+                digest = str(doc.get("source_key_sha256") or Path(key).stem)
+                disk = doc.get("disk") if doc.get("disk") in ("Disk-1", "Disk-2") else "Disk-1"
+                _EC2_DOC_CACHE[key] = {
+                    "digest": digest,
+                    "disk": disk,
+                    "status": doc.get("status"),
+                    "raw": doc.get("raw") if isinstance(doc.get("raw"), dict) else {},
+                    "extensions": doc.get("extensions") if isinstance(doc.get("extensions"), dict) else {},
+                    "block_bytes": int(doc.get("block_bytes") or 0),
+                    "pdf_classes": doc.get("pdf_classes") if isinstance(doc.get("pdf_classes"), dict) else {},
+                    "instance_name": doc.get("instance_name"),
+                    "source_key": doc.get("source_key"),
+                    "stored_files": doc.get("stored_files"),
+                    "finished_at": doc.get("finished_at"),
+                }
+
+    by_disk = {"Disk-1": 0, "Disk-2": 0}
+    raw = {"Disk-1": empty_raw(), "Disk-2": empty_raw()}
+    extensions = {"Disk-1": empty_ext(), "Disk-2": empty_ext()}
+    block_bytes = {"Disk-1": 0, "Disk-2": 0}
+    pdf_classes = {"Disk-1": {}, "Disk-2": {}}
     recent = []
     ok = 0
     failed = 0
 
-    use_fast = skipped_overlap == 0 and bool(priv_arch)
-    if use_fast:
-        for disk in ("Disk-1", "Disk-2"):
-            by_disk[disk] = int((priv_arch.get(disk) or {}).get("ec2_new_ok") or 0)
-            add_raw(raw[disk], priv_delta.get(disk) if isinstance(priv_delta.get(disk), dict) else {})
-        by_disk["combined"] = by_disk["Disk-1"] + by_disk["Disk-2"]
-        add_raw(raw["combined"], raw["Disk-1"])
-        add_raw(raw["combined"], raw["Disk-2"])
-        ok = by_disk["combined"]
-        failed = int((priv_arch.get("combined") or {}).get("ec2_failed") or 0)
-        for row in (private.get("recent_ec2_results") or [])[:20]:
-            if isinstance(row, dict):
-                recent.append(row)
-    else:
-        by_disk = {"Disk-1": 0, "Disk-2": 0}
+    for key, doc in _EC2_DOC_CACHE.items():
+        if doc.get("_error"):
+            failed += 1
+            continue
+        digest = str(doc.get("digest") or Path(key).stem)
+        if digest in skip_ids:
+            continue
+        if doc.get("status") != "ok":
+            if doc.get("status") == "error":
+                failed += 1
+            continue
+        disk = doc.get("disk") if doc.get("disk") in ("Disk-1", "Disk-2") else "Disk-1"
+        by_disk[disk] += 1
+        ok += 1
+        add_raw(raw[disk], doc.get("raw") if isinstance(doc.get("raw"), dict) else {})
+        add_ext(extensions[disk], doc.get("extensions") if isinstance(doc.get("extensions"), dict) else {})
+        block_bytes[disk] += int(doc.get("block_bytes") or 0)
+        for ck, cv in (doc.get("pdf_classes") or {}).items():
+            pdf_classes[disk][ck] = int(pdf_classes[disk].get(ck) or 0) + int(cv or 0)
+        recent.append(
+            {
+                "instance": doc.get("instance_name"),
+                "disk": disk,
+                "archive": Path(str(doc.get("source_key") or "")).name,
+                "stored_files": doc.get("stored_files"),
+                "finished_at": doc.get("finished_at"),
+                "source_key_sha256": digest,
+            }
+        )
+
+    # Prefer private aggregator raw families when identities cannot overlap skip list.
+    use_private_raw = skipped_overlap == 0 and bool(priv_arch) and bool(priv_delta)
+    if use_private_raw:
         raw = {"Disk-1": empty_raw(), "Disk-2": empty_raw()}
-        extensions = {"Disk-1": empty_ext(), "Disk-2": empty_ext()}
-        block_bytes = {"Disk-1": 0, "Disk-2": 0}
-        pdf_classes = {"Disk-1": {}, "Disk-2": {}}
-
-        def load(key: str):
-            try:
-                return key, get_json(client, key)
-            except Exception as exc:
-                return key, {"_error": str(exc)}
-
-        with ThreadPoolExecutor(max_workers=12) as pool:
-            for key, doc in pool.map(load, sorted(keys)):
-                if not isinstance(doc, dict) or doc.get("_error"):
-                    failed += 1
-                    continue
-                digest = str(doc.get("source_key_sha256") or Path(key).stem)
-                if digest in skip_ids:
-                    continue
-                if doc.get("status") != "ok":
-                    if doc.get("status") == "error":
-                        failed += 1
-                    continue
-                disk = doc.get("disk") if doc.get("disk") in ("Disk-1", "Disk-2") else "Disk-1"
-                by_disk[disk] += 1
-                ok += 1
-                add_raw(raw[disk], doc.get("raw") if isinstance(doc.get("raw"), dict) else {})
-                add_ext(extensions[disk], doc.get("extensions") if isinstance(doc.get("extensions"), dict) else {})
-                block_bytes[disk] += int(doc.get("block_bytes") or 0)
-                for ck, cv in (doc.get("pdf_classes") or {}).items():
-                    pdf_classes[disk][ck] = int(pdf_classes[disk].get(ck) or 0) + int(cv or 0)
-                recent.append(
-                    {
-                        "instance": doc.get("instance_name"),
-                        "disk": disk,
-                        "archive": Path(str(doc.get("source_key") or "")).name,
-                        "stored_files": doc.get("stored_files"),
-                        "finished_at": doc.get("finished_at"),
-                        "source_key_sha256": digest,
-                    }
-                )
-
-        recent.sort(key=lambda r: r.get("finished_at") or "", reverse=True)
-        combined_raw = empty_raw()
-        combined_ext = empty_ext()
-        combined_classes: dict[str, int] = {}
         for disk in ("Disk-1", "Disk-2"):
-            add_raw(combined_raw, raw[disk])
-            add_ext(combined_ext, extensions[disk])
-            for k, v in pdf_classes[disk].items():
-                combined_classes[k] = int(combined_classes.get(k) or 0) + int(v or 0)
-        raw["combined"] = combined_raw
-        extensions["combined"] = combined_ext
-        pdf_classes["combined"] = combined_classes
-        block_bytes["combined"] = block_bytes["Disk-1"] + block_bytes["Disk-2"]
-        by_disk["combined"] = by_disk["Disk-1"] + by_disk["Disk-2"]
+            by_disk[disk] = int((priv_arch.get(disk) or {}).get("ec2_new_ok") or by_disk[disk] or 0)
+            add_raw(raw[disk], priv_delta.get(disk) if isinstance(priv_delta.get(disk), dict) else {})
+        failed = int((priv_arch.get("combined") or {}).get("ec2_failed") or failed)
+        ok = by_disk["Disk-1"] + by_disk["Disk-2"]
+
+    recent.sort(key=lambda r: r.get("finished_at") or "", reverse=True)
+    combined_raw = empty_raw()
+    combined_ext = empty_ext()
+    combined_classes: dict[str, int] = {}
+    for disk in ("Disk-1", "Disk-2"):
+        add_raw(combined_raw, raw[disk])
+        add_ext(combined_ext, extensions[disk])
+        for k, v in pdf_classes[disk].items():
+            combined_classes[k] = int(combined_classes.get(k) or 0) + int(v or 0)
+    raw["combined"] = combined_raw
+    extensions["combined"] = combined_ext
+    pdf_classes["combined"] = combined_classes
+    block_bytes["combined"] = block_bytes["Disk-1"] + block_bytes["Disk-2"]
+    by_disk["combined"] = by_disk["Disk-1"] + by_disk["Disk-2"]
 
     _EC2_CACHE.update(
         {
@@ -681,7 +755,10 @@ def refresh_ec2_new(client, skip_ids: set[str], private: dict | None = None, ttl
             "ok": ok,
             "failed": failed,
             "skipped_overlap": skipped_overlap,
-            "fast_path": use_fast,
+            "fast_path": False,
+            "private_raw": use_private_raw,
+            "doc_cache_size": len(_EC2_DOC_CACHE),
+            "fetched_this_refresh": len(missing),
             "at": now,
         }
     )
@@ -840,6 +917,240 @@ def build_counts(baseline: dict, ec2: dict) -> tuple[dict, dict]:
         out[disk] = cats
 
     return out, pending_reasons
+
+
+
+
+def empty_depth_dist() -> dict[str, int]:
+    return {str(depth): 0 for depth in range(16)}
+
+
+def depth_from_summary_node(node: dict | None) -> dict:
+    node = node if isinstance(node, dict) else {}
+    dist = empty_depth_dist()
+    src = node.get("finished_archive_max_depth_distribution") or {}
+    if isinstance(src, dict):
+        for depth in range(16):
+            dist[str(depth)] = int(src.get(str(depth), src.get(depth, 0)) or 0)
+    cap_hits = int(node.get("depth_cap_hits") or 0)
+    measured = sum(dist.values())
+    observed = [int(d) for d, c in dist.items() if int(c)]
+    return {
+        "measured_finished_archives": measured,
+        "unopened_archives_not_measured": None,
+        "max_measured_depth": max(observed) if observed else None,
+        "depth_cap": DEPTH_CAP,
+        "depth_cap_hits": cap_hits,
+        "finished_archive_max_depth_distribution": dist,
+        "finished_by_depth": dist,
+        "archive_nodes_by_depth": empty_depth_dist(),
+        "distribution": dist,
+    }
+
+
+def add_depth_row(bucket: dict, row: dict) -> None:
+    if not isinstance(row, dict):
+        return
+    if str(row.get("status") or "ok").lower() not in {"ok", "done", "success", ""}:
+        return
+    depth = row.get("max_depth_seen")
+    if depth is None:
+        return
+    depth_i = int(depth)
+    if depth_i < 0:
+        return
+    if depth_i > DEPTH_CAP:
+        depth_i = DEPTH_CAP
+    key = str(depth_i)
+    bucket["finished_archive_max_depth_distribution"][key] = int(
+        bucket["finished_archive_max_depth_distribution"].get(key, 0)
+    ) + 1
+    bucket["depth_cap_hits"] = int(bucket.get("depth_cap_hits") or 0) + int(
+        row.get("depth_cap_hits") or 0
+    )
+    nodes = row.get("archive_nodes_by_depth") or row.get("nested_depth_distribution") or {}
+    if isinstance(nodes, dict):
+        for nkey, nval in nodes.items():
+            nk = str(int(nkey))
+            if nk in bucket["archive_nodes_by_depth"]:
+                bucket["archive_nodes_by_depth"][nk] = int(
+                    bucket["archive_nodes_by_depth"].get(nk, 0)
+                ) + int(nval or 0)
+
+
+def finalize_depth(bucket: dict, unopened: int | None = None) -> dict:
+    dist = bucket["finished_archive_max_depth_distribution"]
+    measured = sum(int(v) for v in dist.values())
+    observed = [int(d) for d, c in dist.items() if int(c)]
+    out = {
+        "measured_finished_archives": measured,
+        "unopened_archives_not_measured": unopened,
+        "max_measured_depth": max(observed) if observed else None,
+        "depth_cap": DEPTH_CAP,
+        "depth_cap_hits": int(bucket.get("depth_cap_hits") or 0),
+        "finished_archive_max_depth_distribution": {str(d): int(dist.get(str(d), 0)) for d in range(16)},
+        "finished_by_depth": {str(d): int(dist.get(str(d), 0)) for d in range(16)},
+        "archive_nodes_by_depth": {
+            str(d): int((bucket.get("archive_nodes_by_depth") or {}).get(str(d), 0))
+            for d in range(16)
+        },
+        "distribution": {str(d): int(dist.get(str(d), 0)) for d in range(16)},
+    }
+    return out
+
+
+def load_depth_index(client) -> dict:
+    """Load cached per-archive max depth (sha256 source_key -> row)."""
+    try:
+        doc = get_json(client, DEPTH_INDEX_KEY)
+        by_id = doc.get("by_id") if isinstance(doc, dict) else None
+        if isinstance(by_id, dict):
+            return by_id
+    except Exception as exc:
+        log(f"depth index miss: {type(exc).__name__}: {exc}")
+    local = CACHE_DIR / "ec2_depth_index.json"
+    if local.exists():
+        try:
+            doc = json.loads(local.read_text())
+            by_id = doc.get("by_id") if isinstance(doc, dict) else None
+            if isinstance(by_id, dict):
+                return by_id
+        except Exception:
+            pass
+    return {}
+
+
+def refresh_depth_index(client, skip_ids: set[str], existing: dict) -> dict:
+    """Incrementally add depth for new ec2-results / sidecars not yet indexed."""
+    by_id = dict(existing)
+    keys = list_keys(client, RESULTS_PREFIX)
+    missing = []
+    for key in keys:
+        digest = Path(key).stem
+        if digest in skip_ids:
+            continue
+        if digest in by_id and by_id[digest].get("max_depth_seen") is not None:
+            continue
+        missing.append((digest, key))
+    if not missing:
+        return by_id
+
+    def one(item):
+        digest, key = item
+        # Only tiny sidecars in the 20s loop (full result bodies are multi-MB).
+        side_key = f"{DEPTH_SIDECAR_PREFIX}{digest}.json"
+        try:
+            doc = get_json(client, side_key)
+            if isinstance(doc, dict) and doc.get("max_depth_seen") is not None:
+                return digest, {
+                    "disk": doc.get("disk") or "Disk-1",
+                    "status": doc.get("status") or "ok",
+                    "max_depth_seen": int(doc.get("max_depth_seen") or 0),
+                    "depth_cap_hits": int(doc.get("depth_cap_hits") or 0),
+                    "archive_nodes_by_depth": doc.get("nested_depth_distribution")
+                    or doc.get("archive_nodes_by_depth")
+                    or {},
+                }
+        except Exception:
+            pass
+        return digest, None
+
+    added = 0
+    # Bound work per cycle so the 20s loop stays responsive.
+    batch = missing[:40]
+    with ThreadPoolExecutor(max_workers=8) as pool:
+        for digest, row in pool.map(one, batch):
+            if row is None:
+                continue
+            by_id[digest] = row
+            added += 1
+    if added:
+        doc = {
+            "schema": "ec2-depth-index/v1",
+            "updated_at": utc_now(),
+            "count": len(by_id),
+            "by_id": by_id,
+        }
+        try:
+            put_json(client, PRIVATE_BUCKET, DEPTH_INDEX_KEY, doc, public=False)
+        except Exception as exc:
+            log(f"depth index write failed: {type(exc).__name__}: {exc}")
+        try:
+            CACHE_DIR.mkdir(exist_ok=True)
+            (CACHE_DIR / "ec2_depth_index.json").write_text(json.dumps(doc))
+        except Exception:
+            pass
+        log(f"depth index updated added={added} total={len(by_id)} pending={len(missing)-len(batch)}")
+    return by_id
+
+
+def build_nested_depth(client, baseline: dict, archives: dict) -> dict:
+    """Merge recon baseline depths + EC2 result max depths (source_key sha256 once)."""
+    summary = get_json(client, RECON_SUMMARY_KEY)
+    disks_src = summary.get("disks") or {}
+    by_disk = {
+        "Disk-1": depth_from_summary_node(disks_src.get("Disk-1")),
+        "Disk-2": depth_from_summary_node(disks_src.get("Disk-2")),
+        "combined": depth_from_summary_node(summary.get("combined")),
+    }
+    # Rebuild combined from disks to keep identity consistent.
+    combined = {
+        "finished_archive_max_depth_distribution": empty_depth_dist(),
+        "archive_nodes_by_depth": empty_depth_dist(),
+        "depth_cap_hits": 0,
+    }
+    for disk in ("Disk-1", "Disk-2"):
+        for depth in range(16):
+            k = str(depth)
+            combined["finished_archive_max_depth_distribution"][k] += int(
+                by_disk[disk]["finished_archive_max_depth_distribution"].get(k, 0)
+            )
+            combined["archive_nodes_by_depth"][k] += int(
+                by_disk[disk]["archive_nodes_by_depth"].get(k, 0)
+            )
+        combined["depth_cap_hits"] += int(by_disk[disk].get("depth_cap_hits") or 0)
+
+    skip_ids = baseline.get("ids") or set()
+    index = load_depth_index(client)
+    index = refresh_depth_index(client, skip_ids, index)
+
+    # Accumulators start from baseline, then add non-overlapping EC2 rows.
+    acc = {
+        disk: {
+            "finished_archive_max_depth_distribution": dict(
+                by_disk[disk]["finished_archive_max_depth_distribution"]
+            ),
+            "archive_nodes_by_depth": dict(by_disk[disk]["archive_nodes_by_depth"]),
+            "depth_cap_hits": int(by_disk[disk].get("depth_cap_hits") or 0),
+        }
+        for disk in ("Disk-1", "Disk-2")
+    }
+    acc["combined"] = {
+        "finished_archive_max_depth_distribution": dict(
+            combined["finished_archive_max_depth_distribution"]
+        ),
+        "archive_nodes_by_depth": dict(combined["archive_nodes_by_depth"]),
+        "depth_cap_hits": int(combined["depth_cap_hits"]),
+    }
+
+    for digest, row in index.items():
+        if digest in skip_ids:
+            continue
+        if not isinstance(row, dict):
+            continue
+        disk = row.get("disk") if row.get("disk") in ("Disk-1", "Disk-2") else None
+        if disk is None:
+            continue
+        add_depth_row(acc[disk], row)
+        add_depth_row(acc["combined"], row)
+
+    out = {}
+    for disk in ("Disk-1", "Disk-2", "combined"):
+        arch = (archives or {}).get(disk) or {}
+        total = int(arch.get("total") or MANIFEST_TOTAL[disk])
+        done = int(arch.get("done") or arch.get("completed_ok") or 0)
+        out[disk] = finalize_depth(acc[disk], unopened=max(0, total - done))
+    return out
 
 
 def enrich(private: dict, claims: int, results: int, baseline: dict, ec2: dict) -> dict:
@@ -1164,7 +1475,45 @@ def publish_once(client) -> dict:
     claims, results = refresh_counts(client)
     ec2 = refresh_ec2_new(client, baseline["ids"], private=private)
     public = enrich(private, claims, results, baseline, ec2)
+    try:
+        nested = build_nested_depth(client, baseline, public.get("archives") or {})
+        public["nested_depth"] = nested.get("combined")
+        public["cloud_depth"] = nested.get("combined")
+        public["depth"] = nested.get("combined")
+        disks = public.get("disks") if isinstance(public.get("disks"), dict) else {}
+        for disk in ("Disk-1", "Disk-2", "combined"):
+            if disk in disks and isinstance(disks[disk], dict):
+                disks[disk]["nested_depth"] = nested.get(disk)
+                disks[disk]["depth"] = nested.get(disk)
+        public["disks"] = disks
+        pub = public.get("publisher") if isinstance(public.get("publisher"), dict) else {}
+        pub["depth_merge"] = "reconciliation_summary_plus_ec2_results_max_depth_by_source_key_sha256"
+        pub["depth_cap"] = DEPTH_CAP
+        public["publisher"] = pub
+    except Exception as exc:
+        log(f"depth merge failed: {type(exc).__name__}: {exc}")
+        log(traceback.format_exc().splitlines()[-1])
+    # Full object first (stable for the page), then best-effort status.json.
+    put_json(client, PUBLIC_BUCKET, PUBLIC_FULL_KEY, public, public=True)
     put_json(client, PUBLIC_BUCKET, PUBLIC_KEY, public, public=True)
+    try:
+        arch = (public.get("archives") or {}).get("combined") or {}
+        put_json(
+            client,
+            PRIVATE_BUCKET,
+            HEARTBEAT_KEY,
+            {
+                "published_at": public.get("published_at"),
+                "publisher": public.get("publisher"),
+                "workers_alive": public.get("workers_alive"),
+                "archives_combined_done": arch.get("done"),
+                "disk1_done": ((public.get("archives") or {}).get("Disk-1") or {}).get("done"),
+                "disk2_done": ((public.get("archives") or {}).get("Disk-2") or {}).get("done"),
+            },
+            public=False,
+        )
+    except Exception as exc:
+        log(f"heartbeat write failed: {type(exc).__name__}: {exc}")
     (ROOT / "status.public.json").write_text(
         json.dumps(public, separators=(",", ":"), ensure_ascii=True)
     )
