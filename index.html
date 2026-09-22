@@ -1018,7 +1018,6 @@
       return isObject(byExt) && Object.keys(byExt).length > 0;
     }
 
-<<<<<<< Updated upstream
     // 1956-archive reconciliation floors — never overlay these onto full-population raw.
     const FORBIDDEN_SHA_FLOORS = new Set([125514, 46274, 216, 112347, 13167, 15067, 31207, 774, 542, 8258, 9470, 87164, 20622, 16]);
     const FORBIDDEN_WEAK_FLOORS = new Set([133112, 46703, 21592, 18417, 771, 18249, 7674, 9317, 89053, 27068]);
@@ -1030,37 +1029,16 @@
     function isComputingIdentity(node) {
       const st = identityStatusOf(node);
       return st.includes("computing_full_population_union") || st.includes("global_distinct");
-=======
-    function identityStatusText(node) {
-      if (!isObject(node)) return "";
-      return String(node.sha256_status || node.weak_status || "");
-    }
-
-    function countsNodeComputingUnion(node) {
-      const st = identityStatusText(node).toLowerCase();
-      return st.includes("computing_full_population_union")
-        || st.includes("computing")
-        || st.includes("pending_full_population");
->>>>>>> Stashed changes
     }
 
     function countsNodeIsRich(node) {
       if (!isObject(node)) return false;
-<<<<<<< Updated upstream
       // Intentional null SHA/weak while full-population union runs is valid identity.
       if (isComputingIdentity(node)) return true;
       if (present(node.weak) || present(node.sha256)) return true;
       if (isObject(node.by_ext)) {
         for (const child of Object.values(node.by_ext)) {
           if (isObject(child) && (isComputingIdentity(child) || present(child.weak) || present(child.sha256))) return true;
-=======
-      // Intentional null SHA/weak while full-population union runs counts as rich.
-      if (countsNodeComputingUnion(node)) return true;
-      if (present(node.weak) || present(node.sha256)) return true;
-      if (isObject(node.by_ext)) {
-        for (const child of Object.values(node.by_ext)) {
-          if (isObject(child) && (countsNodeComputingUnion(child) || present(child.weak) || present(child.sha256))) return true;
->>>>>>> Stashed changes
         }
       }
       return false;
@@ -2619,15 +2597,9 @@
       try {
         let status;
         let source;
-<<<<<<< Updated upstream
-        // Prefer live AWS status.json when it carries numeric weak/SHA identity.
-        // Thin racers may still publish disks.*.counts with sha256:null; overlay
-        // identity fields from the GitHub mirror, then fall back entirely.
-=======
         // Prefer live AWS status.json. Do NOT overlay GitHub mirror SHA/weak onto a
         // structurally rich live document — that mirror is stale and caused mixed
         // "pending" vs old 1956 SHA digits. Only fall back to GitHub/GCS when live fails.
->>>>>>> Stashed changes
         const isStructurallyRich = (doc) => !!(doc && doc.disks && doc.disks["Disk-1"] && doc.disks["Disk-1"].counts
           && doc.disks["Disk-2"] && doc.disks["Disk-2"].counts
           && doc.disks.combined && doc.disks.combined.counts);
@@ -2638,13 +2610,6 @@
           source = "aws-s3";
           if (!isStructurallyRich(status)) {
             try {
-<<<<<<< Updated upstream
-              sticky = await fetchStatus(FALLBACK_GITHUB_STATUS_URL);
-              if (statusHasIdentityMetrics(sticky)) {
-                status = mergeIdentityCounts(status, sticky);
-                source = "aws-s3+github-identity";
-              } else if (!isStructurallyRich(status)) {
-=======
               const sticky = await fetchStatus(FALLBACK_GITHUB_STATUS_URL);
               if (isStructurallyRich(sticky)) {
                 // Structural fallback only — still refuse to merge numeric identity from mirror
@@ -2652,7 +2617,6 @@
                 status = sticky;
                 source = "github-fallback";
               } else {
->>>>>>> Stashed changes
                 throw new Error("live status.json thin/missing per-disk counts");
               }
             } catch (stickyError) {
