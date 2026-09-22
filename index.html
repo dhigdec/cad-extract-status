@@ -69,10 +69,12 @@
     function hasValue(x) { return x !== undefined && x !== null && x !== ""; }
     function pick(...values) { return values.find(hasValue); }
     function numberFrom(...values) {
-      const value = pick(...values);
-      if (!hasValue(value)) return null;
-      const parsed = Number(value);
-      return Number.isFinite(parsed) ? parsed : null;
+      for (const value of values) {
+        if (!hasValue(value)) continue;
+        const parsed = Number(value);
+        if (Number.isFinite(parsed)) return parsed;
+      }
+      return null;
     }
     function objectFrom(value) {
       return value && typeof value === "object" && !Array.isArray(value) ? value : {};
@@ -206,26 +208,27 @@
       const cloudS3 = objectFrom(cloud.s3);
       const nestedStorageS3 = objectFrom(storage.s3);
       let storedGb = numberFrom(
-        localS3.stored_gb, totalsS3.stored_gb, cloudS3.stored_gb,
-        nestedStorageS3.stored_gb, storage.s3_stored_gb, storage.stored_gb,
-        st.s3_stored_gb, cloud.s3_stored_gb, cloud.stored_gb
+        cloudS3.stored_gb, nestedStorageS3.stored_gb, storage.s3_stored_gb,
+        storage.stored_gb, cloud.s3_stored_gb, cloud.stored_gb,
+        localS3.stored_gb, totalsS3.stored_gb, st.s3_stored_gb
       );
       const storedBytes = numberFrom(
-        localS3.stored_bytes, totalsS3.stored_bytes, cloudS3.stored_bytes,
-        nestedStorageS3.stored_bytes, storage.s3_stored_bytes, storage.stored_bytes,
-        st.s3_stored_bytes, cloud.s3_stored_bytes, cloud.stored_bytes
+        cloudS3.stored_bytes, nestedStorageS3.stored_bytes, storage.s3_stored_bytes,
+        storage.stored_bytes, cloud.s3_stored_bytes, cloud.stored_bytes,
+        localS3.stored_bytes, totalsS3.stored_bytes, st.s3_stored_bytes
       );
       if (storedGb == null && storedBytes != null) storedGb = storedBytes / 1e9;
       if (storedGb == null) storedGb = 0;
       const storedObjects = numberFrom(
-        localS3.stored_object_count, localS3.object_count, localS3.stored_files,
-        localS3.uploaded_files, totalsS3.stored_object_count, totalsS3.object_count,
-        totalsS3.stored_files, totalsS3.uploaded_files, cloudS3.stored_object_count,
-        cloudS3.object_count, cloudS3.stored_files, nestedStorageS3.stored_files,
+        cloudS3.stored_object_count, cloudS3.object_count, cloudS3.stored_files,
+        nestedStorageS3.stored_files,
         storage.s3_stored_object_count, storage.s3_object_count,
         storage.s3_stored_objects, storage.stored_object_count,
-        storage.object_count, storage.stored_files, st.s3_stored_objects,
-        cloud.s3_stored_objects, cloud.stored_files, cloud.object_count
+        storage.object_count, storage.stored_files, cloud.s3_stored_objects,
+        cloud.stored_files, cloud.object_count, localS3.stored_object_count,
+        localS3.object_count, localS3.stored_files, localS3.uploaded_files,
+        totalsS3.stored_object_count, totalsS3.object_count,
+        totalsS3.stored_files, totalsS3.uploaded_files, st.s3_stored_objects
       ) ?? 0;
       const s3Monthly = storedGb * 0.025;
       const suppliedS3Accrued = numberFrom(
@@ -243,8 +246,8 @@
       const combined = suppliedCombined ??
         computeAccrued + (ebsAccrued ?? 0) + s3Accrued;
       const prefix = pick(
-        localS3.prefix, totalsS3.prefix, cloudS3.prefix, nestedStorageS3.prefix,
-        storage.prefix, "s3://annotationprod/cad-disk-extract/"
+        cloudS3.prefix, nestedStorageS3.prefix, storage.prefix,
+        localS3.prefix, totalsS3.prefix, "s3://annotationprod/cad-disk-extract/"
       );
       const lastUpdated = pick(
         cloud.heartbeat_at, cloud.status_updated_at, cloud.last_updated_at,
