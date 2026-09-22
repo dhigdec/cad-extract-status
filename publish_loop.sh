@@ -278,7 +278,9 @@ publish_once() {
 acquire_lock || exit 0
 echo "$$" >"$PIDFILE"
 trap cleanup EXIT
-trap 'cleanup; exit 0' INT TERM HUP
+# SIGHUP is deliberately ignored so the loop survives the terminal that started it.
+trap '' HUP
+trap 'cleanup; exit 0' INT TERM
 
 while true; do
   publish_once || true
