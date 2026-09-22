@@ -1044,11 +1044,20 @@
         if (!isObject(next.disks)) next.disks = {};
         for (const disk of Object.keys(sticky.disks)) {
           const src = sticky.disks[disk];
-          if (!isObject(src) || !isObject(src.counts)) continue;
+          if (!isObject(src)) continue;
           if (!isObject(next.disks[disk])) next.disks[disk] = {};
-          const liveTwoD = (next.disks[disk].counts || {})["2d"];
-          if (!countsNodeIsRich(liveTwoD) && countsNodeIsRich(src.counts["2d"])) {
-            next.disks[disk].counts = src.counts;
+          if (isObject(src.counts)) {
+            const liveTwoD = (next.disks[disk].counts || {})["2d"];
+            if (!countsNodeIsRich(liveTwoD) && countsNodeIsRich(src.counts["2d"])) {
+              next.disks[disk].counts = src.counts;
+            }
+          }
+          // Thin AWS racers omit depth; keep mirrored nested_depth/depth so tabs
+          // do not render pending while sticky status.json already has histograms.
+          for (const depthKey of ["nested_depth", "depth", "depths"]) {
+            if (isObject(src[depthKey]) && !isObject(next.disks[disk][depthKey])) {
+              next.disks[disk][depthKey] = src[depthKey];
+            }
           }
         }
       }
@@ -1066,6 +1075,11 @@
           && !countsNodeIsRich((next.cloud_counts || {})["2d"])
           && countsNodeIsRich(sticky.cloud_counts["2d"])) {
         next.cloud_counts = sticky.cloud_counts;
+      }
+      for (const depthKey of ["nested_depth", "cloud_depth", "depth", "depths"]) {
+        if (isObject(sticky[depthKey]) && !isObject(next[depthKey])) {
+          next[depthKey] = sticky[depthKey];
+        }
       }
       if (isObject(sticky.dedup)) next.dedup = sticky.dedup;
       if (isObject(sticky.pending_reasons)) next.pending_reasons = sticky.pending_reasons;
