@@ -1,21 +1,34 @@
 {
-  "health": "alive",
-  "updated": "2026-09-22 01:40:54 UTC",
-  "last_update_iso": "2026-09-22 01:40:54 UTC",
-  "age_seconds": 659.0,
+  "source_of_truth": "cloud-ec2",
+  "health": "ok",
+  "updated": "2026-09-22T01:51:48.645736Z",
+  "last_update_iso": "2026-09-22T01:51:48.645736Z",
+  "age_seconds": 13.5,
   "worker_alive": true,
   "stalled": false,
-  "current": {
-    "line": ">>> (986/3620) Disk-2 6.7 MB  [count+upload]  Disk-2/Jobs & Data_Files_Completed_On_Server12/Jobs Files/FTP Data 19-3-2014/FTP Data 21-3-2014-10.10.40.4/FTP5/iten/UPLOADS FROM ITEN/OPs1.rar",
-    "index": 986,
-    "total": 3620,
-    "disk": "Disk-2",
-    "size_mb": 6.7,
-    "size_label": "6.7 MB",
-    "path": "[count+upload]  Disk-2/Jobs & Data_Files_Completed_On_Server12/Jobs Files/FTP Data 19-3-2014/FTP Data 21-3-2014-10.10.40.4/FTP5/iten/UPLOADS FROM ITEN/OPs1.rar",
-    "name": "OPs1.rar"
-  },
-  "current_archive": ">>> (986/3620) Disk-2 6.7 MB  [count+upload]  Disk-2/Jobs & Data_Files_Completed_On_Server12/Jobs Files/FTP Data 19-3-2014/FTP Data 21-3-2014-10.10.40.4/FTP5/iten/UPLOADS FROM ITEN/OPs1.rar",
+  "current": [
+    {
+      "shard": 0,
+      "state": "processing",
+      "archive": "3456-BOP STEEL_SEQ#28_03072017.zip"
+    },
+    {
+      "shard": 1,
+      "state": "processing",
+      "archive": "Leroy Street.7z"
+    },
+    {
+      "shard": 2,
+      "state": "processing",
+      "archive": "3456-BOP STEEL_SEQ#28_03022017.zip"
+    },
+    {
+      "shard": 3,
+      "state": "processing",
+      "archive": "32-21017 North Ft Hood.7z"
+    }
+  ],
+  "current_archive": "3456-BOP STEEL_SEQ#28_03072017.zip",
   "last_finished": {
     "disk": "Disk-2",
     "name": "WO22646-31&32_140813_DWG_2.zip",
@@ -978,8 +991,8 @@
       "Disk-2": "s3://annotationprod/cad-disk-extract/Disk-2/"
     },
     "profile": "annotationprod-publish",
-    "stored_bytes": 500790788,
-    "stored_gb": 0.500791,
+    "stored_bytes": 501331440,
+    "stored_gb": 0.501331,
     "stored_bytes_by_disk": {
       "Disk-1": 38274820,
       "Disk-2": 462515968
@@ -997,9 +1010,321 @@
     "archives_pending_s3": 832,
     "estimated_monthly_usd": 0.0125,
     "cost_rate_usd_per_gb_month": 0.025,
-    "note": "Estimate = stored_GB uploaded by this job \u00d7 $0.025/GB-month (S3 Standard ap-south-1). Not the AWS invoice. Only cad-disk-extract/ is written; source buckets are read-only."
+    "note": "Estimate = stored_GB uploaded by this job \u00d7 $0.025/GB-month (S3 Standard ap-south-1). Not the AWS invoice. Only cad-disk-extract/ is written; source buckets are read-only.",
+    "scope": "whole cad-disk-extract/ prefix measured from EC2",
+    "object_count": 3619,
+    "scanned_at": "2026-09-22T01:49:23.117754Z"
   },
-  "s3_stored_bytes": 500790788,
-  "s3_stored_gb": 0.500791,
-  "estimated_monthly_usd": 0.0125
+  "s3_stored_bytes": 501331440,
+  "s3_stored_gb": 0.501331,
+  "estimated_monthly_usd": 0.0125,
+  "local_baseline": {
+    "note": "Archives completed by the laptop run before cutover to EC2. Extraction, unzip and counting now happen on EC2 only.",
+    "health": "alive",
+    "updated": "2026-09-22 01:40:54 UTC",
+    "archives": {
+      "Disk-1": {
+        "completed_ok": 101,
+        "failed": 0,
+        "skipped_too_large": 0,
+        "completed_total": 101,
+        "remaining": 1053,
+        "manifest_total": 1154
+      },
+      "Disk-2": {
+        "completed_ok": 884,
+        "failed": 0,
+        "skipped_too_large": 0,
+        "completed_total": 884,
+        "remaining": 1582,
+        "manifest_total": 2466
+      },
+      "combined": {
+        "completed_ok": 985,
+        "failed": 0,
+        "skipped_too_large": 0,
+        "completed_total": 985,
+        "remaining": 2635,
+        "manifest_total": 3620
+      }
+    }
+  },
+  "cloud": {
+    "schema": 1,
+    "state": "running",
+    "heartbeat_at": "2026-09-22T01:51:48.645736Z",
+    "run_id": "run-20260922T011906Z",
+    "instance_id": "i-03cbb2e935bbb2445",
+    "instance_type": "c7i.4xlarge",
+    "availability_zone": "ap-south-1a",
+    "credential_expiry": "none",
+    "credential_stop_at": "2027-09-22T01:44:22.171928Z",
+    "progress": {
+      "manifest_total": 2647,
+      "completed_ok": 140,
+      "failed": 0,
+      "remaining": 2507,
+      "retries": 0
+    },
+    "counts": {
+      "raw": {
+        "pdf": 4640,
+        "cad_pdf": 3186,
+        "other_pdf": 1454,
+        "2d": 6972,
+        "3d": 55,
+        "nc1": 806
+      },
+      "sha256": {
+        "pdf": 3691,
+        "cad_pdf": 2496,
+        "other_pdf": 1196,
+        "2d": 6078,
+        "3d": 47,
+        "nc1": 684
+      },
+      "block_sha256": 12003,
+      "extensions": {
+        ".db1": {
+          "category": "3d",
+          "raw": 40,
+          "sha256": 36
+        },
+        ".dg": {
+          "category": "2d",
+          "raw": 4795,
+          "sha256": 4131
+        },
+        ".dpm": {
+          "category": "2d",
+          "raw": 738,
+          "sha256": 543
+        },
+        ".dwg": {
+          "category": "2d",
+          "raw": 517,
+          "sha256": 512
+        },
+        ".dxf": {
+          "category": "2d",
+          "raw": 922,
+          "sha256": 892
+        },
+        ".ifc": {
+          "category": "3d",
+          "raw": 15,
+          "sha256": 11
+        },
+        ".nc1": {
+          "category": "nc1",
+          "raw": 806,
+          "sha256": 684
+        },
+        ".pdf": {
+          "category": "pdf",
+          "raw": 4640,
+          "sha256": 3691
+        }
+      }
+    },
+    "nested_depth": {
+      "measured_finished_archives": 140,
+      "unopened_archives_not_measured": 2507,
+      "archive_nodes_by_depth": {
+        "0": 140,
+        "1": 48
+      },
+      "finished_archive_max_depth_distribution": {
+        "0": 114,
+        "1": 26
+      }
+    },
+    "storage": {
+      "stored_bytes": 2894427554,
+      "stored_gb": 2.894428,
+      "stored_files": 12473,
+      "estimated_s3_monthly_usd": 0.0724
+    },
+    "compute": {
+      "hourly_ec2_estimate_usd": "0.93",
+      "uptime_seconds": 202.5,
+      "uptime_hours": 0.0563,
+      "accrued_estimate_usd": 0.0523,
+      "estimate_label": "On-Demand estimate; excludes taxes and data transfer"
+    },
+    "ebs": {
+      "size_gb": 1000.0,
+      "volume_type": "gp3",
+      "iops": 6000,
+      "throughput_mibps": 500,
+      "rate_usd_per_gb_month": 0.0912,
+      "estimated_monthly_usd": 91.2,
+      "hourly_estimate_usd": 0.124932,
+      "accrued_estimate_usd": 0.007
+    },
+    "s3_prefix": {
+      "state": "ok",
+      "scanned_at": "2026-09-22T01:49:23.117754Z",
+      "prefix": "s3://annotationprod/cad-disk-extract/",
+      "object_count": 3619,
+      "stored_bytes": 501331440,
+      "stored_gb": 0.501331,
+      "estimated_s3_monthly_usd": 0.0125,
+      "cost_rate_usd_per_gb_month": 0.025
+    },
+    "costs": {
+      "compute_accrued_usd": 0.0523,
+      "ebs_accrued_usd": 0.007,
+      "s3_estimated_monthly_usd": 0.0125,
+      "combined_accrued_usd": 0.0593,
+      "combined_hourly_usd": 1.0549,
+      "label": "ESTIMATE ONLY - computed from On-Demand list prices (EC2 + gp3 EBS + S3 Standard at $0.025/GB-month). This is not the AWS invoice."
+    },
+    "workers": [
+      {
+        "shard": 0,
+        "state": "processing",
+        "current_archive": "3456-BOP STEEL_SEQ#28_03072017.zip",
+        "current_archive_id": "592ac6941bbc79fb",
+        "archive_index": 29,
+        "shard_total": 651,
+        "updated_at": "2026-09-22T01:51:40.803570Z",
+        "pid": 4109,
+        "returncode": null
+      },
+      {
+        "shard": 1,
+        "state": "processing",
+        "current_archive": "Leroy Street.7z",
+        "current_archive_id": "b95280ecf3ee7ce7",
+        "archive_index": 18,
+        "shard_total": 676,
+        "updated_at": "2026-09-22T01:51:41.997581Z",
+        "pid": 4110,
+        "returncode": null
+      },
+      {
+        "shard": 2,
+        "state": "processing",
+        "current_archive": "3456-BOP STEEL_SEQ#28_03022017.zip",
+        "current_archive_id": "1ca006a7b3f54658",
+        "archive_index": 50,
+        "shard_total": 681,
+        "updated_at": "2026-09-22T01:51:48.154769Z",
+        "pid": 4111,
+        "returncode": null
+      },
+      {
+        "shard": 3,
+        "state": "processing",
+        "current_archive": "32-21017 North Ft Hood.7z",
+        "current_archive_id": "9aed5ae443e69b02",
+        "archive_index": 43,
+        "shard_total": 639,
+        "updated_at": "2026-09-22T01:51:18.861994Z",
+        "pid": 4112,
+        "returncode": null
+      }
+    ],
+    "worker_processes_alive": 4,
+    "source_listing": {
+      "state": "complete",
+      "finished_at": "2026-09-22T01:51:32.285169Z",
+      "cloud_remaining": 2647,
+      "snapshot_remaining": 2647,
+      "missing_from_snapshot": 0,
+      "stale_in_snapshot": 0,
+      "matched_exactly": true
+    },
+    "last_checkpoint_at": "2026-09-22T01:51:36.274566Z",
+    "github_publisher": {
+      "repo": "dhigdec/cad-extract-status",
+      "last_push_success_at": null,
+      "last_error": "FileNotFoundError"
+    },
+    "temporary_credential_limitation": "Workers stop five minutes before destination credential expiry. The instance remains running; new destination writes require refreshed credentials."
+  },
+  "cloud_workers_alive": 4,
+  "archives_combined": {
+    "total": 2647,
+    "done": 140,
+    "remaining": 2507,
+    "failed": 0,
+    "retries": 0,
+    "done_local_before_cutover": 0,
+    "done_on_ec2": 140
+  },
+  "cloud_counts": {
+    "raw": {
+      "pdf": 4640,
+      "cad_pdf": 3186,
+      "other_pdf": 1454,
+      "2d": 6972,
+      "3d": 55,
+      "nc1": 806
+    },
+    "sha256": {
+      "pdf": 3691,
+      "cad_pdf": 2496,
+      "other_pdf": 1196,
+      "2d": 6078,
+      "3d": 47,
+      "nc1": 684
+    },
+    "block_sha256": 12003,
+    "extensions": {
+      ".db1": {
+        "category": "3d",
+        "raw": 40,
+        "sha256": 36
+      },
+      ".dg": {
+        "category": "2d",
+        "raw": 4795,
+        "sha256": 4131
+      },
+      ".dpm": {
+        "category": "2d",
+        "raw": 738,
+        "sha256": 543
+      },
+      ".dwg": {
+        "category": "2d",
+        "raw": 517,
+        "sha256": 512
+      },
+      ".dxf": {
+        "category": "2d",
+        "raw": 922,
+        "sha256": 892
+      },
+      ".ifc": {
+        "category": "3d",
+        "raw": 15,
+        "sha256": 11
+      },
+      ".nc1": {
+        "category": "nc1",
+        "raw": 806,
+        "sha256": 684
+      },
+      ".pdf": {
+        "category": "pdf",
+        "raw": 4640,
+        "sha256": 3691
+      }
+    }
+  },
+  "cloud_depth": {
+    "measured_finished_archives": 140,
+    "unopened_archives_not_measured": 2507,
+    "archive_nodes_by_depth": {
+      "0": 140,
+      "1": 48
+    },
+    "finished_archive_max_depth_distribution": {
+      "0": 114,
+      "1": 26
+    }
+  }
 }
