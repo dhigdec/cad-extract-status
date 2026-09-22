@@ -1018,8 +1018,9 @@
       return isObject(byExt) && Object.keys(byExt).length > 0;
     }
 
-    // 1956-archive reconciliation floors — never overlay these onto full-population raw.
-    const FORBIDDEN_SHA_FLOORS = new Set([125514, 46274, 216, 112347, 13167, 15067, 31207, 774, 542, 8258, 9470, 87164, 20622, 16]);
+    // Premature / 1956-only floors — never overlay these onto live S3 identity.
+    // Do NOT include proven sealed-union CAD/non-CAD cells (e.g. 26492/20301) here.
+    const FORBIDDEN_SHA_FLOORS = new Set([5242914, 125514, 46274, 216, 112347, 13167, 15067, 31207, 774, 542, 8258, 9470, 87164, 20622, 16, 133112]);
     const FORBIDDEN_WEAK_FLOORS = new Set([133112, 46703, 21592, 18417, 771, 18249, 7674, 9317, 89053, 27068]);
 
     function identityStatusOf(node) {
@@ -1027,8 +1028,10 @@
     }
 
     function isComputingIdentity(node) {
+      // Only the explicit in-progress marker blanks SHA/weak. A completed
+      // global_distinct_* status with a numeric sha256 must render the number.
       const st = identityStatusOf(node);
-      return st.includes("computing_full_population_union") || st.includes("global_distinct");
+      return st.includes("computing_full_population_union");
     }
 
     function countsNodeIsRich(node) {
@@ -1049,8 +1052,6 @@
         || (((status || {}).counts || {}).combined)
         || (status || {}).cloud_counts
         || {};
-      const dedup = (((status || {}).dedup || {}).sha256 || {}).status || "";
-      if (String(dedup).toLowerCase().includes("computing_full_population_union")) return true;
       return countsNodeIsRich(counts["2d"]) || countsNodeIsRich(counts.pdf);
     }
 
@@ -1106,11 +1107,7 @@
     }
 
     function mergeIdentityCounts(live, sticky) {
-      // Never overlay GitHub/GCS mirror SHA/weak onto a live doc that is intentionally
-      // computing full-population union (null + computing_* status). Those mirror
-      // numbers are stale 1956-archive distincts and must not appear beside live raws.
       if (!isObject(live) || !isObject(sticky)) return live;
-      if (statusHasIdentityMetrics(live)) return live;
       const next = live;
       if (isObject(sticky.disks)) {
         if (!isObject(next.disks)) next.disks = {};
@@ -1653,19 +1650,6 @@
         : formatter(value);
     }
 
-    function distinctCell(node, variant) {
-      // Render SHA/weak consistently: numeric when present, else "computing" when the
-      // full-population union is in progress (never fall back to stale mirror digits).
-      if (!isObject(node)) return missing(null, formatCount, "computing");
-      const n = number(node[variant]);
-      if (n !== null) return formatCount(n);
-      const st = identityStatusText(node).toLowerCase();
-      if (st.includes("computing") || st.includes("pending") || node[variant] === null || node[variant] === undefined) {
-        return `<span class="missing">computing</span>`;
-      }
-      return missing(null, formatCount, "computing");
-    }
-
     function basename(value) {
       if (!present(value)) return null;
       const clean = String(value).split(/[?#]/)[0].replace(/\\/g, "/");
@@ -1986,21 +1970,41 @@
       </table></div>`;
     }
 
+    function shaCoverageCaption(bundle) {
+      const cov = (bundle.root && bundle.root.dedup_coverage) || null;
+      const shaCov = cov && cov.sha256;
+      const withH = shaCov && number(shaCov.archives_with_hashes);
+      const inRaw = shaCov && number(shaCov.archives_in_raw);
+      if (withH === null || inRaw === null) return "";
+      if (withH === inRaw) {
+        return `SHA coverage ${integerFormat.format(withH)}/${integerFormat.format(inRaw)} finished archives (exact)`;
+      }
+      return `SHA coverage ${integerFormat.format(withH)}/${integerFormat.format(inRaw)} finished archives (partial — distinct over covered archives only)`;
+    }
+
+    function formatShaCell(bundle, value) {
+      const n = number(value);
+      if (n === null) return missing(value, formatCount);
+      // Always show a present SHA number, including 0 — never "pending".
+      return integerFormat.format(n);
+    }
+
     function assetRow(bundle, category, label, className = "") {
       return `<tr class="${className}"><td>${label}</td>
         <td>${missing(countValue(bundle, category, "raw"), formatCount)}</td>
-        <td>${missing(countValue(bundle, category, "weak"), formatCount, "computing")}</td>
-        <td>${missing(countValue(bundle, category, "sha256"), formatCount, "computing")}</td></tr>`;
+        <td>${missing(countValue(bundle, category, "weak"), formatCount)}</td>
+        <td>${formatShaCell(bundle, countValue(bundle, category, "sha256"))}</td></tr>`;
     }
 
     function extensionRow(bundle, family, extension) {
       return `<tr class="sub-row"><td>${extension}</td>
         <td>${missing(extensionValue(bundle, family, extension, "raw"), formatCount)}</td>
-        <td>${missing(extensionValue(bundle, family, extension, "weak"), formatCount, "computing")}</td>
-        <td>${missing(extensionValue(bundle, family, extension, "sha256"), formatCount, "computing")}</td></tr>`;
+        <td>${missing(extensionValue(bundle, family, extension, "weak"), formatCount)}</td>
+        <td>${formatShaCell(bundle, extensionValue(bundle, family, extension, "sha256"))}</td></tr>`;
     }
 
     function assetTable(bundle) {
+      const covNote = shaCoverageCaption(bundle);
       return `<div class="table-wrap"><table>
         <thead><tr><th>Extracted asset</th><th>Raw</th><th>Weak name + size</th><th>SHA-256 distinct</th></tr></thead>
         <tbody>
@@ -2013,7 +2017,7 @@
           ${EXTENSIONS_3D.map(extension => extensionRow(bundle, "3d", extension)).join("")}
           ${assetRow(bundle, "nc1", "NC1")}
         </tbody>
-      </table></div>`;
+      </table></div>${covNote ? `<p class="caption">${covNote}</p>` : ""}`;
     }
 
     function blockTable(bundle) {
@@ -2056,7 +2060,7 @@
       return `<div class="binary-card">
         <div class="binary-top"><strong>${label}</strong><span>${formatPercent(rawPercent)}</span></div>
         <div class="meter" aria-hidden="true"><span style="width:${number(rawPercent) === null ? 0 : rawPercent.toFixed(2)}%"></span></div>
-        <div class="binary-meta"><span>Raw ${missing(raw, formatCount)}</span><span>SHA ${missing(sha, formatCount, "computing")} · ${sha == null ? "computing" : formatPercent(shaPercent)}</span></div>
+        <div class="binary-meta"><span>Raw ${missing(raw, formatCount)}</span><span>SHA ${missing(sha, formatCount)} · ${formatPercent(shaPercent)}</span></div>
       </div>`;
     }
 
@@ -2067,7 +2071,7 @@
       const otherSha = countValue(bundle, "other_pdf", "sha256");
       const classRows = PDF_CLASSES.map(([key, label]) => `<tr><td>${label}</td>
         <td>${missing(classificationValue(bundle, key, "raw"), formatCount)}</td>
-        <td>${missing(classificationValue(bundle, key, "sha256"), formatCount, "computing")}</td></tr>`).join("");
+        <td>${missing(classificationValue(bundle, key, "sha256"), formatCount)}</td></tr>`).join("");
 
       return `<section class="data-section">
         <div class="data-heading"><div><h3>PDF classification</h3></div>
@@ -2251,16 +2255,12 @@
           <div class="data-heading"><div><h3>Extracted asset inventory</h3></div>
             <p>${(() => {
               const shaStatus = (((bundle.counts || {})["2d"] || {}).sha256_status) || (((bundle.root || {}).dedup || {}).sha256 || {}).status || "";
-              const cov = (bundle.root && bundle.root.dedup_coverage) || (bundle.root && bundle.root.dedup) || null;
-              const shaCov = cov && (cov.sha256 || cov);
+              const covNote = shaCoverageCaption(bundle);
+              if (covNote) return covNote;
               if (String(shaStatus).includes("global_distinct") || String(shaStatus).includes("set_union")) {
-                return "Raw and SHA-256 are global distinct over the same finished archives (baseline + EC2); Combined is true set-union";
+                return "Raw and SHA-256 are global distinct over finished archives (baseline + EC2); Combined is true set-union";
               }
-              if (shaCov && shaCov.archives_with_hashes != null && shaCov.archives_in_raw != null
-                  && Number(shaCov.archives_with_hashes) !== Number(shaCov.archives_in_raw)) {
-                return `SHA coverage ${shaCov.archives_with_hashes}/${shaCov.archives_in_raw} archives — not paired as full-population distinct`;
-              }
-              return "Raw totals include baseline + new EC2; SHA/weak publish only when they cover that same archive population";
+              return "Raw totals include baseline + new EC2; SHA shows proven distinct counts with coverage when available";
             })()}</p></div>
           ${assetTable(bundle)}
         </section>
@@ -2597,30 +2597,40 @@
       try {
         let status;
         let source;
-        // Prefer live AWS status.json. Do NOT overlay GitHub mirror SHA/weak onto a
-        // structurally rich live document — that mirror is stale and caused mixed
-        // "pending" vs old 1956 SHA digits. Only fall back to GitHub/GCS when live fails.
+        // Prefer live AWS status.json. Never overlay an older GitHub mirror when
+        // live already has present SHA/raw numbers (mirror can be hours stale).
         const isStructurallyRich = (doc) => !!(doc && doc.disks && doc.disks["Disk-1"] && doc.disks["Disk-1"].counts
           && doc.disks["Disk-2"] && doc.disks["Disk-2"].counts
           && doc.disks.combined && doc.disks.combined.counts);
+        const livePdfRaw = (doc) => number((((((doc || {}).disks || {}).combined || {}).counts || {}).pdf || {}).raw
+          ?? ((((doc || {}).counts || {}).combined || {}).pdf || {}).raw
+          ?? (((doc || {}).cloud_counts || {}).pdf || {}).raw);
+        const mirrorSafeToOverlay = (live, mirror) => {
+          if (!statusHasIdentityMetrics(mirror)) return false;
+          // Refuse mirror that would lower live raw pdf floors or blank live SHA.
+          const liveRaw = livePdfRaw(live);
+          const mirrorRaw = livePdfRaw(mirror);
+          if (liveRaw !== null && mirrorRaw !== null && mirrorRaw < liveRaw) return false;
+          const liveSha = number((((((live || {}).disks || {}).combined || {}).counts || {})["2d"] || {}).sha256);
+          if (liveSha !== null) return false;
+          return true;
+        };
 
         let sticky = null;
         try {
           status = await fetchStatus(LIVE_STATUS_URL);
           source = "aws-s3";
-          if (!isStructurallyRich(status)) {
+          if (!isStructurallyRich(status) || !statusHasIdentityMetrics(status)) {
             try {
-              const sticky = await fetchStatus(FALLBACK_GITHUB_STATUS_URL);
-              if (isStructurallyRich(sticky)) {
-                // Structural fallback only — still refuse to merge numeric identity from mirror
-                // when live already said computing_full_population_union on dedup.
-                status = sticky;
-                source = "github-fallback";
-              } else {
+              sticky = await fetchStatus(FALLBACK_GITHUB_STATUS_URL);
+              if (mirrorSafeToOverlay(status, sticky)) {
+                status = mergeIdentityCounts(status, sticky);
+                source = "aws-s3+github-identity";
+              } else if (!isStructurallyRich(status)) {
                 throw new Error("live status.json thin/missing per-disk counts");
               }
             } catch (stickyError) {
-              throw stickyError;
+              if (!isStructurallyRich(status)) throw stickyError;
             }
           }
         } catch (primaryError) {
