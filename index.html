@@ -2011,7 +2011,7 @@
       return `
             <article class="vm-worker-row${alive ? "" : " stalled"}">
               <div><strong>${present(workerId) ? escapeHtml(workerId) : `worker-${index + 1}`}</strong> · ${escapeHtml(stage)}${alive ? "" : " · down"}</div>
-              <div>${archiveName ? escapeHtml(archiveName) : "<em>archive pending</em>"}</div>
+              <div>${archiveName ? escapeHtml(archiveName) : "<em>between archives</em>"}</div>
               <div class="kv">
                 <span>Disk</span><strong>${present(disk) ? escapeHtml(disk) : "n/a"}</strong>
                 <span>Compressed</span><strong>${missing(sourceBytes, formatBytes)}</strong>
@@ -2586,7 +2586,7 @@
               <span>Uptime</span><strong>${number(compute.uptime_hours ?? costEstimate.uptime_hours ?? costHints.uptimeHours) === null ? "not published" : `${formatDecimal(compute.uptime_hours ?? costEstimate.uptime_hours ?? costHints.uptimeHours)} hr`}</strong>
             </div>
             <h3>Per-VM compute+disk</h3>
-            ${vmRows || "<em>Per-VM estimates pending</em>"}
+            ${vmRows || "<em>Per-VM estimates not published</em>"}
             <h3>EBS gp3</h3>
             <div class="kv">
               <span>Type / size</span><strong>${escapeHtml(aliasValue(disk, ["type"]) || "gp3")} · ${number(aliasValue(disk, ["size_gb"])) === null ? "fleet volumes" : `${formatCount(disk.size_gb)} GB`}</strong>
