@@ -1503,6 +1503,29 @@
       return missing(value, formatter);
     }
 
+    function classificationMetricNode(bundle, className) {
+      const classAliases = [className, `${className}_pdf`, `${className}_drawings`];
+      for (const root of bundle.countRoots) {
+        const classification = aliasValue(root, [
+          "pdf_by_drawing_type", "pdf_by_type", "pdf_classes", "pdf_classification", "pdf_categories"
+        ]);
+        const classNode = aliasValue(classification, classAliases);
+        if (isObject(classNode)) return classNode;
+      }
+      return null;
+    }
+
+    function formatClassificationShaCell(bundle, className) {
+      const node = classificationMetricNode(bundle, className);
+      const sha = classificationValue(bundle, className, "sha256");
+      if (present(sha)) return formatCount(sha);
+      const status = node && String(node.sha256_status || "");
+      if (status.includes("computing_full_population_union")) {
+        return `<span class="missing">union running</span>`;
+      }
+      return `<span class="missing" title="Drawing-class SHA not published separately">withheld</span>`;
+    }
+
     function classificationValue(bundle, className, variant) {
       const variantAliases = VARIANT_ALIASES[variant] || [variant];
       const classAliases = [className, `${className}_pdf`, `${className}_drawings`];
@@ -2132,7 +2155,7 @@
       return `<div class="table-wrap"><table>
         <thead><tr><th>Transfer &amp; storage</th><th>Value</th></tr></thead>
         <tbody>${rows.map(([label, value, kind]) =>
-          `<tr><td>${label}</td><td>${missing(value, kind === "count" ? formatCount : formatBytes)}</td></tr>`).join("")}</tbody>
+          `<tr><td>${label}</td><td>${missing(value, kind === "count" ? formatCount : formatBytes, "not published")}</td></tr>`).join("")}</tbody>
       </table></div>`;
     }
 
@@ -2159,7 +2182,7 @@
       const otherSha = countValue(bundle, "other_pdf", "sha256");
       const classRows = PDF_CLASSES.map(([key, label]) => `<tr><td>${label}</td>
         <td>${missing(classificationValue(bundle, key, "raw"), formatCount)}</td>
-        <td>${missing(classificationValue(bundle, key, "sha256"), formatCount)}</td></tr>`).join("");
+        <td>${formatClassificationShaCell(bundle, key)}</td></tr>`).join("");
 
       return `<section class="data-section">
         <div class="data-heading"><div><h3>PDF classification</h3></div>
@@ -2560,7 +2583,7 @@
               <span>VMs</span><strong>${escapeHtml(aliasValue(gce, ["instance_count"]) || entries.length || "n/a")}</strong>
               <span>Rate</span><strong>${formatMoney(aliasValue(compute, ["hourly_estimate_usd", "hourly_usd"]) ?? aliasValue(costEstimate, ["ec2_hourly_estimate_usd"]))} / hr</strong>
               <span>Accrued</span><strong>${formatMoney(aliasValue(compute, ["accrued_estimate_usd", "accrued_usd"]))}</strong>
-              <span>Uptime</span><strong>${number(compute.uptime_hours ?? costEstimate.uptime_hours ?? costHints.uptimeHours) === null ? "pending" : `${formatDecimal(compute.uptime_hours ?? costEstimate.uptime_hours ?? costHints.uptimeHours)} hr`}</strong>
+              <span>Uptime</span><strong>${number(compute.uptime_hours ?? costEstimate.uptime_hours ?? costHints.uptimeHours) === null ? "not published" : `${formatDecimal(compute.uptime_hours ?? costEstimate.uptime_hours ?? costHints.uptimeHours)} hr`}</strong>
             </div>
             <h3>Per-VM compute+disk</h3>
             ${vmRows || "<em>Per-VM estimates pending</em>"}
