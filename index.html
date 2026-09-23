@@ -530,7 +530,20 @@
     }
     .sub-row td:first-child { padding-left: 28px; color: var(--text-soft); }
     .missing { color: var(--text-faint); font-style: italic; font-weight: 450; }
-    .sha-partial .cov-hint { color: var(--text-faint); font-weight: 450; font-style: normal; white-space: nowrap; }
+    .sha-partial .cov-hint { color: var(--text-faint); font-weight: 450; font-style: normal; white-space: normal; }
+    .raw-value { display: inline-block; }
+    .raw-provenance {
+      display: block;
+      max-width: 230px;
+      margin-top: 2px;
+      margin-left: auto;
+      color: var(--text-faint);
+      font-size: .62rem;
+      font-style: normal;
+      font-weight: 450;
+      line-height: 1.25;
+      white-space: normal;
+    }
     .number-strong { color: var(--text); font-weight: 750; }
     .mono { font-family: var(--mono); }
 
@@ -618,6 +631,11 @@
     }
 
     .throughput-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+    .scheduler-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
     .throughput-card { min-width: 0; }
     .throughput-card strong {
       display: block;
@@ -810,6 +828,7 @@
     @media (max-width: 1160px) {
       .page-grid { grid-template-columns: minmax(0, 1fr) 310px; }
       .throughput-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .scheduler-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .hero-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     }
     @media (max-width: 900px) {
@@ -825,7 +844,7 @@
       .hero, .panel { border-radius: 17px; }
       .hero-top { display: block; }
       .status-badge { margin-top: 17px; }
-      .hero-stats, .scope-grid, .binary-grid, .depth-summary, .throughput-grid, .recent-grid {
+      .hero-stats, .scope-grid, .binary-grid, .depth-summary, .throughput-grid, .scheduler-grid, .recent-grid {
         grid-template-columns: 1fr 1fr;
       }
       .cost-inner { display: block; }
@@ -837,7 +856,7 @@
       .mini-bar-track { width: 70px; }
     }
     @media (max-width: 420px) {
-      .hero-stats, .scope-grid, .binary-grid, .depth-summary, .throughput-grid, .recent-grid {
+      .hero-stats, .scope-grid, .binary-grid, .depth-summary, .throughput-grid, .scheduler-grid, .recent-grid {
         grid-template-columns: 1fr;
       }
       .worker-details { grid-template-columns: 1fr; }
@@ -854,7 +873,7 @@
     <div class="loading">
       <div class="loading-box">
         <div class="spinner" aria-hidden="true"></div>
-        <strong>Loading GCP extraction status</strong>
+        <strong>Loading AWS extraction status</strong>
         <div>Reading the latest cloud snapshot…</div>
       </div>
     </div>
@@ -1009,7 +1028,7 @@
     }
 
     // Project AWS fleet payloads (ec2_counts_delta / archives) into disks.* so existing
-    // Disk 1 / Disk 2 / Combined count tables bind without pending placeholders.
+    // Disk 1 / Disk 2 / Combined count tables bind without ambiguous placeholders.
     function statusHasAssetExtensions(status) {
       const counts = (((status || {}).disks || {}).combined || {}).counts
         || (((status || {}).counts || {}).combined)
@@ -1327,6 +1346,7 @@
       return {
         id: scopeId,
         roots,
+        globalDedupCoverage: isObject(status.dedup_coverage) ? status.dedup_coverage : null,
         archiveRoots: uniqueObjects(archiveRoots),
         countRoots: uniqueObjects(countRoots),
         depthRoots: uniqueObjects(depthRoots),
@@ -1485,9 +1505,10 @@
         ratio = number(totalBytes) / number(uniqueBytes);
       }
       let blockNode = null;
-      for (const root of roots) {
-        if (isObject(root)) {
-          blockNode = root;
+      for (const root of bundle.countRoots) {
+        const nested = aliasValue(root, ["block", "blocks", "block_level", "block_dedup"]);
+        if (isObject(nested)) {
+          blockNode = nested;
           break;
         }
       }
@@ -1500,7 +1521,19 @@
       if (status.includes("not_measured")) {
         return `<span class="missing" title="Historical results lack per-occurrence block lengths">not measured</span>`;
       }
+      if (status.includes("not_published")) {
+        return `<span class="missing" title="Finished-archive population coverage is not verified">not published — coverage unverified</span>`;
+      }
       return missing(value, formatter);
+    }
+
+    function blockDistinctCell(value, blockNode) {
+      if (number(value) === null) return missing(value, formatCount);
+      const status = blockNode && String(blockNode.distinct_status || "");
+      if (status.includes("1956") || status.includes("reconciliation")) {
+        return `<span class="raw-value">${formatCount(value)}<small class="raw-provenance">exact for the 1,956-archive reconciliation baseline only</small></span>`;
+      }
+      return `<span class="raw-value">${formatCount(value)}<small class="raw-provenance">coverage not published</small></span>`;
     }
 
     function classificationMetricNode(bundle, className) {
@@ -1516,14 +1549,23 @@
     }
 
     function formatClassificationShaCell(bundle, className) {
+      return `<span class="missing" title="Drawing-class SHA union has not been independently verified for publication">not published — class union unverified</span>`;
+    }
+
+    function formatClassificationRawCell(bundle, className) {
       const node = classificationMetricNode(bundle, className);
-      const sha = classificationValue(bundle, className, "sha256");
-      if (present(sha)) return formatCount(sha);
-      const status = node && String(node.sha256_status || "");
-      if (status.includes("computing_full_population_union")) {
-        return `<span class="missing">union running</span>`;
+      const value = classificationValue(bundle, className, "raw");
+      const status = node && String(node.raw_status || "");
+      if (number(value) === null) {
+        const detail = rawStatusLabel(status);
+        return `<span class="missing" title="${escapeHtml(detail)}">${status === "not_published_unverified_population" ? "not published — coverage unverified" : "not available"}</span>`;
       }
-      return `<span class="missing" title="Drawing-class SHA not published separately">withheld</span>`;
+      const covered = number(node && node.raw_archives);
+      const live = number(archiveMetric(bundle, "done"));
+      const coverage = status === "partial_exact_snapshot" && covered !== null && live !== null
+        ? ` · covered ${formatCount(covered)}/${formatCount(live)} archives`
+        : "";
+      return `<span class="raw-value">${formatCount(value)}<small class="raw-provenance">${escapeHtml(rawStatusLabel(status))}${escapeHtml(coverage)}</small></span>`;
     }
 
     function classificationValue(bundle, className, variant) {
@@ -1626,18 +1668,18 @@
     const decimalFormat = new Intl.NumberFormat(undefined, { maximumFractionDigits: 2 });
     const rateFormat = new Intl.NumberFormat(undefined, { maximumFractionDigits: 1 });
 
-    function formatCount(value, missing = "pending") {
+    function formatCount(value, missing = "not available") {
       const parsed = number(value);
       return parsed === null ? missing : integerFormat.format(parsed);
     }
 
-    function formatDecimal(value, digits = 2, missing = "pending") {
+    function formatDecimal(value, digits = 2, missing = "not available") {
       const parsed = number(value);
       if (parsed === null) return missing;
       return new Intl.NumberFormat(undefined, { maximumFractionDigits: digits }).format(parsed);
     }
 
-    function formatBytes(value, missing = "pending") {
+    function formatBytes(value, missing = "not available") {
       const parsed = number(value);
       if (parsed === null) return missing;
       if (parsed === 0) return "0 B";
@@ -1647,24 +1689,24 @@
       return `${scaled.toLocaleString(undefined, { maximumFractionDigits: scaled >= 100 ? 0 : scaled >= 10 ? 1 : 2 })} ${units[index]}`;
     }
 
-    function formatMoney(value, missing = "pending") {
+    function formatMoney(value, missing = "not available") {
       const parsed = number(value);
       if (parsed === null) return missing;
       const digits = Math.abs(parsed) < .01 ? 4 : 2;
       return `$${parsed.toLocaleString(undefined, { minimumFractionDigits: digits, maximumFractionDigits: digits })}`;
     }
 
-    function formatPercent(value, missing = "pending") {
+    function formatPercent(value, missing = "not available") {
       const parsed = number(value);
       return parsed === null ? missing : `${parsed.toFixed(1)}%`;
     }
 
-    function formatRatio(value, missing = "pending") {
+    function formatRatio(value, missing = "not available") {
       const parsed = number(value);
       return parsed === null ? missing : `${parsed.toFixed(2)}×`;
     }
 
-    function formatDurationSeconds(value, missing = "pending") {
+    function formatDurationSeconds(value, missing = "not available") {
       const seconds = number(value);
       if (seconds === null) return missing;
       if (seconds < 60) return `${Math.round(seconds)}s`;
@@ -1684,7 +1726,7 @@
       }).format(date));
     }
 
-    function missing(value, formatter, fallback = "pending") {
+    function missing(value, formatter, fallback = "not available") {
       return number(value) === null
         ? `<span class="missing">${escapeHtml(fallback)}</span>`
         : formatter(value);
@@ -1725,43 +1767,69 @@
     }
 
     function formatWeakDistinctCell(bundle, category, extension = null) {
-      const node = extension ? extensionMetricNode(bundle, category, extension) : categoryMetricNode(bundle, category);
-      const value = extension
-        ? extensionValue(bundle, category, extension, "weak")
-        : countValue(bundle, category, "weak");
-      if (present(value)) return formatCount(value);
-      const status = node && String(node.weak_status || "");
-      if (
-        status === "not_in_ec2_results_yet"
-        || status === "partial_archives_with_weak_lists_only"
-        || status === "ec2_omit_weak_lists"
-      ) {
-        return `<span class="missing" title="EC2 extract results do not include name+size lists">not in these results yet</span>`;
-      }
-      if (present(countValue(bundle, category, "raw")) || (extension && present(extensionValue(bundle, category, extension, "raw")))) {
-        return `<span class="missing" title="EC2 extract results do not include name+size lists">not in these results yet</span>`;
-      }
-      return `<span class="missing">not available</span>`;
+      return `<span class="missing" title="The EC2 result schema omits weak name+size identity lists">not measured — EC2 results omit weak lists</span>`;
     }
 
     function formatShaDistinctCell(bundle, category, extension = null) {
       if (!extension && (category === "cad_pdf" || category === "other_pdf")) {
-        return `<span class="missing" title="CAD/non-CAD subtype SHA withheld (not a true cross-disk union)">withheld</span>`;
+        return `<span class="missing" title="No verified cross-disk SHA set-union exists for the PDF subtype split">not published — subtype union unverified</span>`;
       }
       const node = extension ? extensionMetricNode(bundle, category, extension) : categoryMetricNode(bundle, category);
       const sha = extension
         ? extensionValue(bundle, category, extension, "sha256")
         : countValue(bundle, category, "sha256");
       if (!present(sha)) {
-        return `<span class="missing" title="Withheld until union has real cross-disk distincts">withheld</span>`;
+        return `<span class="missing" title="No verified cross-disk SHA set-union is currently published">not published — verified union unavailable</span>`;
       }
       const status = node && String(node.sha256_status || "");
       if (status === "computing_full_population_union") {
         return `<span class="missing">union running</span>`;
       }
       const cov = shaCoverageFromContext(node, bundle);
-      if (!cov || cov.exact === true) return formatCount(sha);
-      return `<span class="sha-partial">${formatCount(sha)} <small class="cov-hint">(${formatCount(cov.archives_in_sha)} / ${formatCount(cov.archives_done)} archives)</small></span>`;
+      if (!cov) {
+        return `<span class="sha-partial">${formatCount(sha)} <small class="cov-hint">(coverage not published)</small></span>`;
+      }
+      const covered = number(cov.archives_in_sha);
+      const done = number(cov.archives_done);
+      const lag = covered === null || done === null ? null : Math.max(0, done - covered);
+      const exact = cov.exact === true && lag === 0;
+      const coverageScope = bundle.id === "combined" ? "" : "global reducer ";
+      const coverageText = covered === null || done === null
+        ? "coverage not published"
+        : `${coverageScope}covered ${formatCount(covered)}/${formatCount(done)} · lag ${formatCount(lag)}`;
+      return `<span class="sha-partial">${formatCount(sha)} <small class="cov-hint">(${exact ? "exact" : "partial"} · ${coverageText})</small></span>`;
+    }
+
+    function rawStatusLabel(status) {
+      const value = String(status || "");
+      const labels = {
+        exact_finished_archive_occurrence_sum: "exact · finished-archive occurrence sum",
+        exact_disk_sum_finished_archives: "exact · Disk 1 + Disk 2 occurrence sum",
+        exact_union_snapshot: "exact · verified reducer snapshot",
+        partial_exact_snapshot: "partial · exact for the published snapshot",
+        not_published_unverified_population: "not published · population unverified",
+        latest_published_per_disk_sum: "latest published Disk 1 + Disk 2 sum · exactness not certified"
+      };
+      if (labels[value]) return labels[value];
+      return value ? `publisher status · ${value.replace(/_/g, " ")}` : "provenance not published · exactness not certified";
+    }
+
+    function formatRawCell(bundle, category, extension = null) {
+      const node = extension ? extensionMetricNode(bundle, category, extension) : categoryMetricNode(bundle, category);
+      const value = extension
+        ? extensionValue(bundle, category, extension, "raw")
+        : countValue(bundle, category, "raw");
+      const status = node && node.raw_status;
+      if (number(value) === null) {
+        const detail = rawStatusLabel(status);
+        return `<span class="missing" title="${escapeHtml(detail)}">${status === "not_published_unverified_population" ? "not published — coverage unverified" : "not available"}</span>`;
+      }
+      const covered = number(node && node.raw_archives);
+      const live = number(archiveMetric(bundle, "done"));
+      const coverage = status === "partial_exact_snapshot" && covered !== null && live !== null
+        ? ` · covered ${formatCount(covered)}/${formatCount(live)} archives`
+        : "";
+      return `<span class="raw-value">${formatCount(value)}<small class="raw-provenance" title="raw_status: ${escapeHtml(status || "not published")}">${escapeHtml(rawStatusLabel(status))}${escapeHtml(coverage)}</small></span>`;
     }
 
     function basename(value) {
@@ -1793,7 +1861,7 @@
     }
 
     function normalizedStage(value) {
-      if (!present(value)) return "pending";
+      if (!present(value)) return "not published";
       const normalized = normalize(value);
       for (const stage of ["download", "extract", "hash", "upload", "checkpoint"]) {
         if (normalized.includes(stage)) return stage;
@@ -1847,6 +1915,68 @@
       return "Live status";
     }
 
+    function operationalWorkerCounts(status) {
+      const fleet = isObject(status.fleet) ? status.fleet : {};
+      let alive = number(pickPath(status, ["workers_alive", "cloud_workers_alive", ["fleet", "workers_alive"]]));
+      let configured = number(pickPath(status, ["workers_configured", ["fleet", "workers_configured"]]));
+      let active = number(pickPath(status, ["workers_active", ["fleet", "workers_active"]]));
+      let idle = number(pickPath(status, ["workers_idle", ["fleet", "workers_idle"]]));
+
+      if ((active === null || idle === null) && Array.isArray(fleet.instances)) {
+        let observedAlive = 0;
+        let observedActive = 0;
+        let observedConfigured = 0;
+        let observedRows = 0;
+        for (const inst of fleet.instances.filter(isObject)) {
+          const rows = isObject(inst.workers) ? Object.values(inst.workers).filter(isObject) : [];
+          observedRows += rows.length;
+          observedAlive += rows.filter(row => row.alive !== false).length;
+          observedActive += rows.filter(row => row.alive !== false && present(row.current || row.current_archive)).length;
+          observedConfigured += number(inst.workers_configured) ?? rows.length;
+        }
+        if (observedRows) {
+          if (alive === null) alive = observedAlive;
+          if (configured === null) configured = observedConfigured;
+          if (active === null) active = observedActive;
+          if (idle === null) idle = Math.max(0, observedAlive - observedActive);
+        }
+      }
+      return { alive, configured, active, idle };
+    }
+
+    function renderScheduler(status) {
+      const scheduler = isObject(status.scheduler_assignments) ? status.scheduler_assignments : {};
+      const workers = operationalWorkerCounts(status);
+      const claims = number(aliasValue(scheduler, ["claim_objects_total"]))
+        ?? number(aliasValue(status, ["claims_count"]));
+      const resultObjects = number(aliasValue(scheduler, ["result_objects_total"]))
+        ?? number(aliasValue(status, ["result_objects_total"]));
+      const unfinished = number(aliasValue(scheduler, ["unfinished_claims"]))
+        ?? number(aliasValue(status, ["unfinished_claims"]));
+      const unclaimed = number(aliasValue(scheduler, ["unclaimed_remaining"]))
+        ?? number(aliasValue(status, ["unclaimed_remaining"]));
+      const validatedOk = number(aliasValue(status, ["results_count"]));
+
+      const card = (label, value, source) => `<div class="throughput-card"><span>${escapeHtml(label)}</span>
+        <strong>${number(value) === null ? '<span class="missing">not available</span>' : formatCount(value)}</strong>
+        <span class="metric-source">${escapeHtml(source)}</span></div>`;
+      return `<section class="panel" aria-labelledby="scheduler-title">
+        <div class="section-heading">
+          <div><p class="eyebrow">Operational truth</p><h2 id="scheduler-title">Workers and scheduler identity sets</h2>
+            <p>Process liveness, active assignments, historical claims, and unassigned remaining work are separate counters.</p></div>
+        </div>
+        <div class="scheduler-grid">
+          ${card("Workers active", workers.active, "alive + current archive")}
+          ${card("Idle / capacity-wait", workers.idle, "alive + no current archive")}
+          ${card("Unfinished claims", unfinished, "claim identities without results")}
+          ${card("Unclaimed remaining", unclaimed, "remaining without unfinished claim")}
+          ${card("Claim objects", claims, "historical; includes completed")}
+          ${card("Result objects", resultObjects, "terminal result identities")}
+        </div>
+        <div class="callout">Claim objects are historical unique assignment records, not active workers. Unfinished claims are claim identities without a result object. Validated EC2 OK results exclude skip-ledger overlap: <strong>${number(validatedOk) === null ? '<span class="missing">not available</span>' : formatCount(validatedOk)}</strong>.</div>
+      </section>`;
+    }
+
     function renderHeader(status) {
       const bundle = buildBundle(status, "combined");
       const total = archiveMetric(bundle, "total") ?? 3620;
@@ -1876,13 +2006,7 @@
         : null;
       const health = healthInfo(status);
       const gce = isObject(status.gce) ? status.gce : {};
-      const workerCount = pickPath(status, [
-        "cloud_workers_alive", "workers_alive", ["fleet", "workers_alive"],
-        ["gce", "worker_count"], ["workers", "alive_count"]
-      ]);
-      const workersConfigured = pickPath(status, [
-        "workers_configured", ["fleet", "workers_configured"]
-      ]);
+      const workerCounts = operationalWorkerCounts(status);
       const state = pickPath(status, [["gce", "state"], "state"]);
       const fleet = isObject(status.fleet) ? status.fleet : {};
       const instanceCount = number(fleet.instance_count) ?? (Array.isArray(fleet.instances) ? fleet.instances.length : null);
@@ -1910,18 +2034,18 @@
           <span style="width:${progress === null ? 0 : progress.toFixed(2)}%"></span>
         </div>
         <div class="progress-caption">
-          <span><strong>${progress === null ? "Progress pending" : `${progress.toFixed(1)}% complete`}</strong></span>
+          <span><strong>${progress === null ? "Progress not available" : `${progress.toFixed(1)}% complete`}</strong></span>
           <span>${missing(done, formatCount)} of ${missing(total, formatCount)} archives</span>
         </div>
         <div class="hero-stats">
           <div class="hero-stat"><span>Archives done</span><strong>${missing(done, formatCount)}</strong>
-            <small>${number(baselineDone) === null ? "baseline pending" : `${formatCount(baselineDone)} baseline + ${formatCount(ec2New)} EC2`}</small></div>
+            <small>${number(baselineDone) === null ? "baseline not available" : `${formatCount(baselineDone)} baseline + ${formatCount(ec2New)} EC2`}</small></div>
           <div class="hero-stat"><span>Total archives</span><strong>${missing(total, formatCount)}</strong>
-            <small>${number(instanceCount) === null ? "fleet size pending" : `${formatCount(instanceCount)} EC2 instances`}</small></div>
+            <small>${number(instanceCount) === null ? "fleet size not available" : `${formatCount(instanceCount)} EC2 instances`}</small></div>
           <div class="hero-stat"><span>Remaining</span><strong>${missing(remaining, formatCount)}</strong>
             <small>source archives</small></div>
-          <div class="hero-stat"><span>Workers alive</span><strong>${missing(workerCount, formatCount)}</strong>
-            <small>${number(workersConfigured) === null ? (present(state) ? escapeHtml(state) : "state pending") : `${formatCount(workersConfigured)} configured`}</small></div>
+          <div class="hero-stat"><span>Workers active</span><strong>${missing(workerCounts.active, formatCount)}</strong>
+            <small>${number(workerCounts.idle) === null ? "idle count not available" : `${formatCount(workerCounts.idle)} idle / capacity-wait`} · ${number(workerCounts.alive) === null ? "alive count not available" : `${formatCount(workerCounts.alive)} alive`}${number(workerCounts.configured) === null ? (present(state) ? ` · ${escapeHtml(state)}` : "") : ` / ${formatCount(workerCounts.configured)} configured`}</small></div>
         </div>
         <div class="infra-line">
           <span class="chip">Platform · AWS EC2</span>
@@ -1967,6 +2091,8 @@
               workers_alive: inst.workers_alive,
               workers_expected: inst.workers_configured,
               worker_count: inst.workers_configured,
+              workers_active: inst.workers_active,
+              workers_idle: inst.workers_idle,
               workers,
               costs: {
                 hourly_compute_disk_estimate_usd: hourly || null,
@@ -2033,6 +2159,9 @@
         reporting += workers.length;
         const alive = number(aliasValue(vm, ["workers_alive", "alive"])) ?? workers.filter(w => aliasValue(w, ["alive"]) !== false).length;
         const expected = number(aliasValue(vm, ["workers_expected", "worker_count", "expected"])) ?? workers.length;
+        const active = number(aliasValue(vm, ["workers_active", "active"]))
+          ?? workers.filter(w => aliasValue(w, ["alive"]) !== false && present(aliasValue(w, ["current_archive", "current"]))).length;
+        const idle = number(aliasValue(vm, ["workers_idle", "idle"])) ?? Math.max(0, alive - active);
         const costs = isObject(vm.costs) ? vm.costs : {};
         const hourly = aliasValue(costs, ["hourly_compute_disk_estimate_usd", "hourly_estimate_usd"]);
         const accrued = aliasValue(costs, ["accrued_compute_disk_estimate_usd", "accrued_estimate_usd"]);
@@ -2043,7 +2172,8 @@
               <span>${escapeHtml(aliasValue(vm, ["machine_type", "type"]) || "type n/a")}</span>
               <span>${escapeHtml(aliasValue(vm, ["zone"]) || "zone n/a")}</span>
               <span>${escapeHtml(aliasValue(vm, ["state", "status"]) || "state n/a")}</span>
-              <span>workers ${formatCount(alive)} / ${formatCount(expected)}</span>
+              <span>active ${formatCount(active)} · idle/capacity-wait ${formatCount(idle)}</span>
+              <span>alive ${formatCount(alive)} / ${formatCount(expected)} configured</span>
               <span>est. ${formatMoney(hourly)}/hr · accrued ${formatMoney(accrued)}</span>
             </div>
             <div class="vm-workers">
@@ -2085,27 +2215,27 @@
     }
 
     function shaCoverageCaption(bundle) {
-      const cov = (bundle.root && bundle.root.dedup_coverage) || null;
+      const cov = dedupCoverage(bundle);
       const shaCov = cov && cov.sha256;
       const withH = shaCov && number(shaCov.archives_with_hashes);
       const inRaw = shaCov && number(shaCov.archives_in_raw);
       if (withH === null || inRaw === null) return "";
-      if (withH === inRaw) {
-        return `SHA coverage ${integerFormat.format(withH)}/${integerFormat.format(inRaw)} finished archives (exact)`;
-      }
-      return `SHA coverage ${integerFormat.format(withH)}/${integerFormat.format(inRaw)} finished archives (partial — distinct over covered archives only)`;
+      const lag = Math.max(0, inRaw - withH);
+      const exact = withH === inRaw && (shaCov.exact_vs_live === true || shaCov.status === "exact");
+      const prefix = bundle.id === "combined" ? "SHA coverage" : "Global SHA reducer coverage";
+      return `${prefix} ${exact ? "exact" : "partial"} · covered ${integerFormat.format(withH)}/${integerFormat.format(inRaw)} finished archives · lag ${integerFormat.format(lag)}${exact ? "" : " · distinct counts apply only to covered archives"}`;
     }
 
     function assetRow(bundle, category, label, className = "") {
       return `<tr class="${className}"><td>${label}</td>
-        <td>${missing(countValue(bundle, category, "raw"), formatCount)}</td>
+        <td>${formatRawCell(bundle, category)}</td>
         <td>${formatWeakDistinctCell(bundle, category)}</td>
         <td>${formatShaDistinctCell(bundle, category)}</td></tr>`;
     }
 
     function extensionRow(bundle, family, extension) {
       return `<tr class="sub-row"><td>${extension}</td>
-        <td>${missing(extensionValue(bundle, family, extension, "raw"), formatCount)}</td>
+        <td>${formatRawCell(bundle, family, extension)}</td>
         <td>${formatWeakDistinctCell(bundle, family, extension)}</td>
         <td>${formatShaDistinctCell(bundle, family, extension)}</td></tr>`;
     }
@@ -2113,7 +2243,7 @@
     function assetTable(bundle) {
       const covNote = shaCoverageCaption(bundle);
       return `<div class="table-wrap"><table>
-        <thead><tr><th>Extracted asset</th><th>Raw</th><th>Weak name + size</th><th>SHA-256 distinct</th></tr></thead>
+        <thead><tr><th>Extracted asset</th><th>Raw observations + provenance</th><th>Weak name + size</th><th>SHA-256 distinct</th></tr></thead>
         <tbody>
           ${assetRow(bundle, "pdf", "All PDFs")}
           ${assetRow(bundle, "cad_pdf", "CAD PDFs")}
@@ -2136,8 +2266,8 @@
       return `<div class="table-wrap"><table>
         <thead><tr><th>Block-level deduplication</th><th>Value</th></tr></thead>
         <tbody>
-          <tr><td>Distinct block hashes</td><td>${missing(block.distinctBlocks, formatCount)}</td></tr>
-          <tr><td>Total block bytes</td><td>${missing(block.totalBytes, formatBytes)}</td></tr>
+          <tr><td>Distinct block hashes</td><td>${blockDistinctCell(block.distinctBlocks, node)}</td></tr>
+          <tr><td>Total block bytes</td><td>${blockMetricCell(block.totalBytes, node, "total_bytes_status", formatBytes)}</td></tr>
           <tr><td>Unique block bytes</td><td>${blockMetricCell(block.uniqueBytes, node, "unique_status", formatBytes)}</td></tr>
           <tr><td>Duplicate block bytes</td><td>${blockMetricCell(block.duplicateBytes, node, "duplicate_status", formatBytes)}</td></tr>
           <tr><td>Dedup ratio (total ÷ unique)</td><td>${ratioCell}</td></tr>
@@ -2168,10 +2298,11 @@
     function binaryCard(label, raw, rawOther, shaDisplay, shaForPercent = null, shaOtherForPercent = null) {
       const rawPercent = percentage(raw, rawOther);
       const shaPercent = percentage(shaForPercent, shaOtherForPercent);
+      const shaPercentSuffix = number(shaPercent) === null ? "" : ` · ${formatPercent(shaPercent)}`;
       return `<div class="binary-card">
         <div class="binary-top"><strong>${label}</strong><span>${formatPercent(rawPercent)}</span></div>
         <div class="meter" aria-hidden="true"><span style="width:${number(rawPercent) === null ? 0 : rawPercent.toFixed(2)}%"></span></div>
-        <div class="binary-meta"><span>Raw ${missing(raw, formatCount)}</span><span>SHA ${shaDisplay} · ${formatPercent(shaPercent)}</span></div>
+        <div class="binary-meta"><span>Raw ${missing(raw, formatCount)}</span><span>SHA ${shaDisplay}${shaPercentSuffix}</span></div>
       </div>`;
     }
 
@@ -2181,7 +2312,7 @@
       const cadSha = countValue(bundle, "cad_pdf", "sha256");
       const otherSha = countValue(bundle, "other_pdf", "sha256");
       const classRows = PDF_CLASSES.map(([key, label]) => `<tr><td>${label}</td>
-        <td>${missing(classificationValue(bundle, key, "raw"), formatCount)}</td>
+        <td>${formatClassificationRawCell(bundle, key)}</td>
         <td>${formatClassificationShaCell(bundle, key)}</td></tr>`).join("");
 
       return `<section class="data-section">
@@ -2252,7 +2383,7 @@
           <tbody>${rows}</tbody>
         </table></div>
         <p class="caption">Unopened archives have no measured nesting depth and are not included. The configured safety cap is
-          ${number(cap) === null ? '<span class="missing">pending</span>' : formatCount(cap)}; a depth-cap hit is not inferred from a bucket count.</p>
+          ${number(cap) === null ? '<span class="missing">not available</span>' : formatCount(cap)}; a depth-cap hit is not inferred from a bucket count.</p>
       </section>`;
     }
 
@@ -2272,7 +2403,7 @@
           const tb = aliasValue(row, ["tb", "source_tb", "terabytes"]);
           const sourceSize = number(bytes) !== null
             ? formatBytes(bytes)
-            : number(tb) !== null ? `${formatDecimal(tb, 3)} TB` : '<span class="missing">pending</span>';
+            : number(tb) !== null ? `${formatDecimal(tb, 3)} TB` : '<span class="missing">not available</span>';
           return `<tr><td>${escapeHtml(label || "not available")}</td><td>${missing(remaining, formatCount)}</td>
             <td>${sourceSize}</td><td><span class="missing">not measured</span></td></tr>`;
         }).join("");
@@ -2299,6 +2430,7 @@
 
 
     function dedupCoverage(bundle) {
+      if (isObject(bundle.globalDedupCoverage)) return bundle.globalDedupCoverage;
       for (const root of bundle.roots) {
         const value = root && root.dedup_coverage;
         if (isObject(value)) return value;
@@ -2309,7 +2441,7 @@
     function renderDedupCoverage(bundle) {
       const coverage = dedupCoverage(bundle);
       if (!coverage) {
-        return `<div class="data-card"><div class="data-heading"><div><h3>Dedup coverage</h3></div><p>Awaiting reducer coverage block</p></div><p class="missing">pending</p></div>`;
+        return `<div class="data-card"><div class="data-heading"><div><h3>Dedup coverage</h3></div><p>Reducer coverage block not published</p></div><p class="missing">not available</p></div>`;
       }
       const rows = [
         ["SHA-256 identities", coverage.sha256],
@@ -2319,25 +2451,33 @@
         ["Duplicate block bytes", coverage.block_duplicate_bytes]
       ];
       const body = rows.map(([label, entry]) => {
-        if (!isObject(entry)) {
-          const missingLabel = label.includes("Weak")
-            ? "not in these results yet"
-            : "not measured";
-          return `<tr><td>${escapeHtml(label)}</td><td class="missing">${escapeHtml(missingLabel)}</td></tr>`;
+        if (label.includes("Weak")) {
+          return `<tr><td>${escapeHtml(label)}</td><td class="missing">not measured — EC2 results omit weak lists</td></tr>`;
         }
-        const status = entry.status ? String(entry.status) : "not available";
+        if (!isObject(entry)) {
+          return `<tr><td>${escapeHtml(label)}</td><td class="missing">not measured</td></tr>`;
+        }
         const covered = number(entry.covered_archives ?? entry.archives_with_hashes);
         const completed = number(entry.completed_archives ?? entry.archives_in_raw);
+        const lag = covered === null || completed === null ? null : Math.max(0, completed - covered);
+        const exact = covered !== null && completed !== null && lag === 0
+          && (entry.exact_vs_live === true || entry.status === "exact");
+        const status = covered !== null && completed !== null
+          ? (exact ? "exact" : "partial")
+          : (entry.status ? String(entry.status) : "not available");
         const reason = entry.reason ? String(entry.reason) : "";
-        let detail = status;
+        let detail = escapeHtml(status);
         if (covered !== null && completed !== null) {
-          detail += ` · ${formatCount(covered)}/${formatCount(completed)} archives`;
+          detail += ` · covered ${formatCount(covered)}/${formatCount(completed)} archives · lag ${formatCount(lag)}`;
         }
         if (reason) detail += ` · ${escapeHtml(reason)}`;
-        const cls = status === "exact" ? "ok" : (status === "partial" ? "warn" : "missing");
+        const cls = exact ? "ok" : (status === "partial" ? "warn" : "missing");
         return `<tr><td>${escapeHtml(label)}</td><td class="${cls}">${detail}</td></tr>`;
       }).join("");
-      return `<div class="data-card"><div class="data-heading"><div><h3>Dedup coverage</h3></div><p>Exact vs honestly partial/pending</p></div><table><thead><tr><th>Metric</th><th>Status</th></tr></thead><tbody>${body}</tbody></table></div>`;
+      const scopeNote = bundle.id === "combined"
+        ? "Covered finished archives ÷ live done; lag is shown explicitly"
+        : "Global reducer coverage (not a per-disk coverage proof); lag is shown explicitly";
+      return `<div class="data-card"><div class="data-heading"><div><h3>Dedup coverage</h3></div><p>${scopeNote}</p></div><table><thead><tr><th>Metric</th><th>Status and live coverage</th></tr></thead><tbody>${body}</tbody></table></div>`;
     }
 
     function renderScopePanel(status, definition) {
@@ -2347,7 +2487,7 @@
       const pdf = countValue(bundle, "pdf", "raw");
       const hasData = scopeHasData(bundle);
       const unavailableNote = hasData ? "" : `<div class="availability-note">
-        Per-disk metrics are pending in the current status schema. Combined values are not split or inferred.
+        Per-disk metrics are not available in the current status schema. Combined values are not split or inferred.
       </div>`;
 
       return `<section id="panel-${definition.id}" class="tab-panel" role="tabpanel"
@@ -2355,7 +2495,7 @@
         ${definition.id === selectedScope ? "" : "hidden"}>
         <div class="scope-heading">
           <div class="scope-title-wrap"><span class="scope-mark" aria-hidden="true">${definition.short}</span>
-            <div><h2>${definition.label}</h2><p>Truthful published counts; missing fields remain pending.</p></div></div>
+            <div><h2>${definition.label}</h2><p>Truthful published counts; missing fields are labeled not available.</p></div></div>
           <span class="chip">${hasData ? "status fields available" : "awaiting segmented fields"}</span>
         </div>
         ${unavailableNote}
@@ -2375,7 +2515,7 @@
               const covNote = shaCoverageCaption(bundle);
               if (covNote) return covNote;
               if (String(shaStatus).includes("global_distinct") || String(shaStatus).includes("set_union")) {
-                return "Raw and SHA-256 are global distinct over finished archives (baseline + EC2); Combined is true set-union";
+                return "Raw is the finished-archive occurrence sum; SHA-256 is the verified distinct set, with Combined as the cross-disk set-union";
               }
               return "Raw totals include baseline + new EC2; SHA shows proven distinct counts with coverage when available";
             })()}</p></div>
@@ -2392,8 +2532,8 @@
         ${pdfSection(bundle)}
         ${depthSection(bundle)}
         ${backlogSection(bundle)}
+        ${renderDedupCoverage(bundle)}
       </section>
-          ${renderDedupCoverage(bundle)}
 `;
     }
 
@@ -2405,7 +2545,7 @@
       return `<section id="main-content" class="panel" aria-labelledby="datasets-title">
         <div class="section-heading">
           <div><p class="eyebrow">Segmented inventory</p><h2 id="datasets-title">Disk-level extraction detail</h2>
-            <p>Use the tabs to inspect Disk 1, Disk 2, or the byte-distinct combined view.</p></div>
+            <p>Use the tabs to inspect Disk 1, Disk 2, or the cross-disk combined view.</p></div>
         </div>
         <div class="tabs" role="tablist" aria-label="Dataset scope">${tabs}</div>
         ${panels}
@@ -2464,10 +2604,10 @@
       let etaSource = "withheld";
       if (number(rates.etaSeconds) !== null) {
         eta = formatDurationSeconds(rates.etaSeconds);
-        etaSource = "reported";
+        etaSource = "publisher-reported";
       } else if (present(rates.etaAt)) {
         eta = formatTimestamp(rates.etaAt);
-        etaSource = "reported";
+        etaSource = "publisher-reported";
       }
       const orderNote = present(rates.ordering)
         ? ` Reported processing order: ${escapeHtml(rates.ordering)}.`
@@ -2475,16 +2615,16 @@
       return `<section class="panel" aria-labelledby="throughput-title">
         <div class="section-heading">
           <div><p class="eyebrow">Pace &amp; projection</p><h2 id="throughput-title">Throughput and ETA</h2>
-            <p>Cumulative rates are derived only from matching GCP counters and VM uptime.</p></div>
+            <p>Cumulative rates are derived only from matching AWS counters and EC2 uptime.</p></div>
         </div>
         <div class="throughput-grid">
           ${throughputCard("Archives / hour", rates.archivesPerHour, value => `${rateFormat.format(value)} /h`, rates.archiveSource)}
           ${throughputCard("Compressed GB / hour", rates.compressedGbPerHour, value => `${rateFormat.format(value)} GB/h`, rates.compressedSource)}
-          ${throughputCard("GCS upload GB / hour", rates.uploadGbPerHour, value => `${rateFormat.format(value)} GB/h`, rates.uploadSource)}
+          ${throughputCard("Output upload GB / hour", rates.uploadGbPerHour, value => `${rateFormat.format(value)} GB/h`, rates.uploadSource)}
           ${throughputCard("Bytes remaining", rates.bytesRemaining, formatBytes, number(rates.bytesRemaining) === null ? "unavailable" : "reported")}
           <div class="throughput-card"><span>ETA</span><strong>${eta}</strong><span class="metric-source">${etaSource}</span></div>
         </div>
-        <div class="callout">No ETA is guessed from archive counts. Early or smallest-first processing can make cumulative averages optimistic.${orderNote}</div>
+        <div class="callout">No ETA is inferred by this page. ETA appears only when the publisher supplies one; otherwise it remains unavailable. Early or smallest-first processing can make cumulative averages optimistic.${orderNote}</div>
       </section>`;
     }
 
@@ -2605,7 +2745,7 @@
               <span>Rate</span><strong>${formatMoney(aliasValue(aws, ["egress_rate_usd_per_gb", "rate_usd_per_gb"]))} / GB</strong>
               <span>Estimate</span><strong>${formatMoney(aliasValue(aws, ["running_egress_estimate_usd", "egress_estimate_usd"]))}</strong>
             </div>
-            <p class="estimate-note">${escapeHtml(aliasValue(costs, ["estimate_label", "label"]) || aliasValue(costEstimate, ["label"]) || "Estimates only — not a cloud invoice. Missing billing inputs remain pending.")}</p>
+            <p class="estimate-note">${escapeHtml(aliasValue(costs, ["estimate_label", "label"]) || aliasValue(costEstimate, ["label"]) || "Estimates only — not a cloud invoice. Missing billing inputs are not available.")}</p>
             <div class="poll-line">
               <span>Live feed</span>
               <span id="poll-state" class="poll-state">20s poll · ~20s publish</span>
@@ -2619,6 +2759,7 @@
         ${renderHeader(status)}
         <div class="page-grid">
           <main class="main-column">
+            ${renderScheduler(status)}
             ${renderWorkers(status)}
             ${renderDatasetTabs(status)}
             ${renderThroughput(status)}
@@ -2626,7 +2767,7 @@
           </main>
           ${renderCostCard(status)}
         </div>
-        <footer>Read-only public telemetry · Missing values are shown as pending or not available · Source paths and archive identities are redacted</footer>
+        <footer>Read-only public telemetry · Missing values are shown as not measured or not available · Source paths and archive identities are redacted</footer>
       </div>`;
       applySelectedScope(false);
       updateLiveIndicators();
