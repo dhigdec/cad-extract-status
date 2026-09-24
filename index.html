@@ -1773,11 +1773,34 @@
     }
 
     function formatWeakDistinctCell(bundle, category, extension = null) {
+      // Render a published weak identity count when one exists; fall back to
+      // the explanation only while the value is genuinely absent.
+      const wVal = extension
+        ? extensionValue(bundle, category, extension, "weak")
+        : countValue(bundle, category, "weak");
+      if (present(wVal)) {
+        const node = extension ? extensionMetricNode(bundle, category, extension) : categoryMetricNode(bundle, category);
+        const nArch = node && number(node.weak_archives);
+        const hint = node && typeof node.weak_note === "string"
+          ? node.weak_note
+          : (nArch !== null && nArch !== undefined ? `covered ${formatCount(nArch)}` : "");
+        return `<span class="raw-value">${formatCount(wVal)}${hint ? `<small class="raw-provenance">${escapeHtml(hint)}</small>` : ""}</span>`;
+      }
       return `<span class="missing" title="The EC2 result schema omits weak name+size identity lists">not measured — EC2 results omit weak lists</span>`;
     }
 
     function formatShaDistinctCell(bundle, category, extension = null) {
       if (!extension && (category === "cad_pdf" || category === "other_pdf")) {
+        // The subtype union IS published now, with its overlap measured. Render
+        // it when present; only refuse when the publisher supplies nothing.
+        const sNode = categoryMetricNode(bundle, category);
+        const sVal = countValue(bundle, category, "sha256");
+        if (present(sVal)) {
+          const note = sNode && typeof sNode.sha256_note === "string" ? sNode.sha256_note : "";
+          const nArch = sNode && number(sNode.sha256_archives);
+          const hint = note || (nArch !== null && nArch !== undefined ? `covered ${formatCount(nArch)}` : "");
+          return `<span class="raw-value">${formatCount(sVal)}${hint ? `<small class="raw-provenance">${escapeHtml(hint)}</small>` : ""}</span>`;
+        }
         return `<span class="missing" title="No verified cross-disk SHA set-union exists for the PDF subtype split">not published — subtype union unverified</span>`;
       }
       const node = extension ? extensionMetricNode(bundle, category, extension) : categoryMetricNode(bundle, category);
