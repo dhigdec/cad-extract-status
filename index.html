@@ -2276,16 +2276,33 @@
     }
 
     function transferTable(status, bundle) {
+      // Storage totals are exact sums, but only over archives that have a
+      // result document. Render the publisher's coverage note with the value
+      // so a partial-population figure is never read as a full-corpus total.
+      const node = isObject(status.storage) ? scopedValue(status.storage, bundle.id) : undefined;
+      const note = isObject(node) && typeof node.coverage_note === "string" ? node.coverage_note : "";
+      const cov = note ? `<small class="raw-provenance">${escapeHtml(note)}</small>` : "";
+      const extractedUnmeasured = isObject(node) && node.extracted_bytes_status === "not_measured";
+      const extractedWhy = extractedUnmeasured && typeof node.extracted_bytes_reason === "string"
+        ? node.extracted_bytes_reason : "";
       const rows = [
-        ["Extracted bytes", storageMetric(status, bundle, "extractedBytes")],
+        ["Extracted bytes", storageMetric(status, bundle, "extractedBytes"), null, extractedUnmeasured],
         ["Compressed source bytes transferred", storageMetric(status, bundle, "transferredBytes")],
         ["Stored object count", storageMetric(status, bundle, "storedObjects"), "count"],
         ["Stored object bytes", storageMetric(status, bundle, "storedBytes")]
       ];
       return `<div class="table-wrap"><table>
         <thead><tr><th>Transfer &amp; storage</th><th>Value</th></tr></thead>
-        <tbody>${rows.map(([label, value, kind]) =>
-          `<tr><td>${label}</td><td>${missing(value, kind === "count" ? formatCount : formatBytes, "not published")}</td></tr>`).join("")}</tbody>
+        <tbody>${rows.map(([label, value, kind, unmeasured]) => {
+          if (unmeasured && !present(value)) {
+            return `<tr><td>${label}</td><td><span class="missing" title="${escapeHtml(extractedWhy)}">not measured</span></td></tr>`;
+          }
+          const fmt = kind === "count" ? formatCount : formatBytes;
+          const cell = present(value)
+            ? `<span class="raw-value">${fmt(value)}${cov}</span>`
+            : missing(value, fmt, "not published");
+          return `<tr><td>${label}</td><td>${cell}</td></tr>`;
+        }).join("")}</tbody>
       </table></div>`;
     }
 
