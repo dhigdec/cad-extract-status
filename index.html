@@ -1530,6 +1530,12 @@
     function blockDistinctCell(value, blockNode) {
       if (number(value) === null) return missing(value, formatCount);
       const status = blockNode && String(blockNode.distinct_status || "");
+      // The publisher now states how many archives the block union covers;
+      // show that instead of claiming the coverage is unpublished.
+      const cov = blockNode && number(blockNode.block_coverage_archives);
+      if (cov !== null && cov !== undefined && cov > 0) {
+        return `<span class="raw-value">${formatCount(value)}<small class="raw-provenance">exact union over ${formatCount(cov)} archives carrying block lists</small></span>`;
+      }
       if (status.includes("1956") || status.includes("reconciliation")) {
         return `<span class="raw-value">${formatCount(value)}<small class="raw-provenance">exact for the 1,956-archive reconciliation baseline only</small></span>`;
       }
