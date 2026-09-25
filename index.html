@@ -729,6 +729,14 @@
       font-variant-numeric: tabular-nums;
     }
 
+    /* several label/value pairs in one block: two aligned columns instead of one squeezed row */
+    .kv.kv-grid {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 6px 12px;
+    }
+    .kv.kv-grid strong { max-width: none; }
+
     .vm-grid {
       display: grid;
       gap: 12px;
@@ -1654,6 +1662,8 @@
 
     function healthInfo(status) {
       const age = heartbeatAgeSeconds(status);
+      // a finished extraction is not "stalled" when its publisher heartbeat ages
+      if (extractionDone(status)) return { key: "alive", label: "COMPLETE", age };
       const workerCount = number(pickPath(status, [
         "cloud_workers_alive", "workers_alive", ["fleet", "workers_alive"], ["workers", "alive_count"]
       ]));
@@ -1944,7 +1954,25 @@
       return "Live status";
     }
 
+    // ---- completion mode: every archive is done AND the EC2 inventory check published with conversions.json
+    // confirms no extraction VM is running, so the publisher's last worker snapshot is not live any more.
+    function extractionDone(status) {
+      const bundle = buildBundle(status, "combined");
+      const total = number(archiveMetric(bundle, "total"));
+      let done = number(archiveMetric(bundle, "done"));
+      const base = number(pickPath(status, [["archives", "combined", "baseline_completed_ok"], ["disks", "combined", "archives", "baseline_completed_ok"]]));
+      const ec2 = number(pickPath(status, [["archives", "combined", "ec2_new_ok"], ["disks", "combined", "archives", "ec2_new_ok"]]));
+      if (base !== null && ec2 !== null) done = Math.max(done ?? 0, base + ec2);
+      return total !== null && total > 0 && done !== null && done >= total;
+    }
+
+    function fleetReleased(status) {
+      const f = isObject(conversionsData) && isObject(conversionsData.fleet) ? conversionsData.fleet : null;
+      return extractionDone(status) && f !== null && number(f.extraction_vms_running) === 0 ? f : null;
+    }
+
     function operationalWorkerCounts(status) {
+      if (fleetReleased(status)) return { alive: 0, configured: 0, active: 0, idle: 0 };
       const fleet = isObject(status.fleet) ? status.fleet : {};
       let alive = number(pickPath(status, ["workers_alive", "cloud_workers_alive", ["fleet", "workers_alive"]]));
       let configured = number(pickPath(status, ["workers_configured", ["fleet", "workers_configured"]]));
@@ -1995,8 +2023,8 @@
             <p>Process liveness, active assignments, historical claims, and unassigned remaining work are separate counters.</p></div>
         </div>
         <div class="scheduler-grid">
-          ${card("Workers active", workers.active, "alive + current archive")}
-          ${card("Idle / capacity-wait", workers.idle, "alive + no current archive")}
+          ${card("Workers active", workers.active, fleetReleased(status) ? "extraction complete" : "alive + current archive")}
+          ${card("Idle / capacity-wait", workers.idle, fleetReleased(status) ? "fleet released" : "alive + no current archive")}
           ${card("Unfinished claims", unfinished, "claim identities without results")}
           ${card("Unclaimed remaining", unclaimed, "remaining without unfinished claim")}
           ${card("Claim objects", claims, "historical; includes completed")}
@@ -2036,7 +2064,7 @@
       const health = healthInfo(status);
       const gce = isObject(status.gce) ? status.gce : {};
       const workerCounts = operationalWorkerCounts(status);
-      const state = pickPath(status, [["gce", "state"], "state"]);
+      const state = (number(total) > 0 && number(done) !== null && number(done) >= number(total)) ? "complete" : pickPath(status, [["gce", "state"], "state"]);
       const fleet = isObject(status.fleet) ? status.fleet : {};
       const instanceCount = number(fleet.instance_count) ?? (Array.isArray(fleet.instances) ? fleet.instances.length : null);
       const costHints = fleetCostEstimates(status);
@@ -2046,9 +2074,11 @@
       return `<header class="hero">
         <div class="hero-top">
           <div>
-            <p class="eyebrow">Live public extraction status</p>
+            <p class="eyebrow">${extractionDone(status) ? "Public extraction &amp; conversion status" : "Live public extraction status"}</p>
             <h1>Deep CAD extraction across Disk 1 &amp; Disk 2</h1>
-            <p class="lede">A read-only view of the live AWS EC2 extraction fleet, archive progress, and estimated compute costs.</p>
+            <p class="lede">${extractionDone(status)
+              ? "Extraction is complete. The page now also reports the STEP conversions (native, IFC → STEP, Tekla DB1 → STEP) and the packaged dataset."
+              : "A read-only view of the live AWS EC2 extraction fleet, archive progress, and estimated compute costs."}</p>
           </div>
           <span id="status-badge" class="status-badge ${health.key}">${health.label}</span>
         </div>
@@ -2074,12 +2104,12 @@
           <div class="hero-stat"><span>Remaining</span><strong>${missing(remaining, formatCount)}</strong>
             <small>source archives</small></div>
           <div class="hero-stat"><span>Workers active</span><strong>${missing(workerCounts.active, formatCount)}</strong>
-            <small>${number(workerCounts.idle) === null ? "idle count not available" : `${formatCount(workerCounts.idle)} idle / capacity-wait`} · ${number(workerCounts.alive) === null ? "alive count not available" : `${formatCount(workerCounts.alive)} alive`}${number(workerCounts.configured) === null ? (present(state) ? ` · ${escapeHtml(state)}` : "") : ` / ${formatCount(workerCounts.configured)} configured`}</small></div>
+            <small>${fleetReleased(status) ? "extraction complete · fleet released" : `${number(workerCounts.idle) === null ? "idle count not available" : `${formatCount(workerCounts.idle)} idle / capacity-wait`} · ${number(workerCounts.alive) === null ? "alive count not available" : `${formatCount(workerCounts.alive)} alive`}${number(workerCounts.configured) === null ? (present(state) ? ` · ${escapeHtml(state)}` : "") : ` / ${formatCount(workerCounts.configured)} configured`}`}</small></div>
         </div>
         <div class="infra-line">
           <span class="chip">Platform · AWS EC2</span>
           <span class="chip">Region · ${escapeHtml(status.region || aliasValue(gce, ["region"]) || "ap-south-1")}</span>
-          <span class="chip">Est. · ${formatMoney(hourly)}/hr · accrued ${formatMoney(accrued)}</span>
+          <span class="chip">${fleetReleased(status) ? `Est. · fleet released · accrued ${formatMoney(accrued)}` : `Est. · ${formatMoney(hourly)}/hr · accrued ${formatMoney(accrued)}`}</span>
           <span class="chip">Feed · ${statusSourceLabel()}</span>
         </div>
       </header>`;
@@ -2177,6 +2207,25 @@
     }
 
     function renderWorkers(status) {
+      const released = fleetReleased(status);
+      if (released) {
+        return `
+        <section class="panel">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Fleet</p>
+              <h2>Extraction complete · fleet released</h2>
+              <p class="lede">All archives are extracted. No extraction VM is running (EC2 inventory checked ${formatTimestamp(released.checked_at)}).</p>
+            </div>
+          </div>
+          <div class="table-wrap"><table><thead><tr><th>Role</th><th>VMs running</th></tr></thead><tbody>
+            <tr><td>Extraction workers</td><td>${formatCount(released.extraction_vms_running, "0")}</td></tr>
+            <tr><td>STEP conversion hosts</td><td>${formatCount(released.conversion_vms_running, "0")}</td></tr>
+            <tr><td>Packaging hosts</td><td>${formatCount(released.packaging_vms_running, "0")}</td></tr>
+            <tr><td>Status publisher and utility boxes</td><td>${formatCount(released.support_vms_running, "0")}</td></tr>
+          </tbody></table></div>
+        </section>`;
+      }
       const entries = vmEntries(status);
       const flatWorkers = workerArray(status);
       let cards = "";
@@ -2234,7 +2283,7 @@
         ["Remaining", archiveMetric(bundle, "remaining")],
         ["Failed", archiveMetric(bundle, "failed")],
         ["Retried", archiveMetric(bundle, "retried")],
-        ["Skipped", archiveMetric(bundle, "skipped")]
+        ["Skip-list (done earlier by the baseline pipeline, not re-extracted)", archiveMetric(bundle, "skipped")]
       ];
       return `<div class="table-wrap"><table>
         <thead><tr><th>Archive lifecycle</th><th>Count</th></tr></thead>
@@ -2382,7 +2431,13 @@
       return present(value) ? value : 0;
     }
 
+    function bundleComplete(bundle) {
+      const total = number(archiveMetric(bundle, "total")), done = number(archiveMetric(bundle, "done"));
+      return total !== null && total > 0 && done !== null && done >= total && (number(archiveMetric(bundle, "remaining")) ?? 0) === 0;
+    }
+
     function depthSection(bundle) {
+      const complete = bundleComplete(bundle);
       const finished = distributionObject(bundle, [
         "finished_archive_max_depth_distribution", "finished_by_depth", "max_depth_distribution",
         "finished_depth_distribution", "depth_counts"
@@ -2420,7 +2475,7 @@
           <p>Finished archives only · exact depths 0–15</p></div>
         <div class="depth-summary">
           <div><span>Finished measured</span><strong>${missing(measured, formatCount)}</strong></div>
-          <div><span>Unopened / unmeasured</span><strong>${missing(unopened, formatCount)}</strong></div>
+          <div><span>${complete ? "Depth not recorded" : "Unopened / unmeasured"}</span><strong>${missing(unopened, formatCount)}</strong></div>
           <div><span>Max measured depth</span><strong>${missing(maximum, formatCount)}</strong></div>
           <div><span>Depth-cap hits</span><strong>${missing(capHits, formatCount)}</strong></div>
         </div>
@@ -2428,12 +2483,13 @@
           <thead><tr><th>Exact measured depth</th><th>Finished archive maximum</th><th>Archive nodes opened</th><th>Distribution</th></tr></thead>
           <tbody>${rows}</tbody>
         </table></div>
-        <p class="caption">Unopened archives have no measured nesting depth and are not included. The configured safety cap is
+        <p class="caption">${complete ? "Every archive is extracted; archives whose extraction record carries no depth measurement are not included." : "Unopened archives have no measured nesting depth and are not included."} The configured safety cap is
           ${number(cap) === null ? '<span class="missing">not available</span>' : formatCount(cap)}; a depth-cap hit is not inferred from a bucket count.</p>
       </section>`;
     }
 
     function backlogSection(bundle) {
+      if (bundleComplete(bundle)) return "";
       const supplied = bundle.backlogArrays.length > 0;
       const rows = supplied ? bundle.backlogArrays[0] : [];
       let content;
@@ -2645,6 +2701,15 @@
     }
 
     function renderThroughput(status) {
+      if (extractionDone(status)) {
+        const bundle = buildBundle(status, "combined");
+        return `<section class="panel" aria-labelledby="throughput-title">
+        <div class="section-heading">
+          <div><p class="eyebrow">Pace &amp; projection</p><h2 id="throughput-title">Extraction complete</h2>
+            <p>${formatCount(archiveMetric(bundle, "total"))} of ${formatCount(archiveMetric(bundle, "total"))} archives processed. Nothing remains, so no rate or ETA applies.</p></div>
+        </div>
+      </section>`;
+      }
       const rates = throughputValues(status);
       let eta = '<span class="missing">not available</span>';
       let etaSource = "withheld";
@@ -2759,34 +2824,37 @@
             <div class="cost-heading">
               <div>
                 <p class="eyebrow">Cloud footprint</p>
-                <h2>Running cost estimates</h2>
+                <h2>${fleetReleased(status) ? "Cost estimates (fleet released)" : "Running cost estimates"}</h2>
               </div>
             </div>
-            <p class="cost-total">Combined accrued estimate <strong>${formatMoney(combined)}</strong></p>
-            <div class="kv"><span>Pool compute+disk</span><strong>${formatMoney(poolHourly)} / hr <em>(estimate)</em></strong></div>
+            ${fleetReleased(status)
+              ? `<p class="cost-total">Running cost <strong>none · fleet released</strong></p>
+            <p class="estimate-note">Figures below are the publisher's partial estimates from the run (inputs incomplete), not an AWS bill. Actual spend is in AWS billing.</p>`
+              : `<p class="cost-total">Combined accrued estimate <strong>${formatMoney(combined)}</strong></p>`}
+            <div class="kv"><span>Pool compute+disk</span><strong>${fleetReleased(status) ? "none running" : `${formatMoney(poolHourly)} / hr <em>(estimate)</em>`}</strong></div>
             <h3>EC2 compute</h3>
-            <div class="kv">
-              <span>VMs</span><strong>${escapeHtml(aliasValue(gce, ["instance_count"]) || entries.length || "n/a")}</strong>
-              <span>Rate</span><strong>${formatMoney(aliasValue(compute, ["hourly_estimate_usd", "hourly_usd"]) ?? aliasValue(costEstimate, ["ec2_hourly_estimate_usd"]))} / hr</strong>
+            <div class="kv kv-grid">
+              <span>VMs</span><strong>${fleetReleased(status) ? "0 running" : escapeHtml(aliasValue(gce, ["instance_count"]) || entries.length || "n/a")}</strong>
+              <span>Rate</span><strong>${fleetReleased(status) ? "none running" : `${formatMoney(aliasValue(compute, ["hourly_estimate_usd", "hourly_usd"]) ?? aliasValue(costEstimate, ["ec2_hourly_estimate_usd"]))} / hr`}</strong>
               <span>Accrued</span><strong>${formatMoney(aliasValue(compute, ["accrued_estimate_usd", "accrued_usd"]))}</strong>
               <span>Uptime</span><strong>${number(compute.uptime_hours ?? costEstimate.uptime_hours ?? costHints.uptimeHours) === null ? "not published" : `${formatDecimal(compute.uptime_hours ?? costEstimate.uptime_hours ?? costHints.uptimeHours)} hr`}</strong>
             </div>
             <h3>Per-VM compute+disk</h3>
-            ${vmRows || "<em>Per-VM estimates not published</em>"}
+            ${fleetReleased(status) ? "<em>No VM running</em>" : (vmRows || "<em>Per-VM estimates not published</em>")}
             <h3>EBS gp3</h3>
-            <div class="kv">
+            <div class="kv kv-grid">
               <span>Type / size</span><strong>${escapeHtml(aliasValue(disk, ["type"]) || "gp3")} · ${number(aliasValue(disk, ["size_gb"])) === null ? "fleet volumes" : `${formatCount(disk.size_gb)} GB`}</strong>
-              <span>Hourly</span><strong>${formatMoney(aliasValue(disk, ["hourly_estimate_usd"]) ?? aliasValue(costEstimate, ["gp3_hourly_estimate_usd"]))}</strong>
+              <span>Hourly</span><strong>${fleetReleased(status) ? "none running" : formatMoney(aliasValue(disk, ["hourly_estimate_usd"]) ?? aliasValue(costEstimate, ["gp3_hourly_estimate_usd"]))}</strong>
               <span>Accrued</span><strong>${formatMoney(aliasValue(disk, ["accrued_estimate_usd", "accrued_usd"]))}</strong>
             </div>
             <h3>GCS storage estimate</h3>
-            <div class="kv">
+            <div class="kv kv-grid">
               <span>Objects</span><strong>${formatCount(aliasValue(gcs, ["object_count", "objects"]))}</strong>
               <span>Stored</span><strong>${formatBytes(storedBytes)}</strong>
               <span>Monthly</span><strong>${formatMoney(aliasValue(gcs, ["estimated_monthly_usd", "monthly_estimate_usd"]))}</strong>
             </div>
             <h3>AWS egress estimate</h3>
-            <div class="kv">
+            <div class="kv kv-grid">
               <span>Transferred</span><strong>${formatBytes(transferredBytes)}</strong>
               <span>Rate</span><strong>${formatMoney(aliasValue(aws, ["egress_rate_usd_per_gb", "rate_usd_per_gb"]))} / GB</strong>
               <span>Estimate</span><strong>${formatMoney(aliasValue(aws, ["running_egress_estimate_usd", "egress_estimate_usd"]))}</strong>
@@ -2800,6 +2868,139 @@
         </aside>`;
     }
 
+
+    // ---- STEP conversions & packaged dataset (companion file conversions.json, published with this page)
+    let conversionsData = null;
+    async function loadConversions() {
+      for (const url of ["conversions.json", "https://raw.githubusercontent.com/dhigdec/cad-extract-status/main/conversions.json"]) {
+        try {
+          const response = await fetch(`${url}${url.includes("?") ? "&" : "?"}t=${Date.now()}`, { cache: "no-store" });
+          if (!response.ok) continue;
+          conversionsData = await response.json();
+          return;
+        } catch (error) { /* try the next source */ }
+      }
+    }
+
+    function convTile(label, value, note) {
+      return `<div class="throughput-card"><span>${escapeHtml(label)}</span><strong>${formatCount(value)}</strong>` +
+        (note ? `<span class="metric-source">${escapeHtml(note)}</span>` : "") + `</div>`;
+    }
+
+    function convRows(obj, labels) {
+      return Object.entries(obj || {}).map(([key, value]) =>
+        `<tr><td>${escapeHtml(labels[key] || key.replace(/_/g, " "))}</td><td>${formatCount(value)}</td></tr>`).join("");
+    }
+
+    function renderConversions() {
+      const c = conversionsData;
+      if (!isObject(c)) return "";
+      const step = c.step_in_dataset || {}, pkg = c.packaging || {}, ifc = c.ifc_to_step || {}, db1 = c.db1_to_step || {};
+      const distinct = step.distinct_converted || {}, checks = pkg.checks || {};
+      const ext = (c.leftovers || {}).extraction || {};
+      const db1Reasons = {
+        layout_not_decodable: "Part-table layout not identified (large models); nothing guessed",
+        empty_model: "Empty / template / environment models (no parts)",
+        no_part_table: "No part table (old-format files, templates, profile libraries)",
+        held_back_orientation: "Held back: member orientation check failed",
+        held_back_attribute_link: "Held back: column orientation check failed",
+        no_buildable_profiles: "Parts found, but no profile the writer can build",
+        corrupt_source: "Corrupt source file (compressed stream fails its CRC)",
+        no_body_geometry: "Converted, but no solid body geometry",
+        step_writer_failed: "STEP stage failed",
+        not_a_tekla_model: "Not a Tekla model (no version banner)",
+        pending: "Still converting"
+      };
+      const ifcReasons = {
+        grid_only_or_no_geometry: "Complete file without product geometry (mostly grid-only exports)",
+        truncated_source: "Truncated source file (an intact copy is converted where one exists)",
+        zero_filled_source: "Source file is all zero bytes",
+        corrupt_source: "Source file is corrupt (garbled content)",
+        not_ifc_ole2: "Not IFC: binary document with an .ifc name",
+        not_ifc_cis2: "Not IFC: CIS/2 file with an .ifc name",
+        kernel_crash: "Geometry kernel crashes on the model",
+        no_geometry: "IFC holds no product geometry",
+        converter_failed: "Converter failed (every repair and mode tried)",
+        converter_timeout: "Converter did not finish within 6 h",
+        not_ifc: "Not an IFC model (CIS/2 file with an .ifc name)",
+        too_large_for_memory: "Needs more memory than a 512 GB host",
+        bad_output: "Output failed the STEP flavour check",
+        not_run: "No conversion result",
+        worker_error: "Worker error"
+      };
+      const checkLabels = {
+        step_in_2d: "STEP files in a 2d project", "3d_without_step": "3d projects without STEP",
+        project_in_both_routes: "Projects in both 2d and 3d", duplicate_relpath_rows: "Duplicate manifest rows",
+        rows_without_object: "Manifest rows without their file", objects_without_row: "Files without a manifest row",
+        slots_model_step_mismatch: "STEP count ≠ project.json slot", step_row_without_source: "STEP rows without a source tag",
+        converted_from_missing: "Converted STEP whose source is missing", bytes_mismatch: "Size mismatches",
+        project_json_route_mismatch: "project.json route mismatches", manifest_unreadable: "Unreadable manifests",
+        project_json_unreadable: "Unreadable project.json"
+      };
+      const checkTotal = Object.values(checks).reduce((sum, v) => sum + (number(v) || 0), 0);
+      const versionRows = Object.entries(db1.by_version || {})
+        .sort((a, b) => (parseFloat(a[0]) || 99) - (parseFloat(b[0]) || 99))
+        .map(([v, r]) => `<tr><td>${v === "None" ? "No version banner" : `Tekla ${escapeHtml(v)}`}</td><td>${formatCount(r.files)}</td><td>${formatCount(r.converted || 0)}</td><td>${formatCount(r.not_converted || 0)}</td></tr>`).join("");
+      const reasonRows = (obj, labels) => Object.entries(obj || {}).sort((a, b) => b[1] - a[1])
+        .map(([k, v]) => `<tr><td>${escapeHtml(labels[k] || k.replace(/_/g, " "))}</td><td>${formatCount(v)}</td></tr>`).join("");
+      const pct = (a, b) => (number(a) !== null && number(b) > 0) ? ` · ${(100 * a / b).toFixed(1)}%` : "";
+      return `<section class="panel" aria-labelledby="conversions-title">
+        <div class="section-heading">
+          <div><p class="eyebrow">3D models · STEP</p><h2 id="conversions-title">STEP conversions &amp; packaged dataset</h2>
+            <p>Every STEP file in the packaged dataset, by origin. ${c.final ? "<strong>Final numbers.</strong>" : "Updating while the last conversions finish."}
+              Generated ${formatTimestamp(c.generated_at)}.</p></div>
+        </div>
+        <div class="throughput-grid">
+          ${convTile("STEP files in dataset", step.total, "all 3d projects")}
+          ${convTile("Native STEP", step.native, "as extracted from archives")}
+          ${convTile("Converted from IFC", step.from_ifc, `${formatCount(distinct.from_ifc)} distinct conversions`)}
+          ${convTile("Converted from Tekla DB1", step.from_db1, `${formatCount(distinct.from_db1)} distinct conversions`)}
+          ${convTile("3D projects", pkg.projects_3d, `of ${formatCount(pkg.projects_total)} projects`)}
+        </div>
+        <section class="data-section">
+          <div class="data-heading"><div><h3>IFC → STEP</h3></div><p>${formatCount(ifc.distinct_sources)} byte-distinct IFC files</p></div>
+          <div class="table-wrap"><table><thead><tr><th>Outcome</th><th>Files</th></tr></thead>
+            <tbody><tr><td><strong>Converted to STEP</strong></td><td><strong>${formatCount(ifc.converted)}</strong>${pct(ifc.converted, ifc.distinct_sources)}</td></tr>
+            ${reasonRows(ifc.not_converted, ifcReasons)}</tbody></table></div>
+          ${number(ifc.recovered_by_input_fix) ? `<p class="caption">${formatCount(ifc.recovered_by_input_fix)} of the converted files needed a repair first: legacy schema header, zipped IFC saved as .ifc, two exports joined in one file, corrupt source coordinates${number(ifc.elements_excluded_total) ? `, or ${formatCount(ifc.elements_excluded_total)} element(s) the geometry kernel crashes on, left out and listed` : ""}.</p>` : ""}
+        </section>
+        <section class="data-section">
+          <div class="data-heading"><div><h3>Tekla DB1 → STEP</h3></div>
+            <p>${formatCount(db1.distinct_sources)} byte-distinct DB1 files the original converter could not handle · ${formatCount(db1.parts_written)} parts written</p></div>
+          <div class="table-wrap"><table><thead><tr><th>Outcome</th><th>Files</th></tr></thead>
+            <tbody><tr><td><strong>Converted to STEP (checked)</strong></td><td><strong>${formatCount(db1.converted)}</strong>${pct(db1.converted, db1.distinct_sources)}</td></tr>
+            ${reasonRows(db1.not_converted, db1Reasons)}</tbody></table></div>
+          <div class="table-wrap"><table><thead><tr><th>Tekla version</th><th>Files</th><th>Converted</th><th>Not converted</th></tr></thead>
+            <tbody>${versionRows}</tbody></table></div>
+          <p class="caption">${escapeHtml(db1.checks || "")}</p>
+        </section>
+        <section class="data-section">
+          <div class="data-heading"><div><h3>Packaged dataset (projpkg4)</h3></div><p>${escapeHtml(pkg.layout || "")}</p></div>
+          <div class="table-wrap"><table><thead><tr><th>Measure</th><th>Value</th></tr></thead><tbody>
+            <tr><td>Projects</td><td>${formatCount(pkg.projects_total)}</td></tr>
+            <tr><td>main/3d (hold STEP)</td><td>${formatCount(pkg.projects_3d)}</td></tr>
+            <tr><td>main/2d (drawings / fabrication only)</td><td>${formatCount(pkg.projects_2d)}</td></tr>
+            <tr><td>Moved 2d → 3d by these conversions</td><td>${formatCount(pkg.moved_2d_to_3d)}</td></tr>
+            <tr><td>STEP rows tagged native / IFC / DB1</td><td>${formatCount(step.native)} / ${formatCount(step.from_ifc)} / ${formatCount(step.from_db1)}${number(step.untagged) ? ` · ${formatCount(step.untagged)} untagged` : ""}</td></tr>
+          </tbody></table></div>
+          ${number(pkg.verified_projects) > 0 ? `<div class="table-wrap"><table><thead><tr><th>Structure check (${formatCount(pkg.verified_projects)} projects)</th><th>Problems found</th></tr></thead><tbody>
+            ${Object.entries(checkLabels).map(([k, label]) => `<tr><td>${escapeHtml(label)}</td><td>${formatCount(number(checks[k]) ?? 0)}</td></tr>`).join("")}
+          </tbody></table></div>
+          <p class="caption">${checkTotal === 0 ? "Every check passed on every project." : `${formatCount(checkTotal)} problems flagged.`}</p>`
+          : `<p class="caption">The full structure check runs once packaging finishes.</p>`}
+        </section>
+        <section class="data-section">
+          <div class="data-heading"><div><h3>Not opened during extraction</h3></div><p>Everything readable around these was extracted</p></div>
+          <div class="table-wrap"><table><thead><tr><th>Reason</th><th>Archives</th><th>Items</th></tr></thead><tbody>
+            <tr><td>Password-protected nested zips</td><td>${formatCount((ext.encrypted || {}).archives)}</td><td>${formatCount((ext.encrypted || {}).nested_zips)} zips · ${formatCount((ext.encrypted || {}).member_files_locked)} files locked</td></tr>
+            <tr><td>Nested archives 7-Zip cannot open</td><td>${formatCount((ext.unopenable_nested_archives || {}).archives)}</td><td>${formatCount((ext.unopenable_nested_archives || {}).nested)}</td></tr>
+            <tr><td>7-Zip fatal errors, partial content kept</td><td>${formatCount((ext.sevenzip_fatal_accepted_partial || {}).archives)}</td><td>${formatCount((ext.sevenzip_fatal_accepted_partial || {}).events)} events</td></tr>
+          </tbody></table></div>
+          <p class="caption">Recorded by the EC2 extraction pipeline for the ${formatCount(ext.archives_scanned_ec2_era)} archives it processed; the earlier baseline pipeline recorded only explicit errors (${formatCount(ext.baseline_explicit_failure_events)} events, all on archives that later completed).</p>
+        </section>
+      </section>`;
+    }
+
     function render(status) {
       app.innerHTML = `<div class="shell">
         ${renderHeader(status)}
@@ -2808,6 +3009,7 @@
             ${renderScheduler(status)}
             ${renderWorkers(status)}
             ${renderDatasetTabs(status)}
+            ${renderConversions()}
             ${renderThroughput(status)}
             ${renderRecent(status)}
           </main>
@@ -2926,7 +3128,11 @@
       throw lastError || new Error("live S3 status fetch failed");
     }
 
+    let conversionsLoadedAt = 0;
     async function tick() {
+      if (!conversionsData || Date.now() - conversionsLoadedAt > 60000) {
+        await loadConversions(); conversionsLoadedAt = Date.now();
+      }
       try {
         let status;
         let source;

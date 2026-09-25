@@ -1,0 +1,234 @@
+{
+ "schema": "cad-step-conversions/v2",
+ "generated_at": "2026-09-25T15:49:12Z",
+ "final": false,
+ "step_in_dataset": {
+  "total": 23738,
+  "native": 9199,
+  "from_ifc": 14539,
+  "from_db1": 0,
+  "untagged": 0,
+  "source": "project.json slot totals and applied packaging plans (before the final verification)",
+  "distinct_converted": {
+   "from_ifc": 8692,
+   "from_db1": 0
+  }
+ },
+ "packaging": {
+  "format": "projpkg4",
+  "layout": "dataset/main/{3d,2d}",
+  "projects_total": 2477,
+  "verified_projects": 0,
+  "projects_3d": 929,
+  "projects_2d": 1548,
+  "moved_2d_to_3d": 713,
+  "checks": {
+   "step_in_2d": 0,
+   "3d_without_step": 0,
+   "project_in_both_routes": 0,
+   "duplicate_relpath_rows": 0,
+   "rows_without_object": 0,
+   "objects_without_row": 0,
+   "slots_model_step_mismatch": 0,
+   "step_row_without_source": 0,
+   "converted_from_missing": 0,
+   "bytes_mismatch": 0,
+   "project_json_route_mismatch": 0,
+   "manifest_unreadable": 0,
+   "project_json_unreadable": 0
+  }
+ },
+ "ifc_to_step": {
+  "distinct_sources": 9129,
+  "converted": 8761,
+  "not_converted": {
+   "kernel_crash": 3,
+   "zero_filled_source": 3,
+   "not_ifc_ole2": 2,
+   "truncated_source": 4,
+   "not_ifc_cis2": 2,
+   "grid_only_or_no_geometry": 353,
+   "corrupt_source": 1
+  },
+  "recovered_by_input_fix": 32,
+  "elements_excluded_total": 1,
+  "converter": "ifc2step5.py --mode hybrid --prec 2 (ifcopenshell 0.8.4 for finishing runs)"
+ },
+ "db1_to_step": {
+  "distinct_sources": 9568,
+  "converted": 8752,
+  "parts_written": 146022908,
+  "not_converted": {
+   "empty_model": 202,
+   "no_part_table": 129,
+   "layout_not_decodable": 367,
+   "held_back_orientation": 38,
+   "held_back_attribute_link": 12,
+   "pending": 44,
+   "no_buildable_profiles": 15,
+   "not_a_tekla_model": 5,
+   "no_body_geometry": 1,
+   "corrupt_source": 2,
+   "step_writer_failed": 1
+  },
+  "by_version": {
+   "6.47": {
+    "files": 1,
+    "converted": 0,
+    "not_converted": 1
+   },
+   "6.87": {
+    "files": 46,
+    "converted": 31,
+    "not_converted": 15
+   },
+   "7.01": {
+    "files": 36,
+    "converted": 16,
+    "not_converted": 20
+   },
+   "7.13": {
+    "files": 5,
+    "converted": 0,
+    "not_converted": 5
+   },
+   "7.24": {
+    "files": 217,
+    "converted": 160,
+    "not_converted": 57
+   },
+   "7.30": {
+    "files": 11,
+    "converted": 0,
+    "not_converted": 11
+   },
+   "7.52": {
+    "files": 1,
+    "converted": 0,
+    "not_converted": 1
+   },
+   "7.61": {
+    "files": 1,
+    "converted": 0,
+    "not_converted": 1
+   },
+   "7.62": {
+    "files": 5,
+    "converted": 1,
+    "not_converted": 4
+   },
+   "7.64": {
+    "files": 2961,
+    "converted": 2849,
+    "not_converted": 112
+   },
+   "7.81": {
+    "files": 2,
+    "converted": 0,
+    "not_converted": 2
+   },
+   "7.82": {
+    "files": 499,
+    "converted": 462,
+    "not_converted": 37
+   },
+   "7.89": {
+    "files": 43,
+    "converted": 35,
+    "not_converted": 8
+   },
+   "7.98": {
+    "files": 164,
+    "converted": 65,
+    "not_converted": 99
+   },
+   "8.07": {
+    "files": 3191,
+    "converted": 2871,
+    "not_converted": 320
+   },
+   "8.30": {
+    "files": 2,
+    "converted": 2,
+    "not_converted": 0
+   },
+   "8.37": {
+    "files": 8,
+    "converted": 7,
+    "not_converted": 1
+   },
+   "8.44": {
+    "files": 29,
+    "converted": 29,
+    "not_converted": 0
+   },
+   "8.53": {
+    "files": 497,
+    "converted": 452,
+    "not_converted": 45
+   },
+   "8.62": {
+    "files": 435,
+    "converted": 421,
+    "not_converted": 14
+   },
+   "8.65": {
+    "files": 140,
+    "converted": 136,
+    "not_converted": 4
+   },
+   "8.74": {
+    "files": 3,
+    "converted": 1,
+    "not_converted": 2
+   },
+   "8.85": {
+    "files": 1011,
+    "converted": 963,
+    "not_converted": 48
+   },
+   "8.95": {
+    "files": 17,
+    "converted": 17,
+    "not_converted": 0
+   },
+   "9.08": {
+    "files": 238,
+    "converted": 234,
+    "not_converted": 4
+   },
+   "None": {
+    "files": 5,
+    "converted": 0,
+    "not_converted": 5
+   }
+  },
+  "checks": "Written only when the decoded model passes its checks: member axes agree with their reference lines (>=90% per file, parts off by >15 deg dropped), parts named COLUMN are vertical, profile sizes plausible; every STEP is AP214 faceted B-rep (flavour-checked) and read back with OpenCASCADE when under 64 MB."
+ },
+ "leftovers": {
+  "extraction": {
+   "archives_scanned_ec2_era": 1113,
+   "encrypted": {
+    "archives": 38,
+    "nested_zips": 1307,
+    "member_files_locked": 41088
+   },
+   "unopenable_nested_archives": {
+    "archives": 26,
+    "nested": 27
+   },
+   "sevenzip_fatal_accepted_partial": {
+    "archives": 29,
+    "events": 142
+   },
+   "baseline_explicit_failure_events": 8
+  }
+ },
+ "fleet": {
+  "checked_at": "2026-09-25T15:49:52Z",
+  "extraction_vms_running": 0,
+  "conversion_vms_running": 13,
+  "packaging_vms_running": 2,
+  "support_vms_running": 2
+ }
+}
