@@ -1,33 +1,68 @@
 {
  "schema": "cad-step-conversions/v2",
- "generated_at": "2026-09-25T15:49:12Z",
+ "generated_at": "2026-09-26T00:18:14Z",
  "final": false,
  "step_in_dataset": {
-  "total": 23738,
-  "native": 9199,
-  "from_ifc": 14539,
-  "from_db1": 0,
+  "total": 34270,
+  "native": 6220,
+  "from_ifc": 14652,
+  "from_db1": 13398,
   "untagged": 0,
-  "source": "project.json slot totals and applied packaging plans (before the final verification)",
+  "source": "full verification",
   "distinct_converted": {
-   "from_ifc": 8692,
-   "from_db1": 0
+   "from_ifc": 8764,
+   "from_db1": 8837
   }
+ },
+ "db1_coverage": {
+  "packaged_db1_files": 28664,
+  "packaged_db1_distinct": 23294,
+  "xslib_library_distinct": 10781,
+  "model_db1_distinct_in_dataset": 12513,
+  "model_db1_distinct_all": 12514,
+  "attempted_by_original_pipeline": 12474,
+  "found_never_attempted": 40,
+  "old_pipeline_step_ok": 2905,
+  "old_pipeline_failed_empty_step": 174,
+  "new_run_ok": 8836,
+  "overlap_old_ok_and_new": 158,
+  "models_with_step": 11740,
+  "models_without_step": 774
  },
  "packaging": {
   "format": "projpkg4",
   "layout": "dataset/main/{3d,2d}",
-  "projects_total": 2477,
-  "verified_projects": 0,
-  "projects_3d": 929,
-  "projects_2d": 1548,
-  "moved_2d_to_3d": 713,
+  "projects_total": 2476,
+  "verified_projects": 2476,
+  "projects_3d": 1286,
+  "projects_2d": 1190,
+  "moved_2d_to_3d": 1070,
+  "corrections": {
+   "step_duplicates_collapsed": 31,
+   "projects_deduplicated": 25,
+   "empty_step_removed": 168,
+   "projects_with_empty_step": 43,
+   "projects_moved_back_to_2d": 0,
+   "missed_copies_placed": 123
+  },
+  "info": {
+   "empty_packages": 5
+  },
+  "dedup": {
+   "content_duplicate_rows": 0,
+   "step_content_duplicate_rows": 0,
+   "step_same_conversion_twice": 0,
+   "step_duplicates_collapsed": 31,
+   "rule": "inside each project a (channel, ETag, size) content is stored once; each conversion output is placed once per project"
+  },
   "checks": {
    "step_in_2d": 0,
    "3d_without_step": 0,
    "project_in_both_routes": 0,
    "duplicate_relpath_rows": 0,
    "rows_without_object": 0,
+   "projects_with_content_duplicates": 0,
+   "projects_with_conversion_placed_twice": 0,
    "objects_without_row": 0,
    "slots_model_step_mismatch": 0,
    "step_row_without_source": 0,
@@ -40,36 +75,34 @@
  },
  "ifc_to_step": {
   "distinct_sources": 9129,
-  "converted": 8761,
+  "converted": 8764,
   "not_converted": {
-   "kernel_crash": 3,
+   "corrupt_source": 1,
    "zero_filled_source": 3,
    "not_ifc_ole2": 2,
    "truncated_source": 4,
    "not_ifc_cis2": 2,
-   "grid_only_or_no_geometry": 353,
-   "corrupt_source": 1
+   "grid_only_or_no_geometry": 353
   },
-  "recovered_by_input_fix": 32,
-  "elements_excluded_total": 1,
+  "recovered_by_input_fix": 35,
+  "elements_excluded_total": 3,
   "converter": "ifc2step5.py --mode hybrid --prec 2 (ifcopenshell 0.8.4 for finishing runs)"
  },
  "db1_to_step": {
-  "distinct_sources": 9568,
-  "converted": 8752,
-  "parts_written": 146022908,
+  "distinct_sources": 9609,
+  "converted": 8835,
+  "parts_written": 146738389,
   "not_converted": {
    "empty_model": 202,
-   "no_part_table": 129,
+   "no_part_table": 130,
    "layout_not_decodable": 367,
    "held_back_orientation": 38,
    "held_back_attribute_link": 12,
-   "pending": 44,
    "no_buildable_profiles": 15,
    "not_a_tekla_model": 5,
    "no_body_geometry": 1,
    "corrupt_source": 2,
-   "step_writer_failed": 1
+   "pending": 2
   },
   "by_version": {
    "6.47": {
@@ -78,13 +111,13 @@
     "not_converted": 1
    },
    "6.87": {
-    "files": 46,
-    "converted": 31,
-    "not_converted": 15
+    "files": 48,
+    "converted": 32,
+    "not_converted": 16
    },
    "7.01": {
-    "files": 36,
-    "converted": 16,
+    "files": 50,
+    "converted": 30,
     "not_converted": 20
    },
    "7.13": {
@@ -93,8 +126,8 @@
     "not_converted": 5
    },
    "7.24": {
-    "files": 217,
-    "converted": 160,
+    "files": 223,
+    "converted": 166,
     "not_converted": 57
    },
    "7.30": {
@@ -143,8 +176,8 @@
     "not_converted": 99
    },
    "8.07": {
-    "files": 3191,
-    "converted": 2871,
+    "files": 3192,
+    "converted": 2872,
     "not_converted": 320
    },
    "8.30": {
@@ -163,8 +196,8 @@
     "not_converted": 0
    },
    "8.53": {
-    "files": 497,
-    "converted": 452,
+    "files": 498,
+    "converted": 453,
     "not_converted": 45
    },
    "8.62": {
@@ -183,9 +216,9 @@
     "not_converted": 2
    },
    "8.85": {
-    "files": 1011,
-    "converted": 963,
-    "not_converted": 48
+    "files": 1028,
+    "converted": 1023,
+    "not_converted": 5
    },
    "8.95": {
     "files": 17,
@@ -225,10 +258,10 @@
   }
  },
  "fleet": {
-  "checked_at": "2026-09-25T15:49:52Z",
+  "checked_at": "2026-09-26T00:18:19Z",
   "extraction_vms_running": 0,
-  "conversion_vms_running": 13,
-  "packaging_vms_running": 2,
+  "conversion_vms_running": 1,
+  "packaging_vms_running": 0,
   "support_vms_running": 2
  }
 }

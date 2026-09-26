@@ -2932,9 +2932,11 @@
         step_in_2d: "STEP files in a 2d project", "3d_without_step": "3d projects without STEP",
         project_in_both_routes: "Projects in both 2d and 3d", duplicate_relpath_rows: "Duplicate manifest rows",
         rows_without_object: "Manifest rows without their file", objects_without_row: "Files without a manifest row",
+        projects_with_content_duplicates: "Projects storing the same content twice (dedup)",
+        projects_with_conversion_placed_twice: "Projects holding one conversion twice (dedup)",
         slots_model_step_mismatch: "STEP count ≠ project.json slot", step_row_without_source: "STEP rows without a source tag",
         converted_from_missing: "Converted STEP whose source is missing", bytes_mismatch: "Size mismatches",
-        project_json_route_mismatch: "project.json route mismatches", manifest_unreadable: "Unreadable manifests",
+        project_json_route_mismatch: "project.json route mismatches", manifest_unreadable: "Unreadable manifests (packages with files)",
         project_json_unreadable: "Unreadable project.json"
       };
       const checkTotal = Object.values(checks).reduce((sum, v) => sum + (number(v) || 0), 0);
@@ -2966,7 +2968,15 @@
         </section>
         <section class="data-section">
           <div class="data-heading"><div><h3>Tekla DB1 → STEP</h3></div>
-            <p>${formatCount(db1.distinct_sources)} byte-distinct DB1 files the original converter could not handle · ${formatCount(db1.parts_written)} parts written</p></div>
+            <p>${formatCount(db1.distinct_sources)} byte-distinct DB1 files in scope (every file the original converter could not handle, plus model files it never attempted) · ${formatCount(db1.parts_written)} parts written</p></div>
+          ${isObject(c.db1_coverage) && number(c.db1_coverage.packaged_db1_files) ? `<div class="table-wrap"><table><thead><tr><th>Coverage across all archives</th><th>Files</th></tr></thead><tbody>
+            <tr><td>DB1 files in the packaged dataset (every copy)</td><td>${formatCount(c.db1_coverage.packaged_db1_files)}</td></tr>
+            <tr><td>Byte-distinct</td><td>${formatCount(c.db1_coverage.packaged_db1_distinct)}</td></tr>
+            <tr><td>… Tekla model databases (all attempted)</td><td>${formatCount(c.db1_coverage.model_db1_distinct_in_dataset)}</td></tr>
+            <tr><td>… xslib.db1 component libraries (not a model, not converted)</td><td>${formatCount(c.db1_coverage.xslib_library_distinct)}</td></tr>
+            <tr><td>Model files the original converter never attempted, found and converted here</td><td>${formatCount(c.db1_coverage.found_never_attempted)}</td></tr>
+            <tr><td><strong>Model DB1 files with a STEP now</strong></td><td><strong>${formatCount(c.db1_coverage.models_with_step)}</strong> of ${formatCount(c.db1_coverage.model_db1_distinct_all)}${pct(c.db1_coverage.models_with_step, c.db1_coverage.model_db1_distinct_all)}</td></tr>
+          </tbody></table></div>` : ""}
           <div class="table-wrap"><table><thead><tr><th>Outcome</th><th>Files</th></tr></thead>
             <tbody><tr><td><strong>Converted to STEP (checked)</strong></td><td><strong>${formatCount(db1.converted)}</strong>${pct(db1.converted, db1.distinct_sources)}</td></tr>
             ${reasonRows(db1.not_converted, db1Reasons)}</tbody></table></div>
@@ -2981,12 +2991,16 @@
             <tr><td>main/3d (hold STEP)</td><td>${formatCount(pkg.projects_3d)}</td></tr>
             <tr><td>main/2d (drawings / fabrication only)</td><td>${formatCount(pkg.projects_2d)}</td></tr>
             <tr><td>Moved 2d → 3d by these conversions</td><td>${formatCount(pkg.moved_2d_to_3d)}</td></tr>
+            ${isObject(pkg.corrections) ? `
+            <tr><td>STEP placed for identical DB1 copies the first pass missed</td><td>${formatCount(pkg.corrections.missed_copies_placed)}</td></tr>
+            <tr><td>Header-only STEP files (no geometry) from the original DB1 pipeline, removed</td><td>${formatCount(pkg.corrections.empty_step_removed)}${number(pkg.corrections.projects_moved_back_to_2d) ? ` · ${formatCount(pkg.corrections.projects_moved_back_to_2d)} projects back to 2d` : ""}</td></tr>
+            <tr><td>Identical STEP stored twice in a project, collapsed</td><td>${formatCount(pkg.corrections.step_duplicates_collapsed)}</td></tr>` : ""}
             <tr><td>STEP rows tagged native / IFC / DB1</td><td>${formatCount(step.native)} / ${formatCount(step.from_ifc)} / ${formatCount(step.from_db1)}${number(step.untagged) ? ` · ${formatCount(step.untagged)} untagged` : ""}</td></tr>
           </tbody></table></div>
           ${number(pkg.verified_projects) > 0 ? `<div class="table-wrap"><table><thead><tr><th>Structure check (${formatCount(pkg.verified_projects)} projects)</th><th>Problems found</th></tr></thead><tbody>
             ${Object.entries(checkLabels).map(([k, label]) => `<tr><td>${escapeHtml(label)}</td><td>${formatCount(number(checks[k]) ?? 0)}</td></tr>`).join("")}
           </tbody></table></div>
-          <p class="caption">${checkTotal === 0 ? "Every check passed on every project." : `${formatCount(checkTotal)} problems flagged.`}</p>`
+          <p class="caption">${checkTotal === 0 ? "Every check passed on every project." : `${formatCount(checkTotal)} problems flagged.`}${number((pkg.info || {}).empty_packages) ? ` ${formatCount(pkg.info.empty_packages)} packages hold no files at all (their archives had only non-asset files).` : ""}</p>`
           : `<p class="caption">The full structure check runs once packaging finishes.</p>`}
         </section>
         <section class="data-section">
