@@ -1,7 +1,7 @@
 {
  "schema": "cad-step-conversions/v2",
- "generated_at": "2026-09-26T00:18:14Z",
- "final": false,
+ "generated_at": "2026-09-26T05:15:24Z",
+ "final": true,
  "step_in_dataset": {
   "total": 34270,
   "native": 6220,
@@ -26,8 +26,8 @@
   "old_pipeline_failed_empty_step": 174,
   "new_run_ok": 8836,
   "overlap_old_ok_and_new": 158,
-  "models_with_step": 11740,
-  "models_without_step": 774
+  "models_with_step": 11742,
+  "models_without_step": 772
  },
  "packaging": {
   "format": "projpkg4",
@@ -90,8 +90,10 @@
  },
  "db1_to_step": {
   "distinct_sources": 9609,
-  "converted": 8835,
-  "parts_written": 146738389,
+  "converted": 8837,
+  "parts_written": 146784293,
+  "elements_excluded_total": 5,
+  "regenerated_outputs": 2,
   "not_converted": {
    "empty_model": 202,
    "no_part_table": 130,
@@ -101,8 +103,7 @@
    "no_buildable_profiles": 15,
    "not_a_tekla_model": 5,
    "no_body_geometry": 1,
-   "corrupt_source": 2,
-   "pending": 2
+   "corrupt_source": 2
   },
   "by_version": {
    "6.47": {
@@ -177,8 +178,8 @@
    },
    "8.07": {
     "files": 3192,
-    "converted": 2872,
-    "not_converted": 320
+    "converted": 2874,
+    "not_converted": 318
    },
    "8.30": {
     "files": 2,
@@ -240,15 +241,22 @@
  },
  "leftovers": {
   "extraction": {
+   "archives_total": 3620,
    "archives_scanned_ec2_era": 1113,
+   "archives_baseline_era": 2507,
    "encrypted": {
     "archives": 38,
     "nested_zips": 1307,
     "member_files_locked": 41088
    },
    "unopenable_nested_archives": {
-    "archives": 26,
-    "nested": 27
+    "archives": 25,
+    "nested": 55
+   },
+   "damaged_nested_archives": {
+    "archives": 6,
+    "entries": 7,
+    "files_named_not_extracted": 5
    },
    "sevenzip_fatal_accepted_partial": {
     "archives": 29,
@@ -258,7 +266,7 @@
   }
  },
  "fleet": {
-  "checked_at": "2026-09-26T00:18:19Z",
+  "checked_at": "2026-09-26T05:15:34Z",
   "extraction_vms_running": 0,
   "conversion_vms_running": 1,
   "packaging_vms_running": 0,

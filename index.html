@@ -2982,7 +2982,7 @@
             ${reasonRows(db1.not_converted, db1Reasons)}</tbody></table></div>
           <div class="table-wrap"><table><thead><tr><th>Tekla version</th><th>Files</th><th>Converted</th><th>Not converted</th></tr></thead>
             <tbody>${versionRows}</tbody></table></div>
-          <p class="caption">${escapeHtml(db1.checks || "")}</p>
+          <p class="caption">${escapeHtml(db1.checks || "")}${number(db1.elements_excluded_total) ? ` ${formatCount(db1.elements_excluded_total)} element(s) that hang the geometry kernel were left out of their models and are listed in the results.` : ""}${number(db1.regenerated_outputs) ? ` ${formatCount(db1.regenerated_outputs)} output(s) regenerated after a mesh vertex at the kernel's infinite bound was found.` : ""}</p>
         </section>
         <section class="data-section">
           <div class="data-heading"><div><h3>Packaged dataset (projpkg4)</h3></div><p>${escapeHtml(pkg.layout || "")}</p></div>
@@ -3007,7 +3007,8 @@
           <div class="data-heading"><div><h3>Not opened during extraction</h3></div><p>Everything readable around these was extracted</p></div>
           <div class="table-wrap"><table><thead><tr><th>Reason</th><th>Archives</th><th>Items</th></tr></thead><tbody>
             <tr><td>Password-protected nested zips</td><td>${formatCount((ext.encrypted || {}).archives)}</td><td>${formatCount((ext.encrypted || {}).nested_zips)} zips · ${formatCount((ext.encrypted || {}).member_files_locked)} files locked</td></tr>
-            <tr><td>Nested archives 7-Zip cannot open</td><td>${formatCount((ext.unopenable_nested_archives || {}).archives)}</td><td>${formatCount((ext.unopenable_nested_archives || {}).nested)}</td></tr>
+            <tr><td>Nested archives 7-Zip cannot open at all</td><td>${formatCount((ext.unopenable_nested_archives || {}).archives)}</td><td>${formatCount((ext.unopenable_nested_archives || {}).nested)} nested archives</td></tr>
+            ${isObject(ext.damaged_nested_archives) ? `<tr><td>Damaged nested archives, partly extracted</td><td>${formatCount(ext.damaged_nested_archives.archives)}</td><td>${formatCount(ext.damaged_nested_archives.entries)} nested archives · ${formatCount(ext.damaged_nested_archives.files_named_not_extracted)} files not extracted</td></tr>` : ""}
             <tr><td>7-Zip fatal errors, partial content kept</td><td>${formatCount((ext.sevenzip_fatal_accepted_partial || {}).archives)}</td><td>${formatCount((ext.sevenzip_fatal_accepted_partial || {}).events)} events</td></tr>
           </tbody></table></div>
           <p class="caption">Recorded by the EC2 extraction pipeline for the ${formatCount(ext.archives_scanned_ec2_era)} archives it processed; the earlier baseline pipeline recorded only explicit errors (${formatCount(ext.baseline_explicit_failure_events)} events, all on archives that later completed).</p>
