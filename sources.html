@@ -48,6 +48,7 @@ td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
 .cols{display:grid;grid-template-columns:1fr 1fr;gap:18px}
 @media (max-width:820px){.cols{grid-template-columns:1fr}}
 .ok{color:var(--good-text)} .muted{color:var(--muted)}
+.gh{font-size:13px;margin:10px 0 4px;color:var(--text-secondary);font-weight:600}
 .stage{display:flex;gap:8px;align-items:center;padding:4px 0;font-size:14px}
 .ic{width:18px;text-align:center;font-weight:700}
 footer{color:var(--muted);font-size:12px;margin-top:20px}
@@ -69,7 +70,9 @@ Disk-1 / Disk-2 (finished 26 Sep 2026) are on the <a href="./">main status page<
     <div><h3 style="font-size:14px;margin:6px 0">Archives being extracted now</h3><table id="z4-running"></table></div>
   </div>
   <h3 style="font-size:14px;margin:18px 0 6px">File types coming out of the archives</h3><p class="note" id="z4-types-note"></p>
-  <div class="cols"><div><table id="z4-cats"></table></div><div><table id="z4-exts"></table></div></div>
+  <div class="cols"><div><h3 class="gh">3D model files</h3><table id="z4-g-3d"></table></div><div><h3 class="gh">2D drawing files</h3><table id="z4-g-2d"></table></div></div>
+  <div class="cols"><div><h3 class="gh">Fabrication / CNC</h3><table id="z4-g-fab"></table></div><div><h3 class="gh">All other types (by category)</h3><table id="z4-cats"></table></div></div>
+  <details style="margin-top:10px"><summary style="cursor:pointer;font-size:14px">Every extension found (full list)</summary><table id="z4-exts" style="margin-top:8px"></table></details>
 </section>
 
 <section id="z2"><h2 id="z2-title">Disk Z2</h2><p class="note">Smart 3D plant model (SQL Server backups) restored into SQL Server, plus the piping drawing set.</p>
@@ -127,11 +130,22 @@ async function load(){
     `<tr><td colspan="3" class="muted">${n(z.boxes_alive)} extraction machines reporting</td></tr>`;
   const ft=z.file_types||{};
   document.getElementById("z4-types-note").textContent=ft.archives_counted?`From ${n(ft.archives_counted)} finished archives: ${n(ft.distinct_extensions)} distinct extensions; deepest nesting unpacked: ${n(ft.max_nested_depth)} levels. "Unique" = distinct content actually stored.`:"counting…";
-  const trows=(arr,lim)=>(arr||[]).slice(0,lim).map(t=>`<tr><td>${t.type}</td><td class="n">${n(t.files)}</td><td class="n">${gb(t.bytes)}</td><td class="n">${n(t.stored_files)}</td></tr>`).join("");
-  document.getElementById("z4-cats").innerHTML=`<tr><th>Category</th><th class="n">Files</th><th class="n">Size</th><th class="n">Unique</th></tr>`+trows(ft.by_category,20);
-  document.getElementById("z4-exts").innerHTML=`<tr><th>Extension</th><th class="n">Files</th><th class="n">Size</th><th class="n">Unique</th></tr>`+trows(ft.by_extension,25);
+  const HEAD=`<tr><th>Type</th><th class="n">Raw files</th><th class="n">Raw size</th><th class="n">Unique files</th><th class="n">Unique size</th></tr>`;
+  const row=t=>`<tr><td>.${t.type}</td><td class="n">${n(t.files)}</td><td class="n">${gb(t.bytes)}</td><td class="n">${t.stored_files==null?"–":n(t.stored_files)}</td><td class="n">${t.stored_bytes==null?"–":gb(t.stored_bytes)}</td></tr>`;
+  const sumrow=(arr,label)=>{const s=arr.reduce((a,t)=>({f:a.f+t.files,b:a.b+t.bytes,sf:a.sf+(t.stored_files||0),sb:a.sb+(t.stored_bytes||0)}),{f:0,b:0,sf:0,sb:0});return `<tr><td><b>${label}</b></td><td class="n"><b>${n(s.f)}</b></td><td class="n"><b>${gb(s.b)}</b></td><td class="n"><b>${n(s.sf)}</b></td><td class="n"><b>${gb(s.sb)}</b></td></tr>`};
+  const G3D=["stp","step","ifc","ifczip","ifcxml","db1","db2","nwd","nwc","nwf","rvt","rfa","dgn","sat","sab","igs","iges","stl","obj","fbx","3ds","skp","3dm","sldprt","sldasm","ipt","iam","x_t","x_b","jt","glb","gltf","vue","zvf","tbp","tsep","tczip","sdnf","cis","std"];
+  const G2D=["dwg","dxf","dg","dpm","pdf","dwf","dwfx","plt","sha","sym","igr","dgn2d"];
+  const GFAB=["nc1","nc","dstv","kss","xsr","abm","bom","nc2","csv_nc"];
+  const exts=ft.by_extension||[];
+  const pick=list=>list.map(e=>exts.find(t=>t.type===e)).filter(Boolean);
+  const table=(id,list,label)=>{const a=pick(list);document.getElementById(id).innerHTML=HEAD+(a.length?a.map(row).join("")+sumrow(a,label):`<tr><td colspan="5" class="muted">none yet</td></tr>`)};
+  table("z4-g-3d",G3D,"All 3D");table("z4-g-2d",G2D,"All 2D");table("z4-g-fab",GFAB,"All fabrication");
+  const known=new Set([...G3D,...G2D,...GFAB]);
+  document.getElementById("z4-cats").innerHTML=`<tr><th>Category</th><th class="n">Raw files</th><th class="n">Raw size</th><th class="n">Unique files</th><th class="n">Unique size</th></tr>`+
+    (ft.by_category||[]).filter(c=>!["3D model","2D drawing","PDF","CNC / fabrication"].includes(c.type)).map(t=>`<tr><td>${t.type}</td><td class="n">${n(t.files)}</td><td class="n">${gb(t.bytes)}</td><td class="n">${n(t.stored_files)}</td><td class="n">${gb(t.stored_bytes)}</td></tr>`).join("");
+  document.getElementById("z4-exts").innerHTML=HEAD+exts.map(row).join("");
   const y=doc.z2;
-  const t2=(arr)=>`<tr><th>Extension</th><th>Category</th><th class="n">Files</th><th class="n">Size</th></tr>`+(arr||[]).slice(0,15).map(t=>`<tr><td>${t.type}</td><td>${t.category}</td><td class="n">${n(t.files)}</td><td class="n">${gb(t.bytes)}</td></tr>`).join("");
+  const t2=(arr)=>HEAD+(arr||[]).slice(0,40).map(row).join("")+((arr||[]).length?sumrow(arr,"All types"):"");
   document.getElementById("z2-src-types").innerHTML=t2(y.file_types_source);
   document.getElementById("z2-sc-types").innerHTML=t2(y.file_types_sharedcontent);
   document.getElementById("z2-title").textContent=y.label;
