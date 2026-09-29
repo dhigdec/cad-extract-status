@@ -109,7 +109,7 @@ async function load(){
     tile("Files extracted",n(z.files),`${gb(z.bytes)} uncompressed`)+
     tile("Unique files stored",n(z.stored_files),`${gb(z.stored_bytes)} · ${dedupPct.toFixed(1)}% were duplicates`)+
     tile("Nested archives unpacked",n(z.nested_count),`${n(z.encrypted_nested)} password-locked (recorded)`)+
-    tile("Estimated time left",dur(z.eta_s),z.rate_source_bytes_per_s_20min?`${(z.rate_source_bytes_per_s_20min/1e6).toFixed(0)} MB/s compressed, last 20 min`:"measuring…");
+    tile("Estimated time left",z.eta_s==null?"estimating":dur(z.eta_s),z.eta_s==null?"shown once 20% of the data is done (large archives are still in flight)":`${(z.rate_source_bytes_per_s_20min/1e6).toFixed(0)} MB/s compressed, last 20 min`);
   document.getElementById("z4-overall").innerHTML=meter("Compressed data extracted",z.source_bytes_done,z.new_archive_bytes,gb);
   const st=z.archives_status||{};
   document.getElementById("z4-status").innerHTML=
