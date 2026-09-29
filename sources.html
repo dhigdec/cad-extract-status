@@ -64,6 +64,7 @@ Disk-1 / Disk-2 (finished 26 Sep 2026) are on the <a href="./">main status page<
   <div class="tiles" id="z4-tiles"></div>
   <div id="z4-overall"></div>
   <div class="status" id="z4-status"></div>
+  <p class="note" id="z4-verify"></p>
   <div class="cols">
     <div><h3 style="font-size:14px;margin:6px 0">Progress by archive size</h3><div id="z4-bands"></div>
       <h3 style="font-size:14px;margin:14px 0 6px">Raw copy of every archive and loose file into the bucket</h3><div id="z4-copy"></div></div>
@@ -125,6 +126,8 @@ async function load(){
     `<span><span class="sw" style="background:var(--warning)"></span>! partial ${n(st.partial||0)}</span>`+
     `<span><span class="sw" style="background:var(--critical)"></span>✕ failed ${n(st.failed||0)}</span>`+
     `<span class="muted">ransomware-encrypted files flagged: ${n(z.ransomware_files)} · upload errors: ${n(z.upload_error_count)}</span>`;
+  const vf=(z.file_types||{}).verify||{};
+  document.getElementById("z4-verify").innerHTML=Object.keys(vf).length?`<b>Completeness check:</b> ✓ ${n(vf.match||0)} finished archives have exactly as many top-level files as the drive's own 7-Zip listing · ${n((vf.fewer_than_report||0)+(vf.more_than_report||0))} differ · ${n(vf.no_report_entry||0)} were not in the drive listing.`:"";
   const order=["<1 GB","1-20 GB",">=20 GB"];
   document.getElementById("z4-bands").innerHTML=order.filter(b=>z.size_bands[b]).map(b=>{const x=z.size_bands[b];return meter(`${b} (${n(x.archives)} archives)`,x.done,x.archives,n)}).join("");
   const c=z.raw_copy||{};
