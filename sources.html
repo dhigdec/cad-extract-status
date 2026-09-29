@@ -70,12 +70,13 @@ Disk-1 / Disk-2 (finished 26 Sep 2026) are on the <a href="./">main status page<
       <h3 style="font-size:14px;margin:14px 0 6px">Raw copy of every archive and loose file into the bucket</h3><div id="z4-copy"></div></div>
     <div><h3 style="font-size:14px;margin:6px 0">Archives being extracted now</h3><table id="z4-running"></table></div>
   </div>
+  <h3 style="font-size:14px;margin:18px 0 6px">All files at a glance (inside archives)</h3><table id="z4-glance"></table>
   <h3 style="font-size:14px;margin:18px 0 6px">File types coming out of the archives</h3><p class="note" id="z4-types-note"></p>
   <div class="cols"><div><h3 class="gh">3D model files</h3><table id="z4-g-3d"></table></div><div><h3 class="gh">2D drawing files</h3><table id="z4-g-2d"></table></div></div>
   <div class="cols"><div><h3 class="gh">PDFs: CAD drawings vs documents</h3><table id="z4-pdfc"></table><p class="note" id="z4-pdfc-note" style="margin-top:6px"></p></div><div></div></div>
   <div class="cols"><div><h3 class="gh">Fabrication / CNC</h3><table id="z4-g-fab"></table></div><div><h3 class="gh">All other types (by category)</h3><table id="z4-cats"></table></div></div>
   <details style="margin-top:10px"><summary style="cursor:pointer;font-size:14px">Every extension found inside archives (full list)</summary><table id="z4-exts" style="margin-top:8px"></table></details>
-  <h3 style="font-size:14px;margin:18px 0 6px">Loose files on the drive (outside archives)</h3><p class="note" id="z4-loose-note"></p>
+  <h3 style="font-size:14px;margin:18px 0 6px">Loose files on the drive (outside archives)</h3><p class="note" id="z4-loose-note"></p><table id="z4-loose-glance"></table>
   <div class="cols"><div><h3 class="gh">3D model files</h3><table id="z4-l-3d"></table></div><div><h3 class="gh">2D drawing files</h3><table id="z4-l-2d"></table></div></div>
   <details style="margin-top:10px"><summary style="cursor:pointer;font-size:14px">Every loose-file extension (full list)</summary><table id="z4-l-all" style="margin-top:8px"></table></details>
 </section>
@@ -85,6 +86,8 @@ Disk-1 / Disk-2 (finished 26 Sep 2026) are on the <a href="./">main status page<
     <div><h3 style="font-size:14px;margin:6px 0">Database restore</h3><table id="z2-db"></table></div>
     <div><h3 style="font-size:14px;margin:6px 0">Files and drawings</h3><div class="tiles" id="z2-tiles"></div></div>
   </div>
+  <h3 style="font-size:14px;margin:16px 0 6px">Generated outputs</h3><div class="cols"><div><h3 class="gh">3D (from the plant model database)</h3><table id="z2-out3d"></table></div><div><h3 class="gh">2D (from the drawing set)</h3><table id="z2-out2d"></table></div></div>
+  <div class="cols"><div><h3 class="gh">All files at a glance — drawing set</h3><table id="z2-glance-src"></table></div><div><h3 class="gh">All files at a glance — reference content (unpacked, incl. nested archives)</h3><table id="z2-glance-x"></table></div></div>
   <div class="cols"><div><h3 style="font-size:14px;margin:12px 0 6px">File types — drawing set</h3><table id="z2-src-types"></table></div>
     <div><h3 style="font-size:14px;margin:12px 0 6px">File types — S3D reference content (unpacked)</h3><table id="z2-sc-types"></table></div></div>
 </section>
@@ -138,6 +141,11 @@ async function load(){
     `<tr><td colspan="3" class="muted">${n(z.boxes_alive)} extraction machines reporting (${n(z.worker_processes_alive)} worker processes)</td></tr>`;
   const ft=z.file_types||{};
   document.getElementById("z4-types-note").textContent=ft.archives_counted?`From ${n(ft.archives_counted)} finished archives: ${n(ft.distinct_extensions)} distinct extensions; deepest nesting unpacked: ${n(ft.max_nested_depth)} levels. "Raw" = every file path extracted; "Unique" = distinct content (sha256) of that type across the whole disk; "Already in Disk-1/2" = files whose content the Disk-1/Disk-2 extraction already holds (not uploaded again for archives processed after 23:15 UTC).`:"counting…";
+
+  const GHEAD=(d12)=>`<tr><th>Kind</th><th class="n">Raw files</th><th class="n">Raw size</th><th class="n">Unique files</th><th class="n">Unique size</th>${d12?'<th class="n">Already in Disk-1/2</th>':''}</tr>`;
+  const grow=(r,d12)=>{const b=r.kind==="All files";const w=x=>b?`<b>${x}</b>`:x;return `<tr><td>${w(r.kind)}</td><td class="n">${w(n(r.files))}</td><td class="n">${w(gb(r.bytes))}</td><td class="n">${w(n(r.unique_files))}</td><td class="n">${w(gb(r.unique_bytes))}</td>${d12?`<td class="n">${w(n(r.in_disk12_files))}</td>`:''}</tr>`};
+  const glance=(id,rows,d12)=>{const el=document.getElementById(id); if(el) el.innerHTML=GHEAD(d12)+((rows||[]).length?(rows||[]).map(r=>grow(r,d12)).join(""):`<tr><td colspan="6" class="muted">counting…</td></tr>`)};
+  glance("z4-glance",z.at_a_glance,true); glance("z4-loose-glance",z.loose_at_a_glance,false);
   const pc=z.pdf_classes||{}, cl=pc.classes||{};
   document.getElementById("z4-pdfc").innerHTML=`<tr><th>PDF kind</th><th class="n">Raw files</th><th class="n">Unique files</th></tr>`+
     [["cad","CAD drawings"],["document","Non-CAD documents"],["unknown","Unknown (metadata unreadable)"],["pending","Not yet classified"]].map(([k,l])=>`<tr><td>${l}</td><td class="n">${n((cl[k]||{}).raw||0)}</td><td class="n">${n((cl[k]||{}).unique||0)}</td></tr>`).join("")+
@@ -164,6 +172,14 @@ async function load(){
   tableL("z4-l-3d",G3D,"All 3D");tableL("z4-l-2d",G2D,"All 2D");
   document.getElementById("z4-l-all").innerHTML=HEAD+lz.map(row).join("");
   const y=doc.z2;
+
+  glance("z2-glance-src",y.at_a_glance_drawing_set,false); glance("z2-glance-x",y.at_a_glance_extracted,false);
+  const o3=y.outputs_3d||{}, o2=y.outputs_2d||{};
+  const orow=(l,v)=>`<tr><td>${l}</td><td class="n">${v==null?"–":n(v)}</td></tr>`;
+  document.getElementById("z2-out3d").innerHTML=`<tr><th>Output</th><th class="n">Files</th></tr>`+
+    [["Pipelines in the model",o3.pipelines_total],["Parsed JSON (per pipeline)",o3.json_written],["PCF piping files",o3.pcf_written],["Structure JSON files (per area)",o3.structure_area_files],["Equipment JSON files (per area)",o3.equipment_area_files],["IFC models",o3.ifc_files],["STEP models",o3.step_files],["STEP read-back validated",o3.step_validated],["glTF (.glb)",o3.gltf_files],["OBJ",o3.obj_files],["Rendered PNGs",o3.png]].map(([l,v])=>orow(l,v)).join("");
+  document.getElementById("z2-out2d").innerHTML=`<tr><th>Output</th><th class="n">Files</th></tr>`+
+    Object.entries({"DXF from DWG":o2.dxf_from_dwg,"PNG pages rendered from PDFs":o2.png_pages,...Object.fromEntries(Object.entries(o2).filter(([k])=>!["dxf_from_dwg","png_pages"].includes(k)).map(([k,v])=>[k.replace(/_/g," "),v]))}).map(([l,v])=>orow(l,v)).join("");
   const t2=(arr)=>HEAD+(arr||[]).slice(0,40).map(row).join("")+((arr||[]).length?sumrow(arr,"All types"):"");
   document.getElementById("z2-src-types").innerHTML=t2(y.file_types_source);
   document.getElementById("z2-sc-types").innerHTML=t2(y.file_types_sharedcontent);
