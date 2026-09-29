@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>New source disks — live extraction status</title>
+<style>
+.viz-root{color-scheme:light;
+  --page:#f9f9f7;--surface-1:#fcfcfb;--text-primary:#0b0b0b;--text-secondary:#52514e;--muted:#898781;
+  --grid:#e1e0d9;--axis:#c3c2b7;--border:rgba(11,11,11,.10);--series-1:#2a78d6;--track:#e1e0d9;
+  --good:#0ca30c;--warning:#fab219;--serious:#ec835a;--critical:#d03b3b;--good-text:#006300}
+@media (prefers-color-scheme:dark){:root:where(:not([data-theme="light"])) .viz-root{color-scheme:dark;
+  --page:#0d0d0d;--surface-1:#1a1a19;--text-primary:#fff;--text-secondary:#c3c2b7;--muted:#898781;
+  --grid:#2c2c2a;--axis:#383835;--border:rgba(255,255,255,.10);--series-1:#3987e5;--track:#2c2c2a;--good-text:#0ca30c}}
+:root[data-theme="dark"] .viz-root{color-scheme:dark;--page:#0d0d0d;--surface-1:#1a1a19;--text-primary:#fff;
+  --text-secondary:#c3c2b7;--grid:#2c2c2a;--axis:#383835;--border:rgba(255,255,255,.10);--series-1:#3987e5;--track:#2c2c2a;--good-text:#0ca30c}
+*{box-sizing:border-box}
+body{margin:0}
+.viz-root{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--page);color:var(--text-primary);min-height:100vh;padding:28px 20px 60px}
+.wrap{max-width:1180px;margin:0 auto}
+header{display:flex;align-items:baseline;gap:16px;flex-wrap:wrap;margin-bottom:6px}
+h1{font-size:22px;margin:0;font-weight:650}
+.sub{color:var(--text-secondary);font-size:14px;margin:0 0 22px}
+.live{font-size:13px;color:var(--text-secondary);display:flex;align-items:center;gap:6px}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--good)}
+.dot.stale{background:var(--warning)}
+a{color:var(--series-1)}
+section{background:var(--surface-1);border:1px solid var(--border);border-radius:10px;padding:18px 20px;margin:0 0 18px}
+h2{font-size:17px;margin:0 0 4px;font-weight:650}
+.note{color:var(--text-secondary);font-size:13px;margin:0 0 14px}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin:0 0 16px}
+.tile{border:1px solid var(--border);border-radius:8px;padding:10px 12px}
+.tile .k{font-size:12px;color:var(--text-secondary)}
+.tile .v{font-size:24px;font-weight:650;margin-top:2px}
+.tile .d{font-size:12px;color:var(--muted);margin-top:2px}
+.meter{margin:8px 0 12px}
+.meter .row{display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px;color:var(--text-secondary)}
+.meter .row b{color:var(--text-primary);font-weight:600}
+.track{height:10px;background:var(--track);border-radius:5px;overflow:hidden}
+.fill{height:100%;background:var(--series-1);border-radius:5px 4px 4px 5px;min-width:2px;transition:width .6s}
+.status{display:flex;gap:14px;flex-wrap:wrap;font-size:13px;margin:6px 0 12px}
+.status span{display:inline-flex;align-items:center;gap:6px}
+.sw{width:10px;height:10px;border-radius:2px;display:inline-block}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--grid)}
+th{color:var(--text-secondary);font-weight:600}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media (max-width:820px){.cols{grid-template-columns:1fr}}
+.ok{color:var(--good-text)} .muted{color:var(--muted)}
+.stage{display:flex;gap:8px;align-items:center;padding:4px 0;font-size:14px}
+.ic{width:18px;text-align:center;font-weight:700}
+footer{color:var(--muted);font-size:12px;margin-top:20px}
+</style>
+</head>
+<body>
+<div class="viz-root"><div class="wrap">
+<header><h1>New source disks — live extraction status</h1><span class="live"><span class="dot" id="dot"></span><span id="age">loading…</span></span></header>
+<p class="sub">Anonymous numbers only. Updated by the extraction publisher about every 2 minutes; this page refreshes every 30 s.
+Disk-1 / Disk-2 (finished 26 Sep 2026) are on the <a href="./">main status page</a>.</p>
+
+<section id="z4"><h2 id="z4-title">Disk Z4</h2><p class="note" id="z4-note"></p>
+  <div class="tiles" id="z4-tiles"></div>
+  <div id="z4-overall"></div>
+  <div class="status" id="z4-status"></div>
+  <div class="cols">
+    <div><h3 style="font-size:14px;margin:6px 0">Progress by archive size</h3><div id="z4-bands"></div>
+      <h3 style="font-size:14px;margin:14px 0 6px">Raw archive copy into the bucket</h3><div id="z4-copy"></div></div>
+    <div><h3 style="font-size:14px;margin:6px 0">Archives being extracted now</h3><table id="z4-running"></table></div>
+  </div>
+  <h3 style="font-size:14px;margin:18px 0 6px">File types coming out of the archives</h3><p class="note" id="z4-types-note"></p>
+  <div class="cols"><div><table id="z4-cats"></table></div><div><table id="z4-exts"></table></div></div>
+</section>
+
+<section id="z2"><h2 id="z2-title">Disk Z2</h2><p class="note">Smart 3D plant model (SQL Server backups) restored into SQL Server, plus the piping drawing set.</p>
+  <div class="cols">
+    <div><h3 style="font-size:14px;margin:6px 0">Database restore</h3><table id="z2-db"></table></div>
+    <div><h3 style="font-size:14px;margin:6px 0">Files and drawings</h3><div class="tiles" id="z2-tiles"></div></div>
+  </div>
+  <div class="cols"><div><h3 style="font-size:14px;margin:12px 0 6px">File types — drawing set</h3><table id="z2-src-types"></table></div>
+    <div><h3 style="font-size:14px;margin:12px 0 6px">File types — S3D reference content (unpacked)</h3><table id="z2-sc-types"></table></div></div>
+</section>
+
+<section><h2>Machines</h2><p class="note">Instances currently running for this work (Mumbai region; team cap 700 vCPU).</p><table id="fleet"></table></section>
+<footer id="foot"></footer>
+</div></div>
+<script>
+const SRC=["https://raw.githubusercontent.com/dhigdec/cad-extract-status/main/sources.json","sources.json"];
+const nf=new Intl.NumberFormat("en-US");
+const n=x=>x==null?"–":nf.format(Math.round(x));
+const gb=x=>x==null?"–":(x>=1e12?(x/1e12).toFixed(2)+" TB":(x/1e9).toFixed(1)+" GB");
+const pct=(a,b)=>b?Math.min(100,100*a/b):0;
+const dur=s=>{if(s==null||!isFinite(s))return"–";s=Math.max(0,s);const h=Math.floor(s/3600),m=Math.round((s%3600)/60);return h?`${h} h ${m} min`:`${m} min`};
+function tile(k,v,d){return `<div class="tile"><div class="k">${k}</div><div class="v">${v}</div>${d?`<div class="d">${d}</div>`:""}</div>`}
+function meter(label,a,b,fmt,extra){const p=pct(a,b);return `<div class="meter" title="${label}: ${fmt(a)} of ${fmt(b)} (${p.toFixed(1)}%)"><div class="row"><span>${label}</span><span><b>${fmt(a)}</b> / ${fmt(b)} · ${p.toFixed(1)}%${extra||""}</span></div><div class="track"><div class="fill" style="width:${p}%"></div></div></div>`}
+async function load(){
+  let doc=null;
+  for(const u of SRC){try{const r=await fetch(u+"?t="+Date.now(),{cache:"no-store"});if(r.ok){doc=await r.json();break}}catch(e){}}
+  if(!doc){document.getElementById("age").textContent="could not load sources.json";return}
+  const ageS=(Date.now()-Date.parse(doc.generated_at))/1000;
+  document.getElementById("age").textContent=`updated ${dur(ageS)} ago (${doc.generated_at.replace("T"," ").replace("Z"," UTC")})`;
+  document.getElementById("dot").className="dot"+(ageS>900?" stale":"");
+  const z=doc.z4;
+  document.getElementById("z4-title").textContent=z.label;
+  document.getElementById("z4-note").innerHTML=`${n(z.source_archives)} archives on the drive (${gb(z.source_bytes)}). <b>${n(z.duplicate_archives_of_disk1)}</b> are the same files as Disk-1 (same path and size, ${gb(z.duplicate_archive_bytes)}) and are not re-extracted; the <b>${n(z.new_archives)}</b> new archives (${gb(z.new_archive_bytes)}) are fully unpacked, nested archives included. Each distinct file content is stored once; repeats are recorded as pointers.`;
+  const dedupPct=z.files?100*z.dedup_files/z.files:0;
+  document.getElementById("z4-tiles").innerHTML=
+    tile("New archives done",`${n(z.archives_done)} / ${n(z.new_archives)}`,`${gb(z.source_bytes_done)} of ${gb(z.new_archive_bytes)} compressed`)+
+    tile("Files extracted",n(z.files),`${gb(z.bytes)} uncompressed`)+
+    tile("Unique files stored",n(z.stored_files),`${gb(z.stored_bytes)} · ${dedupPct.toFixed(1)}% were duplicates`)+
+    tile("Nested archives unpacked",n(z.nested_count),`${n(z.encrypted_nested)} password-locked (recorded)`)+
+    tile("Estimated time left",dur(z.eta_s),z.rate_source_bytes_per_s_20min?`${(z.rate_source_bytes_per_s_20min/1e6).toFixed(0)} MB/s compressed, last 20 min`:"measuring…");
+  document.getElementById("z4-overall").innerHTML=meter("Compressed data extracted",z.source_bytes_done,z.new_archive_bytes,gb);
+  const st=z.archives_status||{};
+  document.getElementById("z4-status").innerHTML=
+    `<span><span class="sw" style="background:var(--good)"></span>✓ ok ${n(st.ok||0)}</span>`+
+    `<span><span class="sw" style="background:var(--warning)"></span>! partial ${n(st.partial||0)}</span>`+
+    `<span><span class="sw" style="background:var(--critical)"></span>✕ failed ${n(st.failed||0)}</span>`+
+    `<span class="muted">ransomware-encrypted files flagged: ${n(z.ransomware_files)} · upload errors: ${n(z.upload_error_count)}</span>`;
+  const order=["<1 GB","1-20 GB",">=20 GB"];
+  document.getElementById("z4-bands").innerHTML=order.filter(b=>z.size_bands[b]).map(b=>{const x=z.size_bands[b];return meter(`${b} (${n(x.archives)} archives)`,x.done,x.archives,n)}).join("");
+  const c=z.raw_copy||{};
+  document.getElementById("z4-copy").innerHTML=c.total_objects?meter("New archives + loose files copied",(c.done_objects||0)+(c.skipped_objects||0),c.total_objects,n,c.final?" · done":""):'<span class="muted">not started</span>';
+  const run=(z.running||[]).slice().sort((a,b)=>(b.size||0)-(a.size||0));
+  document.getElementById("z4-running").innerHTML=`<tr><th>Phase</th><th class="n">Archive size</th><th class="n">Files uploaded</th></tr>`+
+    (run.length?run.map(r=>`<tr><td>${r.phase}</td><td class="n">${gb(r.size)}</td><td class="n">${r.files_total?`${n(r.files_uploaded)} / ${n(r.files_total)}`:"–"}</td></tr>`).join(""):`<tr><td colspan="3" class="muted">none running</td></tr>`)+
+    `<tr><td colspan="3" class="muted">${n(z.boxes_alive)} extraction machines reporting</td></tr>`;
+  const ft=z.file_types||{};
+  document.getElementById("z4-types-note").textContent=ft.archives_counted?`From ${n(ft.archives_counted)} finished archives: ${n(ft.distinct_extensions)} distinct extensions; deepest nesting unpacked: ${n(ft.max_nested_depth)} levels. "Unique" = distinct content actually stored.`:"counting…";
+  const trows=(arr,lim)=>(arr||[]).slice(0,lim).map(t=>`<tr><td>${t.type}</td><td class="n">${n(t.files)}</td><td class="n">${gb(t.bytes)}</td><td class="n">${n(t.stored_files)}</td></tr>`).join("");
+  document.getElementById("z4-cats").innerHTML=`<tr><th>Category</th><th class="n">Files</th><th class="n">Size</th><th class="n">Unique</th></tr>`+trows(ft.by_category,20);
+  document.getElementById("z4-exts").innerHTML=`<tr><th>Extension</th><th class="n">Files</th><th class="n">Size</th><th class="n">Unique</th></tr>`+trows(ft.by_extension,25);
+  const y=doc.z2;
+  const t2=(arr)=>`<tr><th>Extension</th><th>Category</th><th class="n">Files</th><th class="n">Size</th></tr>`+(arr||[]).slice(0,15).map(t=>`<tr><td>${t.type}</td><td>${t.category}</td><td class="n">${n(t.files)}</td><td class="n">${gb(t.bytes)}</td></tr>`).join("");
+  document.getElementById("z2-src-types").innerHTML=t2(y.file_types_source);
+  document.getElementById("z2-sc-types").innerHTML=t2(y.file_types_sharedcontent);
+  document.getElementById("z2-title").textContent=y.label;
+  document.getElementById("z2-db").innerHTML=`<tr><th>Database</th><th>State</th><th class="n">Tables</th><th class="n">Views</th></tr>`+
+    y.databases.map(d=>`<tr><td>${d.name}</td><td>${d.restored?'<span class="ok">✓ restored</span>':'<span class="muted">… '+(d.name.startsWith("model")?y.stage:"pending")+'</span>'}</td><td class="n">${d.restored?n(d.tables):"–"}</td><td class="n">${d.restored?n(d.views):"–"}</td></tr>`).join("");
+  const f=y.files||{};
+  document.getElementById("z2-tiles").innerHTML=
+    tile("Source files",n(f.source_files),`${n(f.distinct_files)} distinct · ${n(f.duplicate_groups)} duplicate groups`)+
+    tile("Reference content unpacked",n(f.sharedcontent_files),"files (S3D symbols, templates, styles)")+
+    tile("DWG → DXF",f.dxf_ok==null?"–":n(f.dxf_ok),f.dxf_failed==null?"pending":`${n(f.dxf_failed)} failed`)+
+    tile("PDF pages rendered",n(f.pdf_pages_png),f.pdfs==null?"pending":`from ${n(f.pdfs)} PDFs`);
+  const fl=doc.fleet||{};
+  document.getElementById("fleet").innerHTML=`<tr><th>Group</th><th class="n">Instances</th><th class="n">vCPU</th><th>Types</th></tr>`+
+    Object.entries(fl).map(([g,x])=>`<tr><td>${g}</td><td class="n">${n(x.instances)}</td><td class="n">${n(x.vcpu)}</td><td>${Object.entries(x.types).map(([t,c])=>`${c} × ${t}`).join(", ")}</td></tr>`).join("")+
+    `<tr><td><b>Total</b></td><td class="n"><b>${n(Object.values(fl).reduce((a,x)=>a+x.instances,0))}</b></td><td class="n"><b>${n(Object.values(fl).reduce((a,x)=>a+x.vcpu,0))}</b></td><td></td></tr>`;
+  document.getElementById("foot").textContent=`sources.json generated ${doc.generated_at} · publisher interval ${doc.interval_s} s`;
+}
+load();setInterval(load,30000);
+</script>
+</body>
+</html>
