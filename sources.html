@@ -66,13 +66,16 @@ Disk-1 / Disk-2 (finished 26 Sep 2026) are on the <a href="./">main status page<
   <div class="status" id="z4-status"></div>
   <div class="cols">
     <div><h3 style="font-size:14px;margin:6px 0">Progress by archive size</h3><div id="z4-bands"></div>
-      <h3 style="font-size:14px;margin:14px 0 6px">Raw archive copy into the bucket</h3><div id="z4-copy"></div></div>
+      <h3 style="font-size:14px;margin:14px 0 6px">Raw copy of every archive and loose file into the bucket</h3><div id="z4-copy"></div></div>
     <div><h3 style="font-size:14px;margin:6px 0">Archives being extracted now</h3><table id="z4-running"></table></div>
   </div>
   <h3 style="font-size:14px;margin:18px 0 6px">File types coming out of the archives</h3><p class="note" id="z4-types-note"></p>
   <div class="cols"><div><h3 class="gh">3D model files</h3><table id="z4-g-3d"></table></div><div><h3 class="gh">2D drawing files</h3><table id="z4-g-2d"></table></div></div>
   <div class="cols"><div><h3 class="gh">Fabrication / CNC</h3><table id="z4-g-fab"></table></div><div><h3 class="gh">All other types (by category)</h3><table id="z4-cats"></table></div></div>
-  <details style="margin-top:10px"><summary style="cursor:pointer;font-size:14px">Every extension found (full list)</summary><table id="z4-exts" style="margin-top:8px"></table></details>
+  <details style="margin-top:10px"><summary style="cursor:pointer;font-size:14px">Every extension found inside archives (full list)</summary><table id="z4-exts" style="margin-top:8px"></table></details>
+  <h3 style="font-size:14px;margin:18px 0 6px">Loose files on the drive (outside archives)</h3><p class="note" id="z4-loose-note"></p>
+  <div class="cols"><div><h3 class="gh">3D model files</h3><table id="z4-l-3d"></table></div><div><h3 class="gh">2D drawing files</h3><table id="z4-l-2d"></table></div></div>
+  <details style="margin-top:10px"><summary style="cursor:pointer;font-size:14px">Every loose-file extension (full list)</summary><table id="z4-l-all" style="margin-top:8px"></table></details>
 </section>
 
 <section id="z2"><h2 id="z2-title">Disk Z2</h2><p class="note">Smart 3D plant model (SQL Server backups) restored into SQL Server, plus the piping drawing set.</p>
@@ -105,15 +108,16 @@ async function load(){
   document.getElementById("dot").className="dot"+(ageS>900?" stale":"");
   const z=doc.z4;
   document.getElementById("z4-title").textContent=z.label;
-  document.getElementById("z4-note").innerHTML=`${n(z.source_archives)} archives on the drive (${gb(z.source_bytes)}). <b>${n(z.duplicate_archives_of_disk1)}</b> are the same files as Disk-1 (same path and size, ${gb(z.duplicate_archive_bytes)}) and are not re-extracted; the <b>${n(z.new_archives)}</b> new archives (${gb(z.new_archive_bytes)}) are fully unpacked, nested archives included. Each distinct file content is stored once; repeats are recorded as pointers.`;
+  document.getElementById("z4-note").innerHTML=`${n(z.source_archives)} archives (${gb(z.source_bytes)}) and ${n(z.loose_files)} loose files on the drive. <b>Every archive is fully unpacked</b>, nested archives to the deepest level: phase A = ${n((z.phases.A||{}).archives)} archives found only on this drive; phase B = ${n((z.phases.B||{}).archives)} archives that also exist on Disk-1 (Disk-1 kept only CAD types, so all their files are extracted here). Archives with IFC/STEP go first. Each distinct file content is stored once; repeats are recorded as pointers. Nothing is skipped: password-locked and ransomware-damaged files are recorded, not dropped.`;
   const dedupPct=z.files?100*z.dedup_files/z.files:0;
   document.getElementById("z4-tiles").innerHTML=
-    tile("New archives done",`${n(z.archives_done)} / ${n(z.new_archives)}`,`${gb(z.source_bytes_done)} of ${gb(z.new_archive_bytes)} compressed`)+
+    tile("Archives done",`${n(z.archives_done)} / ${n(z.new_archives)}`,`${gb(z.source_bytes_done)} of ${gb(z.new_archive_bytes)} compressed`)+
     tile("Files extracted",n(z.files),`${gb(z.bytes)} uncompressed`)+
     tile("Unique files stored",n(z.stored_files),`${gb(z.stored_bytes)} · ${dedupPct.toFixed(1)}% were duplicates`)+
     tile("Nested archives unpacked",n(z.nested_count),`${n(z.encrypted_nested)} password-locked (recorded)`)+
     tile("Estimated time left",z.eta_s==null?"estimating":dur(z.eta_s),z.eta_s==null?"shown once 20% of the data is done (large archives are still in flight)":`${(z.rate_source_bytes_per_s_20min/1e6).toFixed(0)} MB/s compressed, last 20 min`);
-  document.getElementById("z4-overall").innerHTML=meter("Compressed data extracted",z.source_bytes_done,z.new_archive_bytes,gb);
+  document.getElementById("z4-overall").innerHTML=meter("Compressed data extracted (all archives)",z.source_bytes_done,z.new_archive_bytes,gb)+
+    Object.entries(z.phases||{}).sort().map(([k,x])=>meter(`Phase ${k}: ${k==="A"?"archives only on this drive":"archives also on Disk-1, full unpack"} (${n(x.archives)} archives)`,x.done_bytes,x.bytes,gb,` · ${n(x.done)} / ${n(x.archives)} archives`)).join("");
   const st=z.archives_status||{};
   document.getElementById("z4-status").innerHTML=
     `<span><span class="sw" style="background:var(--good)"></span>✓ ok ${n(st.ok||0)}</span>`+
@@ -123,7 +127,7 @@ async function load(){
   const order=["<1 GB","1-20 GB",">=20 GB"];
   document.getElementById("z4-bands").innerHTML=order.filter(b=>z.size_bands[b]).map(b=>{const x=z.size_bands[b];return meter(`${b} (${n(x.archives)} archives)`,x.done,x.archives,n)}).join("");
   const c=z.raw_copy||{};
-  document.getElementById("z4-copy").innerHTML=c.total_objects?meter("New archives + loose files copied",(c.done_objects||0)+(c.skipped_objects||0),c.total_objects,n,c.final?" · done":""):'<span class="muted">not started</span>';
+  document.getElementById("z4-copy").innerHTML=c.total_objects?meter("Archives + loose files copied",(c.done_objects||0)+(c.skipped_objects||0),c.total_objects,n,c.final?" · done":""):'<span class="muted">not started</span>';
   const run=(z.running||[]).slice().sort((a,b)=>(b.size||0)-(a.size||0));
   document.getElementById("z4-running").innerHTML=`<tr><th>Phase</th><th class="n">Archive size</th><th class="n">Files uploaded</th></tr>`+
     (run.length?run.map(r=>`<tr><td>${r.phase}</td><td class="n">${gb(r.size)}</td><td class="n">${r.files_total?`${n(r.files_uploaded)} / ${n(r.files_total)}`:"–"}</td></tr>`).join(""):`<tr><td colspan="3" class="muted">none running</td></tr>`)+
@@ -144,6 +148,12 @@ async function load(){
   document.getElementById("z4-cats").innerHTML=`<tr><th>Category</th><th class="n">Raw files</th><th class="n">Raw size</th><th class="n">Unique files</th><th class="n">Unique size</th></tr>`+
     (ft.by_category||[]).filter(c=>!["3D model","2D drawing","PDF","CNC / fabrication"].includes(c.type)).map(t=>`<tr><td>${t.type}</td><td class="n">${n(t.files)}</td><td class="n">${gb(t.bytes)}</td><td class="n">${n(t.stored_files)}</td><td class="n">${gb(t.stored_bytes)}</td></tr>`).join("");
   document.getElementById("z4-exts").innerHTML=HEAD+exts.map(row).join("");
+  const lz=z.loose_file_types||[];
+  document.getElementById("z4-loose-note").textContent=`${n(z.loose_files)} files (${gb(z.loose_bytes)}) sit directly on the drive; all are copied to the bucket as-is. "Unique" here = distinct content by checksum.`;
+  const pickL=list=>list.map(e=>lz.find(t=>t.type===e)).filter(Boolean);
+  const tableL=(id,list,label)=>{const a=pickL(list);document.getElementById(id).innerHTML=HEAD+(a.length?a.map(row).join("")+sumrow(a,label):`<tr><td colspan="5" class="muted">none</td></tr>`)};
+  tableL("z4-l-3d",G3D,"All 3D");tableL("z4-l-2d",G2D,"All 2D");
+  document.getElementById("z4-l-all").innerHTML=HEAD+lz.map(row).join("");
   const y=doc.z2;
   const t2=(arr)=>HEAD+(arr||[]).slice(0,40).map(row).join("")+((arr||[]).length?sumrow(arr,"All types"):"");
   document.getElementById("z2-src-types").innerHTML=t2(y.file_types_source);
