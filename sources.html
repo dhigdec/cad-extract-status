@@ -71,6 +71,7 @@ Disk-1 / Disk-2 (finished 26 Sep 2026) are on the <a href="./">main status page<
   </div>
   <h3 style="font-size:14px;margin:18px 0 6px">File types coming out of the archives</h3><p class="note" id="z4-types-note"></p>
   <div class="cols"><div><h3 class="gh">3D model files</h3><table id="z4-g-3d"></table></div><div><h3 class="gh">2D drawing files</h3><table id="z4-g-2d"></table></div></div>
+  <div class="cols"><div><h3 class="gh">PDFs: CAD drawings vs documents</h3><table id="z4-pdfc"></table><p class="note" id="z4-pdfc-note" style="margin-top:6px"></p></div><div></div></div>
   <div class="cols"><div><h3 class="gh">Fabrication / CNC</h3><table id="z4-g-fab"></table></div><div><h3 class="gh">All other types (by category)</h3><table id="z4-cats"></table></div></div>
   <details style="margin-top:10px"><summary style="cursor:pointer;font-size:14px">Every extension found inside archives (full list)</summary><table id="z4-exts" style="margin-top:8px"></table></details>
   <h3 style="font-size:14px;margin:18px 0 6px">Loose files on the drive (outside archives)</h3><p class="note" id="z4-loose-note"></p>
@@ -133,7 +134,12 @@ async function load(){
     (run.length?run.map(r=>`<tr><td>${r.phase}</td><td class="n">${gb(r.size)}</td><td class="n">${r.files_total?`${n(r.files_uploaded)} / ${n(r.files_total)}`:"–"}</td></tr>`).join(""):`<tr><td colspan="3" class="muted">none running</td></tr>`)+
     `<tr><td colspan="3" class="muted">${n(z.boxes_alive)} extraction machines reporting (${n(z.worker_processes_alive)} worker processes)</td></tr>`;
   const ft=z.file_types||{};
-  document.getElementById("z4-types-note").textContent=ft.archives_counted?`From ${n(ft.archives_counted)} finished archives: ${n(ft.distinct_extensions)} distinct extensions; deepest nesting unpacked: ${n(ft.max_nested_depth)} levels. "Unique" = distinct content actually stored.`:"counting…";
+  document.getElementById("z4-types-note").textContent=ft.archives_counted?`From ${n(ft.archives_counted)} finished archives: ${n(ft.distinct_extensions)} distinct extensions; deepest nesting unpacked: ${n(ft.max_nested_depth)} levels. "Raw" = every file path extracted; "Unique" = distinct content (sha256) of that type across the whole disk.`:"counting…";
+  const pc=z.pdf_classes||{}, cl=pc.classes||{};
+  document.getElementById("z4-pdfc").innerHTML=`<tr><th>PDF kind</th><th class="n">Raw files</th><th class="n">Unique files</th></tr>`+
+    [["cad","CAD drawings"],["document","Non-CAD documents"],["unknown","Unknown (metadata unreadable)"],["pending","Not yet classified"]].map(([k,l])=>`<tr><td>${l}</td><td class="n">${n((cl[k]||{}).raw||0)}</td><td class="n">${n((cl[k]||{}).unique||0)}</td></tr>`).join("")+
+    `<tr><td><b>All PDFs</b></td><td class="n"><b>${n(pc.pdf_paths||0)}</b></td><td class="n"><b>${n(pc.pdf_unique||0)}</b></td></tr>`;
+  document.getElementById("z4-pdfc-note").textContent=pc.rule?`Rule: ${pc.rule}. Each unique PDF is read (first/last 64 KB) and classified once.`:"classification starting…";
   const HEAD=`<tr><th>Type</th><th class="n">Raw files</th><th class="n">Raw size</th><th class="n">Unique files</th><th class="n">Unique size</th></tr>`;
   const row=t=>`<tr><td>.${t.type}</td><td class="n">${n(t.files)}</td><td class="n">${gb(t.bytes)}</td><td class="n">${t.stored_files==null?"–":n(t.stored_files)}</td><td class="n">${t.stored_bytes==null?"–":gb(t.stored_bytes)}</td></tr>`;
   const sumrow=(arr,label)=>{const s=arr.reduce((a,t)=>({f:a.f+t.files,b:a.b+t.bytes,sf:a.sf+(t.stored_files||0),sb:a.sb+(t.stored_bytes||0)}),{f:0,b:0,sf:0,sb:0});return `<tr><td><b>${label}</b></td><td class="n"><b>${n(s.f)}</b></td><td class="n"><b>${gb(s.b)}</b></td><td class="n"><b>${n(s.sf)}</b></td><td class="n"><b>${gb(s.sb)}</b></td></tr>`};
