@@ -127,7 +127,7 @@ async function load(){
   const run=(z.running||[]).slice().sort((a,b)=>(b.size||0)-(a.size||0));
   document.getElementById("z4-running").innerHTML=`<tr><th>Phase</th><th class="n">Archive size</th><th class="n">Files uploaded</th></tr>`+
     (run.length?run.map(r=>`<tr><td>${r.phase}</td><td class="n">${gb(r.size)}</td><td class="n">${r.files_total?`${n(r.files_uploaded)} / ${n(r.files_total)}`:"–"}</td></tr>`).join(""):`<tr><td colspan="3" class="muted">none running</td></tr>`)+
-    `<tr><td colspan="3" class="muted">${n(z.boxes_alive)} extraction machines reporting</td></tr>`;
+    `<tr><td colspan="3" class="muted">${n(z.boxes_alive)} extraction machines reporting (${n(z.worker_processes_alive)} worker processes)</td></tr>`;
   const ft=z.file_types||{};
   document.getElementById("z4-types-note").textContent=ft.archives_counted?`From ${n(ft.archives_counted)} finished archives: ${n(ft.distinct_extensions)} distinct extensions; deepest nesting unpacked: ${n(ft.max_nested_depth)} levels. "Unique" = distinct content actually stored.`:"counting…";
   const HEAD=`<tr><th>Type</th><th class="n">Raw files</th><th class="n">Raw size</th><th class="n">Unique files</th><th class="n">Unique size</th></tr>`;
