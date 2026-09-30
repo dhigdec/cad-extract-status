@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-09-30T07:23:37Z",
+ "generated_at": "2026-09-30T07:30:17Z",
  "interval_s": 120,
  "z4": {
   "label": "Disk Z4 (Tekla office backup SSD)",
@@ -50225,7 +50225,7 @@
    "verify_rule": "top-level files extracted per archive vs the drive report (7-Zip header listing of each archive)"
   },
   "pdf_classes": {
-   "updated": "2026-09-30T07:22:51Z",
+   "updated": "2026-09-30T07:28:51Z",
    "pdf_paths": 8681373,
    "pdf_unique": 3900900,
    "classes": {
@@ -50903,7 +50903,7 @@
    "note": "Data-4 contains every Disk-1 archive byte-identical, plus 345 new archives. Disk-1 extraction kept only CAD types, so extracting data-4 fully still yielded content Disk-1 never stored; all content is deduplicated by sha256 against Disk-1/2."
   },
   "conversions": {
-   "updated": "2026-09-30T07:22:23Z",
+   "updated": "2026-09-30T07:30:34Z",
    "source": "Zentitude-data-4",
    "rule": "one job per distinct new content (sha256 not stored by Disk-1/2); disk12 duplicates were converted in the Disk-1/2 run",
    "pipelines": {
@@ -50932,7 +50932,7 @@
       "truncated_tail_repaired": 1
      },
      "ok_with_excluded_elements": 0,
-     "worker_processes_live": 2,
+     "worker_processes_live": 0,
      "pct_done": 100.0,
      "fanout_ready": true,
      "kit": "s3://annotationprod/cad-disk-extract/zentitude-data-4/_control/conv/ifc/",
@@ -50956,7 +50956,7 @@
       "d 03:49Z: runtime v3 (redo list _control/conv/ifc/redo_ids.json re-read every round; published a/b outputs containing '''' are re-converted automatically)",
       "e 04:41Z (lead request after 27 ENOSPC convert_error on ip-10-0-101-74): at most 3 jobs >= 100 MB per host across all worker processes, disk reserved 40x input per job; the 27 were already re-opened by code d (ENOSPC = transient disk_full_on_worker, retried) and re-running since 04:34Z"
      ],
-     "jobs_note": "11,157 distinct new IFC contents (9,489 .ifc, 1,663 .ifczip, 5 .ifcxml; sha256 not stored by Disk-1/2). Genuine failures: no_geometry_grid_or_annotation_only = the model holds only grids/annotations (Tekla grid exports, reference 'out.ifc'); not_step21 = .ifcZIP files that contain an XML 'NewDataSet' (Tekla ExportedToRevit link data), not IFC; ifcxml_unsupported = ifcXML (plain or zipped): both ifcopenshell builds (0.9.0, 0.8.4) ship with the ifcXML reader disabled; empty_output = tiny ifcZIP models with no products; corrupt_coordinates = source geometry ~1.3e11 mm away even after tessellating the corrupt elements; download_error = stored object missing from extracted/ (extraction gap; requeued after the lead's repair). convert_error / kernel_hang written by code a were disk-full (ENOSPC) and are re-run automatically. Repairs applied where needed (input_fixes_ok): header normalization, legacy schema IFC2X2_FINAL->IFC2X3, truncated-tail repair, 0.8.4 kernel for strict-parse failures.",
+     "jobs_note": "11,157 distinct new IFC contents (9,489 .ifc, 1,663 .ifczip, 5 .ifcxml; sha256 not stored by Disk-1/2). Genuine failures: no_geometry_grid_or_annotation_only = the model holds only grids/annotations (Tekla grid exports, reference 'out.ifc'); not_step21 = .ifcZIP files that contain an XML 'NewDataSet' (Tekla ExportedToRevit link data), not IFC; ifcxml_unsupported = ifcXML (plain or zipped): both ifcopenshell builds (0.9.0, 0.8.4) ship with the ifcXML reader disabled; empty_output = tiny ifcZIP models with no products; corrupt_coordinates = source geometry ~1.3e11 mm away even after tessellating the corrupt elements; readback_fail = 1 file (2d0f85a3bc80, Tekla reference .ifczip, 3,017 parts, sane bbox): STEP written in 11 s but the OpenCASCADE read-back did not finish within its 3 h limit, so it was not published (its sibling model read back ok after 2.6 h). The 2 download_error jobs (extraction gap) were requeued after the lead's repair and converted ok. The 49 code-a convert_error/kernel_hang results were disk-full (ENOSPC) and were re-run and converted ok; 56 early outputs with the old name encoding (or not scanned) were re-converted. Repairs applied where needed (input_fixes_ok): header normalization, legacy schema IFC2X2_FINAL->IFC2X3, truncated-tail repair, 0.8.4 kernel for strict-parse failures.",
      "validated_note": "validated = OpenCASCADE read-back (roots == parts, solids, bbox) for STEP < 256 MB; larger outputs are graded by entity markers + bbox and were scanned for the old-writer '''' defect (affected ones re-converted)"
     },
     "db1": {
@@ -50982,7 +50982,7 @@
      "validated": 967,
      "input_fixes_ok": {},
      "ok_with_excluded_elements": 21,
-     "worker_processes_live": 1,
+     "worker_processes_live": 0,
      "pct_done": 100.0,
      "fanout_ready": true,
      "kit": "s3://annotationprod/cad-disk-extract/zentitude-data-4/_control/conv/db1/",
@@ -51079,7 +51079,7 @@
      "truncated_tail_repaired": 1
     },
     "ok_with_excluded_elements": 0,
-    "worker_processes_live": 2,
+    "worker_processes_live": 0,
     "pct_done": 100.0,
     "fanout_ready": true,
     "kit": "s3://annotationprod/cad-disk-extract/zentitude-data-4/_control/conv/ifc/",
@@ -51103,7 +51103,7 @@
      "d 03:49Z: runtime v3 (redo list _control/conv/ifc/redo_ids.json re-read every round; published a/b outputs containing '''' are re-converted automatically)",
      "e 04:41Z (lead request after 27 ENOSPC convert_error on ip-10-0-101-74): at most 3 jobs >= 100 MB per host across all worker processes, disk reserved 40x input per job; the 27 were already re-opened by code d (ENOSPC = transient disk_full_on_worker, retried) and re-running since 04:34Z"
     ],
-    "jobs_note": "11,157 distinct new IFC contents (9,489 .ifc, 1,663 .ifczip, 5 .ifcxml; sha256 not stored by Disk-1/2). Genuine failures: no_geometry_grid_or_annotation_only = the model holds only grids/annotations (Tekla grid exports, reference 'out.ifc'); not_step21 = .ifcZIP files that contain an XML 'NewDataSet' (Tekla ExportedToRevit link data), not IFC; ifcxml_unsupported = ifcXML (plain or zipped): both ifcopenshell builds (0.9.0, 0.8.4) ship with the ifcXML reader disabled; empty_output = tiny ifcZIP models with no products; corrupt_coordinates = source geometry ~1.3e11 mm away even after tessellating the corrupt elements; download_error = stored object missing from extracted/ (extraction gap; requeued after the lead's repair). convert_error / kernel_hang written by code a were disk-full (ENOSPC) and are re-run automatically. Repairs applied where needed (input_fixes_ok): header normalization, legacy schema IFC2X2_FINAL->IFC2X3, truncated-tail repair, 0.8.4 kernel for strict-parse failures.",
+    "jobs_note": "11,157 distinct new IFC contents (9,489 .ifc, 1,663 .ifczip, 5 .ifcxml; sha256 not stored by Disk-1/2). Genuine failures: no_geometry_grid_or_annotation_only = the model holds only grids/annotations (Tekla grid exports, reference 'out.ifc'); not_step21 = .ifcZIP files that contain an XML 'NewDataSet' (Tekla ExportedToRevit link data), not IFC; ifcxml_unsupported = ifcXML (plain or zipped): both ifcopenshell builds (0.9.0, 0.8.4) ship with the ifcXML reader disabled; empty_output = tiny ifcZIP models with no products; corrupt_coordinates = source geometry ~1.3e11 mm away even after tessellating the corrupt elements; readback_fail = 1 file (2d0f85a3bc80, Tekla reference .ifczip, 3,017 parts, sane bbox): STEP written in 11 s but the OpenCASCADE read-back did not finish within its 3 h limit, so it was not published (its sibling model read back ok after 2.6 h). The 2 download_error jobs (extraction gap) were requeued after the lead's repair and converted ok. The 49 code-a convert_error/kernel_hang results were disk-full (ENOSPC) and were re-run and converted ok; 56 early outputs with the old name encoding (or not scanned) were re-converted. Repairs applied where needed (input_fixes_ok): header normalization, legacy schema IFC2X2_FINAL->IFC2X3, truncated-tail repair, 0.8.4 kernel for strict-parse failures.",
     "validated_note": "validated = OpenCASCADE read-back (roots == parts, solids, bbox) for STEP < 256 MB; larger outputs are graded by entity markers + bbox and were scanned for the old-writer '''' defect (affected ones re-converted)"
    },
    "db1": {
@@ -51129,7 +51129,7 @@
     "validated": 967,
     "input_fixes_ok": {},
     "ok_with_excluded_elements": 21,
-    "worker_processes_live": 1,
+    "worker_processes_live": 0,
     "pct_done": 100.0,
     "fanout_ready": true,
     "kit": "s3://annotationprod/cad-disk-extract/zentitude-data-4/_control/conv/db1/",
