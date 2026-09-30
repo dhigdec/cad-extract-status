@@ -129,7 +129,9 @@ async function load(){
     `completeness vs the drive's own listing: ${n(cv.match||0)} match, ${n((cv.fewer_than_report||0)+(cv.more_than_report||0))} differ, ${n(cv.no_report_entry||0)} not in the listing · `+
     `${n(fv.source_objects_copied)} / ${n(fv.source_objects_on_drive)} original files copied · ${n(t.upload_error_count||0)} upload errors<br>`+
     `${n(t.files)} files extracted (${gb(t.bytes)}) · ${n(t.stored_files)} unique objects stored (${gb(t.stored_bytes)}) · ${n(t.dedup_files)} duplicates recorded as pointers, ${n(t.already_in_disk12_files)} of them already in Disk-1/2 · `+
-    `${n(t.nested_count)} nested archives unpacked (deepest ${n(fv.max_nested_depth)} levels) · ${n(t.encrypted_nested)} password-locked nested archives and ${n(t.ransomware_files)} ransomware-encrypted files recorded · ${n(fv.distinct_extensions)} file extensions`;}
+    `${n(t.nested_count)} nested archives unpacked (deepest ${n(fv.max_nested_depth)} levels) · ${n(t.encrypted_nested)} password-locked nested archives and ${n(t.ransomware_files)} ransomware-encrypted files recorded · ${n(fv.distinct_extensions)} file extensions`+
+    (fv.marker_audit?(()=>{const m=fv.marker_audit;const done=m.restored>=m.missing;return `<br><span style="color:${done?'var(--good-text)':'inherit'}">${done?'✓':'⟳'} Post-run audit (${n(m.checked)} dedup pointers checked against S3): ${n(m.missing)} stored contents (${gb(m.missing_bytes)}) were missing — a worker stopped between recording and uploading them. `+
+      `${done?'All restored':'Restoring'} from the source archives: ${n(m.restored)} / ${n(m.missing)} restored, ${n(m.archives_done)} / ${n(m.archives)} archives re-read${m.not_found?` · ${n(m.not_found)} not found yet`:''}.</span>`})():'');}
   const dedupPct=z.files?100*z.dedup_files/z.files:0;
   document.getElementById("z4-tiles").innerHTML=
     tile("Archives done",`${n(z.archives_done)} / ${n(z.new_archives)}`,`${gb(z.source_bytes_done)} of ${gb(z.new_archive_bytes)} compressed`)+
