@@ -93,7 +93,7 @@ Disk-1 / Disk-2 (finished 26 Sep 2026) are on the <a href="./">main status page<
     <div><h3 style="font-size:14px;margin:6px 0">Database restore</h3><table id="z2-db"></table></div>
     <div><h3 style="font-size:14px;margin:6px 0">Files and drawings</h3><div class="tiles" id="z2-tiles"></div></div>
   </div>
-  <h3 style="font-size:14px;margin:16px 0 6px">Generated outputs</h3><div class="cols"><div><h3 class="gh">3D (from the plant model database)</h3><table id="z2-out3d"></table></div><div><h3 class="gh">2D (from the drawing set)</h3><table id="z2-out2d"></table></div></div>
+  <h3 style="font-size:14px;margin:16px 0 6px">Generated outputs</h3><div class="cols"><div><h3 class="gh">3D (from the plant model database)</h3><table id="z2-out3d"></table></div><div><h3 class="gh">2D (drawing set + drawings stored in the model)</h3><table id="z2-out2d"></table></div></div>
   <h3 style="font-size:14px;margin:16px 0 6px">Drawings stored inside the plant model (exported from the database)</h3><p class="note" id="z2-md-note"></p><table id="z2-md"></table>
   <div class="cols"><div><h3 class="gh">All files at a glance — drawing set</h3><table id="z2-glance-src"></table></div><div><h3 class="gh">All files at a glance — reference content (unpacked, incl. nested archives)</h3><table id="z2-glance-x"></table></div></div>
   <div class="cols"><div><h3 style="font-size:14px;margin:12px 0 6px">File types — drawing set</h3><table id="z2-src-types"></table></div>
@@ -213,7 +213,8 @@ async function load(){
   document.getElementById("z2-out3d").innerHTML=`<tr><th>Output</th><th class="n">Files</th></tr>`+
     [["Pipelines in the model",o3.pipelines_total],["Parsed JSON (per pipeline)",o3.json_written],["PCF piping files",o3.pcf_written],["Structure JSON files (per area)",o3.structure_area_files],["Equipment JSON files (per area)",o3.equipment_area_files],["IFC models",o3.ifc_files],["STEP models",o3.step_files],["STEP read-back validated",o3.step_validated],["glTF (.glb)",o3.gltf_files],["OBJ",o3.obj_files],["Rendered PNGs",o3.png]].map(([l,v])=>orow(l,v)).join("");
   document.getElementById("z2-out2d").innerHTML=`<tr><th>Output</th><th class="n">Files</th></tr>`+
-    Object.entries({"DXF from DWG":o2.dxf_from_dwg,"PNG pages rendered from PDFs":o2.png_pages,...Object.fromEntries(Object.entries(o2).filter(([k])=>!["dxf_from_dwg","png_pages"].includes(k)).map(([k,v])=>[k.replace(/_/g," "),v]))}).map(([l,v])=>orow(l,v)).join("");
+    Object.entries({"DXF from DWG":o2.dxf_from_dwg,"PNG pages rendered from PDFs":o2.png_pages,"Vector DXF from PDFs (pages)":o2.dxf_from_pdf_pages,"Drawing title blocks (.sha → JSON)":o2.sha_title_block_json,
+      "Model isometrics: .sha → DXF":o2.model_isometrics_dxf_from_sha,"Model isometrics: .sha → PNG":o2.model_isometrics_png_from_sha,"Model isometrics drawn from original PCF → DXF":o2.model_isometrics_dxf_from_original_pcf,"Model isometrics drawn from original PCF → PNG":o2.model_isometrics_png_from_original_pcf,"Model drawing title blocks → JSON":o2.model_drawing_title_block_json,...Object.fromEntries(Object.entries(o2).filter(([k])=>!["dxf_from_dwg","png_pages","dxf_from_pdf_pages","sha_title_block_json","model_isometrics_dxf_from_sha","model_isometrics_png_from_sha","model_isometrics_dxf_from_original_pcf","model_isometrics_png_from_original_pcf","model_drawing_title_block_json"].includes(k)).map(([k,v])=>[k.replace(/_/g," "),v]))}).map(([l,v])=>orow(l,v)).join("");
   const t2=(arr)=>HEAD+(arr||[]).slice(0,40).map(row).join("")+((arr||[]).length?sumrow(arr,"All types"):"");
   document.getElementById("z2-src-types").innerHTML=t2(y.file_types_source);
   document.getElementById("z2-sc-types").innerHTML=t2(y.file_types_sharedcontent);
