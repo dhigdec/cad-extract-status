@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-09-30T07:00:22Z",
+ "generated_at": "2026-09-30T07:02:22Z",
  "interval_s": 120,
  "z4": {
   "label": "Disk Z4 (Tekla office backup SSD)",
@@ -50225,7 +50225,7 @@
    "verify_rule": "top-level files extracted per archive vs the drive report (7-Zip header listing of each archive)"
   },
   "pdf_classes": {
-   "updated": "2026-09-30T06:58:50Z",
+   "updated": "2026-09-30T07:00:51Z",
    "pdf_paths": 8681373,
    "pdf_unique": 3900900,
    "classes": {
@@ -50903,7 +50903,7 @@
    "note": "Data-4 contains every Disk-1 archive byte-identical, plus 345 new archives. Disk-1 extraction kept only CAD types, so extracting data-4 fully still yielded content Disk-1 never stored; all content is deduplicated by sha256 against Disk-1/2."
   },
   "conversions": {
-   "updated": "2026-09-30T06:59:52Z",
+   "updated": "2026-09-30T07:01:55Z",
    "source": "Zentitude-data-4",
    "rule": "one job per distinct new content (sha256 not stored by Disk-1/2); disk12 duplicates were converted in the Disk-1/2 run",
    "pipelines": {
@@ -51217,14 +51217,15 @@
     "note": "sds2: only one box; if it has finished and shut down, requeued jobs need one box with the sds2 user-data"
    },
    "reply_to_lead": {
-    "at": "2026-09-30T06:01:43Z",
+    "at": "2026-09-30T07:01:36Z",
     "enospc_49": "All 49 IFC convert_error results are ENOSPC from code a (27 on 101-74, 22 on 101-163). They are not in retry/: code d/e re-open any failed result whose JSON contains 'No space left'/'Errno 28' (redo rule), so they count as OPEN. At 04:55Z 47/49 were claimed by d/e workers; the other 2 wait behind the new cap of 3 jobs >= 100 MB per host. IFC boxes cannot write DONE (and power off) until every re-opened job has a new result.",
     "after_ifc": "When IFC has a final result for every job, the IFC boxes terminate (run.sh exits on DONE.ifc, user-data shuts down); they do NOT take DB1 jobs. Launch DB1 boxes as planned.",
     "db1_scaling": "DB1 kit has no limit on concurrent workers/boxes: claims are S3 conditional puts, each box runs 3/4 of its cores as slots (48 on r7i.16xlarge), memory-gated at 30x the DB1 size (largest open job ~0.4 GB -> 13 GB). ~4 more Mumbai + 3 Hyderabad r7i.16xlarge with _control/conv/db1/userdata.sh suits it; any x86 type with >= 128 GB RAM and >= 200 GB root works. Jobs run largest first, so the remaining ones are smaller.",
     "download_error": "When the repair is done: AWS_PROFILE=bim python3 requeue.py ifc --reason download_error (and db1, sds2); script at _control/conv/requeue.py. For sds2 a box is needed if its only box has already finished.",
     "db1_no_member_layout": "Genuine decoder limit, not a search bug: the 4 'tried' entries are the 4 approved variants, which all share stride 73 (hence identical). On 1ee70796 the stride-73 member table has only 489 records (vs 18,136 in a decodable 8.95 model), the point table sits at offset 12 not 17, and no other table has a member signature, so there is nothing verifiable to decode. Needs a new layout reverse-engineered against IFC ground truth (hours); not patched. Explained in pipelines.db1.jobs_note.",
     "download_error_after_boxes_gone": "IFC and DB1 boxes self-terminate when their pipeline is final (as instructed), probably before the repair ends. After the repair: run requeue.py for ifc, db1, sds2 (--reason download_error), then launch ONE small box per pipeline with its user-data (_control/conv/ifc/userdata.sh, _control/conv/db1/userdata.sh; e.g. r7i.4xlarge, 200 GB root); each finishes the requeued jobs and powers off. SDS2 is held alive by your hold flag, so its 2 jobs run on the existing box once requeued (then remove the hold).",
-    "requeue_done": "06:00Z: download_error requeued in ifc (2), db1 (1), sds2 (2) via redo_ids.json entries {reasons:[download_error], before:06:00Z}; all their inputs verified present after the repair. Current v4 workers re-open them within one round."
+    "requeue_done": "06:00Z: download_error requeued in ifc (2), db1 (1), sds2 (2) via redo_ids.json entries {reasons:[download_error], before:06:00Z}; all their inputs verified present after the repair. Current v4 workers re-open them within one round.",
+    "last_open_jobs": "07:00Z open: IFC 2d0f85a3bc80 + bae27d16ad1d (3-5 MB .ifczip Tekla reference models, 'H.I. Ambacht/datastorage/ref/', running since 04:22/04:28 on code-d processes, hosts ip-10-0-101-44 and ip-172-31-40-41; worst-case ladder is several hours: 6 h per attempt, then bisection); DB1 67d9b79585de (requeued, 62 MB, running since 06:02 on ip-172-31-37-155); SDS2 7205cd90299c (requeued, 1.7 GB job) + 1 large job from 03:xx (4 h v4 timeout). Progress per IFC job: /opt/conv/work/ifc/<first 40 hex of id>/log.txt on the host (SSM). Do NOT kill a converter process: rc -9 counts as a memory kill and defers the job to a host with more memory than any we run. I write _state/conv_final.json when these have results."
    }
   },
   "state": "complete",
