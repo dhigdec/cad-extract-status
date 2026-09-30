@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-09-30T02:50:43Z",
+ "generated_at": "2026-09-30T02:57:55Z",
  "interval_s": 120,
  "z4": {
   "label": "Disk Z4 (Tekla office backup SSD)",
@@ -50225,25 +50225,33 @@
    "verify_rule": "top-level files extracted per archive vs the drive report (7-Zip header listing of each archive)"
   },
   "pdf_classes": {
-   "updated": "2026-09-29T23:25:33Z",
-   "pdf_paths": 543574,
-   "pdf_unique": 247633,
+   "updated": "2026-09-30T02:57:24Z",
+   "pdf_paths": 8681373,
+   "pdf_unique": 3900900,
    "classes": {
     "cad": {
-     "raw": 484895,
-     "unique": 219530
+     "raw": 6194205,
+     "unique": 2715190,
+     "new_raw": 1815149,
+     "new_unique": 800084
     },
     "document": {
-     "raw": 38952,
-     "unique": 17389
+     "raw": 1474908,
+     "unique": 696734,
+     "new_raw": 119342,
+     "new_unique": 57510
     },
     "unknown": {
-     "raw": 19727,
-     "unique": 10714
+     "raw": 1012260,
+     "unique": 488976,
+     "new_raw": 132493,
+     "new_unique": 39525
     },
     "pending": {
      "raw": 0,
-     "unique": 0
+     "unique": 0,
+     "new_raw": 0,
+     "new_unique": 0
     }
    },
    "rule": "cad = CAD/plot producer or page >= A3; document = office/scanner producer or smaller page; unknown = no readable metadata"
@@ -50267,27 +50275,27 @@
    },
    {
     "kind": "CAD PDFs (drawings)",
-    "files": 484895,
-    "bytes": 230588434374,
-    "unique_files": 219530,
-    "unique_bytes": 122658481139,
-    "in_disk12_files": 369373
+    "files": 6194205,
+    "bytes": 2945610973813,
+    "unique_files": 2715190,
+    "unique_bytes": 1517064097872,
+    "in_disk12_files": 4718495
    },
    {
     "kind": "Non-CAD PDFs (documents)",
-    "files": 38952,
-    "bytes": 18523351850,
-    "unique_files": 17389,
-    "unique_bytes": 9715794326,
-    "in_disk12_files": 29672
+    "files": 1474908,
+    "bytes": 701382209688,
+    "unique_files": 696734,
+    "unique_bytes": 389287724677,
+    "in_disk12_files": 1123525
    },
    {
     "kind": "PDFs not yet classified / unreadable",
-    "files": 8159193,
-    "bytes": 3880047308454,
-    "unique_files": 3663982,
-    "unique_bytes": 2047184744880,
-    "in_disk12_files": 6215343
+    "files": 1013927,
+    "bytes": 482165911177,
+    "unique_files": 488977,
+    "unique_bytes": 273207197796,
+    "in_disk12_files": 772368
    },
    {
     "kind": "Fabrication / CNC",
@@ -50809,10 +50817,10 @@
      "disk1_unique": 1595023,
      "disk2_unique": 1165748,
      "combined_unique": 2449872,
-     "d4_raw": 484895,
-     "d4_unique": 219530,
-     "d4_new_raw": 0,
-     "d4_new_unique": 0
+     "d4_raw": 6194205,
+     "d4_unique": 2715190,
+     "d4_new_raw": 1815149,
+     "d4_new_unique": 800084
     },
     {
      "type": "Non-CAD PDFs (documents)",
@@ -50822,10 +50830,10 @@
      "disk1_unique": 1622143,
      "disk2_unique": 559827,
      "combined_unique": 1999638,
-     "d4_raw": 38952,
-     "d4_unique": 17389,
-     "d4_new_raw": 0,
-     "d4_new_unique": 0
+     "d4_raw": 1474908,
+     "d4_unique": 696734,
+     "d4_new_raw": 119342,
+     "d4_new_unique": 57510
     },
     {
      "type": "PDFs not yet classified / unreadable",
@@ -50835,10 +50843,10 @@
      "disk1_unique": 0,
      "disk2_unique": 0,
      "combined_unique": 0,
-     "d4_raw": 8159193,
-     "d4_unique": 3663982,
-     "d4_new_raw": 0,
-     "d4_new_unique": 0
+     "d4_raw": 1013927,
+     "d4_unique": 488977,
+     "d4_new_raw": 132493,
+     "d4_new_unique": 39525
     },
     {
      "type": "All other file types (Disk-1/2 did not extract these)",
@@ -50857,7 +50865,194 @@
    "disk12_note": "Disk-1/Disk-2 were extracted for CAD types only (pdf dxf dwg dg dpm stp step ifc db1 sat nc1 ...); unique = distinct sha256; archives from the early run with only a weak hash are not in the sha256 counts",
    "disk12_updated": "2026-09-30T00:56:38Z"
   },
-  "conversions": {},
+  "conversions": {
+   "updated": "2026-09-30T02:56:20Z",
+   "source": "Zentitude-data-4",
+   "rule": "one job per distinct new content (sha256 not stored by Disk-1/2); disk12 duplicates were converted in the Disk-1/2 run",
+   "pipelines": {
+    "ifc": {
+     "jobs": 11157,
+     "jobs_input_bytes": 149813482452,
+     "done": 27,
+     "ok": 25,
+     "failed": 2,
+     "failed_by_reason": {
+      "ifcxml_unsupported": 1,
+      "parse_error": 1
+     },
+     "in_flight": 225,
+     "pending": 11130,
+     "step_files": 25,
+     "step_bytes": 19204547721,
+     "validated": 3,
+     "input_fixes_ok": {},
+     "ok_with_excluded_elements": 0,
+     "worker_processes_live": 9,
+     "pct_done": 0.24,
+     "fanout_ready": true,
+     "kit": "s3://annotationprod/cad-disk-extract/zentitude-data-4/_control/conv/ifc/",
+     "userdata": "s3://annotationprod/cad-disk-extract/zentitude-data-4/_control/conv/ifc/userdata.sh",
+     "code": "z4-ifc-2026-09-30a",
+     "outputs": "conversions/ifc-step/<sha256>.step (+ .stats.json, .validate.json)",
+     "results": "_state/conv/ifc/results/<sha256>.json",
+     "recommended_instances": {
+      "type": "r7i.16xlarge",
+      "count": 7,
+      "region": "ap-south-1",
+      "root_gb": 400,
+      "ami": "AL2023",
+      "note": "launched by the lead 02:47Z (Name=cad-z4-conv-ifc); slots = nproc/2 (32), memory-gated per job"
+     },
+     "sample_validation": "7 samples on cad-zen2-files (ifc 0.2/2/30/150 MB, ifczip 3/20 MB, ifcxml): STEP written + OCC read-back roots==parts, bbox sane"
+    },
+    "db1": {
+     "jobs": 2258,
+     "jobs_input_bytes": 136438093843,
+     "done": 4,
+     "ok": 4,
+     "failed": 0,
+     "failed_by_reason": {},
+     "in_flight": 1,
+     "pending": 2254,
+     "step_files": 4,
+     "step_bytes": 675905788,
+     "validated": 3,
+     "input_fixes_ok": {},
+     "ok_with_excluded_elements": 0,
+     "worker_processes_live": 1,
+     "pct_done": 0.18,
+     "fanout_ready": true,
+     "kit": "s3://annotationprod/cad-disk-extract/zentitude-data-4/_control/conv/db1/",
+     "userdata": "s3://annotationprod/cad-disk-extract/zentitude-data-4/_control/conv/db1/userdata.sh",
+     "code": "z4-db1-2026-09-30a",
+     "outputs": "conversions/db1-step/<sha256>.stp (+ .validate.json)",
+     "results": "_state/conv/db1/results/<sha256>.json",
+     "recommended_instances": {
+      "type": "r7i.16xlarge",
+      "count": 3,
+      "region": "ap-south-2",
+      "ami": "AL2023 ami-003ed75f7a31e8f3d",
+      "root_gb": 400,
+      "note": "3 x 64 vCPU = 192 of the 320 Hyderabad vCPU (rest for SDS2); slots = 3/4 of cores (48), memory-gated 30x DB1 size; 4-5 boxes finish faster if SDS2 needs less"
+     },
+     "jobs_note": "2,258 distinct new model DB1 (3,095 new DB1 minus 837 xslib.db1 component libraries); 11 have engines without a verified layout (9.21 x3, 9.50 x6, 2 no banner) -> recorded as unapproved_engine; 1 stored object missing from extracted/ (extraction gap) -> download_error",
+     "sample_validation": "5 samples on cad-zen2-files (engines 8.53/8.85/8.95/9.08, 1-72 MB): 4 ok (STEP 26-279 MB, OCC read-back roots==parts==written members, bbox sane, axis agreement 1.0); 71 MB 9.08 still decoding at release"
+    },
+    "sds2": {
+     "jobs": 173,
+     "jobs_input_bytes": 71438462014,
+     "done": 0,
+     "ok": 0,
+     "failed": 0,
+     "failed_by_reason": {},
+     "in_flight": 0,
+     "pending": 173,
+     "step_files": 0,
+     "step_bytes": 0,
+     "validated": 0,
+     "input_fixes_ok": {},
+     "ok_with_excluded_elements": 0,
+     "worker_processes_live": 0,
+     "pct_done": 0.0,
+     "fanout_ready": false,
+     "kit": "s3://annotationprod/cad-disk-extract/zentitude-data-4/_control/conv/sds2/",
+     "status_note": "job list + kit in preparation"
+    }
+   },
+   "ifc": {
+    "jobs": 11157,
+    "jobs_input_bytes": 149813482452,
+    "done": 27,
+    "ok": 25,
+    "failed": 2,
+    "failed_by_reason": {
+     "ifcxml_unsupported": 1,
+     "parse_error": 1
+    },
+    "in_flight": 225,
+    "pending": 11130,
+    "step_files": 25,
+    "step_bytes": 19204547721,
+    "validated": 3,
+    "input_fixes_ok": {},
+    "ok_with_excluded_elements": 0,
+    "worker_processes_live": 9,
+    "pct_done": 0.24,
+    "fanout_ready": true,
+    "kit": "s3://annotationprod/cad-disk-extract/zentitude-data-4/_control/conv/ifc/",
+    "userdata": "s3://annotationprod/cad-disk-extract/zentitude-data-4/_control/conv/ifc/userdata.sh",
+    "code": "z4-ifc-2026-09-30a",
+    "outputs": "conversions/ifc-step/<sha256>.step (+ .stats.json, .validate.json)",
+    "results": "_state/conv/ifc/results/<sha256>.json",
+    "recommended_instances": {
+     "type": "r7i.16xlarge",
+     "count": 7,
+     "region": "ap-south-1",
+     "root_gb": 400,
+     "ami": "AL2023",
+     "note": "launched by the lead 02:47Z (Name=cad-z4-conv-ifc); slots = nproc/2 (32), memory-gated per job"
+    },
+    "sample_validation": "7 samples on cad-zen2-files (ifc 0.2/2/30/150 MB, ifczip 3/20 MB, ifcxml): STEP written + OCC read-back roots==parts, bbox sane"
+   },
+   "db1": {
+    "jobs": 2258,
+    "jobs_input_bytes": 136438093843,
+    "done": 4,
+    "ok": 4,
+    "failed": 0,
+    "failed_by_reason": {},
+    "in_flight": 1,
+    "pending": 2254,
+    "step_files": 4,
+    "step_bytes": 675905788,
+    "validated": 3,
+    "input_fixes_ok": {},
+    "ok_with_excluded_elements": 0,
+    "worker_processes_live": 1,
+    "pct_done": 0.18,
+    "fanout_ready": true,
+    "kit": "s3://annotationprod/cad-disk-extract/zentitude-data-4/_control/conv/db1/",
+    "userdata": "s3://annotationprod/cad-disk-extract/zentitude-data-4/_control/conv/db1/userdata.sh",
+    "code": "z4-db1-2026-09-30a",
+    "outputs": "conversions/db1-step/<sha256>.stp (+ .validate.json)",
+    "results": "_state/conv/db1/results/<sha256>.json",
+    "recommended_instances": {
+     "type": "r7i.16xlarge",
+     "count": 3,
+     "region": "ap-south-2",
+     "ami": "AL2023 ami-003ed75f7a31e8f3d",
+     "root_gb": 400,
+     "note": "3 x 64 vCPU = 192 of the 320 Hyderabad vCPU (rest for SDS2); slots = 3/4 of cores (48), memory-gated 30x DB1 size; 4-5 boxes finish faster if SDS2 needs less"
+    },
+    "jobs_note": "2,258 distinct new model DB1 (3,095 new DB1 minus 837 xslib.db1 component libraries); 11 have engines without a verified layout (9.21 x3, 9.50 x6, 2 no banner) -> recorded as unapproved_engine; 1 stored object missing from extracted/ (extraction gap) -> download_error",
+    "sample_validation": "5 samples on cad-zen2-files (engines 8.53/8.85/8.95/9.08, 1-72 MB): 4 ok (STEP 26-279 MB, OCC read-back roots==parts==written members, bbox sane, axis agreement 1.0); 71 MB 9.08 still decoding at release"
+   },
+   "sds2": {
+    "jobs": 173,
+    "jobs_input_bytes": 71438462014,
+    "done": 0,
+    "ok": 0,
+    "failed": 0,
+    "failed_by_reason": {},
+    "in_flight": 0,
+    "pending": 173,
+    "step_files": 0,
+    "step_bytes": 0,
+    "validated": 0,
+    "input_fixes_ok": {},
+    "ok_with_excluded_elements": 0,
+    "worker_processes_live": 0,
+    "pct_done": 0.0,
+    "fanout_ready": false,
+    "kit": "s3://annotationprod/cad-disk-extract/zentitude-data-4/_control/conv/sds2/",
+    "status_note": "job list + kit in preparation"
+   },
+   "native_step": {
+    "new_unique_files": 2448,
+    "index": "s3://annotationprod/cad-disk-extract/zentitude-data-4/_control/conv/native_step/index.json",
+    "note": "already STEP; indexed only (sha256, stored key, size, every data-4 path)"
+   }
+  },
   "state": "complete",
   "final_verify": {
    "checked_at": "2026-09-30T00:32:27Z",
