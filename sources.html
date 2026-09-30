@@ -61,6 +61,7 @@ footer{color:var(--muted);font-size:12px;margin-top:20px}
 Disk-1 / Disk-2 (finished 26 Sep 2026) are on the <a href="./">main status page</a>.</p>
 
 <section id="z4"><h2 id="z4-title">Disk Z4</h2><p class="note" id="z4-note"></p>
+  <div id="z4-final" style="display:none;border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin:0 0 14px"></div>
   <div class="tiles" id="z4-tiles"></div>
   <div id="z4-overall"></div>
   <div class="status" id="z4-status"></div>
@@ -114,6 +115,14 @@ async function load(){
   const z=doc.z4;
   document.getElementById("z4-title").textContent=z.label;
   document.getElementById("z4-note").innerHTML=`${n(z.source_archives)} archives (${gb(z.source_bytes)}) and ${n(z.loose_files)} loose files on the drive. <b>Every archive is fully unpacked</b>, nested archives to the deepest level: phase A = ${n((z.phases.A||{}).archives)} archives found only on this drive; phase B = ${n((z.phases.B||{}).archives)} archives that also exist on Disk-1 (Disk-1 kept only CAD types, so all their files are extracted here). Archives with IFC/STEP go first. Each distinct file content is stored once; repeats are recorded as pointers. Nothing is skipped: password-locked and ransomware-damaged files are recorded, not dropped.`;
+  const fv=z.final_verify;
+  if(z.state==="complete"&&fv){const el=document.getElementById("z4-final");el.style.display="block";const t=fv.totals||{},st=fv.status||{},cv=fv.completeness_vs_drive_report||{};
+    el.innerHTML=`<b style="color:var(--good-text)">✓ Extraction complete — verified ${fv.checked_at.replace("T"," ").replace("Z"," UTC")}</b><br>`+
+    `${n(fv.results)} / ${n(fv.jobs)} archives have a result (${n(st.ok||0)} ok, ${n(st.partial||0)} partial = damage inside the source archive, recorded) · `+
+    `completeness vs the drive's own listing: ${n(cv.match||0)} match, ${n((cv.fewer_than_report||0)+(cv.more_than_report||0))} differ, ${n(cv.no_report_entry||0)} not in the listing · `+
+    `${n(fv.source_objects_copied)} / ${n(fv.source_objects_on_drive)} original files copied · ${n(t.upload_error_count||0)} upload errors<br>`+
+    `${n(t.files)} files extracted (${gb(t.bytes)}) · ${n(t.stored_files)} unique objects stored (${gb(t.stored_bytes)}) · ${n(t.dedup_files)} duplicates recorded as pointers, ${n(t.already_in_disk12_files)} of them already in Disk-1/2 · `+
+    `${n(t.nested_count)} nested archives unpacked (deepest ${n(fv.max_nested_depth)} levels) · ${n(t.encrypted_nested)} password-locked nested archives and ${n(t.ransomware_files)} ransomware-encrypted files recorded · ${n(fv.distinct_extensions)} file extensions`;}
   const dedupPct=z.files?100*z.dedup_files/z.files:0;
   document.getElementById("z4-tiles").innerHTML=
     tile("Archives done",`${n(z.archives_done)} / ${n(z.new_archives)}`,`${gb(z.source_bytes_done)} of ${gb(z.new_archive_bytes)} compressed`)+
