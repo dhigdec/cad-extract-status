@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-09-30T05:41:14Z",
+ "generated_at": "2026-09-30T05:48:37Z",
  "interval_s": 120,
  "z4": {
   "label": "Disk Z4 (Tekla office backup SSD)",
@@ -6699,22 +6699,9 @@
     "done_bytes": 242702961524
    }
   },
-  "running": [
-   {
-    "phase": "nested",
-    "size": 124161466404,
-    "files_total": null,
-    "files_uploaded": null
-   },
-   {
-    "phase": "nested",
-    "size": 117126860234,
-    "files_total": null,
-    "files_uploaded": null
-   }
-  ],
-  "boxes_alive": 1,
-  "worker_processes_alive": 4,
+  "running": [],
+  "boxes_alive": 0,
+  "worker_processes_alive": 0,
   "boxes_seen": 2,
   "file_types": {
    "updated": "2026-09-30T00:46:02Z",
@@ -50238,7 +50225,7 @@
    "verify_rule": "top-level files extracted per archive vs the drive report (7-Zip header listing of each archive)"
   },
   "pdf_classes": {
-   "updated": "2026-09-30T05:40:48Z",
+   "updated": "2026-09-30T05:47:01Z",
    "pdf_paths": 8681373,
    "pdf_unique": 3900900,
    "classes": {
@@ -50879,7 +50866,7 @@
    "disk12_updated": "2026-09-30T00:56:38Z"
   },
   "conversions": {
-   "updated": "2026-09-30T05:40:03Z",
+   "updated": "2026-09-30T05:48:17Z",
    "source": "Zentitude-data-4",
    "rule": "one job per distinct new content (sha256 not stored by Disk-1/2); disk12 duplicates were converted in the Disk-1/2 run",
    "pipelines": {
@@ -50897,14 +50884,14 @@
       "empty_output": 2,
       "corrupt_coordinates": 1
      },
-     "in_flight": 24,
+     "in_flight": 11,
      "pending": 2,
      "step_files": 11096,
-     "step_bytes": 7700774772081,
+     "step_bytes": 7700774496454,
      "validated": 8344,
      "input_fixes_ok": {
       "schema_IFC2X2_FINAL_declared_IFC2X3": 6,
-      "header_normalized": 28,
+      "header_normalized": 19,
       "truncated_tail_repaired": 1
      },
      "ok_with_excluded_elements": 0,
@@ -50938,11 +50925,11 @@
     "db1": {
      "jobs": 2258,
      "jobs_input_bytes": 136438093843,
-     "done": 2242,
-     "ok": 1983,
-     "failed": 259,
+     "done": 2253,
+     "ok": 1991,
+     "failed": 262,
      "failed_by_reason": {
-      "no_member_layout": 188,
+      "no_member_layout": 191,
       "suspect_attr_link": 43,
       "empty_model": 14,
       "unapproved_engine": 9,
@@ -50952,15 +50939,15 @@
       "convert_error": 1,
       "deferred_layout": 1
      },
-     "in_flight": 16,
-     "pending": 16,
-     "step_files": 1983,
-     "step_bytes": 836684087189,
-     "validated": 957,
+     "in_flight": 6,
+     "pending": 5,
+     "step_files": 1991,
+     "step_bytes": 837820482701,
+     "validated": 965,
      "input_fixes_ok": {},
      "ok_with_excluded_elements": 20,
-     "worker_processes_live": 6,
-     "pct_done": 99.29,
+     "worker_processes_live": 5,
+     "pct_done": 99.78,
      "fanout_ready": true,
      "kit": "s3://annotationprod/cad-disk-extract/zentitude-data-4/_control/conv/db1/",
      "userdata": "s3://annotationprod/cad-disk-extract/zentitude-data-4/_control/conv/db1/userdata.sh",
@@ -51045,14 +51032,14 @@
      "empty_output": 2,
      "corrupt_coordinates": 1
     },
-    "in_flight": 24,
+    "in_flight": 11,
     "pending": 2,
     "step_files": 11096,
-    "step_bytes": 7700774772081,
+    "step_bytes": 7700774496454,
     "validated": 8344,
     "input_fixes_ok": {
      "schema_IFC2X2_FINAL_declared_IFC2X3": 6,
-     "header_normalized": 28,
+     "header_normalized": 19,
      "truncated_tail_repaired": 1
     },
     "ok_with_excluded_elements": 0,
@@ -51086,11 +51073,11 @@
    "db1": {
     "jobs": 2258,
     "jobs_input_bytes": 136438093843,
-    "done": 2242,
-    "ok": 1983,
-    "failed": 259,
+    "done": 2253,
+    "ok": 1991,
+    "failed": 262,
     "failed_by_reason": {
-     "no_member_layout": 188,
+     "no_member_layout": 191,
      "suspect_attr_link": 43,
      "empty_model": 14,
      "unapproved_engine": 9,
@@ -51100,15 +51087,15 @@
      "convert_error": 1,
      "deferred_layout": 1
     },
-    "in_flight": 16,
-    "pending": 16,
-    "step_files": 1983,
-    "step_bytes": 836684087189,
-    "validated": 957,
+    "in_flight": 6,
+    "pending": 5,
+    "step_files": 1991,
+    "step_bytes": 837820482701,
+    "validated": 965,
     "input_fixes_ok": {},
     "ok_with_excluded_elements": 20,
-    "worker_processes_live": 6,
-    "pct_done": 99.29,
+    "worker_processes_live": 5,
+    "pct_done": 99.78,
     "fanout_ready": true,
     "kit": "s3://annotationprod/cad-disk-extract/zentitude-data-4/_control/conv/db1/",
     "userdata": "s3://annotationprod/cad-disk-extract/zentitude-data-4/_control/conv/db1/userdata.sh",
@@ -51195,12 +51182,13 @@
     "note": "sds2: only one box; if it has finished and shut down, requeued jobs need one box with the sds2 user-data"
    },
    "reply_to_lead": {
-    "at": "2026-09-30T04:55:54Z",
+    "at": "2026-09-30T05:45:53Z",
     "enospc_49": "All 49 IFC convert_error results are ENOSPC from code a (27 on 101-74, 22 on 101-163). They are not in retry/: code d/e re-open any failed result whose JSON contains 'No space left'/'Errno 28' (redo rule), so they count as OPEN. At 04:55Z 47/49 were claimed by d/e workers; the other 2 wait behind the new cap of 3 jobs >= 100 MB per host. IFC boxes cannot write DONE (and power off) until every re-opened job has a new result.",
     "after_ifc": "When IFC has a final result for every job, the IFC boxes terminate (run.sh exits on DONE.ifc, user-data shuts down); they do NOT take DB1 jobs. Launch DB1 boxes as planned.",
     "db1_scaling": "DB1 kit has no limit on concurrent workers/boxes: claims are S3 conditional puts, each box runs 3/4 of its cores as slots (48 on r7i.16xlarge), memory-gated at 30x the DB1 size (largest open job ~0.4 GB -> 13 GB). ~4 more Mumbai + 3 Hyderabad r7i.16xlarge with _control/conv/db1/userdata.sh suits it; any x86 type with >= 128 GB RAM and >= 200 GB root works. Jobs run largest first, so the remaining ones are smaller.",
     "download_error": "When the repair is done: AWS_PROFILE=bim python3 requeue.py ifc --reason download_error (and db1, sds2); script at _control/conv/requeue.py. For sds2 a box is needed if its only box has already finished.",
-    "db1_no_member_layout": "Genuine decoder limit, not a search bug: the 4 'tried' entries are the 4 approved variants, which all share stride 73 (hence identical). On 1ee70796 the stride-73 member table has only 489 records (vs 18,136 in a decodable 8.95 model), the point table sits at offset 12 not 17, and no other table has a member signature, so there is nothing verifiable to decode. Needs a new layout reverse-engineered against IFC ground truth (hours); not patched. Explained in pipelines.db1.jobs_note."
+    "db1_no_member_layout": "Genuine decoder limit, not a search bug: the 4 'tried' entries are the 4 approved variants, which all share stride 73 (hence identical). On 1ee70796 the stride-73 member table has only 489 records (vs 18,136 in a decodable 8.95 model), the point table sits at offset 12 not 17, and no other table has a member signature, so there is nothing verifiable to decode. Needs a new layout reverse-engineered against IFC ground truth (hours); not patched. Explained in pipelines.db1.jobs_note.",
+    "download_error_after_boxes_gone": "IFC and DB1 boxes self-terminate when their pipeline is final (as instructed), probably before the repair ends. After the repair: run requeue.py for ifc, db1, sds2 (--reason download_error), then launch ONE small box per pipeline with its user-data (_control/conv/ifc/userdata.sh, _control/conv/db1/userdata.sh; e.g. r7i.4xlarge, 200 GB root); each finishes the requeued jobs and powers off. SDS2 is held alive by your hold flag, so its 2 jobs run on the existing box once requeued (then remove the hold)."
    }
   },
   "state": "complete",
@@ -51241,8 +51229,8 @@
     "missing": 433,
     "missing_bytes": 1733142271,
     "archives": 57,
-    "archives_done": 55,
-    "restored": 429,
+    "archives_done": 57,
+    "restored": 433,
     "not_found": 0
    }
   },
