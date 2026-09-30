@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-09-30T05:27:51Z",
+ "generated_at": "2026-09-30T05:29:51Z",
  "interval_s": 120,
  "z4": {
   "label": "Disk Z4 (Tekla office backup SSD)",
@@ -6719,7 +6719,7 @@
     "files_uploaded": null
    },
    {
-    "phase": "nested",
+    "phase": "repair",
     "size": 82922555743,
     "files_total": null,
     "files_uploaded": null
@@ -6727,12 +6727,6 @@
    {
     "phase": "extract",
     "size": 34793816743,
-    "files_total": null,
-    "files_uploaded": null
-   },
-   {
-    "phase": "nested",
-    "size": 41667936788,
     "files_total": null,
     "files_uploaded": null
    }
@@ -50262,7 +50256,7 @@
    "verify_rule": "top-level files extracted per archive vs the drive report (7-Zip header listing of each archive)"
   },
   "pdf_classes": {
-   "updated": "2026-09-30T05:26:49Z",
+   "updated": "2026-09-30T05:28:49Z",
    "pdf_paths": 8681373,
    "pdf_unique": 3900900,
    "classes": {
@@ -50903,7 +50897,7 @@
    "disk12_updated": "2026-09-30T00:56:38Z"
   },
   "conversions": {
-   "updated": "2026-09-30T05:27:39Z",
+   "updated": "2026-09-30T05:29:43Z",
    "source": "Zentitude-data-4",
    "rule": "one job per distinct new content (sha256 not stored by Disk-1/2); disk12 duplicates were converted in the Disk-1/2 run",
    "pipelines": {
@@ -50923,10 +50917,10 @@
       "kernel_hang": 1,
       "corrupt_coordinates": 1
      },
-     "in_flight": 32,
+     "in_flight": 31,
      "pending": 2,
      "step_files": 11093,
-     "step_bytes": 7633034252746,
+     "step_bytes": 7633034252779,
      "validated": 8344,
      "input_fixes_ok": {
       "schema_IFC2X2_FINAL_declared_IFC2X3": 6,
@@ -50964,26 +50958,26 @@
     "db1": {
      "jobs": 2258,
      "jobs_input_bytes": 136438093843,
-     "done": 1742,
-     "ok": 1521,
-     "failed": 221,
+     "done": 1785,
+     "ok": 1561,
+     "failed": 224,
      "failed_by_reason": {
-      "no_member_layout": 185,
-      "suspect_attr_link": 26,
+      "no_member_layout": 186,
+      "suspect_attr_link": 28,
       "unapproved_engine": 7,
       "suspect_orientation": 1,
       "download_error": 1,
       "convert_error": 1
      },
      "in_flight": 144,
-     "pending": 516,
-     "step_files": 1521,
-     "step_bytes": 790203626021,
-     "validated": 513,
+     "pending": 473,
+     "step_files": 1561,
+     "step_bytes": 796945473319,
+     "validated": 551,
      "input_fixes_ok": {},
      "ok_with_excluded_elements": 19,
      "worker_processes_live": 6,
-     "pct_done": 77.15,
+     "pct_done": 79.05,
      "fanout_ready": true,
      "kit": "s3://annotationprod/cad-disk-extract/zentitude-data-4/_control/conv/db1/",
      "userdata": "s3://annotationprod/cad-disk-extract/zentitude-data-4/_control/conv/db1/userdata.sh",
@@ -51011,12 +51005,12 @@
     "sds2": {
      "jobs": 173,
      "jobs_input_bytes": 71438462014,
-     "done": 168,
+     "done": 169,
      "ok": 132,
-     "failed": 36,
+     "failed": 37,
      "failed_by_reason": {
       "no_members_to_calibrate": 8,
-      "invalid_solids": 7,
+      "invalid_solids": 8,
       "job_folder_incomplete": 6,
       "missing_job_file": 6,
       "qa_fail": 4,
@@ -51024,15 +51018,15 @@
       "download_error": 2,
       "step_write_failed": 1
      },
-     "in_flight": 5,
-     "pending": 5,
+     "in_flight": 4,
+     "pending": 4,
      "step_files": 132,
      "step_bytes": 24110918997,
      "validated": 132,
      "input_fixes_ok": {},
      "ok_with_excluded_elements": 0,
      "worker_processes_live": 2,
-     "pct_done": 97.11,
+     "pct_done": 97.69,
      "fanout_ready": true,
      "kit": "s3://annotationprod/cad-disk-extract/zentitude-data-4/_control/conv/sds2/",
      "userdata": "s3://annotationprod/cad-disk-extract/zentitude-data-4/_control/conv/sds2/userdata.sh",
@@ -51070,10 +51064,10 @@
      "kernel_hang": 1,
      "corrupt_coordinates": 1
     },
-    "in_flight": 32,
+    "in_flight": 31,
     "pending": 2,
     "step_files": 11093,
-    "step_bytes": 7633034252746,
+    "step_bytes": 7633034252779,
     "validated": 8344,
     "input_fixes_ok": {
      "schema_IFC2X2_FINAL_declared_IFC2X3": 6,
@@ -51111,26 +51105,26 @@
    "db1": {
     "jobs": 2258,
     "jobs_input_bytes": 136438093843,
-    "done": 1742,
-    "ok": 1521,
-    "failed": 221,
+    "done": 1785,
+    "ok": 1561,
+    "failed": 224,
     "failed_by_reason": {
-     "no_member_layout": 185,
-     "suspect_attr_link": 26,
+     "no_member_layout": 186,
+     "suspect_attr_link": 28,
      "unapproved_engine": 7,
      "suspect_orientation": 1,
      "download_error": 1,
      "convert_error": 1
     },
     "in_flight": 144,
-    "pending": 516,
-    "step_files": 1521,
-    "step_bytes": 790203626021,
-    "validated": 513,
+    "pending": 473,
+    "step_files": 1561,
+    "step_bytes": 796945473319,
+    "validated": 551,
     "input_fixes_ok": {},
     "ok_with_excluded_elements": 19,
     "worker_processes_live": 6,
-    "pct_done": 77.15,
+    "pct_done": 79.05,
     "fanout_ready": true,
     "kit": "s3://annotationprod/cad-disk-extract/zentitude-data-4/_control/conv/db1/",
     "userdata": "s3://annotationprod/cad-disk-extract/zentitude-data-4/_control/conv/db1/userdata.sh",
@@ -51158,12 +51152,12 @@
    "sds2": {
     "jobs": 173,
     "jobs_input_bytes": 71438462014,
-    "done": 168,
+    "done": 169,
     "ok": 132,
-    "failed": 36,
+    "failed": 37,
     "failed_by_reason": {
      "no_members_to_calibrate": 8,
-     "invalid_solids": 7,
+     "invalid_solids": 8,
      "job_folder_incomplete": 6,
      "missing_job_file": 6,
      "qa_fail": 4,
@@ -51171,15 +51165,15 @@
      "download_error": 2,
      "step_write_failed": 1
     },
-    "in_flight": 5,
-    "pending": 5,
+    "in_flight": 4,
+    "pending": 4,
     "step_files": 132,
     "step_bytes": 24110918997,
     "validated": 132,
     "input_fixes_ok": {},
     "ok_with_excluded_elements": 0,
     "worker_processes_live": 2,
-    "pct_done": 97.11,
+    "pct_done": 97.69,
     "fanout_ready": true,
     "kit": "s3://annotationprod/cad-disk-extract/zentitude-data-4/_control/conv/sds2/",
     "userdata": "s3://annotationprod/cad-disk-extract/zentitude-data-4/_control/conv/sds2/userdata.sh",
@@ -51263,8 +51257,8 @@
     "missing": 433,
     "missing_bytes": 1733142271,
     "archives": 57,
-    "archives_done": 51,
-    "restored": 382,
+    "archives_done": 52,
+    "restored": 387,
     "not_found": 0
    }
   },
