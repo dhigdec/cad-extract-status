@@ -60,6 +60,11 @@ footer{color:var(--muted);font-size:12px;margin-top:20px}
 <p class="sub">Anonymous numbers only. Updated by the extraction publisher about every 2 minutes; this page refreshes every 30 s.
 Disk-1 / Disk-2 (finished 26 Sep 2026) are on the <a href="./">main status page</a>.</p>
 
+<section id="cmp"><h2>Disk-1 / Disk-2 vs Disk Z4 — what is new</h2>
+  <p class="note">Unique = distinct content (sha256). <b>New in Z4</b> = content that the Disk-1/Disk-2 extraction had not already stored, i.e. what Z4 actually adds. Disk-1/Disk-2 (Sep 2026) were extracted for CAD types only, so every other type in Z4 is new. PDF CAD/non-CAD for Disk-1/2 comes from that run's own classifier.</p>
+  <table id="cmp-table"></table><p class="note" id="cmp-note" style="margin-top:6px"></p>
+</section>
+
 <section id="z4"><h2 id="z4-title">Disk Z4</h2><p class="note" id="z4-note"></p>
   <div id="z4-final" style="display:none;border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin:0 0 14px"></div>
   <div class="tiles" id="z4-tiles"></div>
@@ -183,6 +188,12 @@ async function load(){
   const tableL=(id,list,label)=>{const a=pickL(list);document.getElementById(id).innerHTML=HEAD+(a.length?a.map(row).join("")+sumrow(a,label):`<tr><td colspan="5" class="muted">none</td></tr>`)};
   tableL("z4-l-3d",G3D,"All 3D");tableL("z4-l-2d",G2D,"All 2D");
   document.getElementById("z4-l-all").innerHTML=HEAD+lz.map(row).join("");
+
+  const cm=(z.comparison||{}).rows||[];
+  document.getElementById("cmp-table").innerHTML=`<tr><th>Type</th><th class="n">Disk-1 unique</th><th class="n">Disk-2 unique</th><th class="n">Disk-1+2 unique</th><th class="n">Z4 raw</th><th class="n">Z4 unique</th><th class="n"><b>New in Z4</b> (unique)</th><th class="n">New in Z4 (raw)</th></tr>`+
+    cm.map(r=>{const b=r.total||r.group==="Other";const w=x=>b?`<b>${x}</b>`:x;const sep=r.total?' style="border-bottom:2px solid var(--axis)"':'';
+      return `<tr${sep}><td>${w(r.type)}</td><td class="n">${w(n(r.disk1_unique))}</td><td class="n">${w(n(r.disk2_unique))}</td><td class="n">${w(n(r.combined_unique))}</td><td class="n">${w(n(r.d4_raw))}</td><td class="n">${w(n(r.d4_unique))}</td><td class="n"><b>${n(r.d4_new_unique)}</b></td><td class="n">${w(n(r.d4_new_raw))}</td></tr>`}).join("");
+  document.getElementById("cmp-note").textContent=(z.comparison||{}).disk12_note||"";
   const y=doc.z2;
 
   glance("z2-glance-src",y.at_a_glance_drawing_set,false); glance("z2-glance-x",y.at_a_glance_extracted,false);
