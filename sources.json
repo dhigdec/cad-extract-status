@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-09-30T05:15:32Z",
+ "generated_at": "2026-09-30T05:17:32Z",
  "interval_s": 120,
  "z4": {
   "label": "Disk Z4 (Tekla office backup SSD)",
@@ -6743,20 +6743,20 @@
     "files_uploaded": null
    },
    {
-    "phase": "extract",
+    "phase": "nested",
     "size": 32249953699,
     "files_total": null,
     "files_uploaded": null
    },
    {
     "phase": "repair",
-    "size": 26803134114,
+    "size": 26420953600,
     "files_total": null,
     "files_uploaded": null
    },
    {
-    "phase": "nested",
-    "size": 26420953600,
+    "phase": "extract",
+    "size": 16209854016,
     "files_total": null,
     "files_uploaded": null
    },
@@ -6767,8 +6767,8 @@
     "files_uploaded": null
    },
    {
-    "phase": "extract",
-    "size": 17145101941,
+    "phase": "download",
+    "size": 12840243321,
     "files_total": null,
     "files_uploaded": null
    },
@@ -6779,7 +6779,7 @@
     "files_uploaded": null
    },
    {
-    "phase": "extract",
+    "phase": "repair",
     "size": 18856103433,
     "files_total": null,
     "files_uploaded": null
@@ -50310,7 +50310,7 @@
    "verify_rule": "top-level files extracted per archive vs the drive report (7-Zip header listing of each archive)"
   },
   "pdf_classes": {
-   "updated": "2026-09-30T05:14:53Z",
+   "updated": "2026-09-30T05:16:49Z",
    "pdf_paths": 8681373,
    "pdf_unique": 3900900,
    "classes": {
@@ -50951,7 +50951,7 @@
    "disk12_updated": "2026-09-30T00:56:38Z"
   },
   "conversions": {
-   "updated": "2026-09-30T05:15:18Z",
+   "updated": "2026-09-30T05:17:21Z",
    "source": "Zentitude-data-4",
    "rule": "one job per distinct new content (sha256 not stored by Disk-1/2); disk12 duplicates were converted in the Disk-1/2 run",
    "pipelines": {
@@ -50959,22 +50959,22 @@
      "jobs": 11157,
      "jobs_input_bytes": 149813482452,
      "done": 11155,
-     "ok": 11070,
-     "failed": 85,
+     "ok": 11077,
+     "failed": 78,
      "failed_by_reason": {
       "no_geometry_grid_or_annotation_only": 25,
-      "convert_error": 25,
       "not_step21": 21,
+      "convert_error": 18,
       "ifcxml_unsupported": 8,
       "download_error": 2,
       "empty_output": 2,
       "kernel_hang": 1,
       "corrupt_coordinates": 1
      },
-     "in_flight": 46,
+     "in_flight": 39,
      "pending": 2,
-     "step_files": 11070,
-     "step_bytes": 7021967826700,
+     "step_files": 11077,
+     "step_bytes": 7207296971580,
      "validated": 8344,
      "input_fixes_ok": {
       "schema_IFC2X2_FINAL_declared_IFC2X3": 6,
@@ -50982,7 +50982,7 @@
       "truncated_tail_repaired": 1
      },
      "ok_with_excluded_elements": 0,
-     "worker_processes_live": 17,
+     "worker_processes_live": 16,
      "pct_done": 99.98,
      "fanout_ready": true,
      "kit": "s3://annotationprod/cad-disk-extract/zentitude-data-4/_control/conv/ifc/",
@@ -51010,26 +51010,26 @@
     "db1": {
      "jobs": 2258,
      "jobs_input_bytes": 136438093843,
-     "done": 1522,
-     "ok": 1317,
-     "failed": 205,
+     "done": 1554,
+     "ok": 1347,
+     "failed": 207,
      "failed_by_reason": {
       "no_member_layout": 184,
-      "suspect_attr_link": 15,
+      "suspect_attr_link": 17,
       "unapproved_engine": 3,
       "suspect_orientation": 1,
       "download_error": 1,
       "convert_error": 1
      },
      "in_flight": 144,
-     "pending": 736,
-     "step_files": 1317,
-     "step_bytes": 753329263357,
-     "validated": 325,
+     "pending": 704,
+     "step_files": 1347,
+     "step_bytes": 759332258269,
+     "validated": 352,
      "input_fixes_ok": {},
      "ok_with_excluded_elements": 18,
      "worker_processes_live": 6,
-     "pct_done": 67.4,
+     "pct_done": 68.82,
      "fanout_ready": true,
      "kit": "s3://annotationprod/cad-disk-extract/zentitude-data-4/_control/conv/db1/",
      "userdata": "s3://annotationprod/cad-disk-extract/zentitude-data-4/_control/conv/db1/userdata.sh",
@@ -51103,22 +51103,22 @@
     "jobs": 11157,
     "jobs_input_bytes": 149813482452,
     "done": 11155,
-    "ok": 11070,
-    "failed": 85,
+    "ok": 11077,
+    "failed": 78,
     "failed_by_reason": {
      "no_geometry_grid_or_annotation_only": 25,
-     "convert_error": 25,
      "not_step21": 21,
+     "convert_error": 18,
      "ifcxml_unsupported": 8,
      "download_error": 2,
      "empty_output": 2,
      "kernel_hang": 1,
      "corrupt_coordinates": 1
     },
-    "in_flight": 46,
+    "in_flight": 39,
     "pending": 2,
-    "step_files": 11070,
-    "step_bytes": 7021967826700,
+    "step_files": 11077,
+    "step_bytes": 7207296971580,
     "validated": 8344,
     "input_fixes_ok": {
      "schema_IFC2X2_FINAL_declared_IFC2X3": 6,
@@ -51126,7 +51126,7 @@
      "truncated_tail_repaired": 1
     },
     "ok_with_excluded_elements": 0,
-    "worker_processes_live": 17,
+    "worker_processes_live": 16,
     "pct_done": 99.98,
     "fanout_ready": true,
     "kit": "s3://annotationprod/cad-disk-extract/zentitude-data-4/_control/conv/ifc/",
@@ -51154,26 +51154,26 @@
    "db1": {
     "jobs": 2258,
     "jobs_input_bytes": 136438093843,
-    "done": 1522,
-    "ok": 1317,
-    "failed": 205,
+    "done": 1554,
+    "ok": 1347,
+    "failed": 207,
     "failed_by_reason": {
      "no_member_layout": 184,
-     "suspect_attr_link": 15,
+     "suspect_attr_link": 17,
      "unapproved_engine": 3,
      "suspect_orientation": 1,
      "download_error": 1,
      "convert_error": 1
     },
     "in_flight": 144,
-    "pending": 736,
-    "step_files": 1317,
-    "step_bytes": 753329263357,
-    "validated": 325,
+    "pending": 704,
+    "step_files": 1347,
+    "step_bytes": 759332258269,
+    "validated": 352,
     "input_fixes_ok": {},
     "ok_with_excluded_elements": 18,
     "worker_processes_live": 6,
-    "pct_done": 67.4,
+    "pct_done": 68.82,
     "fanout_ready": true,
     "kit": "s3://annotationprod/cad-disk-extract/zentitude-data-4/_control/conv/db1/",
     "userdata": "s3://annotationprod/cad-disk-extract/zentitude-data-4/_control/conv/db1/userdata.sh",
@@ -51305,8 +51305,8 @@
     "missing": 433,
     "missing_bytes": 1733142271,
     "archives": 57,
-    "archives_done": 5,
-    "restored": 13,
+    "archives_done": 8,
+    "restored": 18,
     "not_found": 0
    }
   },
