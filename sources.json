@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-09-30T05:09:15Z",
+ "generated_at": "2026-09-30T05:15:32Z",
  "interval_s": 120,
  "z4": {
   "label": "Disk Z4 (Tekla office backup SSD)",
@@ -6737,14 +6737,38 @@
     "files_uploaded": null
    },
    {
-    "phase": "download",
+    "phase": "extract",
     "size": 34793816743,
     "files_total": null,
     "files_uploaded": null
    },
    {
-    "phase": "download",
+    "phase": "extract",
     "size": 32249953699,
+    "files_total": null,
+    "files_uploaded": null
+   },
+   {
+    "phase": "repair",
+    "size": 26803134114,
+    "files_total": null,
+    "files_uploaded": null
+   },
+   {
+    "phase": "nested",
+    "size": 26420953600,
+    "files_total": null,
+    "files_uploaded": null
+   },
+   {
+    "phase": "extract",
+    "size": 21679064956,
+    "files_total": null,
+    "files_uploaded": null
+   },
+   {
+    "phase": "extract",
+    "size": 17145101941,
     "files_total": null,
     "files_uploaded": null
    },
@@ -6756,13 +6780,13 @@
    },
    {
     "phase": "extract",
-    "size": 39831988653,
+    "size": 18856103433,
     "files_total": null,
     "files_uploaded": null
    }
   ],
   "boxes_alive": 2,
-  "worker_processes_alive": 3,
+  "worker_processes_alive": 5,
   "boxes_seen": 2,
   "file_types": {
    "updated": "2026-09-30T00:46:02Z",
@@ -50286,7 +50310,7 @@
    "verify_rule": "top-level files extracted per archive vs the drive report (7-Zip header listing of each archive)"
   },
   "pdf_classes": {
-   "updated": "2026-09-30T05:08:50Z",
+   "updated": "2026-09-30T05:14:53Z",
    "pdf_paths": 8681373,
    "pdf_unique": 3900900,
    "classes": {
@@ -50927,7 +50951,7 @@
    "disk12_updated": "2026-09-30T00:56:38Z"
   },
   "conversions": {
-   "updated": "2026-09-30T05:09:07Z",
+   "updated": "2026-09-30T05:15:18Z",
    "source": "Zentitude-data-4",
    "rule": "one job per distinct new content (sha256 not stored by Disk-1/2); disk12 duplicates were converted in the Disk-1/2 run",
    "pipelines": {
@@ -50935,11 +50959,11 @@
      "jobs": 11157,
      "jobs_input_bytes": 149813482452,
      "done": 11155,
-     "ok": 11054,
-     "failed": 101,
+     "ok": 11070,
+     "failed": 85,
      "failed_by_reason": {
-      "convert_error": 41,
       "no_geometry_grid_or_annotation_only": 25,
+      "convert_error": 25,
       "not_step21": 21,
       "ifcxml_unsupported": 8,
       "download_error": 2,
@@ -50947,10 +50971,10 @@
       "kernel_hang": 1,
       "corrupt_coordinates": 1
      },
-     "in_flight": 49,
+     "in_flight": 46,
      "pending": 2,
-     "step_files": 11054,
-     "step_bytes": 6738398071159,
+     "step_files": 11070,
+     "step_bytes": 7021967826700,
      "validated": 8344,
      "input_fixes_ok": {
       "schema_IFC2X2_FINAL_declared_IFC2X3": 6,
@@ -50958,7 +50982,7 @@
       "truncated_tail_repaired": 1
      },
      "ok_with_excluded_elements": 0,
-     "worker_processes_live": 18,
+     "worker_processes_live": 17,
      "pct_done": 99.98,
      "fanout_ready": true,
      "kit": "s3://annotationprod/cad-disk-extract/zentitude-data-4/_control/conv/ifc/",
@@ -50986,26 +51010,26 @@
     "db1": {
      "jobs": 2258,
      "jobs_input_bytes": 136438093843,
-     "done": 1433,
-     "ok": 1231,
-     "failed": 202,
+     "done": 1522,
+     "ok": 1317,
+     "failed": 205,
      "failed_by_reason": {
-      "no_member_layout": 183,
-      "suspect_attr_link": 14,
-      "unapproved_engine": 2,
+      "no_member_layout": 184,
+      "suspect_attr_link": 15,
+      "unapproved_engine": 3,
       "suspect_orientation": 1,
       "download_error": 1,
       "convert_error": 1
      },
      "in_flight": 144,
-     "pending": 825,
-     "step_files": 1231,
-     "step_bytes": 734908689810,
-     "validated": 258,
+     "pending": 736,
+     "step_files": 1317,
+     "step_bytes": 753329263357,
+     "validated": 325,
      "input_fixes_ok": {},
      "ok_with_excluded_elements": 18,
      "worker_processes_live": 6,
-     "pct_done": 63.46,
+     "pct_done": 67.4,
      "fanout_ready": true,
      "kit": "s3://annotationprod/cad-disk-extract/zentitude-data-4/_control/conv/db1/",
      "userdata": "s3://annotationprod/cad-disk-extract/zentitude-data-4/_control/conv/db1/userdata.sh",
@@ -51020,7 +51044,7 @@
       "root_gb": 400,
       "note": "running: 2 x r7i.16xlarge in ap-south-2 (lead); 48 slots each, memory-gated 30x DB1 size; add boxes when capacity frees (same user-data)"
      },
-     "jobs_note": "2,258 distinct new model DB1 (3,095 new DB1 minus 837 xslib.db1 component libraries); 11 have engines without a verified layout (9.21 x3, 9.50 x6, 2 no banner) -> recorded as unapproved_engine; 1 stored object missing from extracted/ (extraction gap) -> download_error",
+     "jobs_note": "2,258 distinct new model DB1 (3,095 new DB1 minus 837 xslib.db1 component libraries). Genuine failures: no_member_layout = the decoder found no member table it can verify (it never guesses geometry). Diagnosed on 1ee70796 (ATLANTIC PARK ENTERTAINMENT VENUE, 8.85, 148 MB decompressed): only 489 records in the stride-73 member table every approved 8.x layout uses (a decodable 8.95 model of similar size has 18,136), point table at offset 12 instead of 17, and no other table with a member signature (two point refs + length/axis doubles) - the parts are stored in a record variant not reverse-engineered yet (likely records outside the 0x04-flagged runs, as once seen for 8.65). Concentrated in 8.85/8.07 files of 35-57 MB (in the Disk-1/2 run 8.07 had 239 such files; 8.85 models were mostly converted there by the original Windows pipeline, so our decoder had seen few). Fix = reverse-engineer this variant against an IFC ground truth (hours; not done in this run). suspect_orientation / suspect_attr_link = decoded but failed the axis/attribute guards (held back, as on Disk-1/2); unapproved_engine = Tekla 9.21/9.50 or no banner (no verified layout); convert_error = decoder exception on a damaged file; download_error = stored object missing from extracted/ (extraction gap; lead is restoring, then requeue)",
      "sample_validation": "5 samples on cad-zen2-files (engines 8.53/8.85/8.95/9.08, 1-72 MB): 4 ok (STEP 26-279 MB, OCC read-back roots==parts==written members, bbox sane, axis agreement 1.0); 71 MB 9.08 still decoding at release",
      "code_history": [
       "a 03:02Z: initial fleet code",
@@ -51079,11 +51103,11 @@
     "jobs": 11157,
     "jobs_input_bytes": 149813482452,
     "done": 11155,
-    "ok": 11054,
-    "failed": 101,
+    "ok": 11070,
+    "failed": 85,
     "failed_by_reason": {
-     "convert_error": 41,
      "no_geometry_grid_or_annotation_only": 25,
+     "convert_error": 25,
      "not_step21": 21,
      "ifcxml_unsupported": 8,
      "download_error": 2,
@@ -51091,10 +51115,10 @@
      "kernel_hang": 1,
      "corrupt_coordinates": 1
     },
-    "in_flight": 49,
+    "in_flight": 46,
     "pending": 2,
-    "step_files": 11054,
-    "step_bytes": 6738398071159,
+    "step_files": 11070,
+    "step_bytes": 7021967826700,
     "validated": 8344,
     "input_fixes_ok": {
      "schema_IFC2X2_FINAL_declared_IFC2X3": 6,
@@ -51102,7 +51126,7 @@
      "truncated_tail_repaired": 1
     },
     "ok_with_excluded_elements": 0,
-    "worker_processes_live": 18,
+    "worker_processes_live": 17,
     "pct_done": 99.98,
     "fanout_ready": true,
     "kit": "s3://annotationprod/cad-disk-extract/zentitude-data-4/_control/conv/ifc/",
@@ -51130,26 +51154,26 @@
    "db1": {
     "jobs": 2258,
     "jobs_input_bytes": 136438093843,
-    "done": 1433,
-    "ok": 1231,
-    "failed": 202,
+    "done": 1522,
+    "ok": 1317,
+    "failed": 205,
     "failed_by_reason": {
-     "no_member_layout": 183,
-     "suspect_attr_link": 14,
-     "unapproved_engine": 2,
+     "no_member_layout": 184,
+     "suspect_attr_link": 15,
+     "unapproved_engine": 3,
      "suspect_orientation": 1,
      "download_error": 1,
      "convert_error": 1
     },
     "in_flight": 144,
-    "pending": 825,
-    "step_files": 1231,
-    "step_bytes": 734908689810,
-    "validated": 258,
+    "pending": 736,
+    "step_files": 1317,
+    "step_bytes": 753329263357,
+    "validated": 325,
     "input_fixes_ok": {},
     "ok_with_excluded_elements": 18,
     "worker_processes_live": 6,
-    "pct_done": 63.46,
+    "pct_done": 67.4,
     "fanout_ready": true,
     "kit": "s3://annotationprod/cad-disk-extract/zentitude-data-4/_control/conv/db1/",
     "userdata": "s3://annotationprod/cad-disk-extract/zentitude-data-4/_control/conv/db1/userdata.sh",
@@ -51164,7 +51188,7 @@
      "root_gb": 400,
      "note": "running: 2 x r7i.16xlarge in ap-south-2 (lead); 48 slots each, memory-gated 30x DB1 size; add boxes when capacity frees (same user-data)"
     },
-    "jobs_note": "2,258 distinct new model DB1 (3,095 new DB1 minus 837 xslib.db1 component libraries); 11 have engines without a verified layout (9.21 x3, 9.50 x6, 2 no banner) -> recorded as unapproved_engine; 1 stored object missing from extracted/ (extraction gap) -> download_error",
+    "jobs_note": "2,258 distinct new model DB1 (3,095 new DB1 minus 837 xslib.db1 component libraries). Genuine failures: no_member_layout = the decoder found no member table it can verify (it never guesses geometry). Diagnosed on 1ee70796 (ATLANTIC PARK ENTERTAINMENT VENUE, 8.85, 148 MB decompressed): only 489 records in the stride-73 member table every approved 8.x layout uses (a decodable 8.95 model of similar size has 18,136), point table at offset 12 instead of 17, and no other table with a member signature (two point refs + length/axis doubles) - the parts are stored in a record variant not reverse-engineered yet (likely records outside the 0x04-flagged runs, as once seen for 8.65). Concentrated in 8.85/8.07 files of 35-57 MB (in the Disk-1/2 run 8.07 had 239 such files; 8.85 models were mostly converted there by the original Windows pipeline, so our decoder had seen few). Fix = reverse-engineer this variant against an IFC ground truth (hours; not done in this run). suspect_orientation / suspect_attr_link = decoded but failed the axis/attribute guards (held back, as on Disk-1/2); unapproved_engine = Tekla 9.21/9.50 or no banner (no verified layout); convert_error = decoder exception on a damaged file; download_error = stored object missing from extracted/ (extraction gap; lead is restoring, then requeue)",
     "sample_validation": "5 samples on cad-zen2-files (engines 8.53/8.85/8.95/9.08, 1-72 MB): 4 ok (STEP 26-279 MB, OCC read-back roots==parts==written members, bbox sane, axis agreement 1.0); 71 MB 9.08 still decoding at release",
     "code_history": [
      "a 03:02Z: initial fleet code",
@@ -51239,7 +51263,8 @@
     "enospc_49": "All 49 IFC convert_error results are ENOSPC from code a (27 on 101-74, 22 on 101-163). They are not in retry/: code d/e re-open any failed result whose JSON contains 'No space left'/'Errno 28' (redo rule), so they count as OPEN. At 04:55Z 47/49 were claimed by d/e workers; the other 2 wait behind the new cap of 3 jobs >= 100 MB per host. IFC boxes cannot write DONE (and power off) until every re-opened job has a new result.",
     "after_ifc": "When IFC has a final result for every job, the IFC boxes terminate (run.sh exits on DONE.ifc, user-data shuts down); they do NOT take DB1 jobs. Launch DB1 boxes as planned.",
     "db1_scaling": "DB1 kit has no limit on concurrent workers/boxes: claims are S3 conditional puts, each box runs 3/4 of its cores as slots (48 on r7i.16xlarge), memory-gated at 30x the DB1 size (largest open job ~0.4 GB -> 13 GB). ~4 more Mumbai + 3 Hyderabad r7i.16xlarge with _control/conv/db1/userdata.sh suits it; any x86 type with >= 128 GB RAM and >= 200 GB root works. Jobs run largest first, so the remaining ones are smaller.",
-    "download_error": "When the repair is done: AWS_PROFILE=bim python3 requeue.py ifc --reason download_error (and db1, sds2); script at _control/conv/requeue.py. For sds2 a box is needed if its only box has already finished."
+    "download_error": "When the repair is done: AWS_PROFILE=bim python3 requeue.py ifc --reason download_error (and db1, sds2); script at _control/conv/requeue.py. For sds2 a box is needed if its only box has already finished.",
+    "db1_no_member_layout": "Genuine decoder limit, not a search bug: the 4 'tried' entries are the 4 approved variants, which all share stride 73 (hence identical). On 1ee70796 the stride-73 member table has only 489 records (vs 18,136 in a decodable 8.95 model), the point table sits at offset 12 not 17, and no other table has a member signature, so there is nothing verifiable to decode. Needs a new layout reverse-engineered against IFC ground truth (hours); not patched. Explained in pipelines.db1.jobs_note."
    }
   },
   "state": "complete",
@@ -51280,8 +51305,8 @@
     "missing": 433,
     "missing_bytes": 1733142271,
     "archives": 57,
-    "archives_done": 2,
-    "restored": 3,
+    "archives_done": 5,
+    "restored": 13,
     "not_found": 0
    }
   },
