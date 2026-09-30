@@ -76,6 +76,7 @@ Disk-1 / Disk-2 (finished 26 Sep 2026) are on the <a href="./">main status page<
       <h3 style="font-size:14px;margin:14px 0 6px">Raw copy of every archive and loose file into the bucket</h3><div id="z4-copy"></div></div>
     <div><h3 style="font-size:14px;margin:6px 0">Archives being extracted now</h3><table id="z4-running"></table></div>
   </div>
+  <h3 style="font-size:14px;margin:18px 0 6px">Conversions to STEP (new content only)</h3><p class="note" id="z4-conv-note"></p><table id="z4-conv"></table>
   <h3 style="font-size:14px;margin:18px 0 6px">All files at a glance (inside archives)</h3><table id="z4-glance"></table>
   <h3 style="font-size:14px;margin:18px 0 6px">File types coming out of the archives</h3><p class="note" id="z4-types-note"></p>
   <div class="cols"><div><h3 class="gh">3D model files</h3><table id="z4-g-3d"></table></div><div><h3 class="gh">2D drawing files</h3><table id="z4-g-2d"></table></div></div>
@@ -190,6 +191,11 @@ async function load(){
   tableL("z4-l-3d",G3D,"All 3D");tableL("z4-l-2d",G2D,"All 2D");
   document.getElementById("z4-l-all").innerHTML=HEAD+lz.map(row).join("");
 
+
+  const cv=z.conversions||{}, cvp=Object.entries(cv).filter(([k,v])=>v&&typeof v==="object"&&"jobs" in v);
+  document.getElementById("z4-conv-note").textContent=cvp.length?`New IFC / IFCZIP / Tekla DB1 / SDS2 content in Z4 (not already converted from Disk-1/2) converted with the same pipelines as Disk-1/2; every STEP is read back with OpenCASCADE. Updated ${(cv.updated||"").replace("T"," ").replace("Z"," UTC")}.`:"Preparing conversion job lists and pipelines (IFC, IFCZIP, Tekla DB1, SDS2 → STEP)…";
+  document.getElementById("z4-conv").innerHTML=cvp.length?`<tr><th>Pipeline</th><th class="n">Jobs</th><th class="n">Done</th><th class="n">OK</th><th class="n">Failed</th><th class="n">STEP files</th><th class="n">STEP size</th><th class="n">Validated</th></tr>`+
+    cvp.map(([k,v])=>{const f=v.failed_by_reason?Object.values(v.failed_by_reason).reduce((a,b)=>a+b,0):(v.failed||0);return `<tr><td>${k.toUpperCase()} → STEP</td><td class="n">${n(v.jobs)}</td><td class="n">${n(v.done)}</td><td class="n">${n(v.ok)}</td><td class="n" title="${v.failed_by_reason?JSON.stringify(v.failed_by_reason).replace(/"/g,''):''}">${n(f)}</td><td class="n">${n(v.step_files)}</td><td class="n">${gb(v.step_bytes)}</td><td class="n">${n(v.validated)}</td></tr>`}).join(""):"";
   const cm=(z.comparison||{}).rows||[];
   document.getElementById("cmp-table").innerHTML=`<tr><th>Type</th><th class="n">Disk-1 unique</th><th class="n">Disk-2 unique</th><th class="n">Disk-1+2 unique</th><th class="n">Z4 raw</th><th class="n">Z4 unique</th><th class="n"><b>New in Z4</b> (unique)</th><th class="n">New in Z4 (raw)</th></tr>`+
     cm.map(r=>{const b=r.total||r.group==="Other";const w=x=>b?`<b>${x}</b>`:x;const sep=r.total?' style="border-bottom:2px solid var(--axis)"':'';
