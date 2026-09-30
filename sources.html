@@ -72,6 +72,7 @@ Disk-1 / Disk-2 (finished 26 Sep 2026) are on the <a href="./">main status page<
     <div><h3 style="font-size:14px;margin:6px 0">Archives being extracted now</h3><table id="z3-running"></table></div>
     <div><h3 style="font-size:14px;margin:6px 0">Nested archives unpacked, by depth</h3><table id="z3-nest"></table></div>
   </div>
+  <h3 style="font-size:14px;margin:18px 0 6px">SDS2 models in Z3 (job folders)</h3><p class="note" id="z3-sds2-note"></p><div class="scroll"><table id="z3-sds2"></table></div>
   <h3 style="font-size:14px;margin:18px 0 6px">Disk-1 / Disk-2 / Z4 vs Disk Z3 — what is new</h3><p class="note" id="z3-cmp-note"></p><div class="scroll"><table id="z3-cmp-table"></table></div>
   <h3 style="font-size:14px;margin:18px 0 6px">All files at a glance (archive members at every nesting level + loose files)</h3><p class="note" id="z3-glance-note"></p><div class="scroll"><table id="z3-glance"></table></div>
   <h3 style="font-size:14px;margin:18px 0 6px">File types</h3><p class="note" id="z3-types-note"></p>
@@ -200,6 +201,13 @@ function renderZ3(doc){
   const ns=ft.nested||{}, nd=ns.by_depth||{};
   $("z3-nest").innerHTML=`<tr><th>Depth</th><th class="n">Nested archives</th></tr>`+(Object.keys(nd).length?Object.entries(nd).sort((a,b)=>a[0]-b[0]).map(([d,c])=>`<tr><td>level ${d}</td><td class="n">${n(c)}</td></tr>`).join(""):`<tr><td colspan="2" class="muted">none yet</td></tr>`)+
     (ns.unpacked!=null?`<tr><td><b>All levels</b></td><td class="n"><b>${n(ns.unpacked)}</b></td></tr><tr><td class="muted">password-locked (recorded, not opened)</td><td class="n">${n(ns.encrypted_blocked)}</td></tr><tr><td class="muted">drive report: nested archives</td><td class="n">${n(s.nested_archives)}</td></tr>`:"");
+  const sd=z.sds2, so=z.source||{};
+  if(sd){$("z3-sds2").innerHTML=`<tr><th></th><th class="n">Z3 raw</th><th class="n">Z3 unique</th><th class="n"><b>New in Z3</b></th><th class="n">Drive report (whole disk)</th></tr>`+
+    `<tr><td>SDS2 jobs (job folders)</td><td class="n">${n(sd.jobs_raw)}</td><td class="n">${n(sd.jobs_unique)}</td><td class="n"><b>${n(sd.jobs_new_unique)}</b></td><td class="n">${n(so.sds2_jobs)} jobs · ${n(so.sds2_distinct)} distinct</td></tr>`+
+    `<tr><td>Files inside SDS2 jobs</td><td class="n">${n(sd.files)}</td><td class="n">–</td><td class="n"><b>${n(sd.files_new)}</b></td><td class="n">${n(so.sds2_files)}</td></tr>`+
+    `<tr><td>Size of SDS2 job files</td><td class="n">${gb(sd.bytes)}</td><td class="n">–</td><td class="n">–</td><td class="n">${gb(so.sds2_bytes)}</td></tr>`;
+    $("z3-sds2-note").textContent=`SDS2 stores each model as a job folder of extension-less records (members, materials, bolts, holes), so it is counted by job, not by file type. A job is detected by its main/jsetup (or mem/mem_idx) file; unique = distinct jsetup content; new = not stored by Disk-1/2/Z4 (Disk-1/2 kept CAD file types only). Z4 had 173 distinct SDS2 jobs. Found so far: ${n(sd.jobs_raw)} of the ${n(so.sds2_jobs)} jobs in the drive report; the count grows as archives finish.`;}
+  else {$("z3-sds2").innerHTML=`<tr><td class="muted">SDS2 counts appear after the next stats round</td></tr>`;}
   const cm=(z.comparison||{}).rows||[];
   $("z3-cmp-table").innerHTML=`<tr><th>Type</th><th class="n">Disk-1+2 unique</th><th class="n">Z4 unique</th><th class="n">Z4 added (new vs Disk-1/2)</th><th class="n">Earlier disks together</th><th class="n">Z3 raw</th><th class="n">Z3 unique</th><th class="n"><b>New in Z3</b> (unique)</th><th class="n">New in Z3 (raw)</th></tr>`+
     (cm.length?cm.map(r=>{const b=r.total||r.group==="Other";const w=x=>b?`<b>${x}</b>`:x;const sep=r.total?' style="border-bottom:2px solid var(--axis)"':'';
