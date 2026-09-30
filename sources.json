@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-09-30T05:19:32Z",
+ "generated_at": "2026-09-30T05:25:51Z",
  "interval_s": 120,
  "z4": {
   "label": "Disk Z4 (Tekla office backup SSD)",
@@ -6719,20 +6719,8 @@
     "files_uploaded": null
    },
    {
-    "phase": "download",
+    "phase": "extract",
     "size": 82922555743,
-    "files_total": null,
-    "files_uploaded": null
-   },
-   {
-    "phase": "extract",
-    "size": 81300000025,
-    "files_total": null,
-    "files_uploaded": null
-   },
-   {
-    "phase": "extract",
-    "size": 71572867666,
     "files_total": null,
     "files_uploaded": null
    },
@@ -6743,32 +6731,44 @@
     "files_uploaded": null
    },
    {
-    "phase": "nested",
-    "size": 32249953699,
+    "phase": "extract",
+    "size": 3689801532,
     "files_total": null,
     "files_uploaded": null
    },
    {
-    "phase": "extract",
-    "size": 11260428253,
+    "phase": "nested",
+    "size": 2418608169,
     "files_total": null,
     "files_uploaded": null
    },
    {
     "phase": "download",
+    "size": 2106927326,
+    "files_total": null,
+    "files_uploaded": null
+   },
+   {
+    "phase": "repair",
     "size": 8608596250,
     "files_total": null,
     "files_uploaded": null
    },
    {
     "phase": "extract",
+    "size": 2391926693,
+    "files_total": null,
+    "files_uploaded": null
+   },
+   {
+    "phase": "nested",
     "size": 21679064956,
     "files_total": null,
     "files_uploaded": null
    },
    {
-    "phase": "repair",
-    "size": 12840243321,
+    "phase": "download",
+    "size": 2085059541,
     "files_total": null,
     "files_uploaded": null
    },
@@ -6779,8 +6779,8 @@
     "files_uploaded": null
    },
    {
-    "phase": "repair",
-    "size": 11596600065,
+    "phase": "extract",
+    "size": 2111447388,
     "files_total": null,
     "files_uploaded": null
    }
@@ -50310,7 +50310,7 @@
    "verify_rule": "top-level files extracted per archive vs the drive report (7-Zip header listing of each archive)"
   },
   "pdf_classes": {
-   "updated": "2026-09-30T05:18:50Z",
+   "updated": "2026-09-30T05:24:49Z",
    "pdf_paths": 8681373,
    "pdf_unique": 3900900,
    "classes": {
@@ -50951,7 +50951,7 @@
    "disk12_updated": "2026-09-30T00:56:38Z"
   },
   "conversions": {
-   "updated": "2026-09-30T05:19:25Z",
+   "updated": "2026-09-30T05:25:35Z",
    "source": "Zentitude-data-4",
    "rule": "one job per distinct new content (sha256 not stored by Disk-1/2); disk12 duplicates were converted in the Disk-1/2 run",
    "pipelines": {
@@ -50959,22 +50959,22 @@
      "jobs": 11157,
      "jobs_input_bytes": 149813482452,
      "done": 11155,
-     "ok": 11081,
-     "failed": 74,
+     "ok": 11092,
+     "failed": 63,
      "failed_by_reason": {
       "no_geometry_grid_or_annotation_only": 25,
       "not_step21": 21,
-      "convert_error": 14,
       "ifcxml_unsupported": 8,
+      "convert_error": 3,
       "download_error": 2,
       "empty_output": 2,
       "kernel_hang": 1,
       "corrupt_coordinates": 1
      },
-     "in_flight": 37,
+     "in_flight": 35,
      "pending": 2,
-     "step_files": 11081,
-     "step_bytes": 7315160014408,
+     "step_files": 11092,
+     "step_bytes": 7605888399847,
      "validated": 8344,
      "input_fixes_ok": {
       "schema_IFC2X2_FINAL_declared_IFC2X3": 6,
@@ -50982,7 +50982,7 @@
       "truncated_tail_repaired": 1
      },
      "ok_with_excluded_elements": 0,
-     "worker_processes_live": 16,
+     "worker_processes_live": 13,
      "pct_done": 99.98,
      "fanout_ready": true,
      "kit": "s3://annotationprod/cad-disk-extract/zentitude-data-4/_control/conv/ifc/",
@@ -51005,31 +51005,33 @@
       "c 03:40Z: STEP writer name encoding fixed: names with two consecutive apostrophes (Revit feet-inch 8'') were written as '''' which OpenCASCADE 8.0.1 cannot lex (entities dropped -> segfault on read-back; affected outputs < 256 MB were never published, larger ones were published unverified); zero-area POLY_LOOPs dropped; read-back crashes -> readback_crash",
       "d 03:49Z: runtime v3 (redo list _control/conv/ifc/redo_ids.json re-read every round; published a/b outputs containing '''' are re-converted automatically)",
       "e 04:41Z (lead request after 27 ENOSPC convert_error on ip-10-0-101-74): at most 3 jobs >= 100 MB per host across all worker processes, disk reserved 40x input per job; the 27 were already re-opened by code d (ENOSPC = transient disk_full_on_worker, retried) and re-running since 04:34Z"
-     ]
+     ],
+     "jobs_note": "11,157 distinct new IFC contents (9,489 .ifc, 1,663 .ifczip, 5 .ifcxml; sha256 not stored by Disk-1/2). Genuine failures: no_geometry_grid_or_annotation_only = the model holds only grids/annotations (Tekla grid exports, reference 'out.ifc'); not_step21 = .ifcZIP files that contain an XML 'NewDataSet' (Tekla ExportedToRevit link data), not IFC; ifcxml_unsupported = ifcXML (plain or zipped): both ifcopenshell builds (0.9.0, 0.8.4) ship with the ifcXML reader disabled; empty_output = tiny ifcZIP models with no products; corrupt_coordinates = source geometry ~1.3e11 mm away even after tessellating the corrupt elements; download_error = stored object missing from extracted/ (extraction gap; requeued after the lead's repair). convert_error / kernel_hang written by code a were disk-full (ENOSPC) and are re-run automatically. Repairs applied where needed (input_fixes_ok): header normalization, legacy schema IFC2X2_FINAL->IFC2X3, truncated-tail repair, 0.8.4 kernel for strict-parse failures.",
+     "validated_note": "validated = OpenCASCADE read-back (roots == parts, solids, bbox) for STEP < 256 MB; larger outputs are graded by entity markers + bbox and were scanned for the old-writer '''' defect (affected ones re-converted)"
     },
     "db1": {
      "jobs": 2258,
      "jobs_input_bytes": 136438093843,
-     "done": 1587,
-     "ok": 1378,
-     "failed": 209,
+     "done": 1703,
+     "ok": 1484,
+     "failed": 219,
      "failed_by_reason": {
-      "no_member_layout": 184,
-      "suspect_attr_link": 18,
-      "unapproved_engine": 4,
+      "no_member_layout": 185,
+      "suspect_attr_link": 25,
+      "unapproved_engine": 6,
       "suspect_orientation": 1,
       "download_error": 1,
       "convert_error": 1
      },
-     "in_flight": 144,
-     "pending": 671,
-     "step_files": 1378,
-     "step_bytes": 764671211326,
-     "validated": 381,
+     "in_flight": 143,
+     "pending": 555,
+     "step_files": 1484,
+     "step_bytes": 783587244586,
+     "validated": 479,
      "input_fixes_ok": {},
-     "ok_with_excluded_elements": 18,
+     "ok_with_excluded_elements": 19,
      "worker_processes_live": 6,
-     "pct_done": 70.28,
+     "pct_done": 75.42,
      "fanout_ready": true,
      "kit": "s3://annotationprod/cad-disk-extract/zentitude-data-4/_control/conv/db1/",
      "userdata": "s3://annotationprod/cad-disk-extract/zentitude-data-4/_control/conv/db1/userdata.sh",
@@ -51051,33 +51053,34 @@
       "b 03:43Z: same STEP writer fix as IFC c; runtime v2 (bridged next to the code-a processes via SSM)",
       "c 03:49Z: runtime v3 (redo list _control/conv/db1/redo_ids.json)",
       "d 04:41Z: runtime v4 (redo entries by failure reason)"
-     ]
+     ],
+     "validated_note": "validated = OpenCASCADE read-back for STEP < 256 MB; larger outputs graded by FACETED_BREP markers + bbox; 0 of 284 unverified code-a outputs had the '''' defect"
     },
     "sds2": {
      "jobs": 173,
      "jobs_input_bytes": 71438462014,
-     "done": 167,
+     "done": 168,
      "ok": 132,
-     "failed": 35,
+     "failed": 36,
      "failed_by_reason": {
       "no_members_to_calibrate": 8,
+      "invalid_solids": 7,
       "job_folder_incomplete": 6,
-      "invalid_solids": 6,
       "missing_job_file": 6,
       "qa_fail": 4,
       "other": 2,
       "download_error": 2,
       "step_write_failed": 1
      },
-     "in_flight": 6,
-     "pending": 6,
+     "in_flight": 5,
+     "pending": 5,
      "step_files": 132,
      "step_bytes": 24110918997,
      "validated": 132,
      "input_fixes_ok": {},
      "ok_with_excluded_elements": 0,
      "worker_processes_live": 2,
-     "pct_done": 96.53,
+     "pct_done": 97.11,
      "fanout_ready": true,
      "kit": "s3://annotationprod/cad-disk-extract/zentitude-data-4/_control/conv/sds2/",
      "userdata": "s3://annotationprod/cad-disk-extract/zentitude-data-4/_control/conv/sds2/userdata.sh",
@@ -51095,7 +51098,7 @@
       "note": "SDS2 is small (173 jobs, 15.1 GB model files, most finish in seconds-minutes; the largest up to the 4 h timeout). Any one box is enough: i4i.8xlarge (30 slots) or i4i.16xlarge (62) when capacity frees; if nothing frees soon, one r7i.2xlarge / m7i.2xlarge (8 vCPU, 6 slots, 100 GB root) fits the Mumbai headroom and still finishes, only slower. slots = min(nproc-2, GB/6)."
      },
      "sample_validation": "10 real jobs on cad-zen2-files: bernardPSC_job 6804/6804 valid solids, steel ratio 1.027, pass; Baha_Roof_C 1353/1353, 1.038, pass (both identical to run 2); CONTRA FSB 180/180 pass; default7.0ReportWriter ok; 6 genuine source failures (seed template, 0 members to calibrate x2, no mem_idx, no model folders x2)",
-     "jobs_note": "173 distinct job folders (193 report rows), 15.1 GB model files (main/mem/subm); 4 have no model data; 53 name-match a Disk-2 run-2 job (37 accepted there) but are converted anyway (name match only), match recorded per job",
+     "jobs_note": "173 distinct SDS/2 job folders (193 report rows; 15.1 GB model files). Accepted = run-2 audit rule (stage-2 rc 0, QA pass|warn, 0 invalid solids after OCC read-back). Genuine failures: no_members_to_calibrate = v4 finds no member records to calibrate units (training/seed jobs); job_folder_incomplete = no main/jsetup, main/job_mtrl or mem/mem_idx in the folder (no model data); missing_job_file = a job file v4 needs is absent; invalid_solids = STEP written but OCC read-back found invalid solids (not accepted; kept under conversions/sds2-step/_not_accepted/); qa_fail = STEP/SDS2 steel-weight ratio outside the QA band (e.g. 0.22x, 1.30x); step_write_failed = seed template job; other = v4 run failed without a specific cause; download_error = stored object missing from extracted/ (extraction gap; requeued after the lead's repair). 53 job names match a Disk-2 run-2 job (37 accepted there) - converted anyway (name match only).",
      "status_note": "running (lead launched)"
     }
    },
@@ -51103,22 +51106,22 @@
     "jobs": 11157,
     "jobs_input_bytes": 149813482452,
     "done": 11155,
-    "ok": 11081,
-    "failed": 74,
+    "ok": 11092,
+    "failed": 63,
     "failed_by_reason": {
      "no_geometry_grid_or_annotation_only": 25,
      "not_step21": 21,
-     "convert_error": 14,
      "ifcxml_unsupported": 8,
+     "convert_error": 3,
      "download_error": 2,
      "empty_output": 2,
      "kernel_hang": 1,
      "corrupt_coordinates": 1
     },
-    "in_flight": 37,
+    "in_flight": 35,
     "pending": 2,
-    "step_files": 11081,
-    "step_bytes": 7315160014408,
+    "step_files": 11092,
+    "step_bytes": 7605888399847,
     "validated": 8344,
     "input_fixes_ok": {
      "schema_IFC2X2_FINAL_declared_IFC2X3": 6,
@@ -51126,7 +51129,7 @@
      "truncated_tail_repaired": 1
     },
     "ok_with_excluded_elements": 0,
-    "worker_processes_live": 16,
+    "worker_processes_live": 13,
     "pct_done": 99.98,
     "fanout_ready": true,
     "kit": "s3://annotationprod/cad-disk-extract/zentitude-data-4/_control/conv/ifc/",
@@ -51149,31 +51152,33 @@
      "c 03:40Z: STEP writer name encoding fixed: names with two consecutive apostrophes (Revit feet-inch 8'') were written as '''' which OpenCASCADE 8.0.1 cannot lex (entities dropped -> segfault on read-back; affected outputs < 256 MB were never published, larger ones were published unverified); zero-area POLY_LOOPs dropped; read-back crashes -> readback_crash",
      "d 03:49Z: runtime v3 (redo list _control/conv/ifc/redo_ids.json re-read every round; published a/b outputs containing '''' are re-converted automatically)",
      "e 04:41Z (lead request after 27 ENOSPC convert_error on ip-10-0-101-74): at most 3 jobs >= 100 MB per host across all worker processes, disk reserved 40x input per job; the 27 were already re-opened by code d (ENOSPC = transient disk_full_on_worker, retried) and re-running since 04:34Z"
-    ]
+    ],
+    "jobs_note": "11,157 distinct new IFC contents (9,489 .ifc, 1,663 .ifczip, 5 .ifcxml; sha256 not stored by Disk-1/2). Genuine failures: no_geometry_grid_or_annotation_only = the model holds only grids/annotations (Tekla grid exports, reference 'out.ifc'); not_step21 = .ifcZIP files that contain an XML 'NewDataSet' (Tekla ExportedToRevit link data), not IFC; ifcxml_unsupported = ifcXML (plain or zipped): both ifcopenshell builds (0.9.0, 0.8.4) ship with the ifcXML reader disabled; empty_output = tiny ifcZIP models with no products; corrupt_coordinates = source geometry ~1.3e11 mm away even after tessellating the corrupt elements; download_error = stored object missing from extracted/ (extraction gap; requeued after the lead's repair). convert_error / kernel_hang written by code a were disk-full (ENOSPC) and are re-run automatically. Repairs applied where needed (input_fixes_ok): header normalization, legacy schema IFC2X2_FINAL->IFC2X3, truncated-tail repair, 0.8.4 kernel for strict-parse failures.",
+    "validated_note": "validated = OpenCASCADE read-back (roots == parts, solids, bbox) for STEP < 256 MB; larger outputs are graded by entity markers + bbox and were scanned for the old-writer '''' defect (affected ones re-converted)"
    },
    "db1": {
     "jobs": 2258,
     "jobs_input_bytes": 136438093843,
-    "done": 1587,
-    "ok": 1378,
-    "failed": 209,
+    "done": 1703,
+    "ok": 1484,
+    "failed": 219,
     "failed_by_reason": {
-     "no_member_layout": 184,
-     "suspect_attr_link": 18,
-     "unapproved_engine": 4,
+     "no_member_layout": 185,
+     "suspect_attr_link": 25,
+     "unapproved_engine": 6,
      "suspect_orientation": 1,
      "download_error": 1,
      "convert_error": 1
     },
-    "in_flight": 144,
-    "pending": 671,
-    "step_files": 1378,
-    "step_bytes": 764671211326,
-    "validated": 381,
+    "in_flight": 143,
+    "pending": 555,
+    "step_files": 1484,
+    "step_bytes": 783587244586,
+    "validated": 479,
     "input_fixes_ok": {},
-    "ok_with_excluded_elements": 18,
+    "ok_with_excluded_elements": 19,
     "worker_processes_live": 6,
-    "pct_done": 70.28,
+    "pct_done": 75.42,
     "fanout_ready": true,
     "kit": "s3://annotationprod/cad-disk-extract/zentitude-data-4/_control/conv/db1/",
     "userdata": "s3://annotationprod/cad-disk-extract/zentitude-data-4/_control/conv/db1/userdata.sh",
@@ -51195,33 +51200,34 @@
      "b 03:43Z: same STEP writer fix as IFC c; runtime v2 (bridged next to the code-a processes via SSM)",
      "c 03:49Z: runtime v3 (redo list _control/conv/db1/redo_ids.json)",
      "d 04:41Z: runtime v4 (redo entries by failure reason)"
-    ]
+    ],
+    "validated_note": "validated = OpenCASCADE read-back for STEP < 256 MB; larger outputs graded by FACETED_BREP markers + bbox; 0 of 284 unverified code-a outputs had the '''' defect"
    },
    "sds2": {
     "jobs": 173,
     "jobs_input_bytes": 71438462014,
-    "done": 167,
+    "done": 168,
     "ok": 132,
-    "failed": 35,
+    "failed": 36,
     "failed_by_reason": {
      "no_members_to_calibrate": 8,
+     "invalid_solids": 7,
      "job_folder_incomplete": 6,
-     "invalid_solids": 6,
      "missing_job_file": 6,
      "qa_fail": 4,
      "other": 2,
      "download_error": 2,
      "step_write_failed": 1
     },
-    "in_flight": 6,
-    "pending": 6,
+    "in_flight": 5,
+    "pending": 5,
     "step_files": 132,
     "step_bytes": 24110918997,
     "validated": 132,
     "input_fixes_ok": {},
     "ok_with_excluded_elements": 0,
     "worker_processes_live": 2,
-    "pct_done": 96.53,
+    "pct_done": 97.11,
     "fanout_ready": true,
     "kit": "s3://annotationprod/cad-disk-extract/zentitude-data-4/_control/conv/sds2/",
     "userdata": "s3://annotationprod/cad-disk-extract/zentitude-data-4/_control/conv/sds2/userdata.sh",
@@ -51239,7 +51245,7 @@
      "note": "SDS2 is small (173 jobs, 15.1 GB model files, most finish in seconds-minutes; the largest up to the 4 h timeout). Any one box is enough: i4i.8xlarge (30 slots) or i4i.16xlarge (62) when capacity frees; if nothing frees soon, one r7i.2xlarge / m7i.2xlarge (8 vCPU, 6 slots, 100 GB root) fits the Mumbai headroom and still finishes, only slower. slots = min(nproc-2, GB/6)."
     },
     "sample_validation": "10 real jobs on cad-zen2-files: bernardPSC_job 6804/6804 valid solids, steel ratio 1.027, pass; Baha_Roof_C 1353/1353, 1.038, pass (both identical to run 2); CONTRA FSB 180/180 pass; default7.0ReportWriter ok; 6 genuine source failures (seed template, 0 members to calibrate x2, no mem_idx, no model folders x2)",
-    "jobs_note": "173 distinct job folders (193 report rows), 15.1 GB model files (main/mem/subm); 4 have no model data; 53 name-match a Disk-2 run-2 job (37 accepted there) but are converted anyway (name match only), match recorded per job",
+    "jobs_note": "173 distinct SDS/2 job folders (193 report rows; 15.1 GB model files). Accepted = run-2 audit rule (stage-2 rc 0, QA pass|warn, 0 invalid solids after OCC read-back). Genuine failures: no_members_to_calibrate = v4 finds no member records to calibrate units (training/seed jobs); job_folder_incomplete = no main/jsetup, main/job_mtrl or mem/mem_idx in the folder (no model data); missing_job_file = a job file v4 needs is absent; invalid_solids = STEP written but OCC read-back found invalid solids (not accepted; kept under conversions/sds2-step/_not_accepted/); qa_fail = STEP/SDS2 steel-weight ratio outside the QA band (e.g. 0.22x, 1.30x); step_write_failed = seed template job; other = v4 run failed without a specific cause; download_error = stored object missing from extracted/ (extraction gap; requeued after the lead's repair). 53 job names match a Disk-2 run-2 job (37 accepted there) - converted anyway (name match only).",
     "status_note": "running (lead launched)"
    },
    "native_step": {
@@ -51305,8 +51311,8 @@
     "missing": 433,
     "missing_bytes": 1733142271,
     "archives": 57,
-    "archives_done": 9,
-    "restored": 19,
+    "archives_done": 35,
+    "restored": 242,
     "not_found": 0
    }
   },
@@ -51978,18 +51984,18 @@
    },
    {
     "kind": "CAD PDFs (drawings)",
-    "files": 921,
-    "bytes": 252664393,
-    "unique_files": 768,
-    "unique_bytes": 195513383,
+    "files": 1250,
+    "bytes": 342921272,
+    "unique_files": 1066,
+    "unique_bytes": 271376649,
     "in_disk12_files": 0
    },
    {
     "kind": "PDFs not yet classified / unreadable",
-    "files": 331,
-    "bytes": 90805553,
-    "unique_files": 299,
-    "unique_bytes": 76117840,
+    "files": 2,
+    "bytes": 548674,
+    "unique_files": 1,
+    "unique_bytes": 254574,
     "in_disk12_files": 0
    },
    {
