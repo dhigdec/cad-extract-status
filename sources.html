@@ -93,6 +93,7 @@ Disk-1 / Disk-2 (finished 26 Sep 2026) are on the <a href="./">main status page<
     <div><h3 style="font-size:14px;margin:6px 0">Files and drawings</h3><div class="tiles" id="z2-tiles"></div></div>
   </div>
   <h3 style="font-size:14px;margin:16px 0 6px">Generated outputs</h3><div class="cols"><div><h3 class="gh">3D (from the plant model database)</h3><table id="z2-out3d"></table></div><div><h3 class="gh">2D (from the drawing set)</h3><table id="z2-out2d"></table></div></div>
+  <h3 style="font-size:14px;margin:16px 0 6px">Drawings stored inside the plant model (exported from the database)</h3><p class="note" id="z2-md-note"></p><table id="z2-md"></table>
   <div class="cols"><div><h3 class="gh">All files at a glance — drawing set</h3><table id="z2-glance-src"></table></div><div><h3 class="gh">All files at a glance — reference content (unpacked, incl. nested archives)</h3><table id="z2-glance-x"></table></div></div>
   <div class="cols"><div><h3 style="font-size:14px;margin:12px 0 6px">File types — drawing set</h3><table id="z2-src-types"></table></div>
     <div><h3 style="font-size:14px;margin:12px 0 6px">File types — S3D reference content (unpacked)</h3><table id="z2-sc-types"></table></div></div>
@@ -196,6 +197,10 @@ async function load(){
   document.getElementById("cmp-note").textContent=(z.comparison||{}).disk12_note||"";
   const y=doc.z2;
 
+
+  const md=y.model_drawings||{}, mdl={sha:"Isometric drawings (.sha, Smart 3D drawing documents)",pcf:"Original Smart 3D PCF (per pipeline isometric)",xml:"Isogen isometric XML",pod:"Isogen POD output",mes:"Isogen messages",log:"Isometric generation logs",txt:"Text reports",xls:"Excel reports",sat:"ACIS 3D models (.sat)"};
+  document.getElementById("z2-md-note").textContent=md.documents_total?`${n(md.documents_exported)} / ${n(md.documents_total)} documents exported${md.final?" — complete":" (running)"} · stored zip-compressed in the model database, written out as the original files. These are Smart 3D's own drawings of this same plant, so they pair with the rebuilt 3D (by pipeline line number).`:"export starting…";
+  document.getElementById("z2-md").innerHTML=`<tr><th>Document type</th><th class="n">Documents</th><th class="n">Size</th></tr>`+Object.entries(md.by_type||{}).sort((a,b)=>b[1].documents-a[1].documents).map(([t,v])=>`<tr><td>${mdl[t]||"."+t}</td><td class="n">${n(v.documents)}</td><td class="n">${gb(v.bytes)}</td></tr>`).join("");
   glance("z2-glance-src",y.at_a_glance_drawing_set,false); glance("z2-glance-x",y.at_a_glance_extracted,false);
   const o3=y.outputs_3d||{}, o2=y.outputs_2d||{};
   const orow=(l,v)=>`<tr><td>${l}</td><td class="n">${v==null?"–":n(v)}</td></tr>`;
