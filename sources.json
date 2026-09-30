@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-09-30T05:58:29Z",
+ "generated_at": "2026-09-30T06:05:24Z",
  "interval_s": 120,
  "z4": {
   "label": "Disk Z4 (Tekla office backup SSD)",
@@ -6702,7 +6702,7 @@
   "running": [],
   "boxes_alive": 0,
   "worker_processes_alive": 0,
-  "boxes_seen": 1,
+  "boxes_seen": 0,
   "file_types": {
    "updated": "2026-09-30T00:46:02Z",
    "archives_counted": 1499,
@@ -50225,27 +50225,27 @@
    "verify_rule": "top-level files extracted per archive vs the drive report (7-Zip header listing of each archive)"
   },
   "pdf_classes": {
-   "updated": "2026-09-30T05:56:49Z",
+   "updated": "2026-09-30T06:04:50Z",
    "pdf_paths": 8681373,
    "pdf_unique": 3900900,
    "classes": {
     "cad": {
-     "raw": 6747890,
-     "unique": 2946526,
-     "new_raw": 1941154,
-     "new_unique": 836532
+     "raw": 6748318,
+     "unique": 2946732,
+     "new_raw": 1941582,
+     "new_unique": 836738
     },
     "document": {
-     "raw": 1932994,
-     "unique": 954129,
-     "new_raw": 125341,
-     "new_unique": 60342
+     "raw": 1933018,
+     "unique": 954148,
+     "new_raw": 125365,
+     "new_unique": 60361
     },
     "unknown": {
-     "raw": 489,
-     "unique": 245,
-     "new_raw": 489,
-     "new_unique": 245
+     "raw": 37,
+     "unique": 20,
+     "new_raw": 37,
+     "new_unique": 20
     },
     "pending": {
      "raw": 0,
@@ -50275,27 +50275,27 @@
    },
    {
     "kind": "CAD PDFs (drawings)",
-    "files": 6747890,
-    "bytes": 3208912012774,
-    "unique_files": 2946526,
-    "unique_bytes": 1646318971434,
-    "in_disk12_files": 5140269
+    "files": 6748318,
+    "bytes": 3209115545188,
+    "unique_files": 2946732,
+    "unique_bytes": 1646434070268,
+    "in_disk12_files": 5140595
    },
    {
     "kind": "Non-CAD PDFs (documents)",
-    "files": 1932994,
-    "bytes": 919221811147,
-    "unique_files": 954129,
-    "unique_bytes": 533102600790,
-    "in_disk12_files": 1472476
+    "files": 1933018,
+    "bytes": 919233224179,
+    "unique_files": 954148,
+    "unique_bytes": 533113216702,
+    "in_disk12_files": 1472495
    },
    {
     "kind": "PDFs not yet classified / unreadable",
-    "files": 2156,
-    "bytes": 1025270758,
-    "unique_files": 246,
-    "unique_bytes": 137448122,
-    "in_disk12_files": 1642
+    "files": 1704,
+    "bytes": 810325312,
+    "unique_files": 21,
+    "unique_bytes": 11733376,
+    "in_disk12_files": 1298
    },
    {
     "kind": "Fabrication / CNC",
@@ -50359,7 +50359,7 @@
     "bytes": 18493010301775,
     "unique_files": 25946447,
     "unique_bytes": 8425843509576,
-    "in_disk12_files": 63290521
+    "in_disk12_files": 63290522
    }
   ],
   "comparison": {
@@ -50817,10 +50817,10 @@
      "disk1_unique": 1595023,
      "disk2_unique": 1165748,
      "combined_unique": 2449872,
-     "d4_raw": 6747890,
-     "d4_unique": 2946526,
-     "d4_new_raw": 1941154,
-     "d4_new_unique": 836532
+     "d4_raw": 6748318,
+     "d4_unique": 2946732,
+     "d4_new_raw": 1941582,
+     "d4_new_unique": 836738
     },
     {
      "type": "Non-CAD PDFs (documents)",
@@ -50830,10 +50830,10 @@
      "disk1_unique": 1622143,
      "disk2_unique": 559827,
      "combined_unique": 1999638,
-     "d4_raw": 1932994,
-     "d4_unique": 954129,
-     "d4_new_raw": 125341,
-     "d4_new_unique": 60342
+     "d4_raw": 1933018,
+     "d4_unique": 954148,
+     "d4_new_raw": 125365,
+     "d4_new_unique": 60361
     },
     {
      "type": "PDFs not yet classified / unreadable",
@@ -50843,10 +50843,10 @@
      "disk1_unique": 0,
      "disk2_unique": 0,
      "combined_unique": 0,
-     "d4_raw": 2156,
-     "d4_unique": 246,
-     "d4_new_raw": 489,
-     "d4_new_unique": 245
+     "d4_raw": 1704,
+     "d4_unique": 21,
+     "d4_new_raw": 37,
+     "d4_new_unique": 20
     },
     {
      "type": "All other file types (Disk-1/2 did not extract these)",
@@ -50903,7 +50903,7 @@
    "note": "Data-4 contains every Disk-1 archive byte-identical, plus 345 new archives. Disk-1 extraction kept only CAD types, so extracting data-4 fully still yielded content Disk-1 never stored; all content is deduplicated by sha256 against Disk-1/2."
   },
   "conversions": {
-   "updated": "2026-09-30T05:58:30Z",
+   "updated": "2026-09-30T06:04:39Z",
    "source": "Zentitude-data-4",
    "rule": "one job per distinct new content (sha256 not stored by Disk-1/2); disk12 duplicates were converted in the Disk-1/2 run",
    "pipelines": {
@@ -50983,7 +50983,7 @@
      "validated": 967,
      "input_fixes_ok": {},
      "ok_with_excluded_elements": 20,
-     "worker_processes_live": 5,
+     "worker_processes_live": 4,
      "pct_done": 99.96,
      "fanout_ready": true,
      "kit": "s3://annotationprod/cad-disk-extract/zentitude-data-4/_control/conv/db1/",
@@ -51025,7 +51025,7 @@
       "download_error": 2,
       "step_write_failed": 1
      },
-     "in_flight": 3,
+     "in_flight": 5,
      "pending": 3,
      "step_files": 132,
      "step_bytes": 24110918997,
@@ -51131,7 +51131,7 @@
     "validated": 967,
     "input_fixes_ok": {},
     "ok_with_excluded_elements": 20,
-    "worker_processes_live": 5,
+    "worker_processes_live": 4,
     "pct_done": 99.96,
     "fanout_ready": true,
     "kit": "s3://annotationprod/cad-disk-extract/zentitude-data-4/_control/conv/db1/",
@@ -51173,7 +51173,7 @@
      "download_error": 2,
      "step_write_failed": 1
     },
-    "in_flight": 3,
+    "in_flight": 5,
     "pending": 3,
     "step_files": 132,
     "step_bytes": 24110918997,
@@ -51219,13 +51219,14 @@
     "note": "sds2: only one box; if it has finished and shut down, requeued jobs need one box with the sds2 user-data"
    },
    "reply_to_lead": {
-    "at": "2026-09-30T05:45:53Z",
+    "at": "2026-09-30T06:01:43Z",
     "enospc_49": "All 49 IFC convert_error results are ENOSPC from code a (27 on 101-74, 22 on 101-163). They are not in retry/: code d/e re-open any failed result whose JSON contains 'No space left'/'Errno 28' (redo rule), so they count as OPEN. At 04:55Z 47/49 were claimed by d/e workers; the other 2 wait behind the new cap of 3 jobs >= 100 MB per host. IFC boxes cannot write DONE (and power off) until every re-opened job has a new result.",
     "after_ifc": "When IFC has a final result for every job, the IFC boxes terminate (run.sh exits on DONE.ifc, user-data shuts down); they do NOT take DB1 jobs. Launch DB1 boxes as planned.",
     "db1_scaling": "DB1 kit has no limit on concurrent workers/boxes: claims are S3 conditional puts, each box runs 3/4 of its cores as slots (48 on r7i.16xlarge), memory-gated at 30x the DB1 size (largest open job ~0.4 GB -> 13 GB). ~4 more Mumbai + 3 Hyderabad r7i.16xlarge with _control/conv/db1/userdata.sh suits it; any x86 type with >= 128 GB RAM and >= 200 GB root works. Jobs run largest first, so the remaining ones are smaller.",
     "download_error": "When the repair is done: AWS_PROFILE=bim python3 requeue.py ifc --reason download_error (and db1, sds2); script at _control/conv/requeue.py. For sds2 a box is needed if its only box has already finished.",
     "db1_no_member_layout": "Genuine decoder limit, not a search bug: the 4 'tried' entries are the 4 approved variants, which all share stride 73 (hence identical). On 1ee70796 the stride-73 member table has only 489 records (vs 18,136 in a decodable 8.95 model), the point table sits at offset 12 not 17, and no other table has a member signature, so there is nothing verifiable to decode. Needs a new layout reverse-engineered against IFC ground truth (hours); not patched. Explained in pipelines.db1.jobs_note.",
-    "download_error_after_boxes_gone": "IFC and DB1 boxes self-terminate when their pipeline is final (as instructed), probably before the repair ends. After the repair: run requeue.py for ifc, db1, sds2 (--reason download_error), then launch ONE small box per pipeline with its user-data (_control/conv/ifc/userdata.sh, _control/conv/db1/userdata.sh; e.g. r7i.4xlarge, 200 GB root); each finishes the requeued jobs and powers off. SDS2 is held alive by your hold flag, so its 2 jobs run on the existing box once requeued (then remove the hold)."
+    "download_error_after_boxes_gone": "IFC and DB1 boxes self-terminate when their pipeline is final (as instructed), probably before the repair ends. After the repair: run requeue.py for ifc, db1, sds2 (--reason download_error), then launch ONE small box per pipeline with its user-data (_control/conv/ifc/userdata.sh, _control/conv/db1/userdata.sh; e.g. r7i.4xlarge, 200 GB root); each finishes the requeued jobs and powers off. SDS2 is held alive by your hold flag, so its 2 jobs run on the existing box once requeued (then remove the hold).",
+    "requeue_done": "06:00Z: download_error requeued in ifc (2), db1 (1), sds2 (2) via redo_ids.json entries {reasons:[download_error], before:06:00Z}; all their inputs verified present after the repair. Current v4 workers re-open them within one round."
    }
   },
   "state": "complete",
