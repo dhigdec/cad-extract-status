@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-09-30T04:39:02Z",
+ "generated_at": "2026-09-30T04:45:05Z",
  "interval_s": 120,
  "z4": {
   "label": "Disk Z4 (Tekla office backup SSD)",
@@ -50225,7 +50225,7 @@
    "verify_rule": "top-level files extracted per archive vs the drive report (7-Zip header listing of each archive)"
   },
   "pdf_classes": {
-   "updated": "2026-09-30T04:36:49Z",
+   "updated": "2026-09-30T04:44:48Z",
    "pdf_paths": 8681373,
    "pdf_unique": 3900900,
    "classes": {
@@ -50866,39 +50866,40 @@
    "disk12_updated": "2026-09-30T00:56:38Z"
   },
   "conversions": {
-   "updated": "2026-09-30T04:37:53Z",
+   "updated": "2026-09-30T04:44:12Z",
    "source": "Zentitude-data-4",
    "rule": "one job per distinct new content (sha256 not stored by Disk-1/2); disk12 duplicates were converted in the Disk-1/2 run",
    "pipelines": {
     "ifc": {
      "jobs": 11157,
      "jobs_input_bytes": 149813482452,
-     "done": 4954,
-     "ok": 4917,
-     "failed": 37,
+     "done": 8688,
+     "ok": 8646,
+     "failed": 42,
      "failed_by_reason": {
       "convert_error": 27,
       "ifcxml_unsupported": 8,
-      "corrupt_coordinates": 1,
-      "download_error": 1
+      "no_geometry_grid_or_annotation_only": 4,
+      "download_error": 2,
+      "corrupt_coordinates": 1
      },
-     "in_flight": 335,
-     "pending": 6203,
-     "step_files": 4917,
-     "step_bytes": 6412982957912,
-     "validated": 2229,
+     "in_flight": 162,
+     "pending": 2469,
+     "step_files": 8646,
+     "step_bytes": 6494205421541,
+     "validated": 5947,
      "input_fixes_ok": {
-      "schema_IFC2X2_FINAL_declared_IFC2X3": 5,
-      "header_normalized": 26,
+      "schema_IFC2X2_FINAL_declared_IFC2X3": 6,
+      "header_normalized": 27,
       "truncated_tail_repaired": 1
      },
      "ok_with_excluded_elements": 0,
-     "worker_processes_live": 18,
-     "pct_done": 44.4,
+     "worker_processes_live": 37,
+     "pct_done": 77.87,
      "fanout_ready": true,
      "kit": "s3://annotationprod/cad-disk-extract/zentitude-data-4/_control/conv/ifc/",
      "userdata": "s3://annotationprod/cad-disk-extract/zentitude-data-4/_control/conv/ifc/userdata.sh",
-     "code": "z4-ifc-2026-09-30d (runtime convfleet-v3)",
+     "code": "z4-ifc-2026-09-30e (runtime convfleet-v4)",
      "outputs": "conversions/ifc-step/<sha256>.step (+ .stats.json, .validate.json)",
      "results": "_state/conv/ifc/results/<sha256>.json",
      "recommended_instances": {
@@ -50914,35 +50915,36 @@
       "a 02:47Z: initial fleet code",
       "b 03:07Z: parse errors retried on ifcopenshell 0.8.4 (0.9.0 rejects Windows '-1.#IND' NaN tokens of Tekla 16 exports); disk gating + disk watchdog (large inputs expand 2-10x; 400 GB roots reached 88%); ENOSPC = transient; hand-off hot reload; started next to each box's code-a process via SSM",
       "c 03:40Z: STEP writer name encoding fixed: names with two consecutive apostrophes (Revit feet-inch 8'') were written as '''' which OpenCASCADE 8.0.1 cannot lex (entities dropped -> segfault on read-back; affected outputs < 256 MB were never published, larger ones were published unverified); zero-area POLY_LOOPs dropped; read-back crashes -> readback_crash",
-      "d 03:49Z: runtime v3 (redo list _control/conv/ifc/redo_ids.json re-read every round; published a/b outputs containing '''' are re-converted automatically)"
+      "d 03:49Z: runtime v3 (redo list _control/conv/ifc/redo_ids.json re-read every round; published a/b outputs containing '''' are re-converted automatically)",
+      "e 04:41Z (lead request after 27 ENOSPC convert_error on ip-10-0-101-74): at most 3 jobs >= 100 MB per host across all worker processes, disk reserved 40x input per job; the 27 were already re-opened by code d (ENOSPC = transient disk_full_on_worker, retried) and re-running since 04:34Z"
      ]
     },
     "db1": {
      "jobs": 2258,
      "jobs_input_bytes": 136438093843,
-     "done": 868,
-     "ok": 805,
-     "failed": 63,
+     "done": 968,
+     "ok": 889,
+     "failed": 79,
      "failed_by_reason": {
-      "no_member_layout": 59,
+      "no_member_layout": 75,
       "suspect_attr_link": 1,
       "suspect_orientation": 1,
       "download_error": 1,
       "convert_error": 1
      },
-     "in_flight": 144,
-     "pending": 1390,
-     "step_files": 805,
-     "step_bytes": 576399103561,
-     "validated": 120,
+     "in_flight": 126,
+     "pending": 1290,
+     "step_files": 889,
+     "step_bytes": 619103388171,
+     "validated": 125,
      "input_fixes_ok": {},
      "ok_with_excluded_elements": 17,
-     "worker_processes_live": 5,
-     "pct_done": 38.44,
+     "worker_processes_live": 8,
+     "pct_done": 42.87,
      "fanout_ready": true,
      "kit": "s3://annotationprod/cad-disk-extract/zentitude-data-4/_control/conv/db1/",
      "userdata": "s3://annotationprod/cad-disk-extract/zentitude-data-4/_control/conv/db1/userdata.sh",
-     "code": "z4-db1-2026-09-30c (runtime convfleet-v3)",
+     "code": "z4-db1-2026-09-30d (runtime convfleet-v4)",
      "outputs": "conversions/db1-step/<sha256>.stp (+ .validate.json)",
      "results": "_state/conv/db1/results/<sha256>.json",
      "recommended_instances": {
@@ -50958,7 +50960,8 @@
      "code_history": [
       "a 03:02Z: initial fleet code",
       "b 03:43Z: same STEP writer fix as IFC c; runtime v2 (bridged next to the code-a processes via SSM)",
-      "c 03:49Z: runtime v3 (redo list _control/conv/db1/redo_ids.json)"
+      "c 03:49Z: runtime v3 (redo list _control/conv/db1/redo_ids.json)",
+      "d 04:41Z: runtime v4 (redo entries by failure reason)"
      ]
     },
     "sds2": {
@@ -50984,12 +50987,12 @@
      "validated": 131,
      "input_fixes_ok": {},
      "ok_with_excluded_elements": 0,
-     "worker_processes_live": 1,
+     "worker_processes_live": 2,
      "pct_done": 95.95,
      "fanout_ready": true,
      "kit": "s3://annotationprod/cad-disk-extract/zentitude-data-4/_control/conv/sds2/",
      "userdata": "s3://annotationprod/cad-disk-extract/zentitude-data-4/_control/conv/sds2/userdata.sh",
-     "code": "z4-sds2-v4-2026-09-30a (runtime convfleet-v2)",
+     "code": "z4-sds2-v4-2026-09-30b (runtime convfleet-v4)",
      "converter": "sds2-step-pipeline-v4-candidate.zip (sha256 c5b65d271d3a6c69853d745d705cbb92b431e8891686068e7a555e720b3c15f0, the version run 2 accepted results with; v6 canary failed 2/2): sds2_to_step.py --stage 2 --verify, no stage-1 fallback, timeout 14400 s",
      "acceptance": "run-2 audit rule: status ok, stage-2 rc 0, qa pass|warn, 0 invalid solids after OCC read-back, uploaded",
      "outputs": "conversions/sds2-step/<job id>/<name>_stage2.step (+ _pieces.csv, _skipped.csv, _preview.png, _stage2.log, job.json); written-but-not-accepted STEP under conversions/sds2-step/_not_accepted/<job id>/",
@@ -51010,32 +51013,33 @@
    "ifc": {
     "jobs": 11157,
     "jobs_input_bytes": 149813482452,
-    "done": 4954,
-    "ok": 4917,
-    "failed": 37,
+    "done": 8688,
+    "ok": 8646,
+    "failed": 42,
     "failed_by_reason": {
      "convert_error": 27,
      "ifcxml_unsupported": 8,
-     "corrupt_coordinates": 1,
-     "download_error": 1
+     "no_geometry_grid_or_annotation_only": 4,
+     "download_error": 2,
+     "corrupt_coordinates": 1
     },
-    "in_flight": 335,
-    "pending": 6203,
-    "step_files": 4917,
-    "step_bytes": 6412982957912,
-    "validated": 2229,
+    "in_flight": 162,
+    "pending": 2469,
+    "step_files": 8646,
+    "step_bytes": 6494205421541,
+    "validated": 5947,
     "input_fixes_ok": {
-     "schema_IFC2X2_FINAL_declared_IFC2X3": 5,
-     "header_normalized": 26,
+     "schema_IFC2X2_FINAL_declared_IFC2X3": 6,
+     "header_normalized": 27,
      "truncated_tail_repaired": 1
     },
     "ok_with_excluded_elements": 0,
-    "worker_processes_live": 18,
-    "pct_done": 44.4,
+    "worker_processes_live": 37,
+    "pct_done": 77.87,
     "fanout_ready": true,
     "kit": "s3://annotationprod/cad-disk-extract/zentitude-data-4/_control/conv/ifc/",
     "userdata": "s3://annotationprod/cad-disk-extract/zentitude-data-4/_control/conv/ifc/userdata.sh",
-    "code": "z4-ifc-2026-09-30d (runtime convfleet-v3)",
+    "code": "z4-ifc-2026-09-30e (runtime convfleet-v4)",
     "outputs": "conversions/ifc-step/<sha256>.step (+ .stats.json, .validate.json)",
     "results": "_state/conv/ifc/results/<sha256>.json",
     "recommended_instances": {
@@ -51051,35 +51055,36 @@
      "a 02:47Z: initial fleet code",
      "b 03:07Z: parse errors retried on ifcopenshell 0.8.4 (0.9.0 rejects Windows '-1.#IND' NaN tokens of Tekla 16 exports); disk gating + disk watchdog (large inputs expand 2-10x; 400 GB roots reached 88%); ENOSPC = transient; hand-off hot reload; started next to each box's code-a process via SSM",
      "c 03:40Z: STEP writer name encoding fixed: names with two consecutive apostrophes (Revit feet-inch 8'') were written as '''' which OpenCASCADE 8.0.1 cannot lex (entities dropped -> segfault on read-back; affected outputs < 256 MB were never published, larger ones were published unverified); zero-area POLY_LOOPs dropped; read-back crashes -> readback_crash",
-     "d 03:49Z: runtime v3 (redo list _control/conv/ifc/redo_ids.json re-read every round; published a/b outputs containing '''' are re-converted automatically)"
+     "d 03:49Z: runtime v3 (redo list _control/conv/ifc/redo_ids.json re-read every round; published a/b outputs containing '''' are re-converted automatically)",
+     "e 04:41Z (lead request after 27 ENOSPC convert_error on ip-10-0-101-74): at most 3 jobs >= 100 MB per host across all worker processes, disk reserved 40x input per job; the 27 were already re-opened by code d (ENOSPC = transient disk_full_on_worker, retried) and re-running since 04:34Z"
     ]
    },
    "db1": {
     "jobs": 2258,
     "jobs_input_bytes": 136438093843,
-    "done": 868,
-    "ok": 805,
-    "failed": 63,
+    "done": 968,
+    "ok": 889,
+    "failed": 79,
     "failed_by_reason": {
-     "no_member_layout": 59,
+     "no_member_layout": 75,
      "suspect_attr_link": 1,
      "suspect_orientation": 1,
      "download_error": 1,
      "convert_error": 1
     },
-    "in_flight": 144,
-    "pending": 1390,
-    "step_files": 805,
-    "step_bytes": 576399103561,
-    "validated": 120,
+    "in_flight": 126,
+    "pending": 1290,
+    "step_files": 889,
+    "step_bytes": 619103388171,
+    "validated": 125,
     "input_fixes_ok": {},
     "ok_with_excluded_elements": 17,
-    "worker_processes_live": 5,
-    "pct_done": 38.44,
+    "worker_processes_live": 8,
+    "pct_done": 42.87,
     "fanout_ready": true,
     "kit": "s3://annotationprod/cad-disk-extract/zentitude-data-4/_control/conv/db1/",
     "userdata": "s3://annotationprod/cad-disk-extract/zentitude-data-4/_control/conv/db1/userdata.sh",
-    "code": "z4-db1-2026-09-30c (runtime convfleet-v3)",
+    "code": "z4-db1-2026-09-30d (runtime convfleet-v4)",
     "outputs": "conversions/db1-step/<sha256>.stp (+ .validate.json)",
     "results": "_state/conv/db1/results/<sha256>.json",
     "recommended_instances": {
@@ -51095,7 +51100,8 @@
     "code_history": [
      "a 03:02Z: initial fleet code",
      "b 03:43Z: same STEP writer fix as IFC c; runtime v2 (bridged next to the code-a processes via SSM)",
-     "c 03:49Z: runtime v3 (redo list _control/conv/db1/redo_ids.json)"
+     "c 03:49Z: runtime v3 (redo list _control/conv/db1/redo_ids.json)",
+     "d 04:41Z: runtime v4 (redo entries by failure reason)"
     ]
    },
    "sds2": {
@@ -51121,12 +51127,12 @@
     "validated": 131,
     "input_fixes_ok": {},
     "ok_with_excluded_elements": 0,
-    "worker_processes_live": 1,
+    "worker_processes_live": 2,
     "pct_done": 95.95,
     "fanout_ready": true,
     "kit": "s3://annotationprod/cad-disk-extract/zentitude-data-4/_control/conv/sds2/",
     "userdata": "s3://annotationprod/cad-disk-extract/zentitude-data-4/_control/conv/sds2/userdata.sh",
-    "code": "z4-sds2-v4-2026-09-30a (runtime convfleet-v2)",
+    "code": "z4-sds2-v4-2026-09-30b (runtime convfleet-v4)",
     "converter": "sds2-step-pipeline-v4-candidate.zip (sha256 c5b65d271d3a6c69853d745d705cbb92b431e8891686068e7a555e720b3c15f0, the version run 2 accepted results with; v6 canary failed 2/2): sds2_to_step.py --stage 2 --verify, no stage-1 fallback, timeout 14400 s",
     "acceptance": "run-2 audit rule: status ok, stage-2 rc 0, qa pass|warn, 0 invalid solids after OCC read-back, uploaded",
     "outputs": "conversions/sds2-step/<job id>/<name>_stage2.step (+ _pieces.csv, _skipped.csv, _preview.png, _stage2.log, job.json); written-but-not-accepted STEP under conversions/sds2-step/_not_accepted/<job id>/",
@@ -51149,11 +51155,16 @@
     "note": "already STEP; indexed only (sha256, stored key, size, every data-4 path)"
    },
    "notices": [
-    "IFC code d / DB1 code c deployed 03:49Z with hand-off (no idle slots); user-data unchanged for new boxes",
-    "STORAGE: IFC STEP is 5.5 TB after 2,689 of 11,157 files (04:25Z); projected ~8-10 TB. Cause: tessellated curved parts (bolts, holes) written as faceted B-rep (~270 bytes per triangle, 5 mm deflection); mid-size Tekla IFC expand 50-80x. Same format as the Disk-1/2 run (~14 TB of STEP there). If that is too much, options: coarser deflection for tessellated items, or .step.gz (~7x smaller) - needs a decision; the kit is unchanged",
-    "Quote scan of a/b outputs published without read-back (760 files, ~2.5 TB) running; affected ids go to redo_ids.json and re-convert automatically",
-    "ENOSPC on 400 GB roots happened on a few boxes during the largest inputs; handled as retries (no final failures); larger roots (600 GB+) recommended for any new IFC box"
-   ]
+    "04:41Z IFC e / DB1 d / SDS2 b deployed (hand-off, no idle slots); user-data unchanged",
+    "ENOSPC: classified transient (disk_full_on_worker, up to 8 retries) since code b; the 27 code-a convert_error ENOSPC results are being re-run by code d/e; code e caps big jobs (>=100 MB) at 3 per host and reserves 40x input disk",
+    "STORAGE: IFC STEP 6.2 TB after 4,122 of 11,157 files (04:34Z); projected ~8-10 TB (faceted B-rep ~270 bytes per triangle, 5 mm deflection; same format as the Disk-1/2 run). Coarser deflection or .step.gz would cut it - needs a decision",
+    "Quote scan of a/b outputs published without read-back (760 IFC files, ~2.5 TB) running on cad-zen2-files; affected ids go to redo_ids.json and re-convert automatically (results: _control/conv/<pipe>/_scan/quote_scan.json)",
+    "SSO for SSM expired ~04:30Z: the converter agent can no longer run commands on boxes; fleet, status aggregator (cad-zen2-files) and scans keep running"
+   ],
+   "requeue": {
+    "how": "after the extraction repair: AWS_PROFILE=bim python3 requeue.py <ifc|db1|sds2> --reason download_error   (script: s3://annotationprod/cad-disk-extract/zentitude-data-4/_control/conv/requeue.py; or --ids ID ...). Adds {reasons, before=now} to _control/conv/<pipe>/redo_ids.json; running v4 workers re-open matching results within one round (~5 min). Run it after the quote scan has written _control/conv/<pipe>/_scan/quote_scan.json (~05:00Z), since the old scan process rewrites redo_ids.json when it finishes",
+    "note": "sds2: only one box; if it has finished and shut down, requeued jobs need one box with the sds2 user-data"
+   }
   },
   "state": "complete",
   "final_verify": {
