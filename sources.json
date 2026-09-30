@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-09-30T05:29:51Z",
+ "generated_at": "2026-09-30T05:37:14Z",
  "interval_s": 120,
  "z4": {
   "label": "Disk Z4 (Tekla office backup SSD)",
@@ -6701,32 +6701,20 @@
   },
   "running": [
    {
-    "phase": "extract",
+    "phase": "nested",
     "size": 124161466404,
     "files_total": null,
     "files_uploaded": null
    },
    {
-    "phase": "extract",
+    "phase": "nested",
     "size": 117126860234,
     "files_total": null,
     "files_uploaded": null
    },
    {
-    "phase": "extract",
-    "size": 113775442915,
-    "files_total": null,
-    "files_uploaded": null
-   },
-   {
     "phase": "repair",
-    "size": 82922555743,
-    "files_total": null,
-    "files_uploaded": null
-   },
-   {
-    "phase": "extract",
-    "size": 34793816743,
+    "size": 113775442915,
     "files_total": null,
     "files_uploaded": null
    }
@@ -50256,7 +50244,7 @@
    "verify_rule": "top-level files extracted per archive vs the drive report (7-Zip header listing of each archive)"
   },
   "pdf_classes": {
-   "updated": "2026-09-30T05:28:49Z",
+   "updated": "2026-09-30T05:36:48Z",
    "pdf_paths": 8681373,
    "pdf_unique": 3900900,
    "classes": {
@@ -50897,7 +50885,7 @@
    "disk12_updated": "2026-09-30T00:56:38Z"
   },
   "conversions": {
-   "updated": "2026-09-30T05:29:43Z",
+   "updated": "2026-09-30T05:35:55Z",
    "source": "Zentitude-data-4",
    "rule": "one job per distinct new content (sha256 not stored by Disk-1/2); disk12 duplicates were converted in the Disk-1/2 run",
    "pipelines": {
@@ -50905,22 +50893,21 @@
      "jobs": 11157,
      "jobs_input_bytes": 149813482452,
      "done": 11155,
-     "ok": 11093,
-     "failed": 62,
+     "ok": 11095,
+     "failed": 60,
      "failed_by_reason": {
       "no_geometry_grid_or_annotation_only": 25,
       "not_step21": 21,
       "ifcxml_unsupported": 8,
-      "convert_error": 2,
       "download_error": 2,
       "empty_output": 2,
-      "kernel_hang": 1,
+      "convert_error": 1,
       "corrupt_coordinates": 1
      },
-     "in_flight": 31,
+     "in_flight": 27,
      "pending": 2,
-     "step_files": 11093,
-     "step_bytes": 7633034252779,
+     "step_files": 11095,
+     "step_bytes": 7673698149231,
      "validated": 8344,
      "input_fixes_ok": {
       "schema_IFC2X2_FINAL_declared_IFC2X3": 6,
@@ -50958,26 +50945,26 @@
     "db1": {
      "jobs": 2258,
      "jobs_input_bytes": 136438093843,
-     "done": 1785,
-     "ok": 1561,
-     "failed": 224,
+     "done": 1974,
+     "ok": 1736,
+     "failed": 238,
      "failed_by_reason": {
       "no_member_layout": 186,
-      "suspect_attr_link": 28,
-      "unapproved_engine": 7,
+      "suspect_attr_link": 41,
+      "unapproved_engine": 8,
       "suspect_orientation": 1,
       "download_error": 1,
       "convert_error": 1
      },
-     "in_flight": 144,
-     "pending": 473,
-     "step_files": 1561,
-     "step_bytes": 796945473319,
-     "validated": 551,
+     "in_flight": 142,
+     "pending": 284,
+     "step_files": 1736,
+     "step_bytes": 821575590540,
+     "validated": 711,
      "input_fixes_ok": {},
      "ok_with_excluded_elements": 19,
      "worker_processes_live": 6,
-     "pct_done": 79.05,
+     "pct_done": 87.42,
      "fanout_ready": true,
      "kit": "s3://annotationprod/cad-disk-extract/zentitude-data-4/_control/conv/db1/",
      "userdata": "s3://annotationprod/cad-disk-extract/zentitude-data-4/_control/conv/db1/userdata.sh",
@@ -51052,22 +51039,21 @@
     "jobs": 11157,
     "jobs_input_bytes": 149813482452,
     "done": 11155,
-    "ok": 11093,
-    "failed": 62,
+    "ok": 11095,
+    "failed": 60,
     "failed_by_reason": {
      "no_geometry_grid_or_annotation_only": 25,
      "not_step21": 21,
      "ifcxml_unsupported": 8,
-     "convert_error": 2,
      "download_error": 2,
      "empty_output": 2,
-     "kernel_hang": 1,
+     "convert_error": 1,
      "corrupt_coordinates": 1
     },
-    "in_flight": 31,
+    "in_flight": 27,
     "pending": 2,
-    "step_files": 11093,
-    "step_bytes": 7633034252779,
+    "step_files": 11095,
+    "step_bytes": 7673698149231,
     "validated": 8344,
     "input_fixes_ok": {
      "schema_IFC2X2_FINAL_declared_IFC2X3": 6,
@@ -51105,26 +51091,26 @@
    "db1": {
     "jobs": 2258,
     "jobs_input_bytes": 136438093843,
-    "done": 1785,
-    "ok": 1561,
-    "failed": 224,
+    "done": 1974,
+    "ok": 1736,
+    "failed": 238,
     "failed_by_reason": {
      "no_member_layout": 186,
-     "suspect_attr_link": 28,
-     "unapproved_engine": 7,
+     "suspect_attr_link": 41,
+     "unapproved_engine": 8,
      "suspect_orientation": 1,
      "download_error": 1,
      "convert_error": 1
     },
-    "in_flight": 144,
-    "pending": 473,
-    "step_files": 1561,
-    "step_bytes": 796945473319,
-    "validated": 551,
+    "in_flight": 142,
+    "pending": 284,
+    "step_files": 1736,
+    "step_bytes": 821575590540,
+    "validated": 711,
     "input_fixes_ok": {},
     "ok_with_excluded_elements": 19,
     "worker_processes_live": 6,
-    "pct_done": 79.05,
+    "pct_done": 87.42,
     "fanout_ready": true,
     "kit": "s3://annotationprod/cad-disk-extract/zentitude-data-4/_control/conv/db1/",
     "userdata": "s3://annotationprod/cad-disk-extract/zentitude-data-4/_control/conv/db1/userdata.sh",
@@ -51257,8 +51243,8 @@
     "missing": 433,
     "missing_bytes": 1733142271,
     "archives": 57,
-    "archives_done": 52,
-    "restored": 387,
+    "archives_done": 55,
+    "restored": 429,
     "not_found": 0
    }
   },
