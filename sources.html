@@ -149,10 +149,11 @@ async function load(){
   const glance=(id,rows,d12)=>{const el=document.getElementById(id); if(el) el.innerHTML=GHEAD(d12)+((rows||[]).length?(rows||[]).map(r=>grow(r,d12)).join(""):`<tr><td colspan="6" class="muted">counting…</td></tr>`)};
   glance("z4-glance",z.at_a_glance,true); glance("z4-loose-glance",z.loose_at_a_glance,false);
   const pc=z.pdf_classes||{}, cl=pc.classes||{};
-  document.getElementById("z4-pdfc").innerHTML=`<tr><th>PDF kind</th><th class="n">Raw files</th><th class="n">Unique files</th></tr>`+
-    [["cad","CAD drawings"],["document","Non-CAD documents"],["unknown","Unknown (metadata unreadable)"],["pending","Not yet classified"]].map(([k,l])=>`<tr><td>${l}</td><td class="n">${n((cl[k]||{}).raw||0)}</td><td class="n">${n((cl[k]||{}).unique||0)}</td></tr>`).join("")+
-    `<tr><td><b>All PDFs</b></td><td class="n"><b>${n(pc.pdf_paths||0)}</b></td><td class="n"><b>${n(pc.pdf_unique||0)}</b></td></tr>`;
-  document.getElementById("z4-pdfc-note").textContent=pc.rule?`Rule: ${pc.rule}. Each unique PDF is read (first/last 64 KB) and classified once.`:"classification starting…";
+  const pr=(z.at_a_glance||[]).filter(r=>/PDF/.test(r.kind));
+  document.getElementById("z4-pdfc").innerHTML=`<tr><th>PDF kind</th><th class="n">Raw files</th><th class="n">Unique files</th><th class="n">Raw size</th></tr>`+
+    pr.map(r=>`<tr><td>${r.kind}</td><td class="n">${n(r.files)}</td><td class="n">${n(r.unique_files)}</td><td class="n">${gb(r.bytes)}</td></tr>`).join("")+
+    `<tr><td><b>All PDFs</b></td><td class="n"><b>${n(pr.reduce((a,r)=>a+r.files,0))}</b></td><td class="n"><b>${n(pr.reduce((a,r)=>a+r.unique_files,0))}</b></td><td class="n"><b>${gb(pr.reduce((a,r)=>a+r.bytes,0))}</b></td></tr>`;
+  document.getElementById("z4-pdfc-note").textContent=pc.rule?`Rule: ${pc.rule}. Each unique PDF is classified once (by the extraction worker from the local file, or by a backlog pass reading its first/last 64 KB); "not yet classified" shrinks as the backlog pass catches up (${n(pc.pdf_unique||0)} unique classified so far).`:"classification starting…";
   const HEAD=`<tr><th>Type</th><th class="n">Raw files</th><th class="n">Raw size</th><th class="n">Unique files</th><th class="n">Unique size</th><th class="n">Already in Disk-1/2</th></tr>`;
   const row=t=>`<tr><td>.${t.type}</td><td class="n">${n(t.files)}</td><td class="n">${gb(t.bytes)}</td><td class="n">${t.stored_files==null?"–":n(t.stored_files)}</td><td class="n">${t.stored_bytes==null?"–":gb(t.stored_bytes)}</td><td class="n">${t.in_disk12_files==null?"–":n(t.in_disk12_files)}</td></tr>`;
   const sumrow=(arr,label)=>{const s=arr.reduce((a,t)=>({f:a.f+t.files,b:a.b+t.bytes,sf:a.sf+(t.stored_files||0),sb:a.sb+(t.stored_bytes||0),d:a.d+(t.in_disk12_files||0)}),{f:0,b:0,sf:0,sb:0,d:0});return `<tr><td><b>${label}</b></td><td class="n"><b>${n(s.f)}</b></td><td class="n"><b>${gb(s.b)}</b></td><td class="n"><b>${n(s.sf)}</b></td><td class="n"><b>${gb(s.sb)}</b></td><td class="n"><b>${n(s.d)}</b></td></tr>`};
