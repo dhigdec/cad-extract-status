@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-09-30T07:34:17Z",
+ "generated_at": "2026-09-30T07:40:38Z",
  "interval_s": 120,
  "z4": {
   "label": "Disk Z4 (Tekla office backup SSD)",
@@ -50225,7 +50225,7 @@
    "verify_rule": "top-level files extracted per archive vs the drive report (7-Zip header listing of each archive)"
   },
   "pdf_classes": {
-   "updated": "2026-09-30T07:32:53Z",
+   "updated": "2026-09-30T07:38:52Z",
    "pdf_paths": 8681373,
    "pdf_unique": 3900900,
    "classes": {
@@ -50903,7 +50903,7 @@
    "note": "Data-4 contains every Disk-1 archive byte-identical, plus 345 new archives. Disk-1 extraction kept only CAD types, so extracting data-4 fully still yielded content Disk-1 never stored; all content is deduplicated by sha256 against Disk-1/2."
   },
   "conversions": {
-   "updated": "2026-09-30T07:34:40Z",
+   "updated": "2026-09-30T07:40:48Z",
    "source": "Zentitude-data-4",
    "rule": "one job per distinct new content (sha256 not stored by Disk-1/2); disk12 duplicates were converted in the Disk-1/2 run",
    "pipelines": {
@@ -50934,19 +50934,14 @@
      "ok_with_excluded_elements": 0,
      "worker_processes_live": 0,
      "pct_done": 100.0,
-     "fanout_ready": true,
+     "fanout_ready": false,
      "kit": "s3://annotationprod/cad-disk-extract/zentitude-data-4/_control/conv/ifc/",
      "userdata": "s3://annotationprod/cad-disk-extract/zentitude-data-4/_control/conv/ifc/userdata.sh",
      "code": "z4-ifc-2026-09-30e (runtime convfleet-v4)",
      "outputs": "conversions/ifc-step/<sha256>.step (+ .stats.json, .validate.json)",
      "results": "_state/conv/ifc/results/<sha256>.json",
      "recommended_instances": {
-      "type": "r7i.16xlarge",
-      "count": 10,
-      "region": "7 ap-south-1 + 3 ap-south-2 (running)",
-      "root_gb": 400,
-      "ami": "AL2023",
-      "note": "running as launched; 400 GB root is tight while the >100 MB inputs run (b gates on free disk); boxes power off when every job has a result. Extra boxes: same user-data; 600+ GB root if convenient"
+      "note": "pipeline final; no boxes needed"
      },
      "sample_validation": "7 samples on cad-zen2-files (ifc 0.2/2/30/150 MB, ifczip 3/20 MB, ifcxml): STEP written + OCC read-back roots==parts, bbox sane",
      "code_history": [
@@ -50957,7 +50952,8 @@
       "e 04:41Z (lead request after 27 ENOSPC convert_error on ip-10-0-101-74): at most 3 jobs >= 100 MB per host across all worker processes, disk reserved 40x input per job; the 27 were already re-opened by code d (ENOSPC = transient disk_full_on_worker, retried) and re-running since 04:34Z"
      ],
      "jobs_note": "11,157 distinct new IFC contents (9,489 .ifc, 1,663 .ifczip, 5 .ifcxml; sha256 not stored by Disk-1/2). Genuine failures: no_geometry_grid_or_annotation_only = the model holds only grids/annotations (Tekla grid exports, reference 'out.ifc'); not_step21 = .ifcZIP files that contain an XML 'NewDataSet' (Tekla ExportedToRevit link data), not IFC; ifcxml_unsupported = ifcXML (plain or zipped): both ifcopenshell builds (0.9.0, 0.8.4) ship with the ifcXML reader disabled; empty_output = tiny ifcZIP models with no products; corrupt_coordinates = source geometry ~1.3e11 mm away even after tessellating the corrupt elements; readback_fail = 1 file (2d0f85a3bc80, Tekla reference .ifczip, 3,017 parts, sane bbox): STEP written in 11 s but the OpenCASCADE read-back did not finish within its 3 h limit, so it was not published (its sibling model read back ok after 2.6 h). The 2 download_error jobs (extraction gap) were requeued after the lead's repair and converted ok. The 49 code-a convert_error/kernel_hang results were disk-full (ENOSPC) and were re-run and converted ok; 56 early outputs with the old name encoding (or not scanned) were re-converted. Repairs applied where needed (input_fixes_ok): header normalization, legacy schema IFC2X2_FINAL->IFC2X3, truncated-tail repair, 0.8.4 kernel for strict-parse failures.",
-     "validated_note": "validated = OpenCASCADE read-back (roots == parts, solids, bbox) for STEP < 256 MB; larger outputs are graded by entity markers + bbox and were scanned for the old-writer '''' defect (affected ones re-converted)"
+     "validated_note": "validated = OpenCASCADE read-back (roots == parts, solids, bbox) for STEP < 256 MB; larger outputs are graded by entity markers + bbox and were scanned for the old-writer '''' defect (affected ones re-converted)",
+     "final": true
     },
     "db1": {
      "jobs": 2258,
@@ -50984,21 +50980,16 @@
      "ok_with_excluded_elements": 21,
      "worker_processes_live": 0,
      "pct_done": 100.0,
-     "fanout_ready": true,
+     "fanout_ready": false,
      "kit": "s3://annotationprod/cad-disk-extract/zentitude-data-4/_control/conv/db1/",
      "userdata": "s3://annotationprod/cad-disk-extract/zentitude-data-4/_control/conv/db1/userdata.sh",
      "code": "z4-db1-2026-09-30d (runtime convfleet-v4)",
      "outputs": "conversions/db1-step/<sha256>.stp (+ .validate.json)",
      "results": "_state/conv/db1/results/<sha256>.json",
      "recommended_instances": {
-      "type": "r7i.16xlarge",
-      "count": 3,
-      "region": "ap-south-2",
-      "ami": "AL2023 ami-003ed75f7a31e8f3d",
-      "root_gb": 400,
-      "note": "running: 2 x r7i.16xlarge in ap-south-2 (lead); 48 slots each, memory-gated 30x DB1 size; add boxes when capacity frees (same user-data)"
+      "note": "pipeline final; no boxes needed"
      },
-     "jobs_note": "2,258 distinct new model DB1 (3,095 new DB1 minus 836 xslib.db1 component libraries and 1 zero-byte file). Genuine failures: no_member_layout = the decoder found no member table it can verify (it never guesses geometry). Diagnosed on 1ee70796 (ATLANTIC PARK ENTERTAINMENT VENUE, 8.85, 148 MB decompressed): only 489 records in the stride-73 member table every approved 8.x layout uses (a decodable 8.95 model of similar size has 18,136), point table at offset 12 instead of 17, and no other table with a member signature (two point refs + length/axis doubles) - the parts are stored in a record variant not reverse-engineered yet (likely records outside the 0x04-flagged runs, as once seen for 8.65). Concentrated in 8.85/8.07 files of 35-57 MB (in the Disk-1/2 run 8.07 had 239 such files; 8.85 models were mostly converted there by the original Windows pipeline, so our decoder had seen few). Fix = reverse-engineer this variant against an IFC ground truth (hours; not done in this run). suspect_orientation / suspect_attr_link = decoded but failed the axis/attribute guards (held back, as on Disk-1/2); unapproved_engine = Tekla 9.21/9.50 or no banner (no verified layout); convert_error = decoder exception on a damaged file; download_error = stored object missing from extracted/ (extraction gap; lead is restoring, then requeue)",
+     "jobs_note": "2,258 distinct new model DB1 (3,095 new DB1 minus 836 xslib.db1 component libraries and 1 zero-byte file). Genuine failures: no_member_layout (193: 8.85 x139, 8.07 x46, 7.98 x5, 9.08 x3) = no member table the decoder can verify (it never guesses geometry); diagnosed on 1ee70796 (8.85, 148 MB decompressed): only 489 records in the stride-73 member table every approved 8.x layout uses (a decodable 8.95 model of similar size has 18,136), point table at offset 12 instead of 17, no other table with a member signature - a record variant not reverse-engineered yet; in the Disk-1/2 run most 8.85 models had been converted by the original Windows pipeline, so this variant was rarely seen. suspect_attr_link (43) / suspect_orientation (1) = decoded, but held back by the attribute-link / member-axis guards (as on Disk-1/2); empty_model (14) = 0.1-0.8 MB blank/template models with no parts; unapproved_engine (9: Tekla 9.50 x6, 9.21 x3) = engine versions without a verified layout; deferred_layout (2) = full layout discovery exceeded the 2 h decode limit (65 MB 8.07, 292 MB 9.08); no_engine_banner (1) = not a Tekla model header; convert_error (1) = corrupt compressed stream in the source. The one download_error (extraction gap) was requeued after the lead's repair and converted ok.",
      "sample_validation": "5 samples on cad-zen2-files (engines 8.53/8.85/8.95/9.08, 1-72 MB): 4 ok (STEP 26-279 MB, OCC read-back roots==parts==written members, bbox sane, axis agreement 1.0); 71 MB 9.08 still decoding at release",
      "code_history": [
       "a 03:02Z: initial fleet code",
@@ -51006,7 +50997,8 @@
       "c 03:49Z: runtime v3 (redo list _control/conv/db1/redo_ids.json)",
       "d 04:41Z: runtime v4 (redo entries by failure reason)"
      ],
-     "validated_note": "validated = OpenCASCADE read-back for STEP < 256 MB; larger outputs graded by FACETED_BREP markers + bbox; 0 of 284 unverified code-a outputs had the '''' defect"
+     "validated_note": "validated = OpenCASCADE read-back for STEP < 256 MB; larger outputs graded by FACETED_BREP markers + bbox; 0 of 284 unverified code-a outputs had the '''' defect",
+     "final": true
     },
     "sds2": {
      "jobs": 173,
@@ -51030,9 +51022,9 @@
      "validated": 133,
      "input_fixes_ok": {},
      "ok_with_excluded_elements": 0,
-     "worker_processes_live": 2,
+     "worker_processes_live": 0,
      "pct_done": 100.0,
-     "fanout_ready": true,
+     "fanout_ready": false,
      "kit": "s3://annotationprod/cad-disk-extract/zentitude-data-4/_control/conv/sds2/",
      "userdata": "s3://annotationprod/cad-disk-extract/zentitude-data-4/_control/conv/sds2/userdata.sh",
      "code": "z4-sds2-v4-2026-09-30b (runtime convfleet-v4)",
@@ -51041,16 +51033,11 @@
      "outputs": "conversions/sds2-step/<job id>/<name>_stage2.step (+ _pieces.csv, _skipped.csv, _preview.png, _stage2.log, job.json); written-but-not-accepted STEP under conversions/sds2-step/_not_accepted/<job id>/",
      "results": "_state/conv/sds2/results/<job id>.json",
      "recommended_instances": {
-      "type": "i4i.8xlarge",
-      "count": 1,
-      "region": "any (S3 in ap-south-1)",
-      "ami": "Ubuntu 22.04 (validated distro): ap-south-1 ami-05a7c953f702ad6dd, ap-south-2 ami-00d86cbf08764a48b; AL2023 untested for this kit",
-      "root_gb": 100,
-      "note": "SDS2 is small (173 jobs, 15.1 GB model files, most finish in seconds-minutes; the largest up to the 4 h timeout). Any one box is enough: i4i.8xlarge (30 slots) or i4i.16xlarge (62) when capacity frees; if nothing frees soon, one r7i.2xlarge / m7i.2xlarge (8 vCPU, 6 slots, 100 GB root) fits the Mumbai headroom and still finishes, only slower. slots = min(nproc-2, GB/6)."
+      "note": "pipeline final; no boxes needed"
      },
      "sample_validation": "10 real jobs on cad-zen2-files: bernardPSC_job 6804/6804 valid solids, steel ratio 1.027, pass; Baha_Roof_C 1353/1353, 1.038, pass (both identical to run 2); CONTRA FSB 180/180 pass; default7.0ReportWriter ok; 6 genuine source failures (seed template, 0 members to calibrate x2, no mem_idx, no model folders x2)",
-     "jobs_note": "173 distinct SDS/2 job folders (193 report rows; 15.1 GB model files). Accepted = run-2 audit rule (stage-2 rc 0, QA pass|warn, 0 invalid solids after OCC read-back). Genuine failures: no_members_to_calibrate = v4 finds no member records to calibrate units (training/seed jobs); job_folder_incomplete = no main/jsetup, main/job_mtrl or mem/mem_idx in the folder (no model data); missing_job_file = a job file v4 needs is absent; invalid_solids = STEP written but OCC read-back found invalid solids (not accepted; kept under conversions/sds2-step/_not_accepted/); qa_fail = STEP/SDS2 steel-weight ratio outside the QA band (e.g. 0.22x, 1.30x); step_write_failed = seed template job; other = v4 run failed without a specific cause; download_error = stored object missing from extracted/ (extraction gap; requeued after the lead's repair). 53 job names match a Disk-2 run-2 job (37 accepted there) - converted anyway (name match only).",
-     "status_note": "running (lead launched)"
+     "jobs_note": "173 distinct SDS/2 job folders (193 report rows; 15.1 GB model files). Accepted = run-2 audit rule (stage-2 rc 0, QA pass|warn, 0 invalid solids after OCC read-back). Genuine failures: no_members_to_calibrate = v4 finds no member records to calibrate units (training/seed jobs); job_folder_incomplete = no main/jsetup, main/job_mtrl or mem/mem_idx in the folder (no model data); missing_job_file = a job file v4 needs is absent; invalid_solids = STEP written but OCC read-back found invalid solids (not accepted; kept under conversions/sds2-step/_not_accepted/); qa_fail = STEP/SDS2 steel-weight ratio outside the QA band (e.g. 0.22x, 1.30x); step_write_failed = seed template job; other = v4 run failed without a specific cause; The 2 download_error jobs (extraction gap) were requeued after the lead's repair: 1 ok, 1 invalid_solids. 53 job names match a Disk-2 run-2 job (37 accepted there) - converted anyway (name match only).",
+     "final": true
     }
    },
    "ifc": {
@@ -51080,19 +51067,14 @@
     "ok_with_excluded_elements": 0,
     "worker_processes_live": 0,
     "pct_done": 100.0,
-    "fanout_ready": true,
+    "fanout_ready": false,
     "kit": "s3://annotationprod/cad-disk-extract/zentitude-data-4/_control/conv/ifc/",
     "userdata": "s3://annotationprod/cad-disk-extract/zentitude-data-4/_control/conv/ifc/userdata.sh",
     "code": "z4-ifc-2026-09-30e (runtime convfleet-v4)",
     "outputs": "conversions/ifc-step/<sha256>.step (+ .stats.json, .validate.json)",
     "results": "_state/conv/ifc/results/<sha256>.json",
     "recommended_instances": {
-     "type": "r7i.16xlarge",
-     "count": 10,
-     "region": "7 ap-south-1 + 3 ap-south-2 (running)",
-     "root_gb": 400,
-     "ami": "AL2023",
-     "note": "running as launched; 400 GB root is tight while the >100 MB inputs run (b gates on free disk); boxes power off when every job has a result. Extra boxes: same user-data; 600+ GB root if convenient"
+     "note": "pipeline final; no boxes needed"
     },
     "sample_validation": "7 samples on cad-zen2-files (ifc 0.2/2/30/150 MB, ifczip 3/20 MB, ifcxml): STEP written + OCC read-back roots==parts, bbox sane",
     "code_history": [
@@ -51103,7 +51085,8 @@
      "e 04:41Z (lead request after 27 ENOSPC convert_error on ip-10-0-101-74): at most 3 jobs >= 100 MB per host across all worker processes, disk reserved 40x input per job; the 27 were already re-opened by code d (ENOSPC = transient disk_full_on_worker, retried) and re-running since 04:34Z"
     ],
     "jobs_note": "11,157 distinct new IFC contents (9,489 .ifc, 1,663 .ifczip, 5 .ifcxml; sha256 not stored by Disk-1/2). Genuine failures: no_geometry_grid_or_annotation_only = the model holds only grids/annotations (Tekla grid exports, reference 'out.ifc'); not_step21 = .ifcZIP files that contain an XML 'NewDataSet' (Tekla ExportedToRevit link data), not IFC; ifcxml_unsupported = ifcXML (plain or zipped): both ifcopenshell builds (0.9.0, 0.8.4) ship with the ifcXML reader disabled; empty_output = tiny ifcZIP models with no products; corrupt_coordinates = source geometry ~1.3e11 mm away even after tessellating the corrupt elements; readback_fail = 1 file (2d0f85a3bc80, Tekla reference .ifczip, 3,017 parts, sane bbox): STEP written in 11 s but the OpenCASCADE read-back did not finish within its 3 h limit, so it was not published (its sibling model read back ok after 2.6 h). The 2 download_error jobs (extraction gap) were requeued after the lead's repair and converted ok. The 49 code-a convert_error/kernel_hang results were disk-full (ENOSPC) and were re-run and converted ok; 56 early outputs with the old name encoding (or not scanned) were re-converted. Repairs applied where needed (input_fixes_ok): header normalization, legacy schema IFC2X2_FINAL->IFC2X3, truncated-tail repair, 0.8.4 kernel for strict-parse failures.",
-    "validated_note": "validated = OpenCASCADE read-back (roots == parts, solids, bbox) for STEP < 256 MB; larger outputs are graded by entity markers + bbox and were scanned for the old-writer '''' defect (affected ones re-converted)"
+    "validated_note": "validated = OpenCASCADE read-back (roots == parts, solids, bbox) for STEP < 256 MB; larger outputs are graded by entity markers + bbox and were scanned for the old-writer '''' defect (affected ones re-converted)",
+    "final": true
    },
    "db1": {
     "jobs": 2258,
@@ -51130,21 +51113,16 @@
     "ok_with_excluded_elements": 21,
     "worker_processes_live": 0,
     "pct_done": 100.0,
-    "fanout_ready": true,
+    "fanout_ready": false,
     "kit": "s3://annotationprod/cad-disk-extract/zentitude-data-4/_control/conv/db1/",
     "userdata": "s3://annotationprod/cad-disk-extract/zentitude-data-4/_control/conv/db1/userdata.sh",
     "code": "z4-db1-2026-09-30d (runtime convfleet-v4)",
     "outputs": "conversions/db1-step/<sha256>.stp (+ .validate.json)",
     "results": "_state/conv/db1/results/<sha256>.json",
     "recommended_instances": {
-     "type": "r7i.16xlarge",
-     "count": 3,
-     "region": "ap-south-2",
-     "ami": "AL2023 ami-003ed75f7a31e8f3d",
-     "root_gb": 400,
-     "note": "running: 2 x r7i.16xlarge in ap-south-2 (lead); 48 slots each, memory-gated 30x DB1 size; add boxes when capacity frees (same user-data)"
+     "note": "pipeline final; no boxes needed"
     },
-    "jobs_note": "2,258 distinct new model DB1 (3,095 new DB1 minus 836 xslib.db1 component libraries and 1 zero-byte file). Genuine failures: no_member_layout = the decoder found no member table it can verify (it never guesses geometry). Diagnosed on 1ee70796 (ATLANTIC PARK ENTERTAINMENT VENUE, 8.85, 148 MB decompressed): only 489 records in the stride-73 member table every approved 8.x layout uses (a decodable 8.95 model of similar size has 18,136), point table at offset 12 instead of 17, and no other table with a member signature (two point refs + length/axis doubles) - the parts are stored in a record variant not reverse-engineered yet (likely records outside the 0x04-flagged runs, as once seen for 8.65). Concentrated in 8.85/8.07 files of 35-57 MB (in the Disk-1/2 run 8.07 had 239 such files; 8.85 models were mostly converted there by the original Windows pipeline, so our decoder had seen few). Fix = reverse-engineer this variant against an IFC ground truth (hours; not done in this run). suspect_orientation / suspect_attr_link = decoded but failed the axis/attribute guards (held back, as on Disk-1/2); unapproved_engine = Tekla 9.21/9.50 or no banner (no verified layout); convert_error = decoder exception on a damaged file; download_error = stored object missing from extracted/ (extraction gap; lead is restoring, then requeue)",
+    "jobs_note": "2,258 distinct new model DB1 (3,095 new DB1 minus 836 xslib.db1 component libraries and 1 zero-byte file). Genuine failures: no_member_layout (193: 8.85 x139, 8.07 x46, 7.98 x5, 9.08 x3) = no member table the decoder can verify (it never guesses geometry); diagnosed on 1ee70796 (8.85, 148 MB decompressed): only 489 records in the stride-73 member table every approved 8.x layout uses (a decodable 8.95 model of similar size has 18,136), point table at offset 12 instead of 17, no other table with a member signature - a record variant not reverse-engineered yet; in the Disk-1/2 run most 8.85 models had been converted by the original Windows pipeline, so this variant was rarely seen. suspect_attr_link (43) / suspect_orientation (1) = decoded, but held back by the attribute-link / member-axis guards (as on Disk-1/2); empty_model (14) = 0.1-0.8 MB blank/template models with no parts; unapproved_engine (9: Tekla 9.50 x6, 9.21 x3) = engine versions without a verified layout; deferred_layout (2) = full layout discovery exceeded the 2 h decode limit (65 MB 8.07, 292 MB 9.08); no_engine_banner (1) = not a Tekla model header; convert_error (1) = corrupt compressed stream in the source. The one download_error (extraction gap) was requeued after the lead's repair and converted ok.",
     "sample_validation": "5 samples on cad-zen2-files (engines 8.53/8.85/8.95/9.08, 1-72 MB): 4 ok (STEP 26-279 MB, OCC read-back roots==parts==written members, bbox sane, axis agreement 1.0); 71 MB 9.08 still decoding at release",
     "code_history": [
      "a 03:02Z: initial fleet code",
@@ -51152,7 +51130,8 @@
      "c 03:49Z: runtime v3 (redo list _control/conv/db1/redo_ids.json)",
      "d 04:41Z: runtime v4 (redo entries by failure reason)"
     ],
-    "validated_note": "validated = OpenCASCADE read-back for STEP < 256 MB; larger outputs graded by FACETED_BREP markers + bbox; 0 of 284 unverified code-a outputs had the '''' defect"
+    "validated_note": "validated = OpenCASCADE read-back for STEP < 256 MB; larger outputs graded by FACETED_BREP markers + bbox; 0 of 284 unverified code-a outputs had the '''' defect",
+    "final": true
    },
    "sds2": {
     "jobs": 173,
@@ -51176,9 +51155,9 @@
     "validated": 133,
     "input_fixes_ok": {},
     "ok_with_excluded_elements": 0,
-    "worker_processes_live": 2,
+    "worker_processes_live": 0,
     "pct_done": 100.0,
-    "fanout_ready": true,
+    "fanout_ready": false,
     "kit": "s3://annotationprod/cad-disk-extract/zentitude-data-4/_control/conv/sds2/",
     "userdata": "s3://annotationprod/cad-disk-extract/zentitude-data-4/_control/conv/sds2/userdata.sh",
     "code": "z4-sds2-v4-2026-09-30b (runtime convfleet-v4)",
@@ -51187,16 +51166,11 @@
     "outputs": "conversions/sds2-step/<job id>/<name>_stage2.step (+ _pieces.csv, _skipped.csv, _preview.png, _stage2.log, job.json); written-but-not-accepted STEP under conversions/sds2-step/_not_accepted/<job id>/",
     "results": "_state/conv/sds2/results/<job id>.json",
     "recommended_instances": {
-     "type": "i4i.8xlarge",
-     "count": 1,
-     "region": "any (S3 in ap-south-1)",
-     "ami": "Ubuntu 22.04 (validated distro): ap-south-1 ami-05a7c953f702ad6dd, ap-south-2 ami-00d86cbf08764a48b; AL2023 untested for this kit",
-     "root_gb": 100,
-     "note": "SDS2 is small (173 jobs, 15.1 GB model files, most finish in seconds-minutes; the largest up to the 4 h timeout). Any one box is enough: i4i.8xlarge (30 slots) or i4i.16xlarge (62) when capacity frees; if nothing frees soon, one r7i.2xlarge / m7i.2xlarge (8 vCPU, 6 slots, 100 GB root) fits the Mumbai headroom and still finishes, only slower. slots = min(nproc-2, GB/6)."
+     "note": "pipeline final; no boxes needed"
     },
     "sample_validation": "10 real jobs on cad-zen2-files: bernardPSC_job 6804/6804 valid solids, steel ratio 1.027, pass; Baha_Roof_C 1353/1353, 1.038, pass (both identical to run 2); CONTRA FSB 180/180 pass; default7.0ReportWriter ok; 6 genuine source failures (seed template, 0 members to calibrate x2, no mem_idx, no model folders x2)",
-    "jobs_note": "173 distinct SDS/2 job folders (193 report rows; 15.1 GB model files). Accepted = run-2 audit rule (stage-2 rc 0, QA pass|warn, 0 invalid solids after OCC read-back). Genuine failures: no_members_to_calibrate = v4 finds no member records to calibrate units (training/seed jobs); job_folder_incomplete = no main/jsetup, main/job_mtrl or mem/mem_idx in the folder (no model data); missing_job_file = a job file v4 needs is absent; invalid_solids = STEP written but OCC read-back found invalid solids (not accepted; kept under conversions/sds2-step/_not_accepted/); qa_fail = STEP/SDS2 steel-weight ratio outside the QA band (e.g. 0.22x, 1.30x); step_write_failed = seed template job; other = v4 run failed without a specific cause; download_error = stored object missing from extracted/ (extraction gap; requeued after the lead's repair). 53 job names match a Disk-2 run-2 job (37 accepted there) - converted anyway (name match only).",
-    "status_note": "running (lead launched)"
+    "jobs_note": "173 distinct SDS/2 job folders (193 report rows; 15.1 GB model files). Accepted = run-2 audit rule (stage-2 rc 0, QA pass|warn, 0 invalid solids after OCC read-back). Genuine failures: no_members_to_calibrate = v4 finds no member records to calibrate units (training/seed jobs); job_folder_incomplete = no main/jsetup, main/job_mtrl or mem/mem_idx in the folder (no model data); missing_job_file = a job file v4 needs is absent; invalid_solids = STEP written but OCC read-back found invalid solids (not accepted; kept under conversions/sds2-step/_not_accepted/); qa_fail = STEP/SDS2 steel-weight ratio outside the QA band (e.g. 0.22x, 1.30x); step_write_failed = seed template job; other = v4 run failed without a specific cause; The 2 download_error jobs (extraction gap) were requeued after the lead's repair: 1 ok, 1 invalid_solids. 53 job names match a Disk-2 run-2 job (37 accepted there) - converted anyway (name match only).",
+    "final": true
    },
    "native_step": {
     "new_unique_files": 2448,
@@ -51204,27 +51178,16 @@
     "note": "already STEP; indexed only (sha256, stored key, size, every data-4 path)"
    },
    "notices": [
-    "04:41Z IFC e / DB1 d / SDS2 b deployed (hand-off, no idle slots); user-data unchanged",
-    "ENOSPC: classified transient (disk_full_on_worker, up to 8 retries) since code b; the 27 code-a convert_error ENOSPC results are being re-run by code d/e; code e caps big jobs (>=100 MB) at 3 per host and reserves 40x input disk",
-    "STORAGE: IFC STEP 6.2 TB after 4,122 of 11,157 files (04:34Z); projected ~8-10 TB (faceted B-rep ~270 bytes per triangle, 5 mm deflection; same format as the Disk-1/2 run). Coarser deflection or .step.gz would cut it - needs a decision",
-    "Quote scan of a/b outputs published without read-back (760 IFC files, ~2.5 TB) running on cad-zen2-files; affected ids go to redo_ids.json and re-convert automatically (results: _control/conv/<pipe>/_scan/quote_scan.json)",
-    "SSO for SSM expired ~04:30Z: the converter agent can no longer run commands on boxes; fleet, status aggregator (cad-zen2-files) and scans keep running"
+    "2026-09-30T07:35:18Z: all three pipelines FINAL (every job has a result; no in-flight, pending or requeued jobs)",
+    "Code history per pipeline under pipelines.<p>.code_history; outputs under conversions/{ifc-step,db1-step,sds2-step}/",
+    "IFC STEP ~7.7 TB (faceted B-rep, same format as the Disk-1/2 run); validated = OCC read-back for STEP < 256 MB, larger ones graded by markers + bbox and scanned for the old-writer defect"
    ],
-   "requeue": {
-    "how": "after the extraction repair: AWS_PROFILE=bim python3 requeue.py <ifc|db1|sds2> --reason download_error   (script: s3://annotationprod/cad-disk-extract/zentitude-data-4/_control/conv/requeue.py; or --ids ID ...). Adds {reasons, before=now} to _control/conv/<pipe>/redo_ids.json; running v4 workers re-open matching results within one round (~5 min). Run it after the quote scan has written _control/conv/<pipe>/_scan/quote_scan.json (~05:00Z), since the old scan process rewrites redo_ids.json when it finishes",
-    "note": "sds2: only one box; if it has finished and shut down, requeued jobs need one box with the sds2 user-data"
-   },
    "reply_to_lead": {
-    "at": "2026-09-30T07:01:36Z",
-    "enospc_49": "All 49 IFC convert_error results are ENOSPC from code a (27 on 101-74, 22 on 101-163). They are not in retry/: code d/e re-open any failed result whose JSON contains 'No space left'/'Errno 28' (redo rule), so they count as OPEN. At 04:55Z 47/49 were claimed by d/e workers; the other 2 wait behind the new cap of 3 jobs >= 100 MB per host. IFC boxes cannot write DONE (and power off) until every re-opened job has a new result.",
-    "after_ifc": "When IFC has a final result for every job, the IFC boxes terminate (run.sh exits on DONE.ifc, user-data shuts down); they do NOT take DB1 jobs. Launch DB1 boxes as planned.",
-    "db1_scaling": "DB1 kit has no limit on concurrent workers/boxes: claims are S3 conditional puts, each box runs 3/4 of its cores as slots (48 on r7i.16xlarge), memory-gated at 30x the DB1 size (largest open job ~0.4 GB -> 13 GB). ~4 more Mumbai + 3 Hyderabad r7i.16xlarge with _control/conv/db1/userdata.sh suits it; any x86 type with >= 128 GB RAM and >= 200 GB root works. Jobs run largest first, so the remaining ones are smaller.",
-    "download_error": "When the repair is done: AWS_PROFILE=bim python3 requeue.py ifc --reason download_error (and db1, sds2); script at _control/conv/requeue.py. For sds2 a box is needed if its only box has already finished.",
-    "db1_no_member_layout": "Genuine decoder limit, not a search bug: the 4 'tried' entries are the 4 approved variants, which all share stride 73 (hence identical). On 1ee70796 the stride-73 member table has only 489 records (vs 18,136 in a decodable 8.95 model), the point table sits at offset 12 not 17, and no other table has a member signature, so there is nothing verifiable to decode. Needs a new layout reverse-engineered against IFC ground truth (hours); not patched. Explained in pipelines.db1.jobs_note.",
-    "download_error_after_boxes_gone": "IFC and DB1 boxes self-terminate when their pipeline is final (as instructed), probably before the repair ends. After the repair: run requeue.py for ifc, db1, sds2 (--reason download_error), then launch ONE small box per pipeline with its user-data (_control/conv/ifc/userdata.sh, _control/conv/db1/userdata.sh; e.g. r7i.4xlarge, 200 GB root); each finishes the requeued jobs and powers off. SDS2 is held alive by your hold flag, so its 2 jobs run on the existing box once requeued (then remove the hold).",
-    "requeue_done": "06:00Z: download_error requeued in ifc (2), db1 (1), sds2 (2) via redo_ids.json entries {reasons:[download_error], before:06:00Z}; all their inputs verified present after the repair. Current v4 workers re-open them within one round.",
-    "last_open_jobs": "07:00Z open: IFC 2d0f85a3bc80 + bae27d16ad1d (3-5 MB .ifczip Tekla reference models, 'H.I. Ambacht/datastorage/ref/', running since 04:22/04:28 on code-d processes, hosts ip-10-0-101-44 and ip-172-31-40-41; worst-case ladder is several hours: 6 h per attempt, then bisection); DB1 67d9b79585de (requeued, 62 MB, running since 06:02 on ip-172-31-37-155); SDS2 7205cd90299c (requeued, 1.7 GB job) + 1 large job from 03:xx (4 h v4 timeout). Progress per IFC job: /opt/conv/work/ifc/<first 40 hex of id>/log.txt on the host (SSM). Do NOT kill a converter process: rc -9 counts as a memory kill and defers the job to a host with more memory than any we run. I write _state/conv_final.json when these have results."
-   }
+    "at": "2026-09-30T07:35:18Z",
+    "final": "All three pipelines final; _state/conv_final.json written. Final report sent."
+   },
+   "final": true,
+   "final_at": "2026-09-30T07:35:18Z"
   },
   "state": "complete",
   "final_verify": {
