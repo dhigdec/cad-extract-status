@@ -141,6 +141,38 @@ async function load(){
   document.getElementById("z4-running").innerHTML=`<tr><td colspan="3" class="muted">${n(run.length)} archives in flight · ${Object.entries(phc).map(([k,v])=>`${k} ${n(v)}`).join(" · ")} · ${n(z.boxes_alive)} machines, ${n(z.worker_processes_alive)} worker processes. Largest 20:</td></tr>`+
     `<tr><th>Phase</th><th class="n">Archive size</th><th class="n">Files uploaded</th></tr>`+
     (top.length?top.map(r=>`<tr><td>${r.phase}</td><td class="n">${gb(r.size)}</td><td class="n">${r.files_total?`${n(r.files_uploaded)} / ${n(r.files_total)}`:"–"}</td></tr>`).join(""):`<tr><td colspan="3" class="muted">none running</td></tr>`);
+  const ft=z.file_types||{};
+  document.getElementById("z4-types-note").textContent=ft.archives_counted?`From ${n(ft.archives_counted)} finished archives: ${n(ft.distinct_extensions)} distinct extensions; deepest nesting unpacked: ${n(ft.max_nested_depth)} levels. "Raw" = every file path extracted; "Unique" = distinct content (sha256) of that type across the whole disk; "Already in Disk-1/2" = files whose content the Disk-1/Disk-2 extraction already holds (not uploaded again for archives processed after 23:15 UTC).`:"counting…";
+
+  const GHEAD=(d12)=>`<tr><th>Kind</th><th class="n">Raw files</th><th class="n">Raw size</th><th class="n">Unique files</th><th class="n">Unique size</th>${d12?'<th class="n">Already in Disk-1/2</th>':''}</tr>`;
+  const grow=(r,d12)=>{const b=r.kind==="All files";const w=x=>b?`<b>${x}</b>`:x;return `<tr><td>${w(r.kind)}</td><td class="n">${w(n(r.files))}</td><td class="n">${w(gb(r.bytes))}</td><td class="n">${w(n(r.unique_files))}</td><td class="n">${w(gb(r.unique_bytes))}</td>${d12?`<td class="n">${w(n(r.in_disk12_files))}</td>`:''}</tr>`};
+  const glance=(id,rows,d12)=>{const el=document.getElementById(id); if(el) el.innerHTML=GHEAD(d12)+((rows||[]).length?(rows||[]).map(r=>grow(r,d12)).join(""):`<tr><td colspan="6" class="muted">counting…</td></tr>`)};
+  glance("z4-glance",z.at_a_glance,true); glance("z4-loose-glance",z.loose_at_a_glance,false);
+  const pc=z.pdf_classes||{}, cl=pc.classes||{};
+  document.getElementById("z4-pdfc").innerHTML=`<tr><th>PDF kind</th><th class="n">Raw files</th><th class="n">Unique files</th></tr>`+
+    [["cad","CAD drawings"],["document","Non-CAD documents"],["unknown","Unknown (metadata unreadable)"],["pending","Not yet classified"]].map(([k,l])=>`<tr><td>${l}</td><td class="n">${n((cl[k]||{}).raw||0)}</td><td class="n">${n((cl[k]||{}).unique||0)}</td></tr>`).join("")+
+    `<tr><td><b>All PDFs</b></td><td class="n"><b>${n(pc.pdf_paths||0)}</b></td><td class="n"><b>${n(pc.pdf_unique||0)}</b></td></tr>`;
+  document.getElementById("z4-pdfc-note").textContent=pc.rule?`Rule: ${pc.rule}. Each unique PDF is read (first/last 64 KB) and classified once.`:"classification starting…";
+  const HEAD=`<tr><th>Type</th><th class="n">Raw files</th><th class="n">Raw size</th><th class="n">Unique files</th><th class="n">Unique size</th><th class="n">Already in Disk-1/2</th></tr>`;
+  const row=t=>`<tr><td>.${t.type}</td><td class="n">${n(t.files)}</td><td class="n">${gb(t.bytes)}</td><td class="n">${t.stored_files==null?"–":n(t.stored_files)}</td><td class="n">${t.stored_bytes==null?"–":gb(t.stored_bytes)}</td><td class="n">${t.in_disk12_files==null?"–":n(t.in_disk12_files)}</td></tr>`;
+  const sumrow=(arr,label)=>{const s=arr.reduce((a,t)=>({f:a.f+t.files,b:a.b+t.bytes,sf:a.sf+(t.stored_files||0),sb:a.sb+(t.stored_bytes||0),d:a.d+(t.in_disk12_files||0)}),{f:0,b:0,sf:0,sb:0,d:0});return `<tr><td><b>${label}</b></td><td class="n"><b>${n(s.f)}</b></td><td class="n"><b>${gb(s.b)}</b></td><td class="n"><b>${n(s.sf)}</b></td><td class="n"><b>${gb(s.sb)}</b></td><td class="n"><b>${n(s.d)}</b></td></tr>`};
+  const G3D=["stp","step","ifc","ifczip","ifcxml","db1","db2","nwd","nwc","nwf","rvt","rfa","dgn","sat","sab","igs","iges","stl","obj","fbx","3ds","skp","3dm","sldprt","sldasm","ipt","iam","x_t","x_b","jt","glb","gltf","vue","zvf","tbp","tsep","tczip","sdnf","cis","std"];
+  const G2D=["dwg","dxf","dg","dpm","pdf","dwf","dwfx","plt","sha","sym","igr","dgn2d"];
+  const GFAB=["nc1","nc","dstv","kss","xsr","abm","bom","nc2","csv_nc"];
+  const exts=ft.by_extension||[];
+  const pick=list=>list.map(e=>exts.find(t=>t.type===e)).filter(Boolean);
+  const table=(id,list,label)=>{const a=pick(list);document.getElementById(id).innerHTML=HEAD+(a.length?a.map(row).join("")+sumrow(a,label):`<tr><td colspan="5" class="muted">none yet</td></tr>`)};
+  table("z4-g-3d",G3D,"All 3D");table("z4-g-2d",G2D,"All 2D");table("z4-g-fab",GFAB,"All fabrication");
+  const known=new Set([...G3D,...G2D,...GFAB]);
+  document.getElementById("z4-cats").innerHTML=`<tr><th>Category</th><th class="n">Raw files</th><th class="n">Raw size</th><th class="n">Unique files</th><th class="n">Unique size</th></tr>`+
+    (ft.by_category||[]).filter(c=>!["3D model","2D drawing","PDF","CNC / fabrication"].includes(c.type)).map(t=>`<tr><td>${t.type}</td><td class="n">${n(t.files)}</td><td class="n">${gb(t.bytes)}</td><td class="n">${n(t.stored_files)}</td><td class="n">${gb(t.stored_bytes)}</td></tr>`).join("");
+  document.getElementById("z4-exts").innerHTML=HEAD+exts.map(row).join("");
+  const lz=z.loose_file_types||[];
+  document.getElementById("z4-loose-note").textContent=`${n(z.loose_files)} files (${gb(z.loose_bytes)}) sit directly on the drive; all are copied to the bucket as-is. "Unique" here = distinct content by checksum.`;
+  const pickL=list=>list.map(e=>lz.find(t=>t.type===e)).filter(Boolean);
+  const tableL=(id,list,label)=>{const a=pickL(list);document.getElementById(id).innerHTML=HEAD+(a.length?a.map(row).join("")+sumrow(a,label):`<tr><td colspan="5" class="muted">none</td></tr>`)};
+  tableL("z4-l-3d",G3D,"All 3D");tableL("z4-l-2d",G2D,"All 2D");
+  document.getElementById("z4-l-all").innerHTML=HEAD+lz.map(row).join("");
   const y=doc.z2;
 
   glance("z2-glance-src",y.at_a_glance_drawing_set,false); glance("z2-glance-x",y.at_a_glance_extracted,false);
