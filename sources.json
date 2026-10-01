@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-10-01T21:17:30Z",
+ "generated_at": "2026-10-01T21:19:32Z",
  "interval_s": 120,
  "z3": {
   "label": "Disk Z3 (steel-detailing job archive SSD: SDS2 + Tekla)",
@@ -68,10 +68,10 @@
   "boxes_alive": 0,
   "worker_processes_alive": 0,
   "machines": {
-   "instances": 18,
-   "vcpu": 1024,
+   "instances": 19,
+   "vcpu": 1056,
    "regions": {
-    "Z3 extraction (Mumbai)": 13,
+    "Z3 extraction (Mumbai)": 14,
     "Z3 extraction (Hyderabad)": 5
    }
   },
@@ -12330,35 +12330,36 @@
    "problem_job_count": 0
   },
   "conversions": {
-   "updated": "2026-10-01T21:16:30Z",
+   "updated": "2026-10-01T21:19:47Z",
    "final": false,
    "pipelines": {
     "ifc": {
      "distinct": 3956,
      "to_convert": 1179,
      "reused": 2777,
-     "done": 23,
-     "in_flight": 93,
-     "pending": 1156,
-     "step_files": 466,
-     "step_bytes": 57297504491,
-     "graded": 468,
+     "done": 38,
+     "in_flight": 169,
+     "pending": 1141,
+     "step_files": 563,
+     "step_bytes": 90907564010,
+     "graded": 566,
      "classes": {
-      "1": 234,
-      "2": 232,
-      "3": 2
+      "1": 276,
+      "2": 287,
+      "3": 3
      },
      "corpus": {
-      "A": 200,
-      "B": 205,
-      "C": 38
+      "A": 237,
+      "B": 249,
+      "C": 49
      },
      "top_reasons": {
-      "2:non_positive_volume_solids": 187,
-      "2:invalid_solids": 127,
-      "2:parts_outside_volume_tolerance": 30,
-      "2:not_read_back_large_file": 20,
-      "2:source_inventory_unavailable": 17,
+      "2:non_positive_volume_solids": 227,
+      "2:invalid_solids": 160,
+      "2:parts_outside_volume_tolerance": 37,
+      "2:not_read_back_large_file": 27,
+      "2:source_inventory_unavailable": 24,
+      "3:member_coverage_low": 1,
       "3:bbox_absurd": 1,
       "3:source_empty_or_stub": 1
      }
@@ -12395,30 +12396,30 @@
      "distinct": 4571,
      "to_convert": 3812,
      "reused": 759,
-     "done": 86,
-     "in_flight": 315,
-     "pending": 3726,
-     "step_files": 9,
-     "step_bytes": 930954133,
-     "graded": 88,
+     "done": 95,
+     "in_flight": 327,
+     "pending": 3717,
+     "step_files": 11,
+     "step_bytes": 2015333679,
+     "graded": 97,
      "classes": {
       "1": 0,
-      "2": 9,
-      "3": 79
+      "2": 11,
+      "3": 86
      },
      "corpus": {
       "A": 0,
-      "B": 4,
-      "C": 5
+      "B": 5,
+      "C": 6
      },
      "top_reasons": {
       "2:joist_as_envelope_box": 70,
-      "3:source_no_buildable_pieces": 51,
-      "3:source_no_members": 22,
-      "2:member_as_envelope": 8,
-      "3:zerodivisionerror": 5,
-      "2:nominal_bolt_from_hole_stack": 4,
-      "2:profile_fallback_approximate_no_holes": 4,
+      "3:source_no_buildable_pieces": 56,
+      "3:source_no_members": 23,
+      "2:member_as_envelope": 11,
+      "3:zerodivisionerror": 6,
+      "2:nominal_bolt_from_hole_stack": 5,
+      "2:profile_fallback_approximate_no_holes": 5,
       "2:concrete_as_prism": 2
      }
     }
@@ -12427,31 +12428,31 @@
     "distinct": 8633,
     "to_convert": 5045,
     "reused": 3588,
-    "done": 163,
-    "in_flight": 408,
-    "pending": 4882,
-    "step_files": 529,
-    "step_bytes": 58948318553,
-    "graded": 612,
+    "done": 187,
+    "in_flight": 496,
+    "pending": 4858,
+    "step_files": 628,
+    "step_bytes": 93642757618,
+    "graded": 719,
     "classes": {
-     "1": 234,
-     "2": 295,
-     "3": 83
+     "1": 276,
+     "2": 352,
+     "3": 91
     },
     "corpus": {
-     "A": 200,
-     "B": 263,
-     "C": 43
+     "A": 237,
+     "B": 308,
+     "C": 55
     },
     "top_reasons": {
-     "2:non_positive_volume_solids": 187,
-     "2:invalid_solids": 128,
+     "2:non_positive_volume_solids": 227,
+     "2:invalid_solids": 161,
      "2:joist_as_envelope_box": 70,
+     "3:source_no_buildable_pieces": 56,
      "2:pieces_without_bolt_holes": 54,
-     "3:source_no_buildable_pieces": 51,
-     "2:parts_outside_volume_tolerance": 30,
-     "3:source_no_members": 22,
-     "2:not_read_back_large_file": 20
+     "2:parts_outside_volume_tolerance": 37,
+     "2:not_read_back_large_file": 27,
+     "2:source_inventory_unavailable": 24
     }
    },
    "fleet": {
@@ -12463,31 +12464,37 @@
      "boxes": 1,
      "slots": 24,
      "in_flight": 0,
-     "load_avg": 1.5
+     "load_avg": 45.2
     },
     "grade@64vcpu": {
      "boxes": 3,
-     "slots": 96,
-     "in_flight": 85,
-     "load_avg": 48.6
+     "slots": 144,
+     "in_flight": 134,
+     "load_avg": 74.1
+    },
+    "ifc@32vcpu": {
+     "boxes": 1,
+     "slots": 48,
+     "in_flight": 48,
+     "load_avg": 31.3
     },
     "ifc@64vcpu": {
      "boxes": 3,
-     "slots": 96,
-     "in_flight": 94,
-     "load_avg": 40.8
+     "slots": 128,
+     "in_flight": 119,
+     "load_avg": 53.3
     },
     "sds2@32vcpu": {
      "boxes": 1,
      "slots": 30,
      "in_flight": 22,
-     "load_avg": 22.6
+     "load_avg": 24.9
     },
     "sds2@64vcpu": {
      "boxes": 7,
      "slots": 434,
-     "in_flight": 282,
-     "load_avg": 42.5
+     "in_flight": 299,
+     "load_avg": 47.2
     }
    },
    "converters": {
@@ -12498,7 +12505,7 @@
    "versions": {
     "ifc": {
      "unknown": {
-      "distinct": 3476,
+      "distinct": 3378,
       "done": 1,
       "class1": 0,
       "class2": 0,
@@ -12506,11 +12513,11 @@
       "top_reason": "3:source_empty_or_stub"
      },
      "IFC2X3": {
-      "distinct": 465,
-      "done": 465,
-      "class1": 233,
-      "class2": 231,
-      "class3": 1,
+      "distinct": 563,
+      "done": 563,
+      "class1": 275,
+      "class2": 286,
+      "class3": 2,
       "top_reason": "2:non_positive_volume_solids"
      },
      "unknown (ifcZIP)": {
@@ -12566,7 +12573,7 @@
     },
     "sds2": {
      "unknown": {
-      "distinct": 4485,
+      "distinct": 4476,
       "done": 2,
       "class1": 0,
       "class2": 0,
@@ -12574,27 +12581,27 @@
       "top_reason": "3:source_no_members"
      },
      "7.3xx": {
-      "distinct": 50,
-      "done": 50,
+      "distinct": 52,
+      "done": 52,
       "class1": 0,
       "class2": 5,
-      "class3": 45,
+      "class3": 47,
       "top_reason": "2:joist_as_envelope_box"
      },
      "7.4xx": {
-      "distinct": 29,
-      "done": 29,
+      "distinct": 33,
+      "done": 33,
       "class1": 0,
       "class2": 0,
-      "class3": 29,
+      "class3": 33,
       "top_reason": "3:source_no_buildable_pieces"
      },
      "7.6xx": {
-      "distinct": 4,
-      "done": 4,
+      "distinct": 7,
+      "done": 7,
       "class1": 0,
-      "class2": 1,
-      "class3": 3,
+      "class2": 3,
+      "class3": 4,
       "top_reason": "3:source_no_members"
      },
      "7.1xx": {
@@ -64748,13 +64755,13 @@
  },
  "fleet": {
   "Z3 extraction (Mumbai)": {
-   "instances": 13,
-   "vcpu": 704,
+   "instances": 14,
+   "vcpu": 736,
    "types": {
     "r7i.16xlarge": 7,
     "c7i.8xlarge": 2,
     "i4i.16xlarge": 2,
-    "r7i.8xlarge": 1,
+    "r7i.8xlarge": 2,
     "i4i.8xlarge": 1
    }
   },
