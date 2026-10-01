@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-10-01T20:58:19Z",
+ "generated_at": "2026-10-01T21:01:28Z",
  "interval_s": 120,
  "z3": {
   "label": "Disk Z3 (steel-detailing job archive SSD: SDS2 + Tekla)",
@@ -12329,7 +12329,141 @@
    },
    "problem_job_count": 0
   },
-  "conversions": null
+  "conversions": {
+   "updated": "2026-10-01T21:01:55Z",
+   "final": false,
+   "pipelines": {
+    "ifc": {
+     "distinct": 3956,
+     "to_convert": 1179,
+     "reused": 2777,
+     "done": 5,
+     "in_flight": 96,
+     "pending": 1174,
+     "step_files": 126,
+     "step_bytes": 10302076862,
+     "graded": 131,
+     "classes": {
+      "1": 83,
+      "2": 43,
+      "3": 5
+     },
+     "corpus": {
+      "A": 64,
+      "B": 38,
+      "C": 12
+     },
+     "top_reasons": {
+      "2:non_positive_volume_solids": 33,
+      "2:invalid_solids": 17,
+      "2:not_read_back_large_file": 5,
+      "2:source_inventory_unavailable": 5,
+      "3:blank_render": 5,
+      "2:parts_outside_volume_tolerance": 5
+     }
+    },
+    "db1": {
+     "distinct": 106,
+     "to_convert": 54,
+     "reused": 52,
+     "done": 51,
+     "in_flight": 3,
+     "pending": 3,
+     "step_files": 50,
+     "step_bytes": 527574206,
+     "graded": 53,
+     "classes": {
+      "1": 0,
+      "2": 50,
+      "3": 3
+     },
+     "corpus": {
+      "A": 0,
+      "B": 50,
+      "C": 0
+     },
+     "top_reasons": {
+      "2:pieces_without_bolt_holes": 50,
+      "2:parts_dropped_by_axis_guard": 6,
+      "3:decoder_limit": 2,
+      "2:cuts_not_applied": 1,
+      "3:member_coverage_low": 1
+     }
+    },
+    "sds2": {
+     "distinct": 4571,
+     "to_convert": 3812,
+     "reused": 759,
+     "done": 6,
+     "in_flight": 290,
+     "pending": 3806,
+     "step_files": 3,
+     "step_bytes": 357742242,
+     "graded": 8,
+     "classes": {
+      "1": 0,
+      "2": 3,
+      "3": 5
+     },
+     "corpus": {
+      "A": 0,
+      "B": 2,
+      "C": 1
+     },
+     "top_reasons": {
+      "2:joist_as_envelope_box": 26,
+      "2:member_as_envelope": 4,
+      "2:nominal_bolt_from_hole_stack": 2,
+      "2:concrete_as_prism": 2,
+      "3:blank_render": 2,
+      "3:source_no_members": 1,
+      "3:source_job_files_missing": 1,
+      "3:converter_step_write_failed": 1
+     }
+    }
+   },
+   "totals": {
+    "distinct": 8633,
+    "to_convert": 5045,
+    "reused": 3588,
+    "done": 62,
+    "in_flight": 389,
+    "pending": 4983,
+    "step_files": 179,
+    "step_bytes": 11187393310,
+    "graded": 192,
+    "classes": {
+     "1": 83,
+     "2": 96,
+     "3": 13
+    },
+    "corpus": {
+     "A": 64,
+     "B": 90,
+     "C": 13
+    },
+    "top_reasons": {
+     "2:pieces_without_bolt_holes": 50,
+     "2:non_positive_volume_solids": 33,
+     "2:joist_as_envelope_box": 26,
+     "2:invalid_solids": 17,
+     "3:blank_render": 7,
+     "2:parts_dropped_by_axis_guard": 6,
+     "2:not_read_back_large_file": 5,
+     "2:source_inventory_unavailable": 5
+    }
+   },
+   "fleet": {
+    "boxes": 16,
+    "vcpu": 960
+   },
+   "converters": {
+    "ifc": "ifc2step5",
+    "db1": "db1step",
+    "sds2": "v4"
+   },
+   "class_rule": "class 1 = opens, 100% of source parts, all solids valid, no stand-ins, per-part volume within 5%; class 2 = opens with valid solids but partial / stand-ins / needs input / invalid or off-tolerance parts; class 3 = no STEP, unreadable, empty, corrupt or geometry-free source, member coverage < 50%, absurd bbox, blank render"
+  }
  },
  "move": {
   "chunks_total": 928,
