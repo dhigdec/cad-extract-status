@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-10-01T02:24:12Z",
+ "generated_at": "2026-10-01T02:26:12Z",
  "interval_s": 120,
  "z3": {
   "label": "Disk Z3 (steel-detailing job archive SSD: SDS2 + Tekla)",
@@ -25,11 +25,11 @@
   },
   "progress": {
    "jobs_total": 5992,
-   "jobs_done": 5987,
+   "jobs_done": 5988,
    "archive_jobs_total": 2986,
-   "archive_jobs_done": 2981,
+   "archive_jobs_done": 2982,
    "archive_bytes_total": 3992104285466,
-   "archive_bytes_done": 3906063364422,
+   "archive_bytes_done": 3909690976943,
    "loose_jobs_total": 3006,
    "loose_jobs_done": 3006,
    "loose_files_total": 1331538,
@@ -37,31 +37,31 @@
    "loose_bytes_total": 284640906352,
    "loose_bytes_done": 284640906352,
    "bytes_total": 4276745191818,
-   "bytes_done": 4190704270774,
-   "rate_bytes_per_s": 120871022.47555555,
+   "bytes_done": 4194331883295,
+   "rate_bytes_per_s": 116434998.23055555,
    "rate_window_s": 1800,
    "eta_min_fraction": 0.15,
-   "eta_s": 711.8407644925859,
+   "eta_s": 707.8052971651321,
    "status": {
-    "ok": 5920,
+    "ok": 5921,
     "partial": 56,
     "failed": 11
    },
    "complete": false
   },
   "totals": {
-   "files": 352452451,
-   "bytes": 14764691705100,
-   "stored_files": 164902314,
-   "stored_bytes": 3179368698277,
-   "dedup_files": 187550137,
-   "dedup_bytes": 11585323006823,
+   "files": 353100685,
+   "bytes": 14778846200664,
+   "stored_files": 165343906,
+   "stored_bytes": 3181171672378,
+   "dedup_files": 187756779,
+   "dedup_bytes": 11597674528286,
    "nested_count": 60213,
    "encrypted_nested": 22,
    "ransomware_files": 4897,
-   "zero_byte_files": 52216,
+   "zero_byte_files": 52225,
    "upload_error_count": 0,
-   "prior_files": 69101767,
+   "prior_files": 69190210,
    "max_nested_depth": 4
   },
   "running": [
@@ -69,13 +69,13 @@
     "phase": "upload",
     "size": 2920466028,
     "files_total": 431306,
-    "files_uploaded": 300159
+    "files_uploaded": 350831
    },
    {
     "phase": "upload",
     "size": 8083301467,
     "files_total": 1202127,
-    "files_uploaded": 99155
+    "files_uploaded": 177808
    },
    {
     "phase": "upload",
@@ -87,37 +87,31 @@
     "phase": "upload",
     "size": 6279159715,
     "files_total": 2953618,
-    "files_uploaded": 510111
-   },
-   {
-    "phase": "upload",
-    "size": 3627612521,
-    "files_total": 648234,
-    "files_uploaded": 625771
+    "files_uploaded": 638277
    },
    {
     "phase": "upload",
     "size": 24262641,
     "files_total": 43511,
-    "files_uploaded": 23157
+    "files_uploaded": 23543
    },
    {
     "phase": "upload",
     "size": 68026584700,
     "files_total": 14925491,
-    "files_uploaded": 2794848
+    "files_uploaded": 2859511
    },
    {
     "phase": "upload",
     "size": 3639715493,
     "files_total": 554822,
-    "files_uploaded": 398219
+    "files_uploaded": 466074
    },
    {
     "phase": "upload",
     "size": 2267568834,
     "files_total": 416588,
-    "files_uploaded": 232410
+    "files_uploaded": 233028
    }
   ],
   "boxes_alive": 27,
@@ -131,42 +125,42 @@
    }
   },
   "file_types": {
-   "updated": "2026-10-01T02:24:40Z",
-   "jobs_counted": 5987,
-   "archive_jobs_counted": 2981,
+   "updated": "2026-10-01T02:26:34Z",
+   "jobs_counted": 5988,
+   "archive_jobs_counted": 2982,
    "loose_jobs_counted": 3006,
-   "rows_counted": 352452451,
+   "rows_counted": 353100685,
    "distinct_extensions": 909,
    "max_nested_depth": 4,
    "unique_rule": "unique = distinct sha256 content per file type across the whole disk (archive members at every nesting level + loose files); totals.unique_files counts each content once across all types",
    "new_rule": "new = content whose sha256 is not in the Disk-1 / Disk-2 / Z4 index (rows the worker recorded as dedup \"prior\" are old)",
    "totals": {
-    "files": 352452451,
-    "bytes": 14764691705100,
-    "unique_files": 41695954,
-    "unique_bytes": 5022363249616,
-    "prior_files": 69101767,
-    "prior_bytes": 3678474723838,
+    "files": 353100685,
+    "bytes": 14778846200664,
+    "unique_files": 41696363,
+    "unique_bytes": 5022910639168,
+    "prior_files": 69190210,
+    "prior_bytes": 3678501799582,
     "prior_unique": 6055214,
-    "new_files": 283350684,
-    "new_bytes": 11086216981262,
-    "new_unique": 35640740,
-    "new_unique_bytes": 3458141477764,
-    "unique_files_by_type_sum": 41698111,
-    "zero_byte_files": 52216,
+    "new_files": 283910475,
+    "new_bytes": 11100344401082,
+    "new_unique": 35641149,
+    "new_unique_bytes": 3458688867316,
+    "unique_files_by_type_sum": 41698520,
+    "zero_byte_files": 52225,
     "ransomware_files": 4897,
     "dedup_kinds": {
-     "stored": 164902314,
-     "disk": 17946698,
-     "archive": 99812687,
-     "prior": 69101767,
+     "stored": 165343906,
+     "disk": 17973591,
+     "archive": 99903993,
+     "prior": 69190210,
      "source": 688985,
      "other": 0
     }
    },
    "archive_members": {
-    "files": 351685832,
-    "top_level_files": 248246447
+    "files": 352334066,
+    "top_level_files": 248894681
    },
    "nested": {
     "unpacked": 60213,
@@ -182,7 +176,7 @@
     }
    },
    "verify": {
-    "match": 2975,
+    "match": 2976,
     "no_report_entry": 6
    },
    "verify_rule": "top-level files extracted per archive (not inside a nested archive) vs the drive report (7-Zip header listing of each archive)",
@@ -190,22 +184,22 @@
     "match": 15
    },
    "verify_files": {
-    "extracted_top_level": 248246447,
-    "report_files": 247155438
+    "extracted_top_level": 248894681,
+    "report_files": 247803672
    },
    "report_loaded": true,
    "by_category": [
     {
      "type": "Other",
-     "files": 342703675,
-     "bytes": 9547855207730,
-     "unique_files": 38100965,
-     "unique_bytes": 1995981965224,
-     "prior_files": 61460473,
+     "files": 343351061,
+     "bytes": 9561996833807,
+     "unique_files": 38101374,
+     "unique_bytes": 1996529354776,
+     "prior_files": 61548108,
      "prior_unique": 3450042,
-     "new_files": 281243202,
-     "new_unique": 34650923,
-     "new_unique_bytes": 1833315083764
+     "new_files": 281802953,
+     "new_unique": 34651332,
+     "new_unique_bytes": 1833862473316
     },
     {
      "type": "PDF",
@@ -233,13 +227,13 @@
     },
     {
      "type": "Office / text",
-     "files": 963944,
-     "bytes": 392365426972,
+     "files": 963986,
+     "bytes": 392366541465,
      "unique_files": 294650,
      "unique_bytes": 215115729475,
-     "prior_files": 475277,
+     "prior_files": 475281,
      "prior_unique": 50884,
-     "new_files": 488667,
+     "new_files": 488705,
      "new_unique": 243766,
      "new_unique_bytes": 157392362170
     },
@@ -257,13 +251,13 @@
     },
     {
      "type": "Scripts / executables",
-     "files": 412337,
-     "bytes": 14332202159,
+     "files": 413143,
+     "bytes": 14343957153,
      "unique_files": 8308,
      "unique_bytes": 3807155071,
-     "prior_files": 363993,
+     "prior_files": 364797,
      "prior_unique": 2171,
-     "new_files": 48344,
+     "new_files": 48346,
      "new_unique": 6137,
      "new_unique_bytes": 3422986705
     },
@@ -319,15 +313,15 @@
    "by_extension": [
     {
      "type": "(none)",
-     "files": 341491190,
-     "bytes": 8818610172658,
-     "unique_files": 37944878,
-     "unique_bytes": 1479471794792,
-     "prior_files": 61199472,
+     "files": 342138472,
+     "bytes": 8832744806148,
+     "unique_files": 37945286,
+     "unique_bytes": 1480019109512,
+     "prior_files": 61287084,
      "prior_unique": 3437171,
-     "new_files": 280291718,
-     "new_unique": 34507707,
-     "new_unique_bytes": 1406798917407
+     "new_files": 280851388,
+     "new_unique": 34508115,
+     "new_unique_bytes": 1407346232127
     },
     {
      "type": "pdf",
@@ -355,13 +349,13 @@
     },
     {
      "type": "extra",
-     "files": 889478,
-     "bytes": 1712246308,
+     "files": 889500,
+     "bytes": 1712274492,
      "unique_files": 51525,
      "unique_bytes": 283404113,
      "prior_files": 178494,
      "prior_unique": 4397,
-     "new_files": 710984,
+     "new_files": 711006,
      "new_unique": 47128,
      "new_unique_bytes": 273003327
     },
@@ -379,13 +373,13 @@
     },
     {
      "type": "py",
-     "files": 409750,
-     "bytes": 6835574213,
+     "files": 410556,
+     "bytes": 6847329207,
      "unique_files": 6883,
      "unique_bytes": 120249637,
-     "prior_files": 363642,
+     "prior_files": 364446,
      "prior_unique": 2026,
-     "new_files": 46108,
+     "new_files": 46110,
      "new_unique": 4857,
      "new_unique_bytes": 92378046
     },
@@ -475,13 +469,13 @@
     },
     {
      "type": "txt",
-     "files": 106359,
-     "bytes": 678409778,
+     "files": 106397,
+     "bytes": 678424375,
      "unique_files": 12581,
      "unique_bytes": 474381834,
      "prior_files": 13667,
      "prior_unique": 1658,
-     "new_files": 92692,
+     "new_files": 92730,
      "new_unique": 10923,
      "new_unique_bytes": 450181155
     },
@@ -535,13 +529,13 @@
     },
     {
      "type": "0",
-     "files": 41339,
-     "bytes": 172386065,
+     "files": 41376,
+     "bytes": 172423373,
      "unique_files": 3729,
      "unique_bytes": 73090215,
      "prior_files": 2070,
      "prior_unique": 356,
-     "new_files": 39269,
+     "new_files": 39306,
      "new_unique": 3373,
      "new_unique_bytes": 71068605
     },
@@ -571,13 +565,13 @@
     },
     {
      "type": "(other)",
-     "files": 27528,
-     "bytes": 1321476675,
+     "files": 27531,
+     "bytes": 1322219919,
      "unique_files": 15420,
      "unique_bytes": 385235144,
      "prior_files": 2684,
      "prior_unique": 458,
-     "new_files": 24844,
+     "new_files": 24847,
      "new_unique": 14962,
      "new_unique_bytes": 315853501
     },
@@ -607,11 +601,11 @@
     },
     {
      "type": "xml",
-     "files": 20393,
-     "bytes": 8662505203,
+     "files": 20397,
+     "bytes": 8663605099,
      "unique_files": 5217,
      "unique_bytes": 2589281417,
-     "prior_files": 13155,
+     "prior_files": 13159,
      "prior_unique": 854,
      "new_files": 7238,
      "new_unique": 4363,
@@ -655,11 +649,11 @@
     },
     {
      "type": "ttf",
-     "files": 14318,
-     "bytes": 6143841160,
+     "files": 14333,
+     "bytes": 6149129132,
      "unique_files": 402,
      "unique_bytes": 209472868,
-     "prior_files": 12668,
+     "prior_files": 12683,
      "prior_unique": 222,
      "new_files": 1650,
      "new_unique": 180,
@@ -798,6 +792,18 @@
      "new_unique_bytes": 289061638
     },
     {
+     "type": "pkl",
+     "files": 4473,
+     "bytes": 150411432,
+     "unique_files": 4,
+     "unique_bytes": 1809204,
+     "prior_files": 4454,
+     "prior_unique": 3,
+     "new_files": 19,
+     "new_unique": 1,
+     "new_unique_bytes": 609945
+    },
+    {
      "type": "frm",
      "files": 4472,
      "bytes": 16768572,
@@ -808,18 +814,6 @@
      "new_files": 3238,
      "new_unique": 1601,
      "new_unique_bytes": 4614612
-    },
-    {
-     "type": "pkl",
-     "files": 4471,
-     "bytes": 150411282,
-     "unique_files": 4,
-     "unique_bytes": 1809204,
-     "prior_files": 4452,
-     "prior_unique": 3,
-     "new_files": 19,
-     "new_unique": 1,
-     "new_unique_bytes": 609945
     },
     {
      "type": "more",
@@ -1051,15 +1045,15 @@
     },
     {
      "type": "p",
-     "files": 1658,
-     "bytes": 110057987,
-     "unique_files": 510,
-     "unique_bytes": 46811017,
-     "prior_files": 299,
+     "files": 1660,
+     "bytes": 110133298,
+     "unique_files": 511,
+     "unique_bytes": 46885849,
+     "prior_files": 300,
      "prior_unique": 33,
-     "new_files": 1359,
-     "new_unique": 477,
-     "new_unique_bytes": 44516433
+     "new_files": 1360,
+     "new_unique": 478,
+     "new_unique_bytes": 44591265
     },
     {
      "type": "catproduct",
@@ -1123,13 +1117,13 @@
     },
     {
      "type": "a",
-     "files": 1211,
-     "bytes": 145087361,
+     "files": 1213,
+     "bytes": 145091551,
      "unique_files": 395,
      "unique_bytes": 79247639,
-     "prior_files": 108,
+     "prior_files": 109,
      "prior_unique": 13,
-     "new_files": 1103,
+     "new_files": 1104,
      "new_unique": 382,
      "new_unique_bytes": 78395749
     },
@@ -1147,13 +1141,13 @@
     },
     {
      "type": "ctl",
-     "files": 1120,
-     "bytes": 39872,
+     "files": 1130,
+     "bytes": 40228,
      "unique_files": 5,
      "unique_bytes": 178,
      "prior_files": 0,
      "prior_unique": 0,
-     "new_files": 1120,
+     "new_files": 1130,
      "new_unique": 5,
      "new_unique_bytes": 178
     },
@@ -1171,13 +1165,13 @@
     },
     {
      "type": "k",
-     "files": 1069,
-     "bytes": 135831160,
+     "files": 1070,
+     "bytes": 135873138,
      "unique_files": 351,
      "unique_bytes": 62337407,
      "prior_files": 174,
      "prior_unique": 36,
-     "new_files": 895,
+     "new_files": 896,
      "new_unique": 315,
      "new_unique_bytes": 55592107
     },
@@ -1303,11 +1297,11 @@
     },
     {
      "type": "xmcd",
-     "files": 840,
-     "bytes": 123125151,
+     "files": 842,
+     "bytes": 123408313,
      "unique_files": 5,
      "unique_bytes": 4905016,
-     "prior_files": 836,
+     "prior_files": 838,
      "prior_unique": 1,
      "new_files": 4,
      "new_unique": 4,
@@ -1327,11 +1321,11 @@
     },
     {
      "type": "dic",
-     "files": 811,
-     "bytes": 38361187,
+     "files": 813,
+     "bytes": 38370763,
      "unique_files": 23,
      "unique_bytes": 34588243,
-     "prior_files": 789,
+     "prior_files": 791,
      "prior_unique": 1,
      "new_files": 22,
      "new_unique": 22,
@@ -1603,13 +1597,13 @@
     },
     {
      "type": "old",
-     "files": 374,
-     "bytes": 63037544,
+     "files": 377,
+     "bytes": 63059484,
      "unique_files": 22,
      "unique_bytes": 3946920,
      "prior_files": 202,
      "prior_unique": 5,
-     "new_files": 172,
+     "new_files": 175,
      "new_unique": 17,
      "new_unique_bytes": 3332422
     },
@@ -1699,13 +1693,13 @@
     },
     {
      "type": "1",
-     "files": 336,
-     "bytes": 7688671,
+     "files": 337,
+     "bytes": 7689689,
      "unique_files": 82,
      "unique_bytes": 5125540,
      "prior_files": 41,
      "prior_unique": 22,
-     "new_files": 295,
+     "new_files": 296,
      "new_unique": 60,
      "new_unique_bytes": 2611749
     },
@@ -1747,13 +1741,13 @@
     },
     {
      "type": "new",
-     "files": 309,
-     "bytes": 3804963708,
+     "files": 311,
+     "bytes": 3805421906,
      "unique_files": 48,
      "unique_bytes": 1432429039,
      "prior_files": 8,
      "prior_unique": 2,
-     "new_files": 301,
+     "new_files": 303,
      "new_unique": 46,
      "new_unique_bytes": 1388866392
     },
@@ -8085,7 +8079,7 @@
    ]
   },
   "pdf_classes": {
-   "updated": "2026-10-01T02:24:40Z",
+   "updated": "2026-10-01T02:26:34Z",
    "pdf_paths": 5376564,
    "pdf_unique": 1974000,
    "pdf_new_unique": 299465,
@@ -8142,14 +8136,14 @@
    },
    {
     "kind": "SDS2 job folders: files inside",
-    "files": 341669954,
-    "bytes": 9116200338690,
+    "files": 342318188,
+    "bytes": 9130354834254,
     "unique_files": null,
     "unique_bytes": null,
-    "new_files": 279141497,
+    "new_files": 279701288,
     "new_unique": null,
     "new_unique_bytes": null,
-    "jobs_raw": 6788,
+    "jobs_raw": 6790,
     "jobs_unique": 2153,
     "jobs_new_unique": 2019
    },
@@ -8215,11 +8209,11 @@
    },
    {
     "kind": "Office / text",
-    "files": 963944,
-    "bytes": 392365426972,
+    "files": 963986,
+    "bytes": 392366541465,
     "unique_files": 294650,
     "unique_bytes": 215115729475,
-    "new_files": 488667,
+    "new_files": 488705,
     "new_unique": 243766,
     "new_unique_bytes": 157392362170
    },
@@ -8245,33 +8239,33 @@
    },
    {
     "kind": "Scripts / executables",
-    "files": 412337,
-    "bytes": 14332202159,
+    "files": 413143,
+    "bytes": 14343957153,
     "unique_files": 8308,
     "unique_bytes": 3807155071,
-    "new_files": 48344,
+    "new_files": 48346,
     "new_unique": 6137,
     "new_unique_bytes": 3422986705
    },
    {
     "kind": "Other",
-    "files": 342703684,
-    "bytes": 9547854703534,
-    "unique_files": 38100972,
-    "unique_bytes": 1995981325488,
-    "new_files": 281243211,
-    "new_unique": 34650930,
-    "new_unique_bytes": 1833314444028
+    "files": 343351070,
+    "bytes": 9561996329611,
+    "unique_files": 38101381,
+    "unique_bytes": 1996528715040,
+    "new_files": 281802962,
+    "new_unique": 34651339,
+    "new_unique_bytes": 1833861833580
    },
    {
     "kind": "All files",
-    "files": 352452451,
-    "bytes": 14764691705100,
-    "unique_files": 41695954,
-    "unique_bytes": 5022363249616,
-    "new_files": 283350684,
-    "new_unique": 35640740,
-    "new_unique_bytes": 3458141477764,
+    "files": 353100685,
+    "bytes": 14778846200664,
+    "unique_files": 41696363,
+    "unique_bytes": 5022910639168,
+    "new_files": 283910475,
+    "new_unique": 35641149,
+    "new_unique_bytes": 3458688867316,
     "distinct": true
    }
   ],
@@ -8524,7 +8518,7 @@
      "z4_unique": 173,
      "z4_new_unique": null,
      "earlier_unique": null,
-     "z3_raw": 6788,
+     "z3_raw": 6790,
      "z3_unique": 2153,
      "z3_new_raw": null,
      "z3_new_unique": 2019
@@ -8742,10 +8736,10 @@
      "d12_unique": 0,
      "z4_unique": 8199060,
      "z4_new_unique": 8197118,
-     "z3_raw": 344670312,
-     "z3_unique": 38639540,
-     "z3_new_raw": 282150875,
-     "z3_new_unique": 35083226,
+     "z3_raw": 345318546,
+     "z3_unique": 38639949,
+     "z3_new_raw": 282710666,
+     "z3_new_unique": 35083635,
      "earlier_unique": 8197118
     },
     {
@@ -8756,23 +8750,23 @@
      "z4_unique": null,
      "z4_new_unique": 11319180,
      "earlier_unique": 27675351,
-     "z3_raw": 352452451,
-     "z3_unique": 41695954,
-     "z3_new_raw": 283350684,
-     "z3_new_unique": 35640740
+     "z3_raw": 353100685,
+     "z3_unique": 41696363,
+     "z3_new_raw": 283910475,
+     "z3_new_unique": 35641149
     }
    ],
    "disk12_note": "Disk-1/Disk-2 were extracted for CAD types only (pdf dxf dwg dg dpm stp step ifc db1 sat nc1 ...); unique = distinct sha256; archives from the early run with only a weak hash are not in the sha256 counts",
    "rule": "unique = distinct sha256 per type; earlier disks = Disk-1+2 unique + what Z4 added; new in Z3 = content not in the Disk-1/Disk-2/Z4 index"
   },
   "sds2": {
-   "jobs_raw": 6788,
+   "jobs_raw": 6790,
    "jobs_unique": 2153,
    "jobs_new_unique": 2019,
-   "files": 341669954,
-   "bytes": 9116200338690,
-   "files_prior": 62528457,
-   "files_new": 279141497,
+   "files": 342318188,
+   "bytes": 9130354834254,
+   "files_prior": 62616900,
+   "files_new": 279701288,
    "rule": "an SDS2 job = a folder holding main/jsetup (or mem/mem_idx); unique = distinct jsetup content; new = jsetup not stored by Disk-1/2/Z4; files = every file inside job folders"
   },
   "loose": {
