@@ -84,6 +84,7 @@ Disk-1 / Disk-2 (finished 26 Sep 2026) are on the <a href="./">main status page<
   <details style="margin-top:10px"><summary style="cursor:pointer;font-size:14px">Every extension found (full list)</summary><div class="scroll"><table id="z3-exts" style="margin-top:8px"></table></div></details>
   <h3 style="font-size:14px;margin:18px 0 6px">Loose files on the drive (outside archives)</h3><p class="note" id="z3-loose-note"></p><div class="scroll"><table id="z3-loose-glance"></table></div>
   <details style="margin-top:10px"><summary style="cursor:pointer;font-size:14px">Every loose-file extension (full list)</summary><div class="scroll"><table id="z3-l-all" style="margin-top:8px"></table></div></details>
+  <h3 style="font-size:14px;margin:18px 0 6px">Conversions to STEP (IFC · Tekla DB1 · SDS2) and quality classes</h3><p class="note" id="z3-conv-note"></p><div class="scroll"><table id="z3-conv"></table></div><p class="note" id="z3-conv-why" style="margin-top:6px"></p>
  </div>
 </section>
 
@@ -194,6 +195,16 @@ function renderZ3(doc){
     `<span class="muted">ransomware-encrypted files flagged: ${n(t.ransomware_files)} · zero-byte files: ${n(t.zero_byte_files)} · upload errors: ${n(t.upload_error_count)}</span>`;
   const vf=ft.verify||{}, vi=ft.verify_report_listing_incomplete||{}, nvi=Object.values(vi).reduce((a,b)=>a+b,0);
   $("z3-verify").innerHTML=Object.keys(vf).length?`<b>Completeness check</b> (${n(ft.archive_jobs_counted)} archives counted): ✓ ${n(vf.match||0)} have exactly as many top-level files as the drive's own 7-Zip listing · ${n(vf.fewer_than_report||0)} fewer · ${n(vf.more_than_report||0)} more · ${n(vf.no_report_entry||0)} not in the listing${nvi?` · ${n(nvi)} of these the drive report itself could not list completely`:""}.`:(ft.updated?"":"The completeness check starts with the first statistics round.");
+  const cs=z.conversions, cvt=$("z3-conv");
+  if(!cs||!cs.pipelines){$("z3-conv-note").textContent="Preparing: scanning data-3 for every IFC, Tekla DB1 and SDS2 model and building the conversion job lists.";cvt.innerHTML="";$("z3-conv-why").textContent="";}
+  else{const nm={ifc:"IFC",db1:"Tekla DB1",sds2:"SDS2 jobs"}, cl=x=>(x&&x.classes)||{};
+    const row=(lab,p,b)=>{const w=v=>b?`<b>${v}</b>`:v, c=cl(p);return `<tr><td>${w(lab)}</td><td class="n">${w(n(p.distinct))}</td><td class="n">${w(n(p.to_convert))}</td><td class="n">${w(n(p.reused))}</td><td class="n">${w(n(p.done))}${p.in_flight?` <span class="muted">(+${n(p.in_flight)} running)</span>`:""}</td><td class="n">${w(n(p.step_files))}</td><td class="n">${w(gb(p.step_bytes))}</td><td class="n">${w(n(p.graded))}</td><td class="n">${w(n(c["1"]||0))}</td><td class="n">${w(n(c["2"]||0))}</td><td class="n">${w(n(c["3"]||0))}</td></tr>`};
+    cvt.innerHTML=`<tr><th>Model type</th><th class="n">Distinct models</th><th class="n">To convert</th><th class="n">Reused STEP (Disk-1/2, Z4)</th><th class="n">Converted</th><th class="n">STEP files</th><th class="n">STEP size</th><th class="n">Graded</th><th class="n">Class 1 perfect</th><th class="n">Class 2 partial</th><th class="n">Class 3 bad</th></tr>`+
+      Object.entries(cs.pipelines).map(([k,p])=>row(nm[k]||k,p||{},false)).join("")+(cs.totals?row("Total",cs.totals,true):"");
+    const cv=cs.converters||{}, fl=cs.fleet||{};
+    $("z3-conv-note").innerHTML=`${cs.final?"<b style=\"color:var(--good-text)\">✓ Final.</b> ":""}Every distinct model is converted once; STEP already made for the same content in the Disk-1/2 or Z4 runs is reused (matched by checksum) and graded with the same rules. Converters: IFC ${cv.ifc||"–"}, DB1 ${cv.db1||"–"}, SDS2 ${cv.sds2||"–"}. ${fl.boxes?`${n(fl.boxes)} machines, ${n(fl.vcpu)} vCPU. `:""}Updated ${utc(cs.updated)}.`;
+    const why=Object.entries(cs.pipelines).map(([k,p])=>{const r=Object.entries((p||{}).top_reasons||{});return r.length?`<b>${nm[k]||k}</b>: `+r.map(([a,b])=>`${a} ${n(b)}`).join(" · "):""}).filter(Boolean).join("<br>");
+    $("z3-conv-why").innerHTML=(cs.class_rule?`<b>Classes</b>: ${cs.class_rule}<br>`:"<b>Classes</b>: 1 perfect = opens, every part of the source present, all solids valid, no stand-ins · 2 partial = opens but parts missing / approximated or a needed file missing · 3 bad = failed, no geometry, or damaged source.<br>")+(why?`<b>Top reasons (classes 2–3)</b><br>${why}`:"");}
   const run=(z.running||[]).slice().sort((a,b)=>(b.size||0)-(a.size||0)), phc={};
   run.forEach(r=>{phc[r.phase]=(phc[r.phase]||0)+1});
   $("z3-running").innerHTML=`<tr><td colspan="3" class="muted">${n(run.length)} jobs in flight${Object.keys(phc).length?" · "+Object.entries(phc).map(([k,v])=>`${k} ${n(v)}`).join(" · "):""}. Largest 10:</td></tr>`+
