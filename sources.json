@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-10-01T20:54:14Z",
+ "generated_at": "2026-10-01T20:58:19Z",
  "interval_s": 120,
  "z3": {
   "label": "Disk Z3 (steel-detailing job archive SSD: SDS2 + Tekla)",
@@ -43,9 +43,9 @@
    "eta_min_fraction": 0.15,
    "eta_s": 0,
    "status": {
-    "partial": 57,
+    "failed": 11,
     "ok": 5924,
-    "failed": 11
+    "partial": 57
    },
    "complete": true
   },
@@ -68,10 +68,11 @@
   "boxes_alive": 0,
   "worker_processes_alive": 0,
   "machines": {
-   "instances": 2,
-   "vcpu": 96,
+   "instances": 17,
+   "vcpu": 992,
    "regions": {
-    "Z3 extraction (Mumbai)": 2
+    "Z3 extraction (Mumbai)": 12,
+    "Z3 extraction (Hyderabad)": 5
    }
   },
   "file_types": {
@@ -12327,7 +12328,8 @@
     "disk_but_own_object": 762912688444
    },
    "problem_job_count": 0
-  }
+  },
+  "conversions": null
  },
  "move": {
   "chunks_total": 928,
@@ -64458,11 +64460,21 @@
  },
  "fleet": {
   "Z3 extraction (Mumbai)": {
-   "instances": 2,
-   "vcpu": 96,
+   "instances": 12,
+   "vcpu": 672,
    "types": {
-    "r7i.16xlarge": 1,
-    "c7i.8xlarge": 1
+    "r7i.16xlarge": 7,
+    "c7i.8xlarge": 1,
+    "i4i.16xlarge": 2,
+    "r7i.8xlarge": 1,
+    "i4i.8xlarge": 1
+   }
+  },
+  "Z3 extraction (Hyderabad)": {
+   "instances": 5,
+   "vcpu": 320,
+   "types": {
+    "i4i.16xlarge": 5
    }
   }
  }
