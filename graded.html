@@ -128,8 +128,9 @@ function draw(){const pages=Math.max(1,Math.ceil(VIEW.length/PER)); page=Math.mi
       <td>${vvb(r)}</td>
       <td class="n small">${n(r.ps)} → ${n(r.pt)}${r.inv?`<div class="muted">${n(r.inv)} invalid solids</div>`:""}</td>
       <td class="n small">${gb(r.sz)}</td></tr>`).join(""):`<tr><td colspan="10" class="muted">No models match these filters.</td></tr>`)}
-function chips(){const c={1:0,2:0,3:0};ROWS.forEach(r=>{c[r.c]=(c[r.c]||0)+1});const cur=$("f-class").value;
-  $("chips").innerHTML=[["","All graded",ROWS.length]].concat([1,2,3].map(k=>[String(k),`${CLS[k][0]} Class ${k} — ${CLS[k][1]}`,c[k]||0])).map(([v,l,x])=>`<button class="chip${cur===v?" on":""}" data-v="${v}">${l}<b>${n(x)}</b></button>`).join("");
+function chips(){const c={1:0,2:0,3:0};let pend=0;ROWS.forEach(r=>{c[r.c]=(c[r.c]||0)+1;if(r.vp)pend++});const cur=$("f-class").value;
+  $("chips").innerHTML=[["","All graded",ROWS.length]].concat([1,2,3].map(k=>[String(k),`${CLS[k][0]} Class ${k} — ${CLS[k][1]}`,c[k]||0])).map(([v,l,x])=>`<button class="chip${cur===v?" on":""}" data-v="${v}">${l}<b>${n(x)}</b></button>`).join("")+
+    (pend?`<span class="chip" style="cursor:default" title="Pass the grader's class-1 checks; waiting for the independent verifier. Counted in class 2 until verified.">Class 1 pending verification<b>${n(pend)}</b></span>`:"");
   document.querySelectorAll(".chip").forEach(b=>b.onclick=()=>{$("f-class").value=b.dataset.v;chips();filt()})}
 async function load(){let d=null;for(const u of SRC){try{const r=await fetch(u+"?t="+Date.now(),{cache:"no-store"});if(r.ok){d=await r.json();break}}catch(e){}}
   if(!d){$("age").textContent="could not load z3conv.json";$("dot").classList.add("stale");return}
