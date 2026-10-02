@@ -84,6 +84,7 @@ td ul{margin:0;padding-left:16px} td li{margin:0 0 2px}
     <label class="small">Type <select id="f-type"><option value="">All</option><option value="ifc">IFC</option><option value="db1">Tekla DB1</option><option value="sds2">SDS2 job</option></select></label>
     <label class="small">Class <select id="f-class"><option value="">All</option><option value="1">1 — perfect</option><option value="2">2 — partial</option><option value="3">3 — bad</option></select></label>
     <label class="small">Origin <select id="f-reuse"><option value="">All</option><option value="new">Converted now</option><option value="reused">Reused (Disk-1/2, Z4)</option></select></label>
+    <label class="small">SDS2 revisions <select id="f-rev"><option value="">All saved copies</option><option value="primary">One per job (primary)</option></select></label>
     <label class="small">Fix status <select id="f-fs"><option value="">All</option><option value="rerun">Fix live — re-run queued</option><option value="wip">Fix being written</option><option value="src">Not fixable from this file</option></select></label>
     <input id="f-q" type="search" placeholder="Search file name, folder, reason or fix…">
     <span class="muted small" id="count"></span>
@@ -110,8 +111,8 @@ const ST={rerun:"re-run queued",wip:"fix in progress",src:"not in source"};
 function fsb(f){const b=FS[f];return b?`<span class="cls small" title="${esc(b[1])}"><span class="sw" style="background:${b[2]}"></span>${b[0]}</span><div class="muted small">${esc(b[1])}</div>`:"<span class='muted small'>–</span>"}
 const PER=50; let ROWS=[], VIEW=[], page=0, GEN="";
 function badge(c){const b=CLS[c]||["?","–","var(--muted)"];return `<span class="cls"><span class="sw" style="background:${b[2]}"></span>${b[0]} ${c||""} ${b[1]}</span>`}
-function filt(){const t=$("f-type").value,c=$("f-class").value,o=$("f-reuse").value,fs=$("f-fs").value,q=$("f-q").value.trim().toLowerCase();
-  VIEW=ROWS.filter(r=>(!t||r.p===t)&&(!c||String(r.c)===c)&&(!o||(o==="reused")===!!r.r)&&(!fs||r.fs===fs)&&(!q||r._s.includes(q)));page=0;draw()}
+function filt(){const t=$("f-type").value,c=$("f-class").value,o=$("f-reuse").value,fs=$("f-fs").value,rv=$("f-rev").value,q=$("f-q").value.trim().toLowerCase();
+  VIEW=ROWS.filter(r=>(!t||r.p===t)&&(!c||String(r.c)===c)&&(!o||(o==="reused")===!!r.r)&&(!fs||r.fs===fs)&&(!rv||!r.ro)&&(!q||r._s.includes(q)));page=0;draw()}
 function $(id){return document.getElementById(id)}
 function draw(){const pages=Math.max(1,Math.ceil(VIEW.length/PER)); page=Math.min(page,pages-1);
   $("count").textContent=`${n(VIEW.length)} of ${n(ROWS.length)} models`;
@@ -119,7 +120,7 @@ function draw(){const pages=Math.max(1,Math.ceil(VIEW.length/PER)); page=Math.mi
   const rows=VIEW.slice(page*PER,(page+1)*PER);
   $("t").innerHTML=`<tr><th>#</th><th>Model file</th><th>Type</th><th>Class</th><th>Why it got this class</th><th>What is needed for a perfect STEP</th><th>Fix status</th><th>Independent verification</th><th class="n">Parts source → STEP</th><th class="n">STEP size</th></tr>`+
     (rows.length?rows.map((r,i)=>`<tr><td class="muted small">${page*PER+i+1}</td>
-      <td><div class="name">${esc(r.n)}</div><div class="muted small">${esc(r.f)}${r.np>1?` · ${n(r.np)} copies`:""}${r.r?` · reused STEP from ${esc(r.rf||"earlier run")}`:" · converted now"}</div></td>
+      <td><div class="name">${esc(r.n)}</div><div class="muted small">${esc(r.f)}${r.np>1?` · ${n(r.np)} copies`:""}${r.r?` · reused STEP from ${esc(r.rf||"earlier run")}`:" · converted now"}${r.ro?` · older saved copy of the same SDS2 job`:(r.pr&&r.rc>1?` · primary of ${n(r.rc)} saved copies of this job`:"")}</div></td>
       <td class="small">${TYPE[r.p]||esc(r.p)}${r.v?`<div class="muted">${esc(r.v)}</div>`:""}</td>
       <td>${badge(r.c)}${r.k?`<div class="muted small">corpus ${esc(r.k)}</div>`:""}</td>
       <td class="small"><ul>${(r.why||[]).map(w=>`<li>${esc(w)}</li>`).join("")||"<li class='muted'>–</li>"}</ul></td>
@@ -144,7 +145,7 @@ async function load(){let d=null;for(const u of SRC){try{const r=await fetch(u+"
     `<b>Independent verification</b>: every STEP is also checked by a separate verifier for its format (IFC element match, Tekla export match, SDS2 independent decode + SDS2's own IFC / BOM / NC files). A model is class 1 only when both the grader and the verifier pass it. `+
     `<b>Fix status</b> (class 2/3): <i>fix live — re-run queued</i> = this STEP was made before the latest converter fixes and will be re-converted; <i>fix being written</i> = made with the latest converter, the remaining gap is still being fixed; <i>not fixable from this file</i> = the missing data is not in the source.`;
   chips(); filt(); $("foot").textContent=`z3conv.json generated ${d.generated_at} · ${n(ROWS.length)} models`}
-["f-type","f-class","f-reuse","f-fs"].forEach(id=>$(id).onchange=()=>{chips();filt()}); $("f-q").oninput=filt;
+["f-type","f-class","f-reuse","f-fs","f-rev"].forEach(id=>$(id).onchange=()=>{chips();filt()}); $("f-q").oninput=filt;
 $("prev").onclick=()=>{page--;draw()}; $("next").onclick=()=>{page++;draw()};
 load(); setInterval(load,60000);
 </script>
