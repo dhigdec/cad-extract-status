@@ -84,6 +84,7 @@ td ul{margin:0;padding-left:16px} td li{margin:0 0 2px}
     <label class="small">Type <select id="f-type"><option value="">All</option><option value="ifc">IFC</option><option value="db1">Tekla DB1</option><option value="sds2">SDS2 job</option></select></label>
     <label class="small">Class <select id="f-class"><option value="">All</option><option value="1">1 — perfect</option><option value="2">2 — partial</option><option value="3">3 — bad</option></select></label>
     <label class="small">Origin <select id="f-reuse"><option value="">All</option><option value="new">Converted now</option><option value="reused">Reused (Disk-1/2, Z4)</option></select></label>
+    <label class="small">Fix status <select id="f-fs"><option value="">All</option><option value="rerun">Fix live — re-run queued</option><option value="wip">Fix being written</option><option value="src">Not fixable from this file</option></select></label>
     <input id="f-q" type="search" placeholder="Search file name, folder, reason or fix…">
     <span class="muted small" id="count"></span>
   </div>
@@ -100,24 +101,28 @@ const esc=s=>String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;"
 const TYPE={ifc:"IFC",db1:"Tekla DB1",sds2:"SDS2 job"};
 const CLS={1:["✓","Perfect","var(--good)"],2:["!","Partial","var(--warning)"],3:["✕","Bad","var(--critical)"]};
 const CAT={converter_feature:"fixable in our converter",source_file_missing:"file missing from the source",source_data_absent:"not in the source data",profile_or_catalog_missing:"profile / catalog entry missing",source_damaged:"source damaged"};
+const FS={rerun:["Fix live — re-run queued","Made with an older converter (or reused). It will be re-converted with the latest fixes and graded again.","var(--series-1)"],wip:["Fix being written","Made with the latest converter; the fix for what is still missing is being written and will re-run this model.","var(--warning)"],src:["Not fixable from this file","What is missing is not in the source file, so no converter change can add it without inventing geometry.","var(--muted)"]};
+const ST={rerun:"re-run queued",wip:"fix in progress",src:"not in source"};
+function fsb(f){const b=FS[f];return b?`<span class="cls small" title="${esc(b[1])}"><span class="sw" style="background:${b[2]}"></span>${b[0]}</span><div class="muted small">${esc(b[1])}</div>`:"<span class='muted small'>–</span>"}
 const PER=50; let ROWS=[], VIEW=[], page=0, GEN="";
 function badge(c){const b=CLS[c]||["?","–","var(--muted)"];return `<span class="cls"><span class="sw" style="background:${b[2]}"></span>${b[0]} ${c||""} ${b[1]}</span>`}
-function filt(){const t=$("f-type").value,c=$("f-class").value,o=$("f-reuse").value,q=$("f-q").value.trim().toLowerCase();
-  VIEW=ROWS.filter(r=>(!t||r.p===t)&&(!c||String(r.c)===c)&&(!o||(o==="reused")===!!r.r)&&(!q||r._s.includes(q)));page=0;draw()}
+function filt(){const t=$("f-type").value,c=$("f-class").value,o=$("f-reuse").value,fs=$("f-fs").value,q=$("f-q").value.trim().toLowerCase();
+  VIEW=ROWS.filter(r=>(!t||r.p===t)&&(!c||String(r.c)===c)&&(!o||(o==="reused")===!!r.r)&&(!fs||r.fs===fs)&&(!q||r._s.includes(q)));page=0;draw()}
 function $(id){return document.getElementById(id)}
 function draw(){const pages=Math.max(1,Math.ceil(VIEW.length/PER)); page=Math.min(page,pages-1);
   $("count").textContent=`${n(VIEW.length)} of ${n(ROWS.length)} models`;
   $("page").textContent=`page ${page+1} / ${pages}`; $("prev").disabled=page<=0; $("next").disabled=page>=pages-1;
   const rows=VIEW.slice(page*PER,(page+1)*PER);
-  $("t").innerHTML=`<tr><th>#</th><th>Model file</th><th>Type</th><th>Class</th><th>Why it got this class</th><th>What is needed for a perfect STEP</th><th class="n">Parts source → STEP</th><th class="n">STEP size</th></tr>`+
+  $("t").innerHTML=`<tr><th>#</th><th>Model file</th><th>Type</th><th>Class</th><th>Why it got this class</th><th>What is needed for a perfect STEP</th><th>Fix status</th><th class="n">Parts source → STEP</th><th class="n">STEP size</th></tr>`+
     (rows.length?rows.map((r,i)=>`<tr><td class="muted small">${page*PER+i+1}</td>
       <td><div class="name">${esc(r.n)}</div><div class="muted small">${esc(r.f)}${r.np>1?` · ${n(r.np)} copies`:""}${r.r?` · reused STEP from ${esc(r.rf||"earlier run")}`:" · converted now"}</div></td>
       <td class="small">${TYPE[r.p]||esc(r.p)}${r.v?`<div class="muted">${esc(r.v)}</div>`:""}</td>
       <td>${badge(r.c)}${r.k?`<div class="muted small">corpus ${esc(r.k)}</div>`:""}</td>
       <td class="small"><ul>${(r.why||[]).map(w=>`<li>${esc(w)}</li>`).join("")||"<li class='muted'>–</li>"}</ul></td>
-      <td class="small">${(r.need||[]).length?`<ul>${r.need.map(x=>`<li>${esc(x.fix)}<span class="tag">${esc(CAT[x.cat]||x.cat)}</span></li>`).join("")}</ul>`:(r.c===1?"<span class='muted'>nothing — already perfect</span>":"<span class='muted'>–</span>")}</td>
+      <td class="small">${(r.need||[]).length?`<ul>${r.need.map(x=>`<li>${esc(x.fix)}<span class="tag">${esc(CAT[x.cat]||x.cat)}</span>${x.st?`<span class="tag">${esc(ST[x.st]||x.st)}</span>`:""}</li>`).join("")}</ul>`:(r.c===1?"<span class='muted'>nothing — already perfect</span>":"<span class='muted'>–</span>")}</td>
+      <td>${r.c===1?"<span class='muted small'>–</span>":fsb(r.fs)}</td>
       <td class="n small">${n(r.ps)} → ${n(r.pt)}${r.inv?`<div class="muted">${n(r.inv)} invalid solids</div>`:""}</td>
-      <td class="n small">${gb(r.sz)}</td></tr>`).join(""):`<tr><td colspan="8" class="muted">No models match these filters.</td></tr>`)}
+      <td class="n small">${gb(r.sz)}</td></tr>`).join(""):`<tr><td colspan="9" class="muted">No models match these filters.</td></tr>`)}
 function chips(){const c={1:0,2:0,3:0};ROWS.forEach(r=>{c[r.c]=(c[r.c]||0)+1});const cur=$("f-class").value;
   $("chips").innerHTML=[["","All graded",ROWS.length]].concat([1,2,3].map(k=>[String(k),`${CLS[k][0]} Class ${k} — ${CLS[k][1]}`,c[k]||0])).map(([v,l,x])=>`<button class="chip${cur===v?" on":""}" data-v="${v}">${l}<b>${n(x)}</b></button>`).join("");
   document.querySelectorAll(".chip").forEach(b=>b.onclick=()=>{$("f-class").value=b.dataset.v;chips();filt()})}
@@ -129,9 +134,10 @@ async function load(){let d=null;for(const u of SRC){try{const r=await fetch(u+"
   $("legend").innerHTML=`${d.interim?"<b>Interim grades</b> — conversions are still running; one final grading pass over the finished STEP files produces the final classes. ":""}`+
     `<b>Class 1 perfect</b>: opens, every physical part of the source present, all solids valid, no stand-ins, part volumes within 5%. `+
     `<b>Class 2 partial</b>: opens, but parts missing / approximated (each one tagged) or a file or definition is needed. `+
-    `<b>Class 3 bad</b>: no usable STEP — conversion failed, no geometry, or damaged / empty source. Nothing is fabricated: derived or estimated parts are tagged and never count as perfect.`;
+    `<b>Class 3 bad</b>: no usable STEP — conversion failed, no geometry, or damaged / empty source. Nothing is fabricated: derived or estimated parts are tagged and never count as perfect. `+
+    `<b>Fix status</b> (class 2/3): <i>fix live — re-run queued</i> = this STEP was made before the latest converter fixes and will be re-converted; <i>fix being written</i> = made with the latest converter, the remaining gap is still being fixed; <i>not fixable from this file</i> = the missing data is not in the source.`;
   chips(); filt(); $("foot").textContent=`z3conv.json generated ${d.generated_at} · ${n(ROWS.length)} models`}
-["f-type","f-class","f-reuse"].forEach(id=>$(id).onchange=()=>{chips();filt()}); $("f-q").oninput=filt;
+["f-type","f-class","f-reuse","f-fs"].forEach(id=>$(id).onchange=()=>{chips();filt()}); $("f-q").oninput=filt;
 $("prev").onclick=()=>{page--;draw()}; $("next").onclick=()=>{page++;draw()};
 load(); setInterval(load,60000);
 </script>
