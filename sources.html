@@ -84,7 +84,7 @@ Disk-1 / Disk-2 (finished 26 Sep 2026) are on the <a href="./">main status page<
   <details style="margin-top:10px"><summary style="cursor:pointer;font-size:14px">Every extension found (full list)</summary><div class="scroll"><table id="z3-exts" style="margin-top:8px"></table></div></details>
   <h3 style="font-size:14px;margin:18px 0 6px">Loose files on the drive (outside archives)</h3><p class="note" id="z3-loose-note"></p><div class="scroll"><table id="z3-loose-glance"></table></div>
   <details style="margin-top:10px"><summary style="cursor:pointer;font-size:14px">Every loose-file extension (full list)</summary><div class="scroll"><table id="z3-l-all" style="margin-top:8px"></table></div></details>
-  <h3 style="font-size:14px;margin:18px 0 6px">Conversions to STEP (IFC · Tekla DB1 · SDS2) and quality classes · <a href="graded.html">see every graded model, its class and why →</a></h3><p class="note" id="z3-conv-note"></p><div class="scroll"><table id="z3-conv"></table></div><p class="note" id="z3-conv-why" style="margin-top:6px"></p>
+  <h3 style="font-size:14px;margin:18px 0 6px">Conversions to STEP (IFC · Tekla DB1 · SDS2) and quality classes · <a href="graded.html">see every graded model, its class and why →</a></h3><p class="note" id="z3-conv-note"></p><div class="scroll"><table id="z3-conv"></table></div><p class="note" id="z3-conv-why" style="margin-top:6px"></p><p class="note" id="z3-pkg" style="margin-top:6px"></p>
  </div>
 </section>
 
@@ -204,6 +204,14 @@ function renderZ3(doc){
     const cv=cs.converters||{}, fl=cs.fleet||{};
     $("z3-conv-note").innerHTML=`${cs.final?"<b style=\"color:var(--good-text)\">✓ Final.</b> ":""}Every distinct model is converted once; STEP already made for the same content in the Disk-1/2 or Z4 runs is reused (matched by checksum) and graded with the same rules. Converters: IFC ${cv.ifc||"–"}, DB1 ${cv.db1||"–"}, SDS2 ${cv.sds2||"–"}. ${fl.boxes?`${n(fl.boxes)} machines, ${n(fl.vcpu)} vCPU. `:""}Updated ${utc(cs.updated)}.`;
     const why=Object.entries(cs.pipelines).map(([k,p])=>{const r=Object.entries((p||{}).top_reasons||{});return r.length?`<b>${nm[k]||k}</b>: `+r.map(([a,b])=>`${a} ${n(b)}`).join(" · "):""}).filter(Boolean).join("<br>");
+    const pk=cs.packaging||null, pe=$("z3-pkg");
+    if(!pk||!pk.active){pe.innerHTML=pk?"<b>Packaging</b>: tested on 3 projects (all checks passed); switching on for all projects.":"";}
+    else if(pk.error){pe.innerHTML=`<b>Packaging</b>: on · last round reported an error, being fixed.`;}
+    else{const done=pk.projects_packaged||0, tot=pk.projects_with_shipped_step||0;
+      pe.innerHTML=`<b>Packaging</b> (only class 1 perfect STEP, each with its archive's files, projpkg4 format; automatic for every newly perfect model): `+
+        `${n(done)} of ${n(tot)} projects packaged · ${n(pk.placements||0)} STEP placements of ${n(pk.shipped_models||0)} perfect models · `+
+        `${n(pk.pending_jobs||0)} package jobs waiting${pk.removals_pending?` · ${n(pk.removals_pending)} removals waiting for owner approval`:""}`+
+        `${pk.verify_failures?` · <span style="color:var(--critical-text,#b00)">${n(pk.verify_failures)} check failures</span>`:" · package checks: 0 failures"}. Updated ${utc(pk.updated)}.`;}
     $("z3-conv-why").innerHTML=(cs.class_rule?`<b>Classes</b>: ${cs.class_rule}<br>`:"<b>Classes</b>: 1 perfect = opens, every part of the source present, all solids valid, no stand-ins · 2 partial = opens but parts missing / approximated or a needed file missing · 3 bad = failed, no geometry, or damaged source.<br>")+(why?`<b>Top reasons (classes 2–3)</b><br>${why}`:"");}
   const run=(z.running||[]).slice().sort((a,b)=>(b.size||0)-(a.size||0)), phc={};
   run.forEach(r=>{phc[r.phase]=(phc[r.phase]||0)+1});
