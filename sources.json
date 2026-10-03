@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-10-03T19:16:18Z",
+ "generated_at": "2026-10-03T19:20:18Z",
  "interval_s": 120,
  "z3": {
   "label": "Disk Z3 (steel-detailing job archive SSD: SDS2 + Tekla)",
@@ -12327,18 +12327,18 @@
    "problem_job_count": 0
   },
   "conversions": {
-   "updated": "2026-10-03T19:14:38Z",
+   "updated": "2026-10-03T19:19:02Z",
    "final": false,
    "incidents": [],
    "eta": {
     "ifc": {
-     "open": 33,
+     "open": 22,
      "done_last_hour": 397,
      "eta_hours": 0.1,
      "fresh_open": 0,
      "fresh_done_per_hour": 0,
      "fresh_eta_hours": null,
-     "rerun_open": 170,
+     "rerun_open": 159,
      "rerun_done_per_hour": 397,
      "rerun_eta_hours": 0.4,
      "long_tail": {
@@ -13406,6 +13406,31 @@
      "rerun_pending": 173,
      "prefix": "cad-disk-extract/zenitude-data-3/_state/conv/final/r41/",
      "verified": false
+    },
+    {
+     "rev": 42,
+     "label": "final r42",
+     "at": "2026-10-03T19:19:02Z",
+     "by_class": {
+      "ifc": {
+       "1": 2404,
+       "2": 1545,
+       "3": 7
+      },
+      "db1": {
+       "2": 104,
+       "3": 1,
+       "1": 1
+      },
+      "sds2": {
+       "2": 4103,
+       "3": 359,
+       "1": 95
+      }
+     },
+     "rerun_pending": 173,
+     "prefix": "cad-disk-extract/zenitude-data-3/_state/conv/final/r42/",
+     "verified": false
     }
    ],
    "packaging": {
@@ -13414,15 +13439,15 @@
     "projects_packaged": 212,
     "steps_placed_models": 2503,
     "placements": 2584,
-    "pending_jobs": 29,
+    "pending_jobs": 31,
     "pending_create": 0,
-    "pending_steps": 67,
-    "removals_pending": 91,
+    "pending_steps": 64,
+    "removals_pending": 92,
     "verify_failures": 1,
     "stuck_projects": 1,
     "unknown_archives": 0,
     "active": true,
-    "updated": "2026-10-03T19:15:05Z",
+    "updated": "2026-10-03T19:19:28Z",
     "error": false
    },
    "verification": {
@@ -13517,10 +13542,10 @@
      "to_convert": 3604,
      "reused": 352,
      "done": 1179,
-     "in_flight": 327,
+     "in_flight": 344,
      "pending": 0,
      "step_files": 3949,
-     "step_bytes": 602241442988,
+     "step_bytes": 602239500587,
      "graded": 3956,
      "classes": {
       "1": 2404,
@@ -13535,9 +13560,9 @@
      },
      "top_reasons": {
       "2:parts_without_solid_source": 1383,
-      "2:v6_L4-surface": 1252,
+      "2:v6_L4-surface": 1251,
       "2:parts_without_solid": 423,
-      "2:v6_open-surface": 239,
+      "2:v6_open-surface": 240,
       "2:v6_L1_tessellated_analytic": 77,
       "2:parts_outside_volume_tolerance": 59,
       "2:v6_L3-partial-surface": 46,
@@ -13614,10 +13639,10 @@
     "to_convert": 7628,
     "reused": 991,
     "done": 5045,
-    "in_flight": 327,
+    "in_flight": 344,
     "pending": 0,
     "step_files": 8252,
-    "step_bytes": 3778944312700,
+    "step_bytes": 3778942370299,
     "graded": 8619,
     "classes": {
      "1": 2500,
@@ -13650,80 +13675,59 @@
      "boxes": 2,
      "slots": 16,
      "in_flight": 0,
-     "load_avg": 24.0
+     "load_avg": 23.8
     },
     "db1@64vcpu": {
      "boxes": 25,
      "slots": 200,
      "in_flight": 0,
-     "load_avg": 45.5
+     "load_avg": 45.7
     },
     "grade@64vcpu": {
      "boxes": 3,
      "slots": 96,
      "in_flight": 0,
-     "load_avg": 40.9
+     "load_avg": 39.6
     },
     "ifc@32vcpu": {
      "boxes": 2,
      "slots": 14,
-     "in_flight": 10,
-     "load_avg": 24.2
+     "in_flight": 13,
+     "load_avg": 23.9
     },
     "ifc@64vcpu": {
      "boxes": 25,
      "slots": 650,
-     "in_flight": 315,
-     "load_avg": 45.9
+     "in_flight": 321,
+     "load_avg": 44.9
     },
     "sds2@32vcpu": {
      "boxes": 2,
      "slots": 40,
      "in_flight": 0,
-     "load_avg": 22.1
+     "load_avg": 22.4
     },
     "sds2@64vcpu": {
      "boxes": 25,
      "slots": 2000,
      "in_flight": 0,
-     "load_avg": 44.6
+     "load_avg": 44.0
     },
     "boxes": [
      {
       "host": "ip-10-0-101-112.ap-south-1.compute.internal",
       "pipeline": "sds2",
       "cpus": 32,
-      "load": 25.3,
+      "load": 21.2,
       "jobs": {
-       "ifc": 5,
+       "ifc": 6,
        "db1": 0,
        "sds2": 0
       },
       "worker_processes": 14,
       "mem_total_gb": 247,
-      "mem_avail_gb": 161,
-      "reserved_gb": 172.4,
-      "gate": {
-       "ok_cpu": false,
-       "ok_mem": true,
-       "cap_cpu": 28.8,
-       "recent_cores": 2.3
-      }
-     },
-     {
-      "host": "ip-10-0-101-129.ap-south-1.compute.internal",
-      "pipeline": "db1",
-      "cpus": 32,
-      "load": 20.2,
-      "jobs": {
-       "ifc": 5,
-       "db1": 0,
-       "sds2": 0
-      },
-      "worker_processes": 14,
-      "mem_total_gb": 247,
-      "mem_avail_gb": 216,
-      "reserved_gb": 215.0,
+      "mem_avail_gb": 169,
+      "reserved_gb": 168.1,
       "gate": {
        "ok_cpu": false,
        "ok_mem": true,
@@ -13732,32 +13736,53 @@
       }
      },
      {
+      "host": "ip-10-0-101-129.ap-south-1.compute.internal",
+      "pipeline": "db1",
+      "cpus": 32,
+      "load": 23.9,
+      "jobs": {
+       "ifc": 7,
+       "db1": 0,
+       "sds2": 0
+      },
+      "worker_processes": 14,
+      "mem_total_gb": 247,
+      "mem_avail_gb": 199,
+      "reserved_gb": 235.7,
+      "gate": {
+       "ok_cpu": false,
+       "ok_mem": true,
+       "cap_cpu": 28.8,
+       "recent_cores": 5.3
+      }
+     },
+     {
       "host": "ip-10-0-101-177.ap-south-1.compute.internal",
       "pipeline": "grade",
       "cpus": 64,
-      "load": 45.8,
+      "load": 45.1,
       "jobs": {
-       "ifc": 14,
+       "ifc": 18,
        "db1": 0,
        "sds2": 0,
        "grade": 0
       },
       "worker_processes": 15,
       "mem_total_gb": 495,
-      "mem_avail_gb": 371,
-      "reserved_gb": 298.4,
+      "mem_avail_gb": 391,
+      "reserved_gb": 276.1,
       "gate": {
        "ok_cpu": false,
        "ok_mem": true,
        "cap_cpu": 57.6,
-       "recent_cores": 7.6
+       "recent_cores": 16.1
       }
      },
      {
       "host": "ip-10-0-101-187.ap-south-1.compute.internal",
       "pipeline": "sds2",
       "cpus": 64,
-      "load": 48.5,
+      "load": 45.5,
       "jobs": {
        "ifc": 10,
        "db1": 0,
@@ -13765,30 +13790,51 @@
       },
       "worker_processes": 14,
       "mem_total_gb": 495,
-      "mem_avail_gb": 219,
-      "reserved_gb": 469.2,
+      "mem_avail_gb": 268,
+      "reserved_gb": 505.9,
       "gate": {
        "ok_cpu": false,
        "ok_mem": true,
-       "cap_cpu": 57.6,
-       "recent_cores": 10.6
+       "cap_cpu": 54.4,
+       "recent_cores": 10.600000000000001
       }
      },
      {
       "host": "ip-10-0-101-231.ap-south-1.compute.internal",
       "pipeline": "grade",
       "cpus": 64,
-      "load": 37.0,
+      "load": 40.3,
       "jobs": {
-       "ifc": 15,
+       "ifc": 22,
        "db1": 0,
        "sds2": 0,
        "grade": 0
       },
       "worker_processes": 15,
       "mem_total_gb": 495,
-      "mem_avail_gb": 428,
-      "reserved_gb": 291.1,
+      "mem_avail_gb": 392,
+      "reserved_gb": 361.3,
+      "gate": {
+       "ok_cpu": false,
+       "ok_mem": true,
+       "cap_cpu": 57.6,
+       "recent_cores": 16.1
+      }
+     },
+     {
+      "host": "ip-10-0-101-244.ap-south-1.compute.internal",
+      "pipeline": "sds2",
+      "cpus": 64,
+      "load": 40.4,
+      "jobs": {
+       "ifc": 20,
+       "db1": 0,
+       "sds2": 0
+      },
+      "worker_processes": 14,
+      "mem_total_gb": 495,
+      "mem_avail_gb": 378,
+      "reserved_gb": 339.5,
       "gate": {
        "ok_cpu": false,
        "ok_mem": true,
@@ -13797,52 +13843,31 @@
       }
      },
      {
-      "host": "ip-10-0-101-244.ap-south-1.compute.internal",
+      "host": "ip-10-0-101-53.ap-south-1.compute.internal",
       "pipeline": "sds2",
       "cpus": 64,
-      "load": 42.9,
+      "load": 37.2,
       "jobs": {
-       "ifc": 16,
+       "ifc": 14,
        "db1": 0,
        "sds2": 0
       },
       "worker_processes": 14,
       "mem_total_gb": 495,
-      "mem_avail_gb": 341,
-      "reserved_gb": 383.3,
+      "mem_avail_gb": 434,
+      "reserved_gb": 273.7,
       "gate": {
        "ok_cpu": false,
        "ok_mem": true,
        "cap_cpu": 54.4,
-       "recent_cores": 18.400000000000002
-      }
-     },
-     {
-      "host": "ip-10-0-101-53.ap-south-1.compute.internal",
-      "pipeline": "sds2",
-      "cpus": 64,
-      "load": 39.9,
-      "jobs": {
-       "ifc": 17,
-       "db1": 0,
-       "sds2": 0
-      },
-      "worker_processes": 14,
-      "mem_total_gb": 495,
-      "mem_avail_gb": 417,
-      "reserved_gb": 238.9,
-      "gate": {
-       "ok_cpu": false,
-       "ok_mem": true,
-       "cap_cpu": 57.6,
-       "recent_cores": 17.5
+       "recent_cores": 29.900000000000006
       }
      },
      {
       "host": "ip-10-0-101-55.ap-south-1.compute.internal",
       "pipeline": "sds2",
       "cpus": 64,
-      "load": 37.2,
+      "load": 44.8,
       "jobs": {
        "ifc": 16,
        "db1": 0,
@@ -13850,8 +13875,8 @@
       },
       "worker_processes": 14,
       "mem_total_gb": 495,
-      "mem_avail_gb": 421,
-      "reserved_gb": 311.4,
+      "mem_avail_gb": 425,
+      "reserved_gb": 263.8,
       "gate": {
        "ok_cpu": false,
        "ok_mem": true,
@@ -13863,92 +13888,155 @@
       "host": "ip-10-0-101-76.ap-south-1.compute.internal",
       "pipeline": "grade",
       "cpus": 64,
-      "load": 41.0,
+      "load": 36.0,
       "jobs": {
-       "ifc": 15,
+       "ifc": 10,
        "db1": 0,
        "sds2": 0,
        "grade": 0
       },
       "worker_processes": 15,
       "mem_total_gb": 495,
-      "mem_avail_gb": 318,
-      "reserved_gb": 374.3,
+      "mem_avail_gb": 335,
+      "reserved_gb": 318.8,
       "gate": {
        "ok_cpu": false,
        "ok_mem": true,
        "cap_cpu": 57.6,
-       "recent_cores": 14.5
+       "recent_cores": 18.2
       }
      },
      {
       "host": "ip-10-0-102-136.ap-south-1.compute.internal",
       "pipeline": "ifc",
       "cpus": 64,
-      "load": 39.5,
+      "load": 37.6,
       "jobs": {
-       "ifc": 15,
+       "ifc": 14,
        "db1": 0,
        "sds2": 0
       },
       "worker_processes": 14,
       "mem_total_gb": 495,
-      "mem_avail_gb": 221,
-      "reserved_gb": 492.0,
+      "mem_avail_gb": 349,
+      "reserved_gb": 400.5,
       "gate": {
        "ok_cpu": false,
        "ok_mem": true,
        "cap_cpu": 60.8,
-       "recent_cores": 14.5
+       "recent_cores": 19.1
       }
      },
      {
       "host": "ip-10-0-102-184.ap-south-1.compute.internal",
       "pipeline": "sds2",
       "cpus": 64,
-      "load": 38.3,
+      "load": 43.7,
       "jobs": {
-       "ifc": 11,
+       "ifc": 13,
        "db1": 0,
        "sds2": 0
       },
       "worker_processes": 14,
       "mem_total_gb": 495,
-      "mem_avail_gb": 301,
-      "reserved_gb": 424.5,
+      "mem_avail_gb": 373,
+      "reserved_gb": 385.6,
       "gate": {
        "ok_cpu": false,
        "ok_mem": true,
        "cap_cpu": 57.6,
-       "recent_cores": 14.899999999999999
+       "recent_cores": 12.2
       }
      },
      {
       "host": "ip-10-0-102-229.ap-south-1.compute.internal",
       "pipeline": "sds2",
       "cpus": 64,
-      "load": 41.2,
+      "load": 44.3,
       "jobs": {
-       "ifc": 11,
+       "ifc": 13,
        "db1": 0,
        "sds2": 0
       },
       "worker_processes": 14,
       "mem_total_gb": 495,
-      "mem_avail_gb": 352,
-      "reserved_gb": 484.0,
+      "mem_avail_gb": 269,
+      "reserved_gb": 493.3,
       "gate": {
-       "ok_cpu": false,
+       "ok_cpu": true,
        "ok_mem": true,
        "cap_cpu": 57.6,
-       "recent_cores": 13.149999999999999
+       "recent_cores": 7.6
       }
      },
      {
       "host": "ip-10-0-102-230.ap-south-1.compute.internal",
       "pipeline": "sds2",
       "cpus": 64,
-      "load": 41.8,
+      "load": 36.3,
+      "jobs": {
+       "ifc": 16,
+       "db1": 0,
+       "sds2": 0
+      },
+      "worker_processes": 14,
+      "mem_total_gb": 495,
+      "mem_avail_gb": 435,
+      "reserved_gb": 299.9,
+      "gate": {
+       "ok_cpu": false,
+       "ok_mem": true,
+       "cap_cpu": 54.4,
+       "recent_cores": 23.900000000000002
+      }
+     },
+     {
+      "host": "ip-10-0-102-231.ap-south-1.compute.internal",
+      "pipeline": "sds2",
+      "cpus": 64,
+      "load": 37.5,
+      "jobs": {
+       "ifc": 13,
+       "db1": 0,
+       "sds2": 0
+      },
+      "worker_processes": 14,
+      "mem_total_gb": 495,
+      "mem_avail_gb": 423,
+      "reserved_gb": 265.9,
+      "gate": {
+       "ok_cpu": false,
+       "ok_mem": true,
+       "cap_cpu": 57.6,
+       "recent_cores": 18.9
+      }
+     },
+     {
+      "host": "ip-10-0-102-24.ap-south-1.compute.internal",
+      "pipeline": "sds2",
+      "cpus": 64,
+      "load": 45.2,
+      "jobs": {
+       "ifc": 17,
+       "db1": 0,
+       "sds2": 0
+      },
+      "worker_processes": 14,
+      "mem_total_gb": 495,
+      "mem_avail_gb": 394,
+      "reserved_gb": 248.3,
+      "gate": {
+       "ok_cpu": false,
+       "ok_mem": true,
+       "cap_cpu": 54.4,
+       "recent_cores": 16.8
+      }
+     },
+     {
+      "host": "ip-10-0-102-56.ap-south-1.compute.internal",
+      "pipeline": "ifc",
+      "cpus": 64,
+      "load": 45.6,
       "jobs": {
        "ifc": 16,
        "db1": 0,
@@ -13957,91 +14045,28 @@
       "worker_processes": 14,
       "mem_total_gb": 495,
       "mem_avail_gb": 429,
-      "reserved_gb": 368.0,
-      "gate": {
-       "ok_cpu": false,
-       "ok_mem": true,
-       "cap_cpu": 57.6,
-       "recent_cores": 11.5
-      }
-     },
-     {
-      "host": "ip-10-0-102-231.ap-south-1.compute.internal",
-      "pipeline": "sds2",
-      "cpus": 64,
-      "load": 44.5,
-      "jobs": {
-       "ifc": 17,
-       "db1": 0,
-       "sds2": 0
-      },
-      "worker_processes": 14,
-      "mem_total_gb": 495,
-      "mem_avail_gb": 428,
-      "reserved_gb": 274.4,
-      "gate": {
-       "ok_cpu": false,
-       "ok_mem": true,
-       "cap_cpu": 57.6,
-       "recent_cores": 13.8
-      }
-     },
-     {
-      "host": "ip-10-0-102-24.ap-south-1.compute.internal",
-      "pipeline": "sds2",
-      "cpus": 64,
-      "load": 46.2,
-      "jobs": {
-       "ifc": 20,
-       "db1": 0,
-       "sds2": 0
-      },
-      "worker_processes": 14,
-      "mem_total_gb": 495,
-      "mem_avail_gb": 367,
-      "reserved_gb": 272.3,
-      "gate": {
-       "ok_cpu": false,
-       "ok_mem": true,
-       "cap_cpu": 57.6,
-       "recent_cores": 13.8
-      }
-     },
-     {
-      "host": "ip-10-0-102-56.ap-south-1.compute.internal",
-      "pipeline": "ifc",
-      "cpus": 64,
-      "load": 43.1,
-      "jobs": {
-       "ifc": 18,
-       "db1": 0,
-       "sds2": 0
-      },
-      "worker_processes": 14,
-      "mem_total_gb": 495,
-      "mem_avail_gb": 413,
-      "reserved_gb": 269.0,
+      "reserved_gb": 247.7,
       "gate": {
        "ok_cpu": false,
        "ok_mem": true,
        "cap_cpu": 60.8,
-       "recent_cores": 18.400000000000002
+       "recent_cores": 14.5
       }
      },
      {
       "host": "ip-10-0-102-70.ap-south-1.compute.internal",
       "pipeline": "sds2",
       "cpus": 64,
-      "load": 42.0,
+      "load": 36.6,
       "jobs": {
-       "ifc": 13,
+       "ifc": 14,
        "db1": 0,
        "sds2": 0
       },
       "worker_processes": 14,
       "mem_total_gb": 495,
-      "mem_avail_gb": 360,
-      "reserved_gb": 403.4,
+      "mem_avail_gb": 379,
+      "reserved_gb": 367.1,
       "gate": {
        "ok_cpu": false,
        "ok_mem": true,
@@ -14053,49 +14078,49 @@
       "host": "ip-10-0-102-73.ap-south-1.compute.internal",
       "pipeline": "ifc",
       "cpus": 64,
-      "load": 43.4,
+      "load": 45.7,
       "jobs": {
-       "ifc": 18,
+       "ifc": 14,
        "db1": 0,
        "sds2": 0
       },
       "worker_processes": 14,
       "mem_total_gb": 495,
-      "mem_avail_gb": 116,
-      "reserved_gb": 591.9,
+      "mem_avail_gb": 283,
+      "reserved_gb": 391.6,
       "gate": {
-       "ok_cpu": false,
+       "ok_cpu": true,
        "ok_mem": true,
        "cap_cpu": 60.8,
-       "recent_cores": 16.1
+       "recent_cores": 12.2
       }
      },
      {
       "host": "ip-172-31-13-126.ap-south-2.compute.internal",
       "pipeline": "sds2",
       "cpus": 64,
-      "load": 44.0,
+      "load": 46.4,
       "jobs": {
-       "ifc": 13,
+       "ifc": 15,
        "db1": 0,
        "sds2": 0
       },
       "worker_processes": 14,
       "mem_total_gb": 495,
-      "mem_avail_gb": 339,
-      "reserved_gb": 368.2,
+      "mem_avail_gb": 336,
+      "reserved_gb": 345.1,
       "gate": {
-       "ok_cpu": true,
+       "ok_cpu": false,
        "ok_mem": true,
        "cap_cpu": 57.6,
-       "recent_cores": 9.2
+       "recent_cores": 11.5
       }
      },
      {
       "host": "ip-172-31-14-199.ap-south-2.compute.internal",
       "pipeline": "sds2",
       "cpus": 64,
-      "load": 38.9,
+      "load": 40.0,
       "jobs": {
        "ifc": 20,
        "db1": 0,
@@ -14103,62 +14128,20 @@
       },
       "worker_processes": 14,
       "mem_total_gb": 495,
-      "mem_avail_gb": 416,
-      "reserved_gb": 237.0,
+      "mem_avail_gb": 412,
+      "reserved_gb": 299.4,
       "gate": {
        "ok_cpu": false,
        "ok_mem": true,
        "cap_cpu": 57.6,
-       "recent_cores": 13.8
+       "recent_cores": 23.700000000000003
       }
      },
      {
       "host": "ip-172-31-32-90.ap-southeast-1.compute.internal",
       "pipeline": "sds2",
       "cpus": 64,
-      "load": 55.1,
-      "jobs": {
-       "ifc": 4,
-       "db1": 0,
-       "sds2": 0
-      },
-      "worker_processes": 3,
-      "mem_total_gb": 495,
-      "mem_avail_gb": 250,
-      "reserved_gb": 506.7,
-      "gate": {
-       "ok_cpu": false,
-       "ok_mem": true,
-       "cap_cpu": 57.6,
-       "recent_cores": 2.55
-      }
-     },
-     {
-      "host": "ip-172-31-33-242.ap-southeast-1.compute.internal",
-      "pipeline": "sds2",
-      "cpus": 64,
-      "load": 44.8,
-      "jobs": {
-       "ifc": 0,
-       "db1": 0,
-       "sds2": 0
-      },
-      "worker_processes": 3,
-      "mem_total_gb": 495,
-      "mem_avail_gb": 115,
-      "reserved_gb": 604.0,
-      "gate": {
-       "ok_cpu": true,
-       "ok_mem": false,
-       "cap_cpu": 57.6,
-       "recent_cores": 2.5
-      }
-     },
-     {
-      "host": "ip-172-31-38-251.ap-southeast-1.compute.internal",
-      "pipeline": "sds2",
-      "cpus": 64,
-      "load": 62.0,
+      "load": 51.4,
       "jobs": {
        "ifc": 2,
        "db1": 0,
@@ -14166,8 +14149,50 @@
       },
       "worker_processes": 3,
       "mem_total_gb": 495,
+      "mem_avail_gb": 265,
+      "reserved_gb": 474.1,
+      "gate": {
+       "ok_cpu": false,
+       "ok_mem": true,
+       "cap_cpu": 57.6,
+       "recent_cores": 2.0
+      }
+     },
+     {
+      "host": "ip-172-31-33-242.ap-southeast-1.compute.internal",
+      "pipeline": "sds2",
+      "cpus": 64,
+      "load": 48.3,
+      "jobs": {
+       "ifc": 0,
+       "db1": 0,
+       "sds2": 0
+      },
+      "worker_processes": 3,
+      "mem_total_gb": 495,
       "mem_avail_gb": 102,
-      "reserved_gb": 707.8,
+      "reserved_gb": 621.1,
+      "gate": {
+       "ok_cpu": true,
+       "ok_mem": false,
+       "cap_cpu": 57.6,
+       "recent_cores": 0
+      }
+     },
+     {
+      "host": "ip-172-31-38-251.ap-southeast-1.compute.internal",
+      "pipeline": "sds2",
+      "cpus": 64,
+      "load": 60.9,
+      "jobs": {
+       "ifc": 1,
+       "db1": 0,
+       "sds2": 0
+      },
+      "worker_processes": 3,
+      "mem_total_gb": 495,
+      "mem_avail_gb": 83,
+      "reserved_gb": 704.8,
       "gate": {
        "ok_cpu": false,
        "ok_mem": false,
@@ -14179,84 +14204,84 @@
       "host": "ip-172-31-39-89.ap-southeast-1.compute.internal",
       "pipeline": "sds2",
       "cpus": 64,
-      "load": 51.4,
+      "load": 58.4,
       "jobs": {
-       "ifc": 0,
+       "ifc": 3,
        "db1": 0,
        "sds2": 0
       },
       "worker_processes": 3,
       "mem_total_gb": 495,
-      "mem_avail_gb": 183,
-      "reserved_gb": 573.4,
+      "mem_avail_gb": 190,
+      "reserved_gb": 521.1,
       "gate": {
        "ok_cpu": false,
        "ok_mem": true,
        "cap_cpu": 57.6,
-       "recent_cores": 6.5
+       "recent_cores": 0
       }
      },
      {
       "host": "ip-172-31-4-132.ap-south-2.compute.internal",
       "pipeline": "sds2",
       "cpus": 64,
-      "load": 43.4,
+      "load": 40.0,
       "jobs": {
-       "ifc": 9,
+       "ifc": 14,
        "db1": 0,
        "sds2": 0
       },
       "worker_processes": 14,
       "mem_total_gb": 495,
-      "mem_avail_gb": 310,
-      "reserved_gb": 324.9,
+      "mem_avail_gb": 420,
+      "reserved_gb": 238.0,
       "gate": {
-       "ok_cpu": false,
+       "ok_cpu": true,
        "ok_mem": true,
        "cap_cpu": 57.6,
-       "recent_cores": 10.6
+       "recent_cores": 12.2
       }
      },
      {
       "host": "ip-172-31-5-137.ap-south-2.compute.internal",
       "pipeline": "sds2",
       "cpus": 64,
-      "load": 39.2,
+      "load": 40.3,
       "jobs": {
-       "ifc": 8,
+       "ifc": 13,
        "db1": 0,
        "sds2": 0
       },
       "worker_processes": 14,
       "mem_total_gb": 495,
       "mem_avail_gb": 381,
-      "reserved_gb": 255.7,
+      "reserved_gb": 312.4,
       "gate": {
        "ok_cpu": false,
        "ok_mem": true,
        "cap_cpu": 57.6,
-       "recent_cores": 18.2
+       "recent_cores": 14.5
       }
      },
      {
       "host": "ip-172-31-5-195.ap-south-2.compute.internal",
       "pipeline": "sds2",
       "cpus": 64,
-      "load": 45.5,
+      "load": 44.6,
       "jobs": {
-       "ifc": 17,
+       "ifc": 13,
        "db1": 0,
        "sds2": 0
       },
       "worker_processes": 14,
       "mem_total_gb": 495,
-      "mem_avail_gb": 334,
-      "reserved_gb": 442.9,
+      "mem_avail_gb": 335,
+      "reserved_gb": 413.9,
       "gate": {
        "ok_cpu": false,
        "ok_mem": true,
-       "cap_cpu": 57.6,
-       "recent_cores": 11.5
+       "cap_cpu": 54.4,
+       "recent_cores": 13.8
       }
      }
     ],
@@ -14266,7 +14291,7 @@
        "lo_mb": 0,
        "hi_mb": 1,
        "n_done": 770,
-       "n_lower_bound": 28,
+       "n_lower_bound": 32,
        "p50_gb": 0.13,
        "p95_gb": 0.41,
        "max_gb": 1.72,
@@ -14289,18 +14314,18 @@
        "hi_mb": 20,
        "n_done": 777,
        "n_lower_bound": 99,
-       "p50_gb": 2.0,
-       "p95_gb": 7.44,
+       "p50_gb": 2.01,
+       "p95_gb": 7.88,
        "max_gb": 45.51,
-       "expected_gb": 2.23,
-       "reserve_gb": 8.9
+       "expected_gb": 2.36,
+       "reserve_gb": 9.5
       },
       {
        "lo_mb": 20,
        "hi_mb": 50,
        "n_done": 566,
-       "n_lower_bound": 74,
-       "p50_gb": 7.74,
+       "n_lower_bound": 75,
+       "p50_gb": 7.76,
        "p95_gb": 17.59,
        "max_gb": 79.7,
        "expected_gb": 8.66,
@@ -14310,8 +14335,8 @@
        "lo_mb": 50,
        "hi_mb": 100,
        "n_done": 391,
-       "n_lower_bound": 46,
-       "p50_gb": 19.44,
+       "n_lower_bound": 48,
+       "p50_gb": 19.4,
        "p95_gb": 32.02,
        "max_gb": 55.64,
        "expected_gb": 22.21,
@@ -14321,8 +14346,8 @@
        "lo_mb": 100,
        "hi_mb": 200,
        "n_done": 127,
-       "n_lower_bound": 16,
-       "p50_gb": 25.54,
+       "n_lower_bound": 17,
+       "p50_gb": 25.03,
        "p95_gb": 48.3,
        "max_gb": 65.76,
        "expected_gb": 29.85,
@@ -14332,7 +14357,7 @@
        "lo_mb": 200,
        "hi_mb": 500,
        "n_done": 47,
-       "n_lower_bound": 5,
+       "n_lower_bound": 6,
        "p50_gb": 17.01,
        "p95_gb": 57.95,
        "max_gb": 75.52,
@@ -14541,7 +14566,7 @@
      "grade": 0
     },
     "admission": {
-     "updated": "2026-10-03T19:14:54Z",
+     "updated": "2026-10-03T19:19:18Z",
      "resv_factor": 3.0,
      "real_kills_30min": 0,
      "rule": "> 40 real kills / 30 min -> 1.3, > 80 -> 1.15, <= 20 -> step up by 0.2 to resv_factor_max (3.0)"
@@ -14578,7 +14603,7 @@
      "fix": "closed solid geometry in the source model",
      "category": "source_data_absent",
      "models": 1386,
-     "lift_to_class1_if_only_fix": 906
+     "lift_to_class1_if_only_fix": 907
     },
     {
      "key": "converter_feature | sds2 stage 2 failure",
@@ -14619,7 +14644,7 @@
      "key": "source_data_absent | reference open meshes",
      "fix": "closed solid geometry for the imported reference model (the job stores open meshes)",
      "category": "source_data_absent",
-     "models": 1608,
+     "models": 1609,
      "lift_to_class1_if_only_fix": 16
     },
     {
@@ -15350,7 +15375,7 @@
      },
      "reconverted": 1862,
      "done": false,
-     "updated": "2026-10-03T19:14:27Z"
+     "updated": "2026-10-03T19:18:51Z"
     },
     {
      "pipeline": "ifc",
@@ -15395,7 +15420,7 @@
      },
      "reconverted": 2313,
      "done": false,
-     "updated": "2026-10-03T19:14:28Z"
+     "updated": "2026-10-03T19:18:52Z"
     },
     {
      "pipeline": "ifc",
@@ -15416,7 +15441,7 @@
      },
      "reconverted": 289,
      "done": false,
-     "updated": "2026-10-03T19:14:28Z"
+     "updated": "2026-10-03T19:18:52Z"
     },
     {
      "pipeline": "ifc",
@@ -15438,7 +15463,7 @@
      },
      "reconverted": 5,
      "done": false,
-     "updated": "2026-10-03T19:14:28Z"
+     "updated": "2026-10-03T19:18:52Z"
     },
     {
      "pipeline": "db1",
@@ -15484,7 +15509,7 @@
      },
      "reconverted": 1528,
      "done": false,
-     "updated": "2026-10-03T19:14:27Z"
+     "updated": "2026-10-03T19:18:52Z"
     },
     {
      "pipeline": "sds2",
@@ -15507,7 +15532,7 @@
      },
      "reconverted": 623,
      "done": true,
-     "updated": "2026-10-03T19:14:27Z"
+     "updated": "2026-10-03T19:18:52Z"
     },
     {
      "pipeline": "db1",
@@ -15549,7 +15574,7 @@
      },
      "reconverted": 848,
      "done": false,
-     "updated": "2026-10-03T19:14:27Z"
+     "updated": "2026-10-03T19:18:52Z"
     },
     {
      "pipeline": "sds2",
@@ -15570,7 +15595,7 @@
      },
      "reconverted": 457,
      "done": true,
-     "updated": "2026-10-03T19:14:27Z"
+     "updated": "2026-10-03T19:18:52Z"
     },
     {
      "pipeline": "db1",
@@ -15592,7 +15617,7 @@
      },
      "reconverted": 106,
      "done": true,
-     "updated": "2026-10-03T19:14:26Z"
+     "updated": "2026-10-03T19:18:50Z"
     },
     {
      "pipeline": "sds2",
@@ -15617,7 +15642,7 @@
      },
      "reconverted": 1106,
      "done": false,
-     "updated": "2026-10-03T19:14:27Z"
+     "updated": "2026-10-03T19:18:52Z"
     },
     {
      "pipeline": "ifc",
@@ -15641,7 +15666,7 @@
      },
      "reconverted": 1074,
      "done": false,
-     "updated": "2026-10-03T19:14:28Z"
+     "updated": "2026-10-03T19:18:52Z"
     },
     {
      "pipeline": "sds2",
@@ -15662,7 +15687,7 @@
      },
      "reconverted": 2040,
      "done": false,
-     "updated": "2026-10-03T19:14:27Z"
+     "updated": "2026-10-03T19:18:52Z"
     },
     {
      "pipeline": "db1",
@@ -15680,7 +15705,7 @@
      },
      "reconverted": 66,
      "done": true,
-     "updated": "2026-10-03T19:14:26Z"
+     "updated": "2026-10-03T19:18:50Z"
     },
     {
      "pipeline": "sds2",
@@ -15703,7 +15728,7 @@
      },
      "reconverted": 27,
      "done": false,
-     "updated": "2026-10-03T19:14:27Z"
+     "updated": "2026-10-03T19:18:52Z"
     },
     {
      "pipeline": "ifc",
@@ -15721,7 +15746,7 @@
      },
      "reconverted": 9,
      "done": true,
-     "updated": "2026-10-03T19:14:28Z"
+     "updated": "2026-10-03T19:18:52Z"
     },
     {
      "pipeline": "db1",
@@ -15739,7 +15764,7 @@
      },
      "reconverted": 79,
      "done": true,
-     "updated": "2026-10-03T19:14:26Z"
+     "updated": "2026-10-03T19:18:50Z"
     },
     {
      "pipeline": "db1",
@@ -15757,7 +15782,7 @@
      },
      "reconverted": 3,
      "done": true,
-     "updated": "2026-10-03T19:14:26Z"
+     "updated": "2026-10-03T19:18:50Z"
     },
     {
      "pipeline": "db1",
@@ -15780,7 +15805,7 @@
      },
      "reconverted": 101,
      "done": true,
-     "updated": "2026-10-03T19:14:26Z"
+     "updated": "2026-10-03T19:18:50Z"
     },
     {
      "pipeline": "ifc",
@@ -15880,7 +15905,7 @@
      },
      "reconverted": 2553,
      "done": false,
-     "updated": "2026-10-03T19:14:27Z"
+     "updated": "2026-10-03T19:18:51Z"
     },
     {
      "pipeline": "ifc",
@@ -15902,19 +15927,19 @@
       "1": 64
      },
      "after": {
-      "2": 1169,
-      "1": 132
+      "2": 1170,
+      "1": 136
      },
-     "reconverted": 1301,
+     "reconverted": 1306,
      "done": false,
-     "updated": "2026-10-03T19:14:28Z"
+     "updated": "2026-10-03T19:18:52Z"
     }
    ],
    "class_rule": "class 1 = opens, 100% of source parts, all solids valid, no stand-ins, per-part volume within 5%; class 2 = opens with valid solids but partial / stand-ins / needs input / invalid or off-tolerance parts; class 3 = no STEP, unreadable, empty, corrupt or geometry-free source, member coverage < 50%, absurd bbox, blank render",
    "disks": {
     "zentitude-data-4": {
      "disk": "zentitude-data-4",
-     "updated": "2026-10-03T19:11:35Z",
+     "updated": "2026-10-03T19:15:58Z",
      "reuse_from": [
       "zenitude-data-3"
      ],
@@ -15929,30 +15954,30 @@
         "zenitude-data-3": 1453
        },
        "classes": {
-        "1": 2137,
-        "2": 5522,
+        "1": 2140,
+        "2": 5535,
         "3": 12
        },
        "classes_converted_here": {
-        "1": 1107,
-        "2": 5103,
+        "1": 1110,
+        "2": 5116,
         "3": 8
        },
        "progress": {
         "jobs": 17479,
-        "done": 6221,
-        "in_flight": 118,
-        "pending": 11258,
+        "done": 6243,
+        "in_flight": 111,
+        "pending": 11236,
         "worker_processes_live": 27,
-        "pct_done": 35.59
+        "pct_done": 35.72
        },
        "verification": {
-        "n/a": 11278,
-        "pending": 5623,
-        "verified": 587,
+        "n/a": 11262,
+        "pending": 5638,
+        "verified": 588,
         "warn_ok": 38,
         "pass": 367,
-        "cannot": 77,
+        "cannot": 78,
         "warn": 105,
         "class1_verified": 0,
         "class1_pending": 0,
@@ -15970,29 +15995,29 @@
        },
        "classes": {
         "1": 15,
-        "2": 3199,
-        "3": 94
+        "2": 3210,
+        "3": 95
        },
        "classes_converted_here": {
         "1": 14,
-        "2": 3169,
-        "3": 93
+        "2": 3180,
+        "3": 94
        },
        "progress": {
         "jobs": 14697,
-        "done": 3277,
-        "in_flight": 80,
-        "pending": 11420,
+        "done": 3289,
+        "in_flight": 79,
+        "pending": 11408,
         "worker_processes_live": 27,
-        "pct_done": 22.3
+        "pct_done": 22.38
        },
        "verification": {
-        "n/a": 11525,
-        "verified": 2980,
-        "warn_ok": 212,
-        "warn": 2301,
-        "cannot": 389,
-        "pending": 203,
+        "n/a": 11514,
+        "verified": 3002,
+        "warn_ok": 215,
+        "warn": 2317,
+        "cannot": 392,
+        "pending": 192,
         "pass": 78,
         "class1_verified": 14,
         "class1_pending": 1,
@@ -16046,26 +16071,26 @@
      "complete": false,
      "eta": {
       "ifc": {
-       "open": 11258,
-       "done_last_hour": 280,
-       "eta_hours": 40.2,
-       "fresh_open": 11258,
-       "fresh_done_per_hour": 283,
-       "fresh_eta_hours": 39.8,
+       "open": 11236,
+       "done_last_hour": 275,
+       "eta_hours": 40.9,
+       "fresh_open": 11236,
+       "fresh_done_per_hour": 287,
+       "fresh_eta_hours": 39.1,
        "rerun_open": 0,
        "rerun_done_per_hour": 0,
        "rerun_eta_hours": null
       },
       "db1": {
-       "open": 22853,
-       "done_last_hour": 201,
-       "eta_hours": 113.7,
-       "fresh_open": 11420,
-       "fresh_done_per_hour": 183,
-       "fresh_eta_hours": 62.4,
-       "rerun_open": 11433,
-       "rerun_done_per_hour": 18,
-       "rerun_eta_hours": 635.2
+       "open": 22829,
+       "done_last_hour": 184,
+       "eta_hours": 124.1,
+       "fresh_open": 11408,
+       "fresh_done_per_hour": 178,
+       "fresh_eta_hours": 64.1,
+       "rerun_open": 11421,
+       "rerun_done_per_hour": 6,
+       "rerun_eta_hours": 1903.5
       },
       "sds2": {
        "open": 0,
