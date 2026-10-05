@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-10-05T00:14:18Z",
+ "generated_at": "2026-10-05T00:20:18Z",
  "interval_s": 120,
  "z3": {
   "label": "Disk Z3 (steel-detailing job archive SSD: SDS2 + Tekla)",
@@ -12327,26 +12327,20 @@
    "problem_job_count": 0
   },
   "conversions": {
-   "updated": "2026-10-05T00:12:31Z",
+   "updated": "2026-10-05T00:19:08Z",
    "final": true,
    "incidents": [],
    "eta": {
     "ifc": {
      "open": 0,
-     "done_last_hour": 336,
+     "done_last_hour": 240,
      "eta_hours": 0.0,
      "fresh_open": 0,
      "fresh_done_per_hour": 0,
      "fresh_eta_hours": null,
      "rerun_open": 305,
-     "rerun_done_per_hour": 336,
-     "rerun_eta_hours": 0.9,
-     "long_tail": {
-      "expected_finish": "2026-10-05T00:13:41Z",
-      "job": "ae120f28aabba972",
-      "host": "ip-10-0-102-136.ap-sou",
-      "started": "2026-10-04T23:17:41Z"
-     }
+     "rerun_done_per_hour": 240,
+     "rerun_eta_hours": 1.3
     },
     "db1": {
      "open": 0,
@@ -14681,6 +14675,31 @@
      "rerun_pending": 306,
      "prefix": "cad-disk-extract/zenitude-data-3/_state/conv/final/r92/",
      "verified": false
+    },
+    {
+     "rev": 93,
+     "label": "final r93",
+     "at": "2026-10-05T00:19:08Z",
+     "by_class": {
+      "ifc": {
+       "1": 2396,
+       "2": 1553,
+       "3": 7
+      },
+      "db1": {
+       "2": 104,
+       "3": 1,
+       "1": 1
+      },
+      "sds2": {
+       "2": 4103,
+       "3": 359,
+       "1": 95
+      }
+     },
+     "rerun_pending": 306,
+     "prefix": "cad-disk-extract/zenitude-data-3/_state/conv/final/r93/",
+     "verified": true
     }
    ],
    "packaging": {
@@ -14689,15 +14708,15 @@
     "projects_packaged": 212,
     "steps_placed_models": 2504,
     "placements": 2504,
-    "pending_jobs": 3,
+    "pending_jobs": 2,
     "pending_create": 0,
-    "pending_steps": 3,
+    "pending_steps": 1,
     "removals_pending": 132,
     "verify_failures": 0,
     "stuck_projects": 0,
     "unknown_archives": 0,
     "active": true,
-    "updated": "2026-10-05T00:12:53Z",
+    "updated": "2026-10-05T00:19:30Z",
     "error": false
    },
    "verification": {
@@ -14790,10 +14809,10 @@
      "to_convert": 3606,
      "reused": 350,
      "done": 1179,
-     "in_flight": 1,
+     "in_flight": 0,
      "pending": 0,
      "step_files": 3949,
-     "step_bytes": 601628811534,
+     "step_bytes": 601628798778,
      "graded": 3956,
      "classes": {
       "1": 2396,
@@ -14887,10 +14906,10 @@
     "to_convert": 7630,
     "reused": 989,
     "done": 5045,
-    "in_flight": 1,
+    "in_flight": 0,
     "pending": 0,
     "step_files": 8252,
-    "step_bytes": 3784929157877,
+    "step_bytes": 3784929145121,
     "graded": 8619,
     "classes": {
      "1": 2492,
@@ -14915,40 +14934,40 @@
     }
    },
    "fleet": {
-    "boxes": 13,
-    "vcpu": 832
+    "boxes": 11,
+    "vcpu": 704
    },
    "utilization": {
     "db1@64vcpu": {
-     "boxes": 12,
-     "slots": 192,
+     "boxes": 10,
+     "slots": 160,
      "in_flight": 0,
-     "load_avg": 0.2
+     "load_avg": 0.1
     },
     "grade@64vcpu": {
      "boxes": 1,
      "slots": 32,
      "in_flight": 0,
-     "load_avg": 0.1
+     "load_avg": 0.0
     },
     "ifc@64vcpu": {
-     "boxes": 12,
-     "slots": 312,
-     "in_flight": 1,
-     "load_avg": 0.2
+     "boxes": 10,
+     "slots": 260,
+     "in_flight": 0,
+     "load_avg": 0.1
     },
     "sds2@64vcpu": {
-     "boxes": 12,
-     "slots": 960,
+     "boxes": 10,
+     "slots": 800,
      "in_flight": 0,
-     "load_avg": 0.2
+     "load_avg": 0.1
     },
     "boxes": [
      {
       "host": "ip-10-0-101-231.ap-south-1.compute.internal",
       "pipeline": "grade",
       "cpus": 64,
-      "load": 0.1,
+      "load": 0.0,
       "jobs": {
        "ifc": 0,
        "db1": 0,
@@ -14957,7 +14976,7 @@
       },
       "worker_processes": 7,
       "mem_total_gb": 495,
-      "mem_avail_gb": 485,
+      "mem_avail_gb": 486,
       "reserved_gb": 129.7,
       "gate": {
        "ok_cpu": true,
@@ -14970,7 +14989,7 @@
       "host": "ip-10-0-101-55.ap-south-1.compute.internal",
       "pipeline": "sds2",
       "cpus": 64,
-      "load": 0.1,
+      "load": 0.0,
       "jobs": {
        "ifc": 0,
        "db1": 0,
@@ -14991,15 +15010,15 @@
       "host": "ip-10-0-102-136.ap-south-1.compute.internal",
       "pipeline": "ifc",
       "cpus": 64,
-      "load": 1.1,
+      "load": 0.2,
       "jobs": {
-       "ifc": 1,
+       "ifc": 0,
        "db1": 0,
        "sds2": 0
       },
       "worker_processes": 6,
       "mem_total_gb": 495,
-      "mem_avail_gb": 406,
+      "mem_avail_gb": 484,
       "reserved_gb": 169.5,
       "gate": {
        "ok_cpu": true,
@@ -15030,27 +15049,6 @@
       }
      },
      {
-      "host": "ip-10-0-102-24.ap-south-1.compute.internal",
-      "pipeline": "sds2",
-      "cpus": 64,
-      "load": 0.1,
-      "jobs": {
-       "ifc": 0,
-       "db1": 0,
-       "sds2": 0
-      },
-      "worker_processes": 6,
-      "mem_total_gb": 495,
-      "mem_avail_gb": 478,
-      "reserved_gb": 212.0,
-      "gate": {
-       "ok_cpu": true,
-       "ok_mem": true,
-       "cap_cpu": 60.8,
-       "recent_cores": 6.8999999999999995
-      }
-     },
-     {
       "host": "ip-10-0-102-56.ap-south-1.compute.internal",
       "pipeline": "ifc",
       "cpus": 64,
@@ -15069,27 +15067,6 @@
        "ok_mem": true,
        "cap_cpu": 62.7,
        "recent_cores": 0
-      }
-     },
-     {
-      "host": "ip-10-0-102-70.ap-south-1.compute.internal",
-      "pipeline": "sds2",
-      "cpus": 64,
-      "load": 0.1,
-      "jobs": {
-       "ifc": 0,
-       "db1": 0,
-       "sds2": 0
-      },
-      "worker_processes": 6,
-      "mem_total_gb": 495,
-      "mem_avail_gb": 477,
-      "reserved_gb": 146.8,
-      "gate": {
-       "ok_cpu": true,
-       "ok_mem": true,
-       "cap_cpu": 60.8,
-       "recent_cores": 6.8999999999999995
       }
      },
      {
@@ -15138,7 +15115,7 @@
       "host": "ip-172-31-33-242.ap-southeast-1.compute.internal",
       "pipeline": "sds2",
       "cpus": 64,
-      "load": 0.0,
+      "load": 0.1,
       "jobs": {
        "ifc": 0,
        "db1": 0,
@@ -15159,7 +15136,7 @@
       "host": "ip-172-31-38-251.ap-southeast-1.compute.internal",
       "pipeline": "sds2",
       "cpus": 64,
-      "load": 0.2,
+      "load": 0.1,
       "jobs": {
        "ifc": 0,
        "db1": 0,
@@ -15180,7 +15157,7 @@
       "host": "ip-172-31-39-89.ap-southeast-1.compute.internal",
       "pipeline": "sds2",
       "cpus": 64,
-      "load": 0.0,
+      "load": 0.1,
       "jobs": {
        "ifc": 0,
        "db1": 0,
@@ -15237,12 +15214,12 @@
        "lo_mb": 20,
        "hi_mb": 50,
        "n_done": 566,
-       "n_lower_bound": 5,
-       "p50_gb": 8.7,
-       "p95_gb": 17.96,
+       "n_lower_bound": 4,
+       "p50_gb": 8.66,
+       "p95_gb": 17.94,
        "max_gb": 79.7,
-       "expected_gb": 8.7,
-       "reserve_gb": 21.6
+       "expected_gb": 8.66,
+       "reserve_gb": 21.5
       },
       {
        "lo_mb": 50,
@@ -15479,7 +15456,7 @@
      "grade": 0
     },
     "admission": {
-     "updated": "2026-10-05T00:12:40Z",
+     "updated": "2026-10-05T00:19:17Z",
      "resv_factor": 3.0,
      "real_kills_30min": 0,
      "rule": "> 40 real kills / 30 min -> 1.3, > 80 -> 1.15, <= 20 -> step up by 0.2 to resv_factor_max (3.0)"
@@ -15507,6 +15484,12 @@
       "host": "ip-10-0-101-187.ap-south-1.compute.internal",
       "pipeline": "db1",
       "released": "2026-10-04T23:26:33Z",
+      "primary": false
+     },
+     {
+      "host": "ip-10-0-101-231.ap-south-1.compute.internal",
+      "pipeline": "db1",
+      "released": "2026-10-05T00:19:13Z",
       "primary": false
      },
      {
@@ -15543,6 +15526,12 @@
       "host": "ip-10-0-102-230.ap-south-1.compute.internal",
       "pipeline": "db1",
       "released": "2026-10-04T23:59:47Z",
+      "primary": false
+     },
+     {
+      "host": "ip-10-0-102-231.ap-south-1.compute.internal",
+      "pipeline": "db1",
+      "released": "2026-10-05T00:19:11Z",
       "primary": false
      },
      {
@@ -15693,6 +15682,12 @@
       "host": "ip-10-0-101-177.ap-south-1.compute.internal",
       "pipeline": "final",
       "released": "2026-10-04T23:51:14Z",
+      "primary": false
+     },
+     {
+      "host": "ip-10-0-101-231.ap-south-1.compute.internal",
+      "pipeline": "final",
+      "released": "2026-10-05T00:18:46Z",
       "primary": false
      },
      {
@@ -16492,7 +16487,7 @@
      },
      "reconverted": 1864,
      "done": false,
-     "updated": "2026-10-05T00:12:20Z"
+     "updated": "2026-10-05T00:18:58Z"
     },
     {
      "pipeline": "ifc",
@@ -16532,12 +16527,12 @@
       "2": 2398
      },
      "after": {
-      "1": 892,
+      "1": 893,
       "2": 1499
      },
-     "reconverted": 2391,
+     "reconverted": 2392,
      "done": false,
-     "updated": "2026-10-05T00:12:21Z"
+     "updated": "2026-10-05T00:18:58Z"
     },
     {
      "pipeline": "ifc",
@@ -16558,7 +16553,7 @@
      },
      "reconverted": 292,
      "done": true,
-     "updated": "2026-10-05T00:12:21Z"
+     "updated": "2026-10-05T00:18:58Z"
     },
     {
      "pipeline": "ifc",
@@ -16580,7 +16575,7 @@
      },
      "reconverted": 6,
      "done": true,
-     "updated": "2026-10-05T00:12:21Z"
+     "updated": "2026-10-05T00:18:58Z"
     },
     {
      "pipeline": "db1",
@@ -16626,7 +16621,7 @@
      },
      "reconverted": 1528,
      "done": false,
-     "updated": "2026-10-05T00:12:20Z"
+     "updated": "2026-10-05T00:18:58Z"
     },
     {
      "pipeline": "sds2",
@@ -16649,7 +16644,7 @@
      },
      "reconverted": 623,
      "done": true,
-     "updated": "2026-10-05T00:12:20Z"
+     "updated": "2026-10-05T00:18:58Z"
     },
     {
      "pipeline": "db1",
@@ -16691,7 +16686,7 @@
      },
      "reconverted": 848,
      "done": false,
-     "updated": "2026-10-05T00:12:20Z"
+     "updated": "2026-10-05T00:18:58Z"
     },
     {
      "pipeline": "sds2",
@@ -16712,7 +16707,7 @@
      },
      "reconverted": 457,
      "done": true,
-     "updated": "2026-10-05T00:12:20Z"
+     "updated": "2026-10-05T00:18:58Z"
     },
     {
      "pipeline": "db1",
@@ -16734,7 +16729,7 @@
      },
      "reconverted": 106,
      "done": true,
-     "updated": "2026-10-05T00:12:19Z"
+     "updated": "2026-10-05T00:18:56Z"
     },
     {
      "pipeline": "sds2",
@@ -16759,7 +16754,7 @@
      },
      "reconverted": 1106,
      "done": false,
-     "updated": "2026-10-05T00:12:20Z"
+     "updated": "2026-10-05T00:18:58Z"
     },
     {
      "pipeline": "ifc",
@@ -16783,7 +16778,7 @@
      },
      "reconverted": 1074,
      "done": false,
-     "updated": "2026-10-05T00:12:21Z"
+     "updated": "2026-10-05T00:18:58Z"
     },
     {
      "pipeline": "sds2",
@@ -16804,7 +16799,7 @@
      },
      "reconverted": 2040,
      "done": false,
-     "updated": "2026-10-05T00:12:20Z"
+     "updated": "2026-10-05T00:18:58Z"
     },
     {
      "pipeline": "db1",
@@ -16822,7 +16817,7 @@
      },
      "reconverted": 66,
      "done": true,
-     "updated": "2026-10-05T00:12:19Z"
+     "updated": "2026-10-05T00:18:56Z"
     },
     {
      "pipeline": "sds2",
@@ -16845,7 +16840,7 @@
      },
      "reconverted": 27,
      "done": false,
-     "updated": "2026-10-05T00:12:20Z"
+     "updated": "2026-10-05T00:18:58Z"
     },
     {
      "pipeline": "ifc",
@@ -16863,7 +16858,7 @@
      },
      "reconverted": 9,
      "done": true,
-     "updated": "2026-10-05T00:12:21Z"
+     "updated": "2026-10-05T00:18:58Z"
     },
     {
      "pipeline": "db1",
@@ -16881,7 +16876,7 @@
      },
      "reconverted": 79,
      "done": true,
-     "updated": "2026-10-05T00:12:19Z"
+     "updated": "2026-10-05T00:18:56Z"
     },
     {
      "pipeline": "db1",
@@ -16899,7 +16894,7 @@
      },
      "reconverted": 3,
      "done": true,
-     "updated": "2026-10-05T00:12:19Z"
+     "updated": "2026-10-05T00:18:57Z"
     },
     {
      "pipeline": "db1",
@@ -16922,7 +16917,7 @@
      },
      "reconverted": 101,
      "done": true,
-     "updated": "2026-10-05T00:12:19Z"
+     "updated": "2026-10-05T00:18:57Z"
     },
     {
      "pipeline": "ifc",
@@ -17022,7 +17017,7 @@
      },
      "reconverted": 2553,
      "done": false,
-     "updated": "2026-10-05T00:12:20Z"
+     "updated": "2026-10-05T00:18:58Z"
     },
     {
      "pipeline": "ifc",
@@ -17049,14 +17044,14 @@
      },
      "reconverted": 1333,
      "done": false,
-     "updated": "2026-10-05T00:12:21Z"
+     "updated": "2026-10-05T00:18:58Z"
     }
    ],
    "class_rule": "class 1 = opens, 100% of source parts, all solids valid, no stand-ins, per-part volume within 5%; class 2 = opens with valid solids but partial / stand-ins / needs input / invalid or off-tolerance parts; class 3 = no STEP, unreadable, empty, corrupt or geometry-free source, member coverage < 50%, absurd bbox, blank render",
    "disks": {
     "zentitude-data-4": {
      "disk": "zentitude-data-4",
-     "updated": "2026-10-05T00:09:13Z",
+     "updated": "2026-10-05T00:15:51Z",
      "reuse_from": [
       "zenitude-data-3"
      ],
@@ -17085,7 +17080,7 @@
         "done": 17479,
         "in_flight": 0,
         "pending": 0,
-        "worker_processes_live": 13,
+        "worker_processes_live": 12,
         "pct_done": 100.0
        },
        "verification": {
@@ -17125,7 +17120,7 @@
         "done": 14697,
         "in_flight": 0,
         "pending": 0,
-        "worker_processes_live": 13,
+        "worker_processes_live": 12,
         "pct_done": 100.0
        },
        "verification": {
@@ -17164,7 +17159,7 @@
         "done": 291,
         "in_flight": 0,
         "pending": 0,
-        "worker_processes_live": 13,
+        "worker_processes_live": 11,
         "pct_done": 100.0
        },
        "verification": {
