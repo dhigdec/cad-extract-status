@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-10-05T00:34:18Z",
+ "generated_at": "2026-10-05T00:40:18Z",
  "interval_s": 120,
  "z3": {
   "label": "Disk Z3 (steel-detailing job archive SSD: SDS2 + Tekla)",
@@ -12327,20 +12327,20 @@
    "problem_job_count": 0
   },
   "conversions": {
-   "updated": "2026-10-05T00:32:19Z",
+   "updated": "2026-10-05T00:38:51Z",
    "final": true,
    "incidents": [],
    "eta": {
     "ifc": {
      "open": 0,
-     "done_last_hour": 35,
+     "done_last_hour": 20,
      "eta_hours": 0.0,
      "fresh_open": 0,
      "fresh_done_per_hour": 0,
      "fresh_eta_hours": null,
      "rerun_open": 305,
-     "rerun_done_per_hour": 35,
-     "rerun_eta_hours": 8.7
+     "rerun_done_per_hour": 20,
+     "rerun_eta_hours": 15.2
     },
     "db1": {
      "open": 0,
@@ -14716,7 +14716,7 @@
     "stuck_projects": 0,
     "unknown_archives": 0,
     "active": true,
-    "updated": "2026-10-05T00:32:41Z",
+    "updated": "2026-10-05T00:39:12Z",
     "error": false
    },
    "verification": {
@@ -14934,50 +14934,29 @@
     }
    },
    "fleet": {
-    "boxes": 8,
-    "vcpu": 512
+    "boxes": 5,
+    "vcpu": 320
    },
    "utilization": {
     "db1@64vcpu": {
-     "boxes": 6,
-     "slots": 142,
+     "boxes": 3,
+     "slots": 48,
      "in_flight": 0,
      "load_avg": 0.1
     },
     "ifc@64vcpu": {
-     "boxes": 7,
-     "slots": 182,
+     "boxes": 4,
+     "slots": 104,
      "in_flight": 0,
      "load_avg": 0.0
     },
     "sds2@64vcpu": {
-     "boxes": 6,
-     "slots": 480,
+     "boxes": 3,
+     "slots": 240,
      "in_flight": 0,
-     "load_avg": 0.1
+     "load_avg": 0.0
     },
     "boxes": [
-     {
-      "host": "ip-10-0-101-55.ap-south-1.compute.internal",
-      "pipeline": "sds2",
-      "cpus": 64,
-      "load": 0.0,
-      "jobs": {
-       "ifc": 0,
-       "db1": 0,
-       "sds2": 0
-      },
-      "worker_processes": 6,
-      "mem_total_gb": 495,
-      "mem_avail_gb": 481,
-      "reserved_gb": 25.3,
-      "gate": {
-       "ok_cpu": true,
-       "ok_mem": true,
-       "cap_cpu": 60.8,
-       "recent_cores": 0
-      }
-     },
      {
       "host": "ip-10-0-102-136.ap-south-1.compute.internal",
       "pipeline": "ifc",
@@ -15037,48 +15016,6 @@
        "ok_mem": true,
        "cap_cpu": 62.7,
        "recent_cores": 0
-      }
-     },
-     {
-      "host": "ip-172-31-32-90.ap-southeast-1.compute.internal",
-      "pipeline": "sds2",
-      "cpus": 64,
-      "load": 0.1,
-      "jobs": {
-       "ifc": 0,
-       "db1": 0,
-       "sds2": 0
-      },
-      "worker_processes": 4,
-      "mem_total_gb": 495,
-      "mem_avail_gb": 486,
-      "reserved_gb": 38.8,
-      "gate": {
-       "ok_cpu": true,
-       "ok_mem": true,
-       "cap_cpu": 60.8,
-       "recent_cores": 0
-      }
-     },
-     {
-      "host": "ip-172-31-33-242.ap-southeast-1.compute.internal",
-      "pipeline": "sds2",
-      "cpus": 64,
-      "load": 0.1,
-      "jobs": {
-       "ifc": 0,
-       "db1": 0,
-       "sds2": 0
-      },
-      "worker_processes": 3,
-      "mem_total_gb": 495,
-      "mem_avail_gb": 485,
-      "reserved_gb": 32.5,
-      "gate": {
-       "ok_cpu": true,
-       "ok_mem": true,
-       "cap_cpu": 60.8,
-       "recent_cores": 4.6
       }
      },
      {
@@ -15384,7 +15321,7 @@
      "grade": 0
     },
     "admission": {
-     "updated": "2026-10-05T00:32:28Z",
+     "updated": "2026-10-05T00:38:59Z",
      "resv_factor": 3.0,
      "real_kills_30min": 0,
      "rule": "> 40 real kills / 30 min -> 1.3, > 80 -> 1.15, <= 20 -> step up by 0.2 to resv_factor_max (3.0)"
@@ -15609,7 +15546,7 @@
      {
       "host": "ip-172-31-33-242.ap-southeast-1.compute.internal",
       "pipeline": "sds2",
-      "released": "2026-10-04T23:57:45Z",
+      "released": "2026-10-05T00:32:41Z",
       "primary": true
      },
      {
@@ -16445,7 +16382,7 @@
      },
      "reconverted": 1864,
      "done": false,
-     "updated": "2026-10-05T00:32:07Z"
+     "updated": "2026-10-05T00:38:40Z"
     },
     {
      "pipeline": "ifc",
@@ -16490,7 +16427,7 @@
      },
      "reconverted": 2392,
      "done": false,
-     "updated": "2026-10-05T00:32:08Z"
+     "updated": "2026-10-05T00:38:41Z"
     },
     {
      "pipeline": "ifc",
@@ -16511,7 +16448,7 @@
      },
      "reconverted": 292,
      "done": true,
-     "updated": "2026-10-05T00:32:08Z"
+     "updated": "2026-10-05T00:38:41Z"
     },
     {
      "pipeline": "ifc",
@@ -16533,7 +16470,7 @@
      },
      "reconverted": 6,
      "done": true,
-     "updated": "2026-10-05T00:32:08Z"
+     "updated": "2026-10-05T00:38:41Z"
     },
     {
      "pipeline": "db1",
@@ -16579,7 +16516,7 @@
      },
      "reconverted": 1528,
      "done": false,
-     "updated": "2026-10-05T00:32:07Z"
+     "updated": "2026-10-05T00:38:40Z"
     },
     {
      "pipeline": "sds2",
@@ -16602,7 +16539,7 @@
      },
      "reconverted": 623,
      "done": true,
-     "updated": "2026-10-05T00:32:07Z"
+     "updated": "2026-10-05T00:38:40Z"
     },
     {
      "pipeline": "db1",
@@ -16644,7 +16581,7 @@
      },
      "reconverted": 848,
      "done": false,
-     "updated": "2026-10-05T00:32:07Z"
+     "updated": "2026-10-05T00:38:40Z"
     },
     {
      "pipeline": "sds2",
@@ -16665,7 +16602,7 @@
      },
      "reconverted": 457,
      "done": true,
-     "updated": "2026-10-05T00:32:07Z"
+     "updated": "2026-10-05T00:38:40Z"
     },
     {
      "pipeline": "db1",
@@ -16687,7 +16624,7 @@
      },
      "reconverted": 106,
      "done": true,
-     "updated": "2026-10-05T00:32:06Z"
+     "updated": "2026-10-05T00:38:39Z"
     },
     {
      "pipeline": "sds2",
@@ -16712,7 +16649,7 @@
      },
      "reconverted": 1106,
      "done": false,
-     "updated": "2026-10-05T00:32:07Z"
+     "updated": "2026-10-05T00:38:40Z"
     },
     {
      "pipeline": "ifc",
@@ -16736,7 +16673,7 @@
      },
      "reconverted": 1074,
      "done": false,
-     "updated": "2026-10-05T00:32:08Z"
+     "updated": "2026-10-05T00:38:41Z"
     },
     {
      "pipeline": "sds2",
@@ -16757,7 +16694,7 @@
      },
      "reconverted": 2040,
      "done": false,
-     "updated": "2026-10-05T00:32:08Z"
+     "updated": "2026-10-05T00:38:40Z"
     },
     {
      "pipeline": "db1",
@@ -16775,7 +16712,7 @@
      },
      "reconverted": 66,
      "done": true,
-     "updated": "2026-10-05T00:32:06Z"
+     "updated": "2026-10-05T00:38:39Z"
     },
     {
      "pipeline": "sds2",
@@ -16798,7 +16735,7 @@
      },
      "reconverted": 27,
      "done": false,
-     "updated": "2026-10-05T00:32:08Z"
+     "updated": "2026-10-05T00:38:40Z"
     },
     {
      "pipeline": "ifc",
@@ -16816,7 +16753,7 @@
      },
      "reconverted": 9,
      "done": true,
-     "updated": "2026-10-05T00:32:08Z"
+     "updated": "2026-10-05T00:38:41Z"
     },
     {
      "pipeline": "db1",
@@ -16834,7 +16771,7 @@
      },
      "reconverted": 79,
      "done": true,
-     "updated": "2026-10-05T00:32:06Z"
+     "updated": "2026-10-05T00:38:39Z"
     },
     {
      "pipeline": "db1",
@@ -16852,7 +16789,7 @@
      },
      "reconverted": 3,
      "done": true,
-     "updated": "2026-10-05T00:32:06Z"
+     "updated": "2026-10-05T00:38:39Z"
     },
     {
      "pipeline": "db1",
@@ -16875,7 +16812,7 @@
      },
      "reconverted": 101,
      "done": true,
-     "updated": "2026-10-05T00:32:06Z"
+     "updated": "2026-10-05T00:38:39Z"
     },
     {
      "pipeline": "ifc",
@@ -16975,7 +16912,7 @@
      },
      "reconverted": 2553,
      "done": false,
-     "updated": "2026-10-05T00:32:07Z"
+     "updated": "2026-10-05T00:38:40Z"
     },
     {
      "pipeline": "ifc",
@@ -17002,14 +16939,14 @@
      },
      "reconverted": 1333,
      "done": false,
-     "updated": "2026-10-05T00:32:08Z"
+     "updated": "2026-10-05T00:38:41Z"
     }
    ],
    "class_rule": "class 1 = opens, 100% of source parts, all solids valid, no stand-ins, per-part volume within 5%; class 2 = opens with valid solids but partial / stand-ins / needs input / invalid or off-tolerance parts; class 3 = no STEP, unreadable, empty, corrupt or geometry-free source, member coverage < 50%, absurd bbox, blank render",
    "disks": {
     "zentitude-data-4": {
      "disk": "zentitude-data-4",
-     "updated": "2026-10-05T00:29:00Z",
+     "updated": "2026-10-05T00:35:35Z",
      "reuse_from": [
       "zenitude-data-3"
      ],
