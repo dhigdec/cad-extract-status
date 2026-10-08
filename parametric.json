@@ -1,11 +1,11 @@
 {
- "updated": "2026-10-08T05:33:36Z",
+ "updated": "2026-10-08T05:38:36Z",
  "started": "2026-10-07T22:20:00Z",
  "models": {
   "total": 12467,
-  "done": 11410,
-  "perfect": 6782,
-  "running": 221,
+  "done": 11444,
+  "perfect": 6783,
+  "running": 219,
   "reruns": 177,
   "by_class": {
    "S": {
@@ -18,48 +18,48 @@
    },
    "M": {
     "total": 2880,
-    "done": 2869,
+    "done": 2870,
     "perfect": 839,
     "size": "10-100 MB",
-    "parts": 9243290,
-    "parts_match": 9061661
+    "parts": 9276289,
+    "parts_match": 9094659
    },
    "L": {
     "total": 1381,
-    "done": 645,
-    "perfect": 94,
+    "done": 671,
+    "perfect": 95,
     "size": "100-500 MB",
-    "parts": 6594739,
-    "parts_match": 6494490
+    "parts": 6887358,
+    "parts_match": 6782882
    },
    "XL": {
     "total": 218,
-    "done": 15,
+    "done": 18,
     "perfect": 0,
     "size": "0.5-1 GB",
-    "parts": 531056,
-    "parts_match": 530301
+    "parts": 636480,
+    "parts_match": 635307
    },
    "XXL": {
     "total": 134,
-    "done": 27,
+    "done": 31,
     "perfect": 0,
     "size": "1-14 GB",
-    "parts": 1172672,
-    "parts_match": 1170194
+    "parts": 1357351,
+    "parts_match": 1354163
    }
   },
   "by_tool": {
    "tekla": {
-    "done": 7389,
-    "perfect": 4662
+    "done": 7412,
+    "perfect": 4663
    },
    "sds2": {
-    "done": 2672,
+    "done": 2681,
     "perfect": 1204
    },
    "blank": {
-    "done": 962,
+    "done": 964,
     "perfect": 644
    },
    "other": {
@@ -81,91 +81,91 @@
   }
  },
  "parts": {
-  "built": 18789100,
+  "built": 19404821,
   "status": {
-   "match": 18450818,
-   "MISMATCH": 153293,
+   "match": 19061183,
+   "MISMATCH": 157885,
    "no_delivered_part": 148720,
-   "INVALID_SOLID": 18378,
-   "BUILD_ERROR": 17891
+   "INVALID_SOLID": 18726,
+   "BUILD_ERROR": 18307
   },
   "by_geometry": {
    "parametric": {
-    "match": 9536179,
+    "match": 9874568,
     "no_delivered_part": 50693,
-    "MISMATCH": 48514,
-    "INVALID_SOLID": 7816,
+    "MISMATCH": 49298,
+    "INVALID_SOLID": 8070,
     "BUILD_ERROR": 129
    },
    "recovered": {
-    "match": 8557840,
+    "match": 8791601,
     "no_delivered_part": 94677,
-    "MISMATCH": 39993,
+    "MISMATCH": 42017,
     "INVALID_SOLID": 132
    },
    "exact": {
-    "match": 356799,
-    "MISMATCH": 64786,
-    "BUILD_ERROR": 17762,
-    "INVALID_SOLID": 10430,
+    "match": 395014,
+    "MISMATCH": 66570,
+    "BUILD_ERROR": 18178,
+    "INVALID_SOLID": 10524,
     "no_delivered_part": 3350
    }
   },
   "source_check": {
-   "exact": 18545728,
-   "DIFFERS": 159209,
-   "source_open": 66092,
-   "": 17891,
+   "exact": 19155964,
+   "DIFFERS": 164036,
+   "source_open": 66334,
+   "": 18307,
    "n/a": 180
   },
   "delivered_check": {
-   "match": 18583800,
-   "": 166611,
-   "DIFFERS": 38689
+   "match": 19198403,
+   "": 167027,
+   "DIFFERS": 39391
   }
  },
  "levels": {
   "assemblies": {
-   "total": 3609545,
-   "ok": 3520602
+   "total": 3714312,
+   "ok": 3623076
   },
   "assembly_marks": {
-   "total": 643395,
-   "ok": 609385
+   "total": 665233,
+   "ok": 630006
   },
   "piece_marks": {
-   "total": 1770206,
-   "ok": 1680618
+   "total": 1891797,
+   "ok": 1800139
   }
  },
  "e2e": {
   "model": {
-   "runs": 11325,
-   "ok": 9614
+   "runs": 11353,
+   "ok": 9634
   },
   "determinism": {
-   "runs": 11325,
-   "ok": 11020
+   "runs": 11353,
+   "ok": 11043
   },
   "assembly": {
-   "runs": 98702,
-   "ok": 96617
+   "runs": 99163,
+   "ok": 97078
   },
   "piece": {
-   "runs": 72585,
-   "ok": 71888
+   "runs": 72957,
+   "ok": 72258
   }
  },
  "reasons": {
-  "levels_not_ok": 4325,
-  "parts_not_all_match": 4228,
-  "e2e_model": 1711,
+  "levels_not_ok": 4358,
+  "parts_not_all_match": 4260,
+  "e2e_model": 1719,
   "e2e_assembly": 899,
-  "step_tekla_checks_rc1": 523,
-  "e2e_piece": 423,
+  "step_tekla_checks_rc1": 527,
+  "e2e_piece": 424,
   "delivered_parts_not_built": 376,
-  "e2e_determinism": 305,
-  "no_e2e_summary": 85,
+  "e2e_determinism": 310,
+  "no_e2e_summary": 91,
   "step_verify_levels_rc1": 64,
   "no_levels_summary": 64,
   "step_e2e_rc1": 62,
@@ -176,19 +176,19 @@
   "no_verification_summary": 37,
   "no_parts": 25,
   "step_verify_rc1": 24,
-  "step_recover_rc124": 17
+  "step_e2e_rc-9": 20
  },
  "gap": {
   "single": [
    {
     "cause": "exact_geom",
     "fix": "exact-face geometry fix",
-    "models": 1267
+    "models": 1270
    },
    {
     "cause": "parametric_mismatch",
     "fix": "parametric cut / notch fix",
-    "models": 1127
+    "models": 1138
    },
    {
     "cause": "e2e_only",
@@ -203,7 +203,7 @@
    {
     "cause": "levels_only",
     "fix": "marks / levels fix",
-    "models": 86
+    "models": 87
    },
    {
     "cause": "recovered_mismatch",
@@ -231,36 +231,36 @@
     "models": 1
    }
   ],
-  "several_causes": 1628,
+  "several_causes": 1646,
   "several_top": {
    "exact-face geometry fix + parametric cut / notch fix": 475,
-   "exact-face geometry fix + recovery fix": 375,
-   "already fixed (v9a): rerun + parametric cut / notch fix": 268,
+   "exact-face geometry fix + recovery fix": 384,
+   "already fixed (v9a): rerun + parametric cut / notch fix": 270,
    "SDS/2 delivered-part matching fix + exact-face geometry fix": 124,
-   "already fixed (v9a): rerun + exact-face geometry fix + parametric cut / notch fix": 98,
+   "already fixed (v9a): rerun + exact-face geometry fix + parametric cut / notch fix": 99,
    "already fixed (v9a): rerun + parametric cut / notch fix + recovery fix": 66
   },
   "median_failing_parts": 9,
-  "models_with_le5_failing_parts": 1817
+  "models_with_le5_failing_parts": 1829
  },
  "code_versions": {
-  "v9a": 9590,
-  "v9p": 1156,
+  "v9a": 9591,
+  "v9p": 1189,
   "v9": 664
  },
  "throughput_per_h": {
   "S": 0,
-  "M": 8,
-  "L": 278,
-  "XL": 4,
-  "XXL": 12
+  "M": 6,
+  "L": 284,
+  "XL": 10,
+  "XXL": 20
  },
  "eta_h": {
   "S": null,
-  "M": 1.4,
-  "L": 2.6,
-  "XL": 50.8,
-  "XXL": 8.9
+  "M": 1.7,
+  "L": 2.5,
+  "XL": 20.0,
+  "XXL": 5.2
  },
  "timeline": [
   [
@@ -410,25 +410,25 @@
   ],
   [
    1791438300,
-   11410,
-   6782
+   11444,
+   6783
   ],
   [
    1791439200,
-   11410,
-   6782
+   11444,
+   6783
   ]
  ],
  "fleet": {
   "boxes": 38,
   "vcpu": 2560,
-  "load": 2475,
-  "benches": 7,
+  "load": 2371,
+  "benches": 2,
   "running_by_class": {
-   "XXL": 23,
-   "XL": 16,
-   "L": 173,
-   "M": 9
+   "XXL": 28,
+   "XL": 17,
+   "L": 164,
+   "M": 10
   },
   "groups": [
    {
@@ -437,7 +437,7 @@
     "role": "standard",
     "boxes": 4,
     "vcpu": 256,
-    "load": 217,
+    "load": 262,
     "benches": 0
    },
    {
@@ -446,7 +446,7 @@
     "role": "standard",
     "boxes": 2,
     "vcpu": 128,
-    "load": 98,
+    "load": 104,
     "benches": 0
    },
    {
@@ -455,8 +455,8 @@
     "role": "standard",
     "boxes": 22,
     "vcpu": 1408,
-    "load": 1299,
-    "benches": 7
+    "load": 1362,
+    "benches": 2
    },
    {
     "region": "ap-south-2",
@@ -464,7 +464,7 @@
     "role": "big",
     "boxes": 1,
     "vcpu": 192,
-    "load": 171,
+    "load": 49,
     "benches": 0
    },
    {
@@ -473,7 +473,7 @@
     "role": "standard",
     "boxes": 1,
     "vcpu": 64,
-    "load": 26,
+    "load": 36,
     "benches": 0
    },
    {
@@ -482,7 +482,7 @@
     "role": "standard",
     "boxes": 3,
     "vcpu": 192,
-    "load": 164,
+    "load": 167,
     "benches": 0
    },
    {
@@ -491,7 +491,7 @@
     "role": "standard",
     "boxes": 5,
     "vcpu": 320,
-    "load": 499,
+    "load": 392,
     "benches": 0
    }
   ]
@@ -524,8 +524,8 @@
   },
   {
    "name": "Fix: end-to-end script failures",
-   "state": "rework running",
-   "note": "multi-solid parts were written in model coordinates (precision loss); the fix is right but changes 7 already-perfect models' schedules, which must be disclosed and re-baselined first"
+   "state": "fixed - review approved",
+   "note": "37/39 affected models perfect, every model byte-identical over 6 builds; narrowed so already-perfect models keep identical schedules (checked on 124 extra perfect models). The 2 left share one source-geometry artefact"
   },
   {
    "name": "Fix: SDS/2 delivered-part matching",
@@ -564,8 +564,8 @@
   },
   {
    "name": "PII redaction of published outputs",
-   "state": "round 3 running",
-   "note": "8 of 10 review findings fixed; last 2 being closed before anything is published. Individuals' names / logins / emails / phones removed, organisations kept"
+   "state": "round 3 done - re-review running",
+   "note": "both blocking findings + 8 more bypass types fixed; 192 unit checks, 461 adversarial cases, 3,673 fuzz cases, 55 real models staged clean. Independent re-review before anything is published"
   },
   {
    "name": "DB1 / SDS2 models (271)",
