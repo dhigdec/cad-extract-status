@@ -1,11 +1,11 @@
 {
- "updated": "2026-10-08T21:22:13Z",
+ "updated": "2026-10-08T21:27:13Z",
  "started": "2026-10-07T22:20:00Z",
  "models": {
   "total": 12735,
   "done": 12697,
   "perfect": 8881,
-  "running": 15,
+  "running": 14,
   "reruns": 6565,
   "by_class": {
    "S": {
@@ -104,13 +104,13 @@
     "BUILD_CRASH": 3
    },
    "recovered": {
-    "match": 17335312,
+    "match": 17359690,
     "no_delivered_part": 3871,
     "MISMATCH": 1898,
     "INVALID_SOLID": 10
    },
    "exact": {
-    "match": 1628843,
+    "match": 1604465,
     "MISMATCH": 73055,
     "INVALID_SOLID": 6551,
     "BUILD_ERROR": 1759,
@@ -177,8 +177,8 @@
   "no_levels_summary": 44,
   "delivered_parts_not_built": 40,
   "step_recover_rc1": 35,
-  "step_recover_rc124": 31,
   "step_props_rc1": 31,
+  "step_recover_rc124": 30,
   "step_extract+exact_rc1": 28,
   "step_views_rc1": 28,
   "no_parts": 25,
@@ -194,7 +194,7 @@
    {
     "cause": "exact_geom",
     "fix": "exact-face geometry fix",
-    "models": 1029
+    "models": 1030
    },
    {
     "cause": "levels_only",
@@ -227,11 +227,11 @@
     "models": 1
    }
   ],
-  "several_causes": 670,
+  "several_causes": 669,
   "several_top": {
    "exact-face geometry fix + parametric cut / notch fix": 508,
-   "crash fixes + exact-face geometry fix": 26,
    "exact-face geometry fix + recovery fix": 26,
+   "crash fixes + exact-face geometry fix": 25,
    "crash fixes + parametric cut / notch fix": 22,
    "crash fixes + exact-face geometry fix + parametric cut / notch fix": 19,
    "already fixed (v9a): rerun + exact-face geometry fix + parametric cut / notch fix": 19
@@ -250,14 +250,14 @@
  "throughput_per_h": {
   "S": 0,
   "M": 0,
-  "L": 0,
+  "L": 2,
   "XL": 0,
   "XXL": 0
  },
  "eta_h": {
   "S": null,
   "M": null,
-  "L": null,
+  "L": 4.0,
   "XL": null,
   "XXL": null
  },
@@ -684,42 +684,42 @@
   ],
   [
    1791487800,
-   12693,
+   12692,
    8879
   ],
   [
    1791488700,
-   12693,
+   12692,
    8879
   ],
   [
    1791489600,
-   12695,
+   12694,
    8879
   ],
   [
    1791490500,
-   12696,
+   12695,
    8880
   ],
   [
    1791491400,
-   12697,
+   12696,
    8881
   ],
   [
    1791492300,
-   12697,
+   12696,
    8881
   ],
   [
    1791493200,
-   12697,
+   12696,
    8881
   ],
   [
    1791494100,
-   12697,
+   12696,
    8881
   ],
   [
@@ -734,12 +734,12 @@
   ]
  ],
  "fleet": {
-  "boxes": 26,
-  "vcpu": 1792,
-  "load": 589,
+  "boxes": 25,
+  "vcpu": 1728,
+  "load": 518,
   "benches": 7,
   "running_by_class": {
-   "L": 2,
+   "L": 1,
    "XXL": 11,
    "XL": 2
   },
@@ -750,16 +750,16 @@
     "role": "standard",
     "boxes": 9,
     "vcpu": 576,
-    "load": 94,
+    "load": 79,
     "benches": 5
    },
    {
     "region": "ap-south-2",
     "type": "r7i.16xlarge",
     "role": "standard",
-    "boxes": 12,
-    "vcpu": 768,
-    "load": 262,
+    "boxes": 11,
+    "vcpu": 704,
+    "load": 263,
     "benches": 2
    },
    {
@@ -768,7 +768,7 @@
     "role": "big",
     "boxes": 1,
     "vcpu": 192,
-    "load": 19,
+    "load": 21,
     "benches": 0
    },
    {
@@ -777,7 +777,7 @@
     "role": "standard",
     "boxes": 4,
     "vcpu": 256,
-    "load": 213,
+    "load": 154,
     "benches": 0
    }
   ]
