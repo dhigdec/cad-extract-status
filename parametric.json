@@ -1,11 +1,11 @@
 {
- "updated": "2026-10-08T03:13:36Z",
+ "updated": "2026-10-08T03:18:36Z",
  "started": "2026-10-07T22:20:00Z",
  "models": {
   "total": 12467,
-  "done": 10721,
-  "perfect": 6691,
-  "running": 280,
+  "done": 10744,
+  "perfect": 6695,
+  "running": 292,
   "reruns": 177,
   "by_class": {
    "S": {
@@ -18,19 +18,19 @@
    },
    "M": {
     "total": 2880,
-    "done": 2729,
-    "perfect": 829,
+    "done": 2739,
+    "perfect": 833,
     "size": "10-100 MB",
-    "parts": 8118810,
-    "parts_match": 7952306
+    "parts": 8210917,
+    "parts_match": 8043565
    },
    "L": {
     "total": 1381,
-    "done": 120,
+    "done": 133,
     "perfect": 13,
     "size": "100-500 MB",
-    "parts": 1188453,
-    "parts_match": 1173609
+    "parts": 1300652,
+    "parts_match": 1284063
    },
    "XL": {
     "total": 218,
@@ -51,20 +51,20 @@
   },
   "by_tool": {
    "tekla": {
-    "done": 6987,
-    "perfect": 4622
+    "done": 7002,
+    "perfect": 4625
    },
    "sds2": {
-    "done": 2500,
+    "done": 2505,
     "perfect": 1200
    },
    "blank": {
-    "done": 864,
+    "done": 866,
     "perfect": 601
    },
    "other": {
-    "done": 360,
-    "perfect": 264
+    "done": 361,
+    "perfect": 265
    },
    "hicad": {
     "done": 7,
@@ -81,96 +81,96 @@
   }
  },
  "parts": {
-  "built": 10772528,
+  "built": 10976834,
   "status": {
-   "match": 10537688,
+   "match": 10739401,
    "no_delivered_part": 109772,
-   "MISMATCH": 101473,
-   "INVALID_SOLID": 12424,
-   "BUILD_ERROR": 11171
+   "MISMATCH": 103272,
+   "INVALID_SOLID": 13210,
+   "BUILD_ERROR": 11179
   },
   "by_geometry": {
    "parametric": {
-    "match": 5485464,
+    "match": 5563500,
     "no_delivered_part": 50686,
-    "MISMATCH": 35523,
-    "INVALID_SOLID": 5127,
+    "MISMATCH": 36268,
+    "INVALID_SOLID": 5157,
     "BUILD_ERROR": 106
    },
    "recovered": {
-    "match": 4833983,
+    "match": 4953419,
     "no_delivered_part": 55834,
-    "MISMATCH": 19801,
+    "MISMATCH": 19819,
     "INVALID_SOLID": 31
    },
    "exact": {
-    "match": 218241,
-    "MISMATCH": 46149,
-    "BUILD_ERROR": 11065,
-    "INVALID_SOLID": 7266,
+    "match": 222482,
+    "MISMATCH": 47185,
+    "BUILD_ERROR": 11073,
+    "INVALID_SOLID": 8022,
     "no_delivered_part": 3252
    }
   },
   "source_check": {
-   "exact": 10624592,
-   "DIFFERS": 104810,
-   "source_open": 31786,
-   "": 11171,
+   "exact": 10825336,
+   "DIFFERS": 106664,
+   "source_open": 33486,
+   "": 11179,
    "n/a": 169
   },
   "delivered_check": {
-   "match": 10624911,
-   "": 120943,
-   "DIFFERS": 26674
+   "match": 10828407,
+   "": 120951,
+   "DIFFERS": 27476
   }
  },
  "levels": {
   "assemblies": {
-   "total": 2059251,
-   "ok": 2000057
+   "total": 2083822,
+   "ok": 2022767
   },
   "assembly_marks": {
-   "total": 392490,
-   "ok": 370557
+   "total": 398584,
+   "ok": 376257
   },
   "piece_marks": {
-   "total": 1135879,
-   "ok": 1102755
+   "total": 1144750,
+   "ok": 1111426
   }
  },
  "e2e": {
   "model": {
-   "runs": 10664,
-   "ok": 9219
+   "runs": 10687,
+   "ok": 9233
   },
   "determinism": {
-   "runs": 10664,
-   "ok": 10396
+   "runs": 10687,
+   "ok": 10418
   },
   "assembly": {
-   "runs": 88464,
-   "ok": 86471
+   "runs": 88826,
+   "ok": 86821
   },
   "piece": {
-   "runs": 65251,
-   "ok": 64603
+   "runs": 65465,
+   "ok": 64815
   }
  },
  "reasons": {
-  "levels_not_ok": 3742,
-  "parts_not_all_match": 3660,
-  "e2e_model": 1445,
-  "e2e_assembly": 853,
-  "e2e_piece": 383,
-  "step_tekla_checks_rc1": 375,
+  "levels_not_ok": 3761,
+  "parts_not_all_match": 3679,
+  "e2e_model": 1454,
+  "e2e_assembly": 856,
+  "e2e_piece": 385,
+  "step_tekla_checks_rc1": 378,
   "delivered_parts_not_built": 374,
-  "e2e_determinism": 268,
+  "e2e_determinism": 269,
   "step_verify_levels_rc1": 57,
   "no_levels_summary": 57,
   "no_e2e_summary": 57,
   "step_e2e_rc1": 55,
+  "step_props_rc1": 47,
   "step_recover_rc1": 47,
-  "step_props_rc1": 46,
   "step_extract+exact_rc1": 44,
   "step_views_rc1": 44,
   "no_verification_summary": 30,
@@ -183,12 +183,12 @@
    {
     "cause": "exact_geom",
     "fix": "exact-face geometry fix",
-    "models": 1128
+    "models": 1135
    },
    {
     "cause": "parametric_mismatch",
     "fix": "parametric cut / notch fix",
-    "models": 1054
+    "models": 1057
    },
    {
     "cause": "e2e_only",
@@ -231,34 +231,34 @@
     "models": 1
    }
   ],
-  "several_causes": 1279,
+  "several_causes": 1288,
   "several_top": {
-   "exact-face geometry fix + parametric cut / notch fix": 403,
-   "exact-face geometry fix + recovery fix": 277,
-   "already fixed (v9a): rerun + parametric cut / notch fix": 204,
+   "exact-face geometry fix + parametric cut / notch fix": 406,
+   "exact-face geometry fix + recovery fix": 279,
+   "already fixed (v9a): rerun + parametric cut / notch fix": 206,
    "SDS/2 delivered-part matching fix + exact-face geometry fix": 124,
    "already fixed (v9a): rerun + exact-face geometry fix + parametric cut / notch fix": 57,
    "exact-face geometry fix + parametric cut / notch fix + recovery fix": 52
   },
   "median_failing_parts": 8,
-  "models_with_le5_failing_parts": 1700
+  "models_with_le5_failing_parts": 1702
  },
  "code_versions": {
-  "v9a": 9526,
+  "v9a": 9535,
   "v9": 664,
-  "v9p": 531
+  "v9p": 545
  },
  "throughput_per_h": {
   "S": 2,
-  "M": 214,
-  "L": 106,
+  "M": 182,
+  "L": 128,
   "XL": 6,
   "XXL": 0
  },
  "eta_h": {
   "S": null,
-  "M": 0.7,
-  "L": 11.9,
+  "M": 0.8,
+  "L": 9.8,
   "XL": 35.0,
   "XXL": null
  },
@@ -360,25 +360,30 @@
   ],
   [
    1791429300,
-   10721,
-   6691
+   10728,
+   6692
   ],
   [
    1791430200,
-   10721,
-   6691
+   10744,
+   6695
+  ],
+  [
+   1791431100,
+   10744,
+   6695
   ]
  ],
  "fleet": {
   "boxes": 40,
   "vcpu": 2688,
-  "load": 2496,
+  "load": 2739,
   "benches": 9,
   "running_by_class": {
-   "M": 151,
+   "M": 141,
    "XXL": 30,
    "XL": 11,
-   "L": 88
+   "L": 110
   },
   "groups": [
    {
@@ -387,7 +392,7 @@
     "role": "standard",
     "boxes": 4,
     "vcpu": 256,
-    "load": 209,
+    "load": 251,
     "benches": 0
    },
    {
@@ -396,7 +401,7 @@
     "role": "standard",
     "boxes": 2,
     "vcpu": 128,
-    "load": 95,
+    "load": 46,
     "benches": 0
    },
    {
@@ -405,7 +410,7 @@
     "role": "standard",
     "boxes": 24,
     "vcpu": 1536,
-    "load": 1503,
+    "load": 1708,
     "benches": 9
    },
    {
@@ -414,7 +419,7 @@
     "role": "big",
     "boxes": 1,
     "vcpu": 192,
-    "load": 118,
+    "load": 114,
     "benches": 0
    },
    {
@@ -423,7 +428,7 @@
     "role": "standard",
     "boxes": 1,
     "vcpu": 64,
-    "load": 45,
+    "load": 42,
     "benches": 0
    },
    {
@@ -432,7 +437,7 @@
     "role": "standard",
     "boxes": 3,
     "vcpu": 192,
-    "load": 173,
+    "load": 194,
     "benches": 0
    },
    {
@@ -441,7 +446,7 @@
     "role": "standard",
     "boxes": 5,
     "vcpu": 320,
-    "load": 353,
+    "load": 384,
     "benches": 0
    }
   ]
@@ -489,8 +494,8 @@
   },
   {
    "name": "Fix: exact-face geometry",
-   "state": "running",
-   "note": "build errors / invalid solids on faceted parts"
+   "state": "built - review running",
+   "note": "14 sub-causes found and fixed (SDS/2 hole winding, T-profiles, faces slightly off-plane, openings on faceted parts, ...)"
   },
   {
    "name": "Fix: exact-face geometry (scale track)",
@@ -500,7 +505,7 @@
   {
    "name": "Fix: recovered-part mismatches",
    "state": "running",
-   "note": "faceted parts recovered as extrusions / sweeps / cut constructions that then fail the check: 7% of failing parts in 10-100 MB models, 22% in 100-500 MB models"
+   "note": "676 affected models sub-clustered (13,438 mismatching recovered parts + matching issues); fixing. 7% of failing parts in 10-100 MB models, 22% in 100-500 MB"
   },
   {
    "name": "Exact B-rep distance gate",
@@ -524,8 +529,8 @@
   },
   {
    "name": "Publishing",
-   "state": "tool ready",
-   "note": "per package: scripts/, verification/, metadata.json, README; starts after the merged fixes"
+   "state": "adapting (sample layout)",
+   "note": "owner decision: same layout as the 5 published samples, inside each perfect-tier package: scripts/, verification/, metadata.json, a README and a manifest of the added files; the package's own files are untouched. Publishing starts with v10 and only after the PII gate passes review"
   },
   {
    "name": "v10 = all fixes + speed-up, then full rerun",
