@@ -1,12 +1,12 @@
 {
- "updated": "2026-10-08T11:27:12Z",
+ "updated": "2026-10-08T11:32:12Z",
  "started": "2026-10-07T22:20:00Z",
  "models": {
   "total": 12735,
-  "done": 12328,
-  "perfect": 8440,
-  "running": 229,
-  "reruns": 5377,
+  "done": 12333,
+  "perfect": 8442,
+  "running": 237,
+  "reruns": 5398,
   "by_class": {
    "S": {
     "total": 8029,
@@ -19,47 +19,47 @@
    "M": {
     "total": 2960,
     "done": 2914,
-    "perfect": 1204,
+    "perfect": 1205,
     "size": "10-100 MB",
     "parts": 9592844,
-    "parts_match": 9493030
+    "parts_match": 9493160
    },
    "L": {
     "total": 1392,
-    "done": 1110,
-    "perfect": 232,
+    "done": 1111,
+    "perfect": 233,
     "size": "100-500 MB",
-    "parts": 14469173,
-    "parts_match": 14343944
+    "parts": 14490142,
+    "parts_match": 14365027
    },
    "XL": {
     "total": 219,
-    "done": 182,
+    "done": 185,
     "perfect": 15,
     "size": "0.5-1 GB",
-    "parts": 4766080,
-    "parts_match": 4752346
+    "parts": 4828585,
+    "parts_match": 4814818
    },
    "XXL": {
     "total": 135,
-    "done": 93,
+    "done": 94,
     "perfect": 3,
     "size": "1-14 GB",
-    "parts": 3443457,
-    "parts_match": 3436596
+    "parts": 3463382,
+    "parts_match": 3456432
    }
   },
   "by_tool": {
    "tekla": {
-    "done": 7900,
-    "perfect": 5288
+    "done": 7902,
+    "perfect": 5290
    },
    "sds2": {
-    "done": 2829,
+    "done": 2830,
     "perfect": 2016
    },
    "blank": {
-    "done": 1060,
+    "done": 1062,
     "perfect": 715
    },
    "other": {
@@ -85,91 +85,91 @@
   }
  },
  "parts": {
-  "built": 33547504,
+  "built": 33650903,
   "status": {
-   "match": 33295041,
-   "MISMATCH": 152718,
+   "match": 33398562,
+   "MISMATCH": 152591,
    "no_delivered_part": 72815,
-   "INVALID_SOLID": 16969,
+   "INVALID_SOLID": 16974,
    "BUILD_ERROR": 9959,
    "BUILD_CRASH": 2
   },
   "by_geometry": {
    "parametric": {
-    "match": 18361020,
-    "MISMATCH": 63883,
+    "match": 18438619,
+    "MISMATCH": 63815,
     "no_delivered_part": 18942,
-    "INVALID_SOLID": 8767,
+    "INVALID_SOLID": 8773,
     "BUILD_ERROR": 698,
     "BUILD_CRASH": 2
    },
    "recovered": {
-    "match": 13883959,
+    "match": 13909341,
     "no_delivered_part": 51969,
-    "MISMATCH": 13933,
+    "MISMATCH": 13898,
     "INVALID_SOLID": 26
    },
    "exact": {
-    "match": 1050062,
-    "MISMATCH": 74902,
+    "match": 1050602,
+    "MISMATCH": 74878,
     "BUILD_ERROR": 9261,
-    "INVALID_SOLID": 8176,
+    "INVALID_SOLID": 8175,
     "no_delivered_part": 1904
    }
   },
   "source_check": {
-   "exact": 33208412,
-   "source_open": 169397,
-   "DIFFERS": 159535,
+   "exact": 33311936,
+   "source_open": 169398,
+   "DIFFERS": 159409,
    "": 9961,
    "n/a": 199
   },
   "delivered_check": {
-   "match": 33416374,
+   "match": 33519840,
    "": 82776,
-   "DIFFERS": 48354
+   "DIFFERS": 48287
   }
  },
  "levels": {
   "assemblies": {
-   "total": 6500159,
-   "ok": 6414028
+   "total": 6521100,
+   "ok": 6435096
   },
   "assembly_marks": {
-   "total": 1371987,
-   "ok": 1333869
+   "total": 1378005,
+   "ok": 1339923
   },
   "piece_marks": {
-   "total": 2497591,
-   "ok": 2417661
+   "total": 2499065,
+   "ok": 2419226
   }
  },
  "e2e": {
   "model": {
-   "runs": 12228,
-   "ok": 10660
+   "runs": 12233,
+   "ok": 10668
   },
   "determinism": {
-   "runs": 12228,
-   "ok": 12029
+   "runs": 12233,
+   "ok": 12035
   },
   "assembly": {
-   "runs": 109614,
-   "ok": 108301
+   "runs": 109704,
+   "ok": 108391
   },
   "piece": {
-   "runs": 87801,
-   "ok": 87301
+   "runs": 87862,
+   "ok": 87365
   }
  },
  "reasons": {
-  "levels_not_ok": 3708,
-  "parts_not_all_match": 3579,
-  "e2e_model": 1568,
+  "levels_not_ok": 3709,
+  "parts_not_all_match": 3580,
+  "e2e_model": 1565,
   "e2e_assembly": 617,
-  "e2e_piece": 299,
-  "step_tekla_checks_rc1": 206,
-  "e2e_determinism": 199,
+  "e2e_piece": 297,
+  "step_tekla_checks_rc1": 202,
+  "e2e_determinism": 198,
   "no_e2e_summary": 100,
   "delivered_parts_not_built": 64,
   "step_verify_levels_rc1": 48,
@@ -189,17 +189,17 @@
    {
     "cause": "parametric_mismatch",
     "fix": "parametric cut / notch fix",
-    "models": 1521
+    "models": 1524
    },
    {
     "cause": "exact_geom",
     "fix": "exact-face geometry fix",
-    "models": 1079
+    "models": 1083
    },
    {
     "cause": "e2e_only",
     "fix": "end-to-end script fix",
-    "models": 127
+    "models": 129
    },
    {
     "cause": "levels_only",
@@ -214,7 +214,7 @@
    {
     "cause": "recovered_mismatch",
     "fix": "recovery fix",
-    "models": 21
+    "models": 19
    },
    {
     "cause": "sds2_delivered",
@@ -232,39 +232,39 @@
     "models": 1
    }
   ],
-  "several_causes": 976,
+  "several_causes": 972,
   "several_top": {
-   "exact-face geometry fix + parametric cut / notch fix": 467,
-   "exact-face geometry fix + recovery fix": 169,
-   "already fixed (v9a): rerun + parametric cut / notch fix": 81,
-   "already fixed (v9a): rerun + exact-face geometry fix + parametric cut / notch fix": 58,
-   "exact-face geometry fix + parametric cut / notch fix + recovery fix": 28,
+   "exact-face geometry fix + parametric cut / notch fix": 469,
+   "exact-face geometry fix + recovery fix": 168,
+   "already fixed (v9a): rerun + parametric cut / notch fix": 80,
+   "already fixed (v9a): rerun + exact-face geometry fix + parametric cut / notch fix": 56,
+   "exact-face geometry fix + parametric cut / notch fix + recovery fix": 27,
    "already fixed (v9a): rerun + parametric cut / notch fix + recovery fix": 24
   },
   "median_failing_parts": 8,
-  "models_with_le5_failing_parts": 1666
+  "models_with_le5_failing_parts": 1674
  },
  "code_versions": {
-  "v10": 5602,
+  "v10": 5628,
   "v9a": 5380,
-  "v9p": 696,
-  "v9": 428,
+  "v9p": 676,
+  "v9": 427,
   "db1": 135,
   "sds2": 87
  },
  "throughput_per_h": {
-  "S": 134,
-  "M": 114,
-  "L": 122,
-  "XL": 54,
-  "XXL": 32
+  "S": 64,
+  "M": 116,
+  "L": 138,
+  "XL": 58,
+  "XXL": 24
  },
  "eta_h": {
   "S": null,
   "M": 0.4,
-  "L": 2.3,
-  "XL": 0.7,
-  "XXL": 1.3
+  "L": 2.0,
+  "XL": 0.6,
+  "XXL": 1.7
  },
  "timeline": [
   [
@@ -274,280 +274,285 @@
   ],
   [
    1791413100,
-   2359,
+   2358,
    2351
   ],
   [
    1791414000,
-   3498,
+   3497,
    3484
   ],
   [
    1791414900,
-   3976,
+   3975,
    3960
   ],
   [
    1791415800,
-   4240,
+   4239,
    4212
   ],
   [
    1791416700,
-   4517,
+   4516,
    4378
   ],
   [
    1791417600,
-   4732,
+   4731,
    4482
   ],
   [
    1791418500,
-   4919,
+   4918,
    4585
   ],
   [
    1791419400,
-   5052,
+   5051,
    4638
   ],
   [
    1791420300,
-   5184,
+   5183,
    4685
   ],
   [
    1791421200,
-   5290,
+   5289,
    4727
   ],
   [
    1791422100,
-   5392,
+   5391,
    4760
   ],
   [
    1791423000,
-   5475,
+   5474,
    4796
   ],
   [
    1791423900,
-   5559,
+   5558,
    4822
   ],
   [
    1791424800,
-   5626,
+   5625,
    4848
   ],
   [
    1791425700,
-   5698,
+   5692,
    4873
   ],
   [
    1791426600,
-   5884,
+   5877,
    5028
   ],
   [
    1791427500,
-   5914,
+   5907,
    5035
   ],
   [
    1791428400,
-   5953,
+   5946,
    5048
   ],
   [
    1791429300,
-   5988,
+   5981,
    5056
   ],
   [
    1791430200,
-   6027,
+   6020,
    5070
   ],
   [
    1791431100,
-   6063,
+   6055,
    5075
   ],
   [
    1791432000,
-   6107,
+   6097,
    5085
   ],
   [
    1791432900,
-   6148,
+   6134,
    5090
   ],
   [
    1791433800,
-   6180,
+   6163,
    5094
   ],
   [
    1791434700,
-   6212,
+   6193,
    5102
   ],
   [
    1791435600,
-   6241,
+   6222,
    5113
   ],
   [
    1791436500,
-   6269,
+   6249,
    5131
   ],
   [
    1791437400,
-   6294,
+   6274,
    5138
   ],
   [
    1791438300,
-   6309,
+   6289,
    5140
   ],
   [
    1791439200,
-   6335,
+   6315,
    5146
   ],
   [
    1791440100,
-   6691,
+   6670,
    5395
   ],
   [
    1791441000,
-   7610,
+   7589,
    5752
   ],
   [
    1791441900,
-   8141,
+   8120,
    5987
   ],
   [
    1791442800,
-   8396,
+   8375,
    6065
   ],
   [
    1791443700,
-   8718,
+   8697,
    6238
   ],
   [
    1791444600,
-   9503,
+   9482,
    6930
   ],
   [
    1791445500,
-   10107,
+   10086,
    7453
   ],
   [
    1791446400,
-   10481,
+   10460,
    7737
   ],
   [
    1791447300,
-   10781,
+   10760,
    7933
   ],
   [
    1791448200,
-   10962,
+   10941,
    8001
   ],
   [
    1791449100,
-   11118,
+   11097,
    8057
   ],
   [
    1791450000,
-   11296,
+   11275,
    8118
   ],
   [
    1791450900,
-   11441,
+   11420,
    8174
   ],
   [
    1791451800,
-   11552,
+   11531,
    8204
   ],
   [
    1791452700,
-   11622,
+   11601,
    8223
   ],
   [
    1791453600,
-   11692,
+   11671,
    8241
   ],
   [
    1791454500,
-   11758,
+   11737,
    8260
   ],
   [
    1791455400,
-   11840,
+   11819,
    8277
   ],
   [
    1791456300,
-   11964,
+   11943,
    8315
   ],
   [
    1791457200,
-   12132,
+   12111,
    8375
   ],
   [
    1791458100,
-   12268,
+   12247,
    8429
   ],
   [
    1791459000,
-   12328,
+   12318,
    8440
   ],
   [
    1791459900,
-   12328,
-   8440
+   12333,
+   8442
+  ],
+  [
+   1791460800,
+   12333,
+   8442
   ]
  ],
  "fleet": {
   "boxes": 46,
   "vcpu": 3072,
-  "load": 3474,
+  "load": 3541,
   "benches": 5,
   "running_by_class": {
-   "XL": 49,
+   "XL": 47,
    "M": 41,
-   "L": 91,
-   "XXL": 45,
+   "L": 103,
+   "XXL": 43,
    "S": 3
   },
   "groups": [
@@ -557,7 +562,7 @@
     "role": "standard",
     "boxes": 4,
     "vcpu": 256,
-    "load": 325,
+    "load": 330,
     "benches": 0
    },
    {
@@ -566,7 +571,7 @@
     "role": "standard",
     "boxes": 9,
     "vcpu": 576,
-    "load": 611,
+    "load": 640,
     "benches": 3
    },
    {
@@ -575,7 +580,7 @@
     "role": "standard",
     "boxes": 23,
     "vcpu": 1472,
-    "load": 1898,
+    "load": 1967,
     "benches": 2
    },
    {
@@ -584,7 +589,7 @@
     "role": "big",
     "boxes": 1,
     "vcpu": 192,
-    "load": 123,
+    "load": 138,
     "benches": 0
    },
    {
@@ -593,7 +598,7 @@
     "role": "standard",
     "boxes": 1,
     "vcpu": 64,
-    "load": 46,
+    "load": 38,
     "benches": 0
    },
    {
@@ -602,7 +607,7 @@
     "role": "standard",
     "boxes": 3,
     "vcpu": 192,
-    "load": 187,
+    "load": 161,
     "benches": 0
    },
    {
@@ -611,7 +616,7 @@
     "role": "standard",
     "boxes": 5,
     "vcpu": 320,
-    "load": 285,
+    "load": 268,
     "benches": 0
    }
   ]
