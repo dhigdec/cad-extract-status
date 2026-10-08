@@ -81,7 +81,7 @@ Numbers are read from the run's state every 5 minutes. No project or client name
 
 <section>
   <h2>Progress by model size</h2>
-  <p class="note">Bar = models processed; orange part = processed and perfect. Rate = models finished in the last 30 minutes, per hour; the time left is at that rate.</p>
+  <p class="note">Bar = models processed; orange part = processed and perfect. A model is perfect only when every one of its parts is - so large models (median 12,000+ parts) need every remaining failure type fixed; "parts matching" shows how close they are. Rate = models finished in the last 30 minutes, per hour; the time left is at that rate.</p>
   <div class="legend"><span><i class="sw" style="background:var(--series-1)"></i>processed</span><span><i class="sw" style="background:var(--series-2)"></i>perfect</span></div>
   <div id="meters"></div>
   <table id="clsTable"></table>
@@ -212,9 +212,9 @@ function render(d) {
     f.style.width = (100 * v.done / v.total) + '%'; fp.style.width = (100 * v.perfect / v.total) + '%'; tr.append(f, fp);
     mtr.append(row, tr); met.appendChild(mtr);
     const eta = d.eta_h[c];
-    rows.push([c + ' (' + v.size + ')', fmt(v.total), fmt(v.done), fmt(v.perfect), pct(v.perfect, v.done), fmt(d.fleet.running_by_class[c] || 0), fmt(d.throughput_per_h[c]), v.done >= v.total ? 'done' : eta == null ? '–' : eta < 1 ? Math.round(eta * 60) + ' min' : eta.toFixed(1) + ' h']);
+    rows.push([c + ' (' + v.size + ')', fmt(v.total), fmt(v.done), fmt(v.perfect), pct(v.perfect, v.done), v.parts ? pct(v.parts_match, v.parts) : '–', fmt(d.fleet.running_by_class[c] || 0), fmt(d.throughput_per_h[c]), v.done >= v.total ? 'done' : eta == null ? '–' : eta < 1 ? Math.round(eta * 60) + ' min' : eta.toFixed(1) + ' h']);
   });
-  table($('clsTable'), ['size class', 'models', 'processed', 'perfect', 'perfect / processed', 'running', 'rate / h', 'time left at this rate'], rows, [1, 2, 3, 4, 5, 6, 7]);
+  table($('clsTable'), ['size class', 'models', 'processed', 'perfect', 'perfect / processed', 'parts matching', 'running', 'rate / h', 'time left at this rate'], rows, [1, 2, 3, 4, 5, 6, 7, 8]);
   timeline(d.timeline);
   const lv = d.levels, e = d.e2e, sc = P.source_check || {}, dc = P.delivered_check || {};
   const sum = o => Object.values(o).reduce((a, b) => a + b, 0);

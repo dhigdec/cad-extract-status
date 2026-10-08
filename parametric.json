@@ -1,59 +1,69 @@
 {
- "updated": "2026-10-08T02:24:32Z",
+ "updated": "2026-10-08T02:28:36Z",
  "started": "2026-10-07T22:20:00Z",
  "models": {
   "total": 12467,
-  "done": 10391,
-  "perfect": 6559,
-  "running": 380,
-  "reruns": 90,
+  "done": 10432,
+  "perfect": 6653,
+  "running": 412,
+  "reruns": 177,
   "by_class": {
    "S": {
     "total": 7854,
     "done": 7853,
-    "perfect": 5762,
-    "size": "< 10 MB"
+    "perfect": 5849,
+    "size": "< 10 MB",
+    "parts": 1247343,
+    "parts_match": 1194172
    },
    "M": {
     "total": 2880,
-    "done": 2465,
-    "perfect": 789,
-    "size": "10-100 MB"
+    "done": 2506,
+    "perfect": 796,
+    "size": "10-100 MB",
+    "parts": 6764085,
+    "parts_match": 6622103
    },
    "L": {
     "total": 1381,
     "done": 58,
     "perfect": 8,
-    "size": "100-500 MB"
+    "size": "100-500 MB",
+    "parts": 766746,
+    "parts_match": 754831
    },
    "XL": {
     "total": 218,
     "done": 5,
     "perfect": 0,
-    "size": "0.5-1 GB"
+    "size": "0.5-1 GB",
+    "parts": 47798,
+    "parts_match": 47486
    },
    "XXL": {
     "total": 134,
     "done": 10,
     "perfect": 0,
-    "size": "1-14 GB"
+    "size": "1-14 GB",
+    "parts": 0,
+    "parts_match": 0
    }
   },
   "by_tool": {
    "tekla": {
-    "done": 6791,
-    "perfect": 4511
+    "done": 6817,
+    "perfect": 4602
    },
    "sds2": {
-    "done": 2418,
-    "perfect": 1193
+    "done": 2429,
+    "perfect": 1195
    },
    "blank": {
-    "done": 828,
-    "perfect": 594
+    "done": 831,
+    "perfect": 595
    },
    "other": {
-    "done": 344,
+    "done": 345,
     "perfect": 257
    },
    "hicad": {
@@ -71,101 +81,101 @@
   }
  },
  "parts": {
-  "built": 8533023,
+  "built": 8825972,
   "status": {
-   "match": 8326496,
+   "match": 8618592,
    "no_delivered_part": 102895,
-   "MISMATCH": 83709,
-   "INVALID_SOLID": 10612,
-   "BUILD_ERROR": 9311
+   "MISMATCH": 84401,
+   "INVALID_SOLID": 10647,
+   "BUILD_ERROR": 9437
   },
   "by_geometry": {
    "parametric": {
-    "match": 4447175,
+    "match": 4540463,
     "no_delivered_part": 46252,
-    "MISMATCH": 30100,
-    "INVALID_SOLID": 4454,
+    "MISMATCH": 30289,
+    "INVALID_SOLID": 4465,
     "BUILD_ERROR": 46
    },
    "recovered": {
-    "match": 3734718,
+    "match": 3932241,
     "no_delivered_part": 53440,
-    "MISMATCH": 13333,
+    "MISMATCH": 13438,
     "INVALID_SOLID": 31
    },
    "exact": {
-    "match": 144603,
-    "MISMATCH": 40276,
-    "BUILD_ERROR": 9265,
-    "INVALID_SOLID": 6127,
+    "match": 145888,
+    "MISMATCH": 40674,
+    "BUILD_ERROR": 9391,
+    "INVALID_SOLID": 6151,
     "no_delivered_part": 3203
    }
   },
   "source_check": {
-   "exact": 8411637,
-   "DIFFERS": 86478,
-   "source_open": 25443,
-   "": 9311,
+   "exact": 8703567,
+   "DIFFERS": 87177,
+   "source_open": 25637,
+   "": 9437,
    "n/a": 154
   },
   "delivered_check": {
-   "match": 8399590,
-   "": 112206,
-   "DIFFERS": 21227
+   "match": 8692284,
+   "": 112332,
+   "DIFFERS": 21356
   }
  },
  "levels": {
   "assemblies": {
-   "total": 1651115,
-   "ok": 1602237
+   "total": 1710890,
+   "ok": 1661410
   },
   "assembly_marks": {
-   "total": 312450,
-   "ok": 294318
+   "total": 319801,
+   "ok": 301425
   },
   "piece_marks": {
-   "total": 954280,
-   "ok": 926083
+   "total": 965686,
+   "ok": 937215
   }
  },
  "e2e": {
   "model": {
-   "runs": 10339,
-   "ok": 9002
+   "runs": 10378,
+   "ok": 9035
   },
   "determinism": {
-   "runs": 10339,
-   "ok": 10082
+   "runs": 10378,
+   "ok": 10120
   },
   "assembly": {
-   "runs": 83251,
-   "ok": 81338
+   "runs": 83862,
+   "ok": 81935
   },
   "piece": {
-   "runs": 61606,
-   "ok": 60976
+   "runs": 62030,
+   "ok": 61400
   }
  },
  "reasons": {
-  "levels_not_ok": 3462,
-  "parts_not_all_match": 3382,
-  "e2e_model": 1337,
-  "e2e_assembly": 827,
-  "step_tekla_checks_rc1": 427,
+  "levels_not_ok": 3495,
+  "parts_not_all_match": 3414,
+  "e2e_model": 1343,
+  "e2e_assembly": 830,
   "delivered_parts_not_built": 373,
   "e2e_piece": 369,
-  "e2e_determinism": 257,
-  "step_verify_levels_rc1": 54,
-  "no_levels_summary": 54,
-  "step_e2e_rc1": 52,
-  "no_e2e_summary": 52,
-  "step_recover_rc1": 44,
-  "step_extract+exact_rc1": 43,
-  "step_views_rc1": 43,
-  "step_props_rc1": 42,
-  "no_verification_summary": 27,
+  "step_tekla_checks_rc1": 346,
+  "e2e_determinism": 258,
+  "step_verify_levels_rc1": 55,
+  "no_levels_summary": 55,
+  "no_e2e_summary": 54,
+  "step_e2e_rc1": 53,
+  "step_recover_rc1": 45,
+  "step_extract+exact_rc1": 44,
+  "step_views_rc1": 44,
+  "step_props_rc1": 43,
+  "no_verification_summary": 28,
   "no_parts": 25,
-  "step_verify_rc1": 19,
+  "step_verify_rc1": 20,
   "step_recover_rc124": 9
  },
  "gap": {
@@ -173,12 +183,12 @@
    {
     "cause": "exact_geom",
     "fix": "exact-face geometry fix",
-    "models": 1056
+    "models": 1065
    },
    {
     "cause": "parametric_mismatch",
     "fix": "parametric cut / notch fix",
-    "models": 999
+    "models": 1011
    },
    {
     "cause": "e2e_only",
@@ -191,19 +201,14 @@
     "models": 195
    },
    {
-    "cause": "crash_tekla_checks",
-    "fix": "already fixed (v9a): rerun",
-    "models": 88
-   },
-   {
     "cause": "levels_only",
     "fix": "marks / levels fix",
-    "models": 72
+    "models": 73
    },
    {
     "cause": "recovered_mismatch",
     "fix": "recovery fix",
-    "models": 36
+    "models": 37
    },
    {
     "cause": "crash_other",
@@ -219,35 +224,40 @@
     "cause": "delivered_match_other",
     "fix": "delivered matching",
     "models": 2
+   },
+   {
+    "cause": "crash_tekla_checks",
+    "fix": "already fixed (v9a): rerun",
+    "models": 1
    }
   ],
-  "several_causes": 1131,
+  "several_causes": 1142,
   "several_top": {
-   "exact-face geometry fix + parametric cut / notch fix": 354,
-   "exact-face geometry fix + recovery fix": 230,
-   "already fixed (v9a): rerun + parametric cut / notch fix": 187,
+   "exact-face geometry fix + parametric cut / notch fix": 355,
+   "exact-face geometry fix + recovery fix": 233,
+   "already fixed (v9a): rerun + parametric cut / notch fix": 189,
    "SDS/2 delivered-part matching fix + exact-face geometry fix": 123,
-   "already fixed (v9a): rerun + exact-face geometry fix + parametric cut / notch fix": 50,
+   "already fixed (v9a): rerun + exact-face geometry fix + parametric cut / notch fix": 51,
    "exact-face geometry fix + parametric cut / notch fix + recovery fix": 41
   },
-  "median_failing_parts": 7,
-  "models_with_le5_failing_parts": 1726
+  "median_failing_parts": 8,
+  "models_with_le5_failing_parts": 1650
  },
  "code_versions": {
-  "v9a": 9407,
-  "v9": 750,
-  "v9p": 234
+  "v9a": 9428,
+  "v9": 663,
+  "v9p": 341
  },
  "throughput_per_h": {
-  "S": 180,
-  "M": 592,
+  "S": 354,
+  "M": 606,
   "L": 8,
   "XL": 2,
   "XXL": 0
  },
  "eta_h": {
   "S": 0.0,
-  "M": 0.7,
+  "M": 0.6,
   "L": 165.4,
   "XL": 106.5,
   "XXL": null
@@ -255,106 +265,106 @@
  "timeline": [
   [
    1791412200,
-   848,
+   761,
    669
   ],
   [
    1791413100,
-   3669,
+   3582,
    3169
   ],
   [
    1791414000,
-   5848,
+   5761,
    4687
   ],
   [
    1791414900,
-   7024,
+   6937,
    5335
   ],
   [
    1791415800,
-   7646,
+   7559,
    5635
   ],
   [
    1791416700,
-   8145,
+   8058,
    5838
   ],
   [
    1791417600,
-   8516,
+   8429,
    5969
   ],
   [
    1791418500,
-   8833,
+   8746,
    6093
   ],
   [
    1791419400,
-   9037,
+   8950,
    6160
   ],
   [
    1791420300,
-   9261,
+   9174,
    6215
   ],
   [
    1791421200,
-   9446,
+   9359,
    6275
   ],
   [
    1791422100,
-   9634,
+   9547,
    6316
   ],
   [
    1791423000,
-   9780,
+   9693,
    6359
   ],
   [
    1791423900,
-   9932,
+   9845,
    6389
   ],
   [
    1791424800,
-   10040,
+   9953,
    6418
   ],
   [
    1791425700,
-   10197,
+   10110,
    6448
   ],
   [
    1791426600,
-   10391,
-   6559
+   10432,
+   6653
   ],
   [
    1791427500,
-   10391,
-   6559
+   10432,
+   6653
   ]
  ],
  "fleet": {
   "boxes": 40,
   "vcpu": 2688,
-  "load": 2787,
-  "benches": 8,
+  "load": 2697,
+  "benches": 9,
   "running_by_class": {
    "XL": 26,
    "XXL": 25,
-   "L": 27,
-   "M": 288,
-   "S": 14
+   "L": 26,
+   "M": 334,
+   "S": 1
   },
   "groups": [
    {
@@ -363,7 +373,7 @@
     "role": "standard",
     "boxes": 4,
     "vcpu": 256,
-    "load": 248,
+    "load": 267,
     "benches": 0
    },
    {
@@ -372,7 +382,7 @@
     "role": "standard",
     "boxes": 2,
     "vcpu": 128,
-    "load": 244,
+    "load": 240,
     "benches": 0
    },
    {
@@ -381,8 +391,8 @@
     "role": "standard",
     "boxes": 24,
     "vcpu": 1536,
-    "load": 1614,
-    "benches": 8
+    "load": 1517,
+    "benches": 9
    },
    {
     "region": "ap-south-2",
@@ -390,7 +400,7 @@
     "role": "big",
     "boxes": 1,
     "vcpu": 192,
-    "load": 168,
+    "load": 150,
     "benches": 0
    },
    {
@@ -399,7 +409,7 @@
     "role": "standard",
     "boxes": 1,
     "vcpu": 64,
-    "load": 34,
+    "load": 22,
     "benches": 0
    },
    {
@@ -408,7 +418,7 @@
     "role": "standard",
     "boxes": 3,
     "vcpu": 192,
-    "load": 175,
+    "load": 196,
     "benches": 0
    },
    {
@@ -417,7 +427,7 @@
     "role": "standard",
     "boxes": 5,
     "vcpu": 320,
-    "load": 303,
+    "load": 305,
     "benches": 0
    }
   ]
@@ -472,6 +482,11 @@
    "name": "Fix: exact-face geometry (scale track)",
    "state": "running",
    "note": "sub-clusters the exact-face failures across all ~1,700 affected models (largest bucket of the gap), then fixes each sub-cause; builds on round 2"
+  },
+  {
+   "name": "Fix: recovered-part mismatches",
+   "state": "running",
+   "note": "faceted parts recovered as extrusions / sweeps / cut constructions that then fail the check: 7% of failing parts in 10-100 MB models, 22% in 100-500 MB models"
   },
   {
    "name": "Exact B-rep distance gate",
