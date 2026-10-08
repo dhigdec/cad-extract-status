@@ -108,6 +108,12 @@ Numbers are read from the run's state every 5 minutes. No project or client name
 </div>
 
 <section>
+  <h2>Where the gap is, and which fix closes it</h2>
+  <p class="note" id="gapNote"></p>
+  <table id="gap"></table>
+</section>
+
+<section>
   <h2>Why some models are not perfect yet</h2>
   <p class="note">Reasons across processed models (a model can have several). Each has a fix track below; fixed models are rerun on the merged code.</p>
   <div class="bars" id="reasons"></div>
@@ -224,6 +230,13 @@ function render(d) {
     ['script run: assembly selections', fmt(e.assembly.ok), fmt(e.assembly.runs), pct(e.assembly.ok, e.assembly.runs)],
     ['script run: piece-mark selections', fmt(e.piece.ok), fmt(e.piece.runs), pct(e.piece.ok, e.piece.runs)]], [1, 2, 3]);
   table($('geo'), ['geometry', 'parts', 'match', '%'], Object.entries(P.by_geometry).map(([g, c]) => { const t = sum(c); return [g, fmt(t), fmt(c.match || 0), pct(c.match || 0, t)]; }), [1, 2, 3]);
+  if (d.gap) {
+    const g = d.gap, nonp = m.done - m.perfect;
+    $('gapNote').textContent = fmt(nonp) + ' processed models are not perfect yet. Half of them have ' + fmt(g.median_failing_parts) + ' or fewer failing parts (' + fmt(g.models_with_le5_failing_parts) + ' have 5 or fewer). Each row is the fix track a model depends on; models are rerun on the merged code (v10) once the fixes pass review.';
+    const rows = g.single.map(x => [x.fix, x.cause.replace(/_/g, ' '), fmt(x.models), pct(x.models, nonp)]);
+    rows.push(['several of the above', Object.entries(g.several_top).slice(0, 3).map(([k, v]) => k + ' (' + fmt(v) + ')').join('; ') + (Object.keys(g.several_top).length > 3 ? '; …' : ''), fmt(g.several_causes), pct(g.several_causes, nonp)]);
+    table($('gap'), ['fix track', 'cause', 'models', 'share of the gap'], rows, [2, 3]);
+  }
   const R = Object.entries(d.reasons), mx = Math.max(1, ...R.map(x => x[1])), bars = $('reasons'); bars.replaceChildren();
   R.forEach(([k, v]) => { const b = el('div', { class: 'b', tabindex: 0, title: (REASON[k] || k) + ': ' + fmt(v) + ' models' });
     const t = el('div'); const bt = el('div', { class: 'bt' }); bt.style.width = (100 * v / mx) + '%'; t.appendChild(bt);
