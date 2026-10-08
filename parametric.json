@@ -1,11 +1,11 @@
 {
- "updated": "2026-10-08T01:55:17Z",
+ "updated": "2026-10-08T02:00:17Z",
  "started": "2026-10-07T22:20:00Z",
  "models": {
   "total": 12467,
-  "done": 10101,
-  "perfect": 6413,
-  "running": 452,
+  "done": 10134,
+  "perfect": 6419,
+  "running": 483,
   "reruns": 0,
   "by_class": {
    "S": {
@@ -16,8 +16,8 @@
    },
    "M": {
     "total": 2880,
-    "done": 2180,
-    "perfect": 733,
+    "done": 2213,
+    "perfect": 739,
     "size": "10-100 MB"
    },
    "L": {
@@ -41,16 +41,16 @@
   },
   "by_tool": {
    "tekla": {
-    "done": 6576,
-    "perfect": 4381
+    "done": 6600,
+    "perfect": 4385
    },
    "sds2": {
-    "done": 2380,
-    "perfect": 1186
+    "done": 2388,
+    "perfect": 1187
    },
    "blank": {
-    "done": 803,
-    "perfect": 589
+    "done": 804,
+    "perfect": 590
    },
    "other": {
     "done": 332,
@@ -71,90 +71,90 @@
   }
  },
  "parts": {
-  "built": 7083481,
+  "built": 7222440,
   "status": {
-   "match": 6892109,
+   "match": 7029609,
    "no_delivered_part": 99508,
-   "MISMATCH": 72815,
-   "INVALID_SOLID": 9996,
-   "BUILD_ERROR": 9053
+   "MISMATCH": 74131,
+   "INVALID_SOLID": 10112,
+   "BUILD_ERROR": 9080
   },
   "by_geometry": {
    "parametric": {
-    "match": 3625502,
+    "match": 3694368,
     "no_delivered_part": 44139,
-    "MISMATCH": 25310,
-    "INVALID_SOLID": 4037,
+    "MISMATCH": 25725,
+    "INVALID_SOLID": 4068,
     "BUILD_ERROR": 28
    },
    "recovered": {
-    "match": 3148543,
+    "match": 3212995,
     "no_delivered_part": 52376,
-    "MISMATCH": 12147,
+    "MISMATCH": 12158,
     "INVALID_SOLID": 31
    },
    "exact": {
-    "match": 118064,
-    "MISMATCH": 35358,
-    "BUILD_ERROR": 9025,
-    "INVALID_SOLID": 5928,
+    "match": 122246,
+    "MISMATCH": 36248,
+    "BUILD_ERROR": 9052,
+    "INVALID_SOLID": 6013,
     "no_delivered_part": 2993
    }
   },
   "source_check": {
-   "exact": 6978418,
-   "DIFFERS": 75360,
-   "source_open": 20496,
-   "": 9053,
+   "exact": 7115430,
+   "DIFFERS": 76686,
+   "source_open": 21090,
+   "": 9080,
    "n/a": 154
   },
   "delivered_check": {
-   "match": 6956727,
-   "": 108561,
-   "DIFFERS": 18193
+   "match": 7095403,
+   "": 108588,
+   "DIFFERS": 18449
   }
  },
  "levels": {
   "assemblies": {
-   "total": 1267494,
-   "ok": 1224500
+   "total": 1305622,
+   "ok": 1262084
   },
   "assembly_marks": {
-   "total": 267279,
-   "ok": 251542
+   "total": 272764,
+   "ok": 256784
   },
   "piece_marks": {
-   "total": 822413,
-   "ok": 797645
+   "total": 836260,
+   "ok": 811055
   }
  },
  "e2e": {
   "model": {
-   "runs": 10049,
-   "ok": 8796
+   "runs": 10082,
+   "ok": 8819
   },
   "determinism": {
-   "runs": 10049,
-   "ok": 9804
+   "runs": 10082,
+   "ok": 9834
   },
   "assembly": {
-   "runs": 78791,
-   "ok": 76954
+   "runs": 79293,
+   "ok": 77455
   },
   "piece": {
-   "runs": 58305,
-   "ok": 57685
+   "runs": 58666,
+   "ok": 58045
   }
  },
  "reasons": {
-  "levels_not_ok": 3231,
-  "parts_not_all_match": 3157,
-  "e2e_model": 1253,
-  "e2e_assembly": 804,
-  "step_tekla_checks_rc1": 475,
+  "levels_not_ok": 3258,
+  "parts_not_all_match": 3184,
+  "e2e_model": 1263,
+  "e2e_assembly": 805,
+  "step_tekla_checks_rc1": 481,
   "delivered_parts_not_built": 371,
-  "e2e_piece": 359,
-  "e2e_determinism": 245,
+  "e2e_piece": 360,
+  "e2e_determinism": 248,
   "step_verify_levels_rc1": 54,
   "no_levels_summary": 54,
   "step_e2e_rc1": 52,
@@ -169,22 +169,23 @@
   "step_recover_rc124": 9
  },
  "code_versions": {
-  "v9a": 9261,
-  "v9": 840
+  "v9a": 9289,
+  "v9": 840,
+  "v9p": 5
  },
  "throughput_per_h": {
   "S": 0,
-  "M": 528,
-  "L": 4,
+  "M": 512,
+  "L": 2,
   "XL": 0,
-  "XXL": 10
+  "XXL": 8
  },
  "eta_h": {
   "S": null,
   "M": 1.3,
-  "L": 331.8,
+  "L": 663.5,
   "XL": null,
-  "XXL": 12.4
+  "XXL": 15.5
  },
  "timeline": [
   [
@@ -259,25 +260,30 @@
   ],
   [
    1791424800,
-   10101,
-   6413
+   10130,
+   6418
   ],
   [
    1791425700,
-   10101,
-   6413
+   10134,
+   6419
+  ],
+  [
+   1791426600,
+   10134,
+   6419
   ]
  ],
  "fleet": {
   "boxes": 40,
   "vcpu": 2688,
-  "load": 2776,
+  "load": 2877,
   "benches": 7,
   "running_by_class": {
-   "XL": 26,
-   "XXL": 24,
    "L": 30,
-   "M": 371,
+   "XL": 27,
+   "XXL": 25,
+   "M": 400,
    "S": 1
   },
   "groups": [
@@ -287,7 +293,7 @@
     "role": "standard",
     "boxes": 4,
     "vcpu": 256,
-    "load": 264,
+    "load": 273,
     "benches": 0
    },
    {
@@ -296,7 +302,7 @@
     "role": "standard",
     "boxes": 2,
     "vcpu": 128,
-    "load": 148,
+    "load": 220,
     "benches": 0
    },
    {
@@ -305,7 +311,7 @@
     "role": "standard",
     "boxes": 24,
     "vcpu": 1536,
-    "load": 1576,
+    "load": 1610,
     "benches": 7
    },
    {
@@ -314,7 +320,7 @@
     "role": "big",
     "boxes": 1,
     "vcpu": 192,
-    "load": 203,
+    "load": 204,
     "benches": 0
    },
    {
@@ -323,7 +329,7 @@
     "role": "standard",
     "boxes": 1,
     "vcpu": 64,
-    "load": 19,
+    "load": 37,
     "benches": 0
    },
    {
@@ -332,7 +338,7 @@
     "role": "standard",
     "boxes": 3,
     "vcpu": 192,
-    "load": 172,
+    "load": 151,
     "benches": 0
    },
    {
@@ -341,7 +347,7 @@
     "role": "standard",
     "boxes": 5,
     "vcpu": 320,
-    "load": 395,
+    "load": 382,
     "benches": 0
    }
   ]
@@ -354,8 +360,8 @@
   },
   {
    "name": "Speed-up (v9p)",
-   "state": "released",
-   "note": "live on the fleet since 18:45 PDT: 2.9-4.5x faster end to end on large models; byte-identical outputs proven on 43 models incl. whole-model STEPs up to 1.47 GB"
+   "state": "released - hardening running",
+   "note": "live since 18:45 PDT (2.9-4.5x faster, byte-identical on 43 models up to 491 MB). Review found memory / fault-handling risks on the >=1 GB tail (no wrong results): fleet memory accounting fixed (PSS); hardening for v10 being proven on real >=1 GB models"
   },
   {
    "name": "Fix: empty GlobalId (Tekla project-origin marker)",
