@@ -1,11 +1,11 @@
 {
- "updated": "2026-10-08T03:28:36Z",
+ "updated": "2026-10-08T03:33:36Z",
  "started": "2026-10-07T22:20:00Z",
  "models": {
   "total": 12467,
-  "done": 10785,
-  "perfect": 6705,
-  "running": 282,
+  "done": 10806,
+  "perfect": 6707,
+  "running": 280,
   "reruns": 177,
   "by_class": {
    "S": {
@@ -18,27 +18,27 @@
    },
    "M": {
     "total": 2880,
-    "done": 2752,
+    "done": 2756,
     "perfect": 835,
     "size": "10-100 MB",
-    "parts": 8311737,
-    "parts_match": 8142710
+    "parts": 8331508,
+    "parts_match": 8161852
    },
    "L": {
     "total": 1381,
-    "done": 161,
-    "perfect": 21,
+    "done": 177,
+    "perfect": 23,
     "size": "100-500 MB",
-    "parts": 1508319,
-    "parts_match": 1489736
+    "parts": 1644411,
+    "parts_match": 1625459
    },
    "XL": {
     "total": 218,
-    "done": 8,
+    "done": 9,
     "perfect": 0,
     "size": "0.5-1 GB",
-    "parts": 217922,
-    "parts_match": 217601
+    "parts": 278165,
+    "parts_match": 277841
    },
    "XXL": {
     "total": 134,
@@ -51,19 +51,19 @@
   },
   "by_tool": {
    "tekla": {
-    "done": 7023,
-    "perfect": 4632
+    "done": 7034,
+    "perfect": 4633
    },
    "sds2": {
-    "done": 2518,
+    "done": 2523,
     "perfect": 1201
    },
    "blank": {
-    "done": 872,
-    "perfect": 603
+    "done": 876,
+    "perfect": 604
    },
    "other": {
-    "done": 362,
+    "done": 363,
     "perfect": 265
    },
    "hicad": {
@@ -81,90 +81,90 @@
   }
  },
  "parts": {
-  "built": 11285321,
+  "built": 11501427,
   "status": {
-   "match": 11044219,
+   "match": 11259324,
    "no_delivered_part": 109772,
-   "MISMATCH": 105673,
-   "INVALID_SOLID": 13390,
-   "BUILD_ERROR": 12267
+   "MISMATCH": 106321,
+   "INVALID_SOLID": 13485,
+   "BUILD_ERROR": 12525
   },
   "by_geometry": {
    "parametric": {
-    "match": 5765212,
+    "match": 5883890,
     "no_delivered_part": 50686,
-    "MISMATCH": 37854,
-    "INVALID_SOLID": 5301,
+    "MISMATCH": 37956,
+    "INVALID_SOLID": 5375,
     "BUILD_ERROR": 106
    },
    "recovered": {
-    "match": 5053046,
+    "match": 5144733,
     "no_delivered_part": 55834,
-    "MISMATCH": 20107,
+    "MISMATCH": 20219,
     "INVALID_SOLID": 31
    },
    "exact": {
-    "match": 225961,
-    "MISMATCH": 47712,
-    "BUILD_ERROR": 12161,
-    "INVALID_SOLID": 8058,
+    "match": 230701,
+    "MISMATCH": 48146,
+    "BUILD_ERROR": 12419,
+    "INVALID_SOLID": 8079,
     "no_delivered_part": 3252
    }
   },
   "source_check": {
-   "exact": 11129742,
-   "DIFFERS": 109207,
-   "source_open": 33936,
-   "": 12267,
+   "exact": 11342680,
+   "DIFFERS": 109927,
+   "source_open": 36126,
+   "": 12525,
    "n/a": 169
   },
   "delivered_check": {
-   "match": 11134099,
-   "": 122039,
-   "DIFFERS": 29183
+   "match": 11349870,
+   "": 122297,
+   "DIFFERS": 29260
   }
  },
  "levels": {
   "assemblies": {
-   "total": 2156861,
-   "ok": 2093689
+   "total": 2203782,
+   "ok": 2139999
   },
   "assembly_marks": {
-   "total": 407264,
-   "ok": 384286
+   "total": 413452,
+   "ok": 390256
   },
   "piece_marks": {
-   "total": 1164655,
-   "ok": 1131004
+   "total": 1175233,
+   "ok": 1141321
   }
  },
  "e2e": {
   "model": {
-   "runs": 10726,
-   "ok": 9263
+   "runs": 10747,
+   "ok": 9277
   },
   "determinism": {
-   "runs": 10726,
-   "ok": 10452
+   "runs": 10747,
+   "ok": 10471
   },
   "assembly": {
-   "runs": 89551,
-   "ok": 87545
+   "runs": 89915,
+   "ok": 87908
   },
   "piece": {
-   "runs": 65935,
-   "ok": 65283
+   "runs": 66175,
+   "ok": 65523
   }
  },
  "reasons": {
-  "levels_not_ok": 3789,
-  "parts_not_all_match": 3707,
-  "e2e_model": 1463,
-  "e2e_assembly": 857,
+  "levels_not_ok": 3808,
+  "parts_not_all_match": 3726,
+  "e2e_model": 1470,
+  "e2e_assembly": 858,
   "e2e_piece": 387,
-  "step_tekla_checks_rc1": 382,
+  "step_tekla_checks_rc1": 384,
   "delivered_parts_not_built": 374,
-  "e2e_determinism": 274,
+  "e2e_determinism": 276,
   "no_e2e_summary": 59,
   "step_verify_levels_rc1": 58,
   "no_levels_summary": 58,
@@ -183,12 +183,12 @@
    {
     "cause": "exact_geom",
     "fix": "exact-face geometry fix",
-    "models": 1142
+    "models": 1146
    },
    {
     "cause": "parametric_mismatch",
     "fix": "parametric cut / notch fix",
-    "models": 1063
+    "models": 1066
    },
    {
     "cause": "e2e_only",
@@ -231,35 +231,35 @@
     "models": 1
    }
   ],
-  "several_causes": 1304,
+  "several_causes": 1316,
   "several_top": {
-   "exact-face geometry fix + parametric cut / notch fix": 411,
-   "exact-face geometry fix + recovery fix": 285,
-   "already fixed (v9a): rerun + parametric cut / notch fix": 207,
+   "exact-face geometry fix + parametric cut / notch fix": 417,
+   "exact-face geometry fix + recovery fix": 289,
+   "already fixed (v9a): rerun + parametric cut / notch fix": 208,
    "SDS/2 delivered-part matching fix + exact-face geometry fix": 124,
-   "already fixed (v9a): rerun + exact-face geometry fix + parametric cut / notch fix": 57,
+   "already fixed (v9a): rerun + exact-face geometry fix + parametric cut / notch fix": 58,
    "exact-face geometry fix + parametric cut / notch fix + recovery fix": 52
   },
   "median_failing_parts": 8,
-  "models_with_le5_failing_parts": 1709
+  "models_with_le5_failing_parts": 1712
  },
  "code_versions": {
-  "v9a": 9540,
+  "v9a": 9542,
   "v9": 664,
-  "v9p": 581
+  "v9p": 600
  },
  "throughput_per_h": {
-  "S": 2,
-  "M": 114,
-  "L": 160,
-  "XL": 4,
+  "S": 0,
+  "M": 104,
+  "L": 178,
+  "XL": 6,
   "XXL": 0
  },
  "eta_h": {
   "S": null,
-  "M": 1.1,
-  "L": 7.6,
-  "XL": 52.5,
+  "M": 1.2,
+  "L": 6.8,
+  "XL": 34.8,
   "XXL": null
  },
  "timeline": [
@@ -365,25 +365,30 @@
   ],
   [
    1791430200,
-   10785,
-   6705
+   10789,
+   6707
   ],
   [
    1791431100,
-   10785,
-   6705
+   10806,
+   6707
+  ],
+  [
+   1791432000,
+   10806,
+   6707
   ]
  ],
  "fleet": {
   "boxes": 40,
   "vcpu": 2688,
-  "load": 2793,
+  "load": 2579,
   "benches": 9,
   "running_by_class": {
-   "M": 130,
+   "M": 124,
    "XXL": 30,
    "XL": 12,
-   "L": 110
+   "L": 114
   },
   "groups": [
    {
@@ -392,7 +397,7 @@
     "role": "standard",
     "boxes": 4,
     "vcpu": 256,
-    "load": 276,
+    "load": 233,
     "benches": 0
    },
    {
@@ -401,7 +406,7 @@
     "role": "standard",
     "boxes": 2,
     "vcpu": 128,
-    "load": 98,
+    "load": 66,
     "benches": 0
    },
    {
@@ -410,7 +415,7 @@
     "role": "standard",
     "boxes": 24,
     "vcpu": 1536,
-    "load": 1677,
+    "load": 1721,
     "benches": 9
    },
    {
@@ -419,7 +424,7 @@
     "role": "big",
     "boxes": 1,
     "vcpu": 192,
-    "load": 66,
+    "load": 34,
     "benches": 0
    },
    {
@@ -428,7 +433,7 @@
     "role": "standard",
     "boxes": 1,
     "vcpu": 64,
-    "load": 31,
+    "load": 23,
     "benches": 0
    },
    {
@@ -437,7 +442,7 @@
     "role": "standard",
     "boxes": 3,
     "vcpu": 192,
-    "load": 193,
+    "load": 161,
     "benches": 0
    },
    {
@@ -446,7 +451,7 @@
     "role": "standard",
     "boxes": 5,
     "vcpu": 320,
-    "load": 452,
+    "load": 341,
     "benches": 0
    }
   ]
@@ -489,8 +494,8 @@
   },
   {
    "name": "Fix: Tekla cut / notch mismatches",
-   "state": "running",
-   "note": "largest overall cluster (~650 small Tekla models): bounding boxes exact, volume 0.1-3% off"
+   "state": "round 1 done - round 2 running",
+   "note": "round 1 fixed 4 causes (fuzzy booleans keeping cut material, self-crossing outlines, volume integration, evidence-based reference defects): on 79 affected models perfect 0 -> 17, mismatching parts 415 -> 281, invalid solids 106 -> 14, 0 regressions. Round 2: the remaining sub-causes + ~30 tube fish-mouth parts that falsely matched (kernel and rebuild wrong the same way)"
   },
   {
    "name": "Fix: exact-face geometry",
@@ -519,7 +524,7 @@
   },
   {
    "name": "PII redaction of published outputs",
-   "state": "rework running",
+   "state": "rework done - re-review running",
    "note": "individuals' names / logins / emails / phones removed from everything published, organisations kept. Review found a bypass (escaped newlines in JSON); being closed before anything is published"
   },
   {
