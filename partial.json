@@ -1,0 +1,133 @@
+{
+ "updated": "2026-10-08T05:39:36Z",
+ "models": 26738,
+ "packages": 2418,
+ "tier": {
+  "ifc": {
+   "S": 822,
+   "M": 2511,
+   "L": 2776,
+   "XL": 1328,
+   "too_big_v1": 1034,
+   "ALL": 8471
+  },
+  "db1": {
+   "S": 661,
+   "M": 3316,
+   "L": 5937,
+   "XL": 1771,
+   "too_big_v1": 2203,
+   "ALL": 13888
+  },
+  "sds2": {
+   "S": 165,
+   "M": 844,
+   "L": 1871,
+   "XL": 747,
+   "too_big_v1": 752,
+   "ALL": 4379
+  },
+  "ALL": {
+   "S": 1648,
+   "M": 6671,
+   "L": 10584,
+   "XL": 3846,
+   "too_big_v1": 3989,
+   "ALL": 26738
+  }
+ },
+ "tb": {
+  "ifc": 6.15,
+  "db1": 9.31,
+  "sds2": 3.27,
+  "ALL": 18.73
+ },
+ "in_scope": 45498,
+ "tests": [
+  {
+   "n": "n1",
+   "source": "db1",
+   "size_mb": 6,
+   "published_files": 0,
+   "coloured_steps": 0,
+   "state": "running"
+  },
+  {
+   "n": "n2",
+   "source": "db1",
+   "size_mb": 27,
+   "published_files": 0,
+   "coloured_steps": 0,
+   "state": "running"
+  },
+  {
+   "n": "n3",
+   "source": "ifc",
+   "size_mb": 18,
+   "published_files": 0,
+   "coloured_steps": 0,
+   "state": "running"
+  },
+  {
+   "n": "n4",
+   "source": "ifc",
+   "size_mb": 7,
+   "published_files": 0,
+   "coloured_steps": 0,
+   "state": "running"
+  },
+  {
+   "n": "n5",
+   "source": "sds2",
+   "size_mb": 14,
+   "published_files": 0,
+   "coloured_steps": 0,
+   "state": "running"
+  }
+ ],
+ "tests_published": 0,
+ "bundles": 4,
+ "report_ready": false,
+ "workstreams": [
+  {
+   "name": "Job list (all partial models, signed links)",
+   "state": "done",
+   "note": "26,738 models in 2,418 packages; 22,749 in scope (< 1 GB)"
+  },
+  {
+   "name": "DB1 -> source stage",
+   "state": "done",
+   "note": "reproduces the delivered STEP on both DB1 test models"
+  },
+  {
+   "name": "SDS/2 -> source stage",
+   "state": "done",
+   "note": "reproduces the delivered STEP on the SDS/2 test model"
+  },
+  {
+   "name": "build123d pipeline stage",
+   "state": "done",
+   "note": "scripts + schedules + verification"
+  },
+  {
+   "name": "Colour-coded reconstruction (build_issues_model.py)",
+   "state": "done",
+   "note": "red missing / orange approximated / yellow check / purple not yet perfect"
+  },
+  {
+   "name": "Publisher into package scripts/",
+   "state": "done",
+   "note": "passed on a fake test package"
+  },
+  {
+   "name": "End-to-end test on 5 new samples + publish",
+   "state": "running",
+   "note": "Modal, all 5 in parallel"
+  },
+  {
+   "name": "Scale to all in-scope partial models",
+   "state": "waiting",
+   "note": "after the test report and owner approval of cost"
+  }
+ ]
+}
