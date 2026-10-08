@@ -1,0 +1,406 @@
+{
+ "updated": "2026-10-08T01:25:17Z",
+ "started": "2026-10-07T22:20:00Z",
+ "models": {
+  "total": 12467,
+  "done": 9831,
+  "perfect": 6349,
+  "running": 437,
+  "reruns": 0,
+  "by_class": {
+   "S": {
+    "total": 7854,
+    "done": 7853,
+    "perfect": 5672,
+    "size": "< 10 MB"
+   },
+   "M": {
+    "total": 2880,
+    "done": 1917,
+    "perfect": 669,
+    "size": "10-100 MB"
+   },
+   "L": {
+    "total": 1381,
+    "done": 52,
+    "perfect": 8,
+    "size": "100-500 MB"
+   },
+   "XL": {
+    "total": 218,
+    "done": 4,
+    "perfect": 0,
+    "size": "0.5-1 GB"
+   },
+   "XXL": {
+    "total": 134,
+    "done": 5,
+    "perfect": 0,
+    "size": "1-14 GB"
+   }
+  },
+  "by_tool": {
+   "tekla": {
+    "done": 6414,
+    "perfect": 4345
+   },
+   "sds2": {
+    "done": 2317,
+    "perfect": 1181
+   },
+   "blank": {
+    "done": 764,
+    "perfect": 569
+   },
+   "other": {
+    "done": 326,
+    "perfect": 250
+   },
+   "hicad": {
+    "done": 7,
+    "perfect": 4
+   },
+   "revit": {
+    "done": 3,
+    "perfect": 0
+   }
+  },
+  "non_ifc_track": {
+   "db1": 174,
+   "sds2": 97
+  }
+ },
+ "parts": {
+  "built": 6024607,
+  "status": {
+   "match": 5862517,
+   "no_delivered_part": 84091,
+   "MISMATCH": 60794,
+   "INVALID_SOLID": 9107,
+   "BUILD_ERROR": 8098
+  },
+  "by_geometry": {
+   "parametric": {
+    "match": 3043110,
+    "no_delivered_part": 35772,
+    "MISMATCH": 20138,
+    "INVALID_SOLID": 3897,
+    "BUILD_ERROR": 28
+   },
+   "recovered": {
+    "match": 2716739,
+    "no_delivered_part": 45656,
+    "MISMATCH": 9295,
+    "INVALID_SOLID": 31
+   },
+   "exact": {
+    "match": 102668,
+    "MISMATCH": 31361,
+    "BUILD_ERROR": 8070,
+    "INVALID_SOLID": 5179,
+    "no_delivered_part": 2663
+   }
+  },
+  "source_check": {
+   "exact": 5938358,
+   "DIFFERS": 63201,
+   "source_open": 14880,
+   "": 8098,
+   "n/a": 70
+  },
+  "delivered_check": {
+   "match": 5917135,
+   "": 92189,
+   "DIFFERS": 15283
+  }
+ },
+ "levels": {
+  "assemblies": {
+   "total": 1053325,
+   "ok": 1018311
+  },
+  "assembly_marks": {
+   "total": 225053,
+   "ok": 212893
+  },
+  "piece_marks": {
+   "total": 711576,
+   "ok": 690316
+  }
+ },
+ "e2e": {
+  "model": {
+   "runs": 9785,
+   "ok": 8610
+  },
+  "determinism": {
+   "runs": 9785,
+   "ok": 9552
+  },
+  "assembly": {
+   "runs": 74617,
+   "ok": 72857
+  },
+  "piece": {
+   "runs": 55317,
+   "ok": 54711
+  }
+ },
+ "reasons": {
+  "levels_not_ok": 3039,
+  "parts_not_all_match": 2970,
+  "e2e_model": 1175,
+  "e2e_assembly": 780,
+  "step_tekla_checks_rc1": 436,
+  "delivered_parts_not_built": 357,
+  "e2e_piece": 351,
+  "e2e_determinism": 233,
+  "step_verify_levels_rc1": 48,
+  "no_levels_summary": 48,
+  "step_e2e_rc1": 46,
+  "no_e2e_summary": 46,
+  "step_props_rc1": 39,
+  "step_recover_rc1": 38,
+  "step_extract+exact_rc1": 37,
+  "step_views_rc1": 37,
+  "no_verification_summary": 27,
+  "step_verify_rc1": 19,
+  "no_parts": 19,
+  "step_recover_rc124": 9
+ },
+ "code_versions": {
+  "v9a": 8993,
+  "v9": 838
+ },
+ "throughput_per_h": {
+  "S": 16,
+  "M": 662,
+  "L": 8,
+  "XL": 4,
+  "XXL": 4
+ },
+ "eta_h": {
+  "S": 0.1,
+  "M": 1.5,
+  "L": 166.1,
+  "XL": 53.5,
+  "XXL": 32.2
+ },
+ "timeline": [
+  [
+   1791412200,
+   938,
+   669
+  ],
+  [
+   1791413100,
+   3759,
+   3169
+  ],
+  [
+   1791414000,
+   5938,
+   4687
+  ],
+  [
+   1791414900,
+   7114,
+   5335
+  ],
+  [
+   1791415800,
+   7736,
+   5635
+  ],
+  [
+   1791416700,
+   8235,
+   5838
+  ],
+  [
+   1791417600,
+   8606,
+   5969
+  ],
+  [
+   1791418500,
+   8923,
+   6093
+  ],
+  [
+   1791419400,
+   9127,
+   6160
+  ],
+  [
+   1791420300,
+   9351,
+   6215
+  ],
+  [
+   1791421200,
+   9536,
+   6275
+  ],
+  [
+   1791422100,
+   9724,
+   6316
+  ],
+  [
+   1791423000,
+   9831,
+   6349
+  ],
+  [
+   1791423900,
+   9831,
+   6349
+  ]
+ ],
+ "fleet": {
+  "boxes": 39,
+  "vcpu": 2624,
+  "load": 2210,
+  "benches": 7,
+  "running_by_class": {
+   "XL": 19,
+   "XXL": 24,
+   "L": 27,
+   "M": 366,
+   "S": 1
+  },
+  "groups": [
+   {
+    "region": "ap-south-1",
+    "type": "m7i.16xlarge",
+    "role": "standard",
+    "boxes": 4,
+    "vcpu": 256,
+    "load": 228,
+    "benches": 0
+   },
+   {
+    "region": "ap-south-1",
+    "type": "r7i.16xlarge",
+    "role": "standard",
+    "boxes": 2,
+    "vcpu": 128,
+    "load": 162,
+    "benches": 0
+   },
+   {
+    "region": "ap-south-2",
+    "type": "r7i.16xlarge",
+    "role": "standard",
+    "boxes": 23,
+    "vcpu": 1472,
+    "load": 1199,
+    "benches": 7
+   },
+   {
+    "region": "ap-south-2",
+    "type": "r7i.48xlarge",
+    "role": "big",
+    "boxes": 1,
+    "vcpu": 192,
+    "load": 111,
+    "benches": 0
+   },
+   {
+    "region": "ap-southeast-1",
+    "type": "c7i.16xlarge",
+    "role": "standard",
+    "boxes": 1,
+    "vcpu": 64,
+    "load": 28,
+    "benches": 0
+   },
+   {
+    "region": "ap-southeast-1",
+    "type": "m7i.16xlarge",
+    "role": "standard",
+    "boxes": 3,
+    "vcpu": 192,
+    "load": 178,
+    "benches": 0
+   },
+   {
+    "region": "ap-southeast-1",
+    "type": "r7i.16xlarge",
+    "role": "standard",
+    "boxes": 5,
+    "vcpu": 320,
+    "load": 303,
+    "benches": 0
+   }
+  ]
+ },
+ "workstreams": [
+  {
+   "name": "Full-corpus run (code v9 / v9a)",
+   "state": "running",
+   "note": "fleet of ~40 boxes across 3 regions works through all 12,467 IFC-sourced models; every model gets its build scripts and full verification (per part, per assembly / mark, whole model, end-to-end script run, byte-identical rebuild)"
+  },
+  {
+   "name": "Speed-up (v9p)",
+   "state": "ready - awaiting release approval",
+   "note": "2.9-4.5x faster end to end on large models (e2e read-back parallelised, identical parts built once); byte-identical outputs proven on 43 models incl. whole-model STEPs up to 1.47 GB"
+  },
+  {
+   "name": "Fix: empty GlobalId (Tekla project-origin marker)",
+   "state": "fixed",
+   "note": "part id falls back the same way the delivered STEP does"
+  },
+  {
+   "name": "Fix: crashes (authoring-fact check, zipped IFC with .ifc name)",
+   "state": "fixed - review approved",
+   "note": ""
+  },
+  {
+   "name": "Fix: end-to-end script failures",
+   "state": "rework - review blocked",
+   "note": "multi-solid parts were written in model coordinates (precision loss); the fix is right but changes 7 already-perfect models' schedules, which must be disclosed and re-baselined first"
+  },
+  {
+   "name": "Fix: SDS/2 delivered-part matching",
+   "state": "running",
+   "note": "largest SDS/2 cluster (~30% of SDS/2 models)"
+  },
+  {
+   "name": "Fix: Tekla cut / notch mismatches",
+   "state": "running",
+   "note": "largest overall cluster (~650 small Tekla models): bounding boxes exact, volume 0.1-3% off"
+  },
+  {
+   "name": "Fix: exact-face geometry",
+   "state": "running",
+   "note": "build errors / invalid solids on faceted parts"
+  },
+  {
+   "name": "Exact B-rep distance gate",
+   "state": "running",
+   "note": "two-sided surface distance <= 0.1 mm per part vs the IFC source B-rep"
+  },
+  {
+   "name": "Marks from property sets",
+   "state": "built - review running",
+   "note": "Tekla writes the part mark into Pset_*Common.Reference: v9a missed it on most secondary parts"
+  },
+  {
+   "name": "PII redaction of published outputs",
+   "state": "built - review running",
+   "note": "individuals' names / logins / emails / phones removed from everything published; organisation names kept"
+  },
+  {
+   "name": "DB1 / SDS2 models (271)",
+   "state": "running",
+   "note": "regenerate / emit the IFC with our own converters, then the same pipeline (source check = consistency check, stated as such)"
+  },
+  {
+   "name": "Publishing",
+   "state": "tool ready",
+   "note": "per package: scripts/, verification/, metadata.json, README; starts after the merged fixes"
+  }
+ ]
+}
