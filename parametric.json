@@ -1,11 +1,11 @@
 {
- "updated": "2026-10-08T15:02:12Z",
+ "updated": "2026-10-08T15:07:12Z",
  "started": "2026-10-07T22:20:00Z",
  "models": {
   "total": 12735,
-  "done": 12612,
+  "done": 12617,
   "perfect": 8865,
-  "running": 108,
+  "running": 103,
   "reruns": 6559,
   "by_class": {
    "S": {
@@ -26,19 +26,19 @@
    },
    "L": {
     "total": 1392,
-    "done": 1312,
+    "done": 1315,
     "perfect": 293,
     "size": "100-500 MB",
-    "parts": 17528955,
-    "parts_match": 17444852
+    "parts": 17612888,
+    "parts_match": 17528674
    },
    "XL": {
     "total": 219,
-    "done": 203,
+    "done": 205,
     "perfect": 19,
     "size": "0.5-1 GB",
-    "parts": 5373334,
-    "parts_match": 5359284
+    "parts": 5418467,
+    "parts_match": 5404417
    },
    "XXL": {
     "total": 135,
@@ -51,7 +51,7 @@
   },
   "by_tool": {
    "tekla": {
-    "done": 8081,
+    "done": 8084,
     "perfect": 5474
    },
    "sds2": {
@@ -59,11 +59,11 @@
     "perfect": 2193
    },
    "blank": {
-    "done": 1099,
+    "done": 1100,
     "perfect": 735
    },
    "other": {
-    "done": 398,
+    "done": 399,
     "perfect": 290
    },
    "db1": {
@@ -85,92 +85,92 @@
   }
  },
  "parts": {
-  "built": 37962018,
+  "built": 38091084,
   "status": {
-   "match": 37798418,
-   "MISMATCH": 137508,
-   "INVALID_SOLID": 14744,
+   "match": 37927373,
+   "MISMATCH": 137618,
+   "INVALID_SOLID": 14745,
    "no_delivered_part": 8657,
    "BUILD_ERROR": 2688,
    "BUILD_CRASH": 3
   },
   "by_geometry": {
    "parametric": {
-    "match": 21166393,
-    "MISMATCH": 63788,
-    "INVALID_SOLID": 8611,
+    "match": 21202114,
+    "MISMATCH": 63886,
+    "INVALID_SOLID": 8612,
     "no_delivered_part": 4140,
     "BUILD_ERROR": 929,
     "BUILD_CRASH": 3
    },
    "recovered": {
-    "match": 15395176,
+    "match": 15461079,
     "no_delivered_part": 3871,
     "MISMATCH": 1898,
     "INVALID_SOLID": 10
    },
    "exact": {
-    "match": 1236849,
-    "MISMATCH": 71822,
+    "match": 1264180,
+    "MISMATCH": 71834,
     "INVALID_SOLID": 6123,
     "BUILD_ERROR": 1759,
     "no_delivered_part": 646
    }
   },
   "source_check": {
-   "exact": 37590364,
-   "source_open": 225078,
-   "DIFFERS": 143673,
+   "exact": 37719103,
+   "source_open": 225294,
+   "DIFFERS": 143784,
    "": 2691,
    "n/a": 212
   },
   "delivered_check": {
-   "match": 37902794,
-   "DIFFERS": 47876,
+   "match": 38031790,
+   "DIFFERS": 47946,
    "": 11348
   }
  },
  "levels": {
   "assemblies": {
-   "total": 7517066,
-   "ok": 7443129
+   "total": 7530551,
+   "ok": 7456520
   },
   "assembly_marks": {
-   "total": 1715387,
-   "ok": 1678913
+   "total": 1717873,
+   "ok": 1681325
   },
   "piece_marks": {
-   "total": 2603121,
-   "ok": 2573366
+   "total": 2604923,
+   "ok": 2575104
   }
  },
  "e2e": {
   "model": {
-   "runs": 12508,
-   "ok": 10946
+   "runs": 12512,
+   "ok": 10948
   },
   "determinism": {
-   "runs": 12508,
-   "ok": 12361
+   "runs": 12512,
+   "ok": 12365
   },
   "assembly": {
-   "runs": 113442,
-   "ok": 112274
+   "runs": 113478,
+   "ok": 112310
   },
   "piece": {
-   "runs": 92875,
-   "ok": 92454
+   "runs": 92905,
+   "ok": 92484
   }
  },
  "reasons": {
-  "levels_not_ok": 3569,
-  "parts_not_all_match": 3389,
-  "e2e_model": 1562,
+  "levels_not_ok": 3572,
+  "parts_not_all_match": 3392,
+  "e2e_model": 1564,
   "e2e_assembly": 590,
   "e2e_piece": 264,
   "e2e_determinism": 147,
-  "no_e2e_summary": 104,
-  "step_e2e_rc-9": 51,
+  "no_e2e_summary": 105,
+  "step_e2e_rc-9": 52,
   "step_tekla_checks_rc1": 48,
   "step_verify_levels_rc1": 44,
   "step_e2e_rc1": 44,
@@ -189,12 +189,12 @@
    {
     "cause": "parametric_mismatch",
     "fix": "parametric cut / notch fix",
-    "models": 1760
+    "models": 1761
    },
    {
     "cause": "exact_geom",
     "fix": "exact-face geometry fix",
-    "models": 979
+    "models": 981
    },
    {
     "cause": "levels_only",
@@ -204,12 +204,12 @@
    {
     "cause": "e2e_only",
     "fix": "end-to-end script fix",
-    "models": 122
+    "models": 123
    },
    {
     "cause": "crash_other",
     "fix": "crash fixes",
-    "models": 48
+    "models": 49
    },
    {
     "cause": "other",
@@ -237,10 +237,10 @@
    "already fixed (v9a): rerun + exact-face geometry fix + parametric cut / notch fix": 19
   },
   "median_failing_parts": 6,
-  "models_with_le5_failing_parts": 1790
+  "models_with_le5_failing_parts": 1792
  },
  "code_versions": {
-  "v10": 7021,
+  "v10": 7026,
   "v9a": 4492,
   "v9p": 431,
   "v9": 400,
@@ -249,17 +249,17 @@
  },
  "throughput_per_h": {
   "S": 0,
-  "M": 6,
-  "L": 84,
-  "XL": 0,
-  "XXL": 8
+  "M": 4,
+  "L": 80,
+  "XL": 4,
+  "XXL": 4
  },
  "eta_h": {
   "S": null,
-  "M": 0.3,
+  "M": 0.5,
   "L": 1.0,
-  "XL": null,
-  "XXL": 3.1
+  "XL": 3.5,
+  "XXL": 6.2
  },
  "timeline": [
   [
@@ -599,24 +599,24 @@
   ],
   [
    1791472500,
-   12612,
+   12617,
    8865
   ],
   [
    1791473400,
-   12612,
+   12617,
    8865
   ]
  ],
  "fleet": {
-  "boxes": 43,
-  "vcpu": 2880,
-  "load": 2266,
+  "boxes": 42,
+  "vcpu": 2816,
+  "load": 2305,
   "benches": 5,
   "running_by_class": {
-   "L": 74,
-   "XL": 13,
+   "L": 71,
    "XXL": 17,
+   "XL": 11,
    "M": 4
   },
   "groups": [
@@ -624,9 +624,9 @@
     "region": "ap-south-1",
     "type": "m7i.16xlarge",
     "role": "standard",
-    "boxes": 4,
-    "vcpu": 256,
-    "load": 0,
+    "boxes": 3,
+    "vcpu": 192,
+    "load": 1,
     "benches": 0
    },
    {
@@ -635,7 +635,7 @@
     "role": "standard",
     "boxes": 9,
     "vcpu": 576,
-    "load": 383,
+    "load": 427,
     "benches": 3
    },
    {
@@ -644,7 +644,7 @@
     "role": "standard",
     "boxes": 20,
     "vcpu": 1280,
-    "load": 1330,
+    "load": 1302,
     "benches": 2
    },
    {
@@ -653,7 +653,7 @@
     "role": "big",
     "boxes": 1,
     "vcpu": 192,
-    "load": 226,
+    "load": 168,
     "benches": 0
    },
    {
@@ -662,7 +662,7 @@
     "role": "standard",
     "boxes": 1,
     "vcpu": 64,
-    "load": 32,
+    "load": 56,
     "benches": 0
    },
    {
@@ -671,7 +671,7 @@
     "role": "standard",
     "boxes": 3,
     "vcpu": 192,
-    "load": 134,
+    "load": 172,
     "benches": 0
    },
    {
@@ -680,7 +680,7 @@
     "role": "standard",
     "boxes": 5,
     "vcpu": 320,
-    "load": 161,
+    "load": 179,
     "benches": 0
    }
   ]
