@@ -197,7 +197,9 @@ function render(d) {
   const m = d.models, P = d.parts, st = P.status || {};
   $('tiles').replaceChildren(
     tile('Models processed', fmt(m.done), 'of ' + fmt(m.total) + ' (' + pct(m.done, m.total) + ')'),
-    tile('Perfect models', fmt(m.perfect), pct(m.perfect, m.done) + ' of processed'),
+    tile('Perfect models', fmt(m.perfect), pct(m.perfect, m.done) + ' of processed'
+         + (m.perfect_relying_on_ifc_integral ? '; ' + fmt(m.perfect_relying_on_ifc_integral) + ' via exact IFC geometry' : '')
+         + (m.perfect_with_kernel_left_out ? '; ' + fmt(m.perfect_with_kernel_left_out) + ' with kernel-unbuildable items left out' : '')),
     tile('Running now', fmt(m.running), 'models in flight'),
     tile('Parts rebuilt', fmt(P.built), pct(st.match || 0, P.built) + ' match both references'),
     tile('Assemblies verified', fmt(d.levels.assemblies.total), pct(d.levels.assemblies.ok, d.levels.assemblies.total) + ' fully ok'),
