@@ -1,5 +1,5 @@
 {
- "updated": "2026-10-10T07:30:11Z",
+ "updated": "2026-10-10T07:35:11Z",
  "started": "2026-10-07T22:20:00Z",
  "models": {
   "total": 12735,
@@ -12,7 +12,7 @@
   "perfect_with_kernel_faces_merged": 0,
   "perfect_with_kernel_faces_split": 0,
   "perfect_with_zero_volume_source": 0,
-  "running": 14,
+  "running": 13,
   "reruns": 7319,
   "by_class": {
    "S": {
@@ -267,7 +267,7 @@
   "S": 0,
   "M": 0,
   "L": 0,
-  "XL": 8,
+  "XL": 6,
   "XXL": 0
  },
  "eta_h": {
@@ -1435,22 +1435,22 @@
   ]
  ],
  "fleet": {
-  "boxes": 49,
-  "vcpu": 4352,
-  "load": 1783,
+  "boxes": 50,
+  "vcpu": 4416,
+  "load": 1465,
   "benches": 34,
   "running_by_class": {
    "XXXL": 9,
-   "XXL": 5
+   "XXL": 4
   },
   "groups": [
    {
     "region": "ap-south-1",
     "type": "r7i.16xlarge",
     "role": "standard",
-    "boxes": 9,
-    "vcpu": 576,
-    "load": 345,
+    "boxes": 10,
+    "vcpu": 640,
+    "load": 267,
     "benches": 7
    },
    {
@@ -1486,7 +1486,7 @@
     "role": "standard",
     "boxes": 27,
     "vcpu": 1728,
-    "load": 1369,
+    "load": 1128,
     "benches": 26
    },
    {
@@ -1495,7 +1495,7 @@
     "role": "big",
     "boxes": 5,
     "vcpu": 960,
-    "load": 6,
+    "load": 24,
     "benches": 0
    },
    {
@@ -1513,7 +1513,7 @@
     "role": "standard",
     "boxes": 2,
     "vcpu": 128,
-    "load": 58,
+    "load": 39,
     "benches": 1
    },
    {
@@ -1531,7 +1531,7 @@
   {
    "name": "Full-corpus run (code v9 / v9a / v9p)",
    "state": "running v10.5; v10.6 combined gate",
-   "note": "8 additional 1.5 TB workers have claimed the memory-bound tail; no tolerance changes."
+   "note": "Nine additional workers (eight 1.5 TB and one 1 TB) have claimed memory-bound production jobs; production remains v10.5 pending the release gate."
   },
   {
    "name": "Speed-up (v9p)",
@@ -1600,8 +1600,8 @@
   },
   {
    "name": "Publishing",
-   "state": "verifier compatibility update in cloud proof",
-   "note": "Updating source-policy evidence checks and READMEs before the next validated package publish pass."
+   "state": "fresh package snapshots and release planning",
+   "note": "Client KFAILCUT and ZVIFC checks pass; non-perfect SDS/2 remains failed. Exact-generation kit proofs and pinned SDS/2 provenance guards tested before publishing."
   },
   {
    "name": "Fix: v10 crashes + levels / e2e residuals",
@@ -1631,7 +1631,7 @@
   {
    "name": "v10.6 combined release",
    "state": "proofs running; production remains v10.5",
-   "note": "Regression 42/42; completed preservation 55/61 all PERFECT; 24 candidate gains among completed affected tests. These test gains are excluded from the live total. Cross-host and large-model checks pending; stricter SDS/2 guard proof running. Updated 2026-10-10 07:10 UTC."
+   "note": "Regression 42/42 and preservation 61/61 all PERFECT. 45 unique candidate gains across 107 paired affected comparisons, zero losses so far. Test gains are excluded from the live total. Cross-host STEP bytes, larger cases and final SDS/2 tests still running. Updated 2026-10-10 07:35 UTC."
   }
  ]
 }
