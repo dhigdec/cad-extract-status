@@ -81,7 +81,7 @@ Numbers are read from the run's state every 5 minutes. No project or client name
 
 <section>
   <h2>Progress by model size</h2>
-  <p class="note">Bar = models processed; orange part = processed and perfect. A model is perfect only when every one of its parts is - so large models (median 12,000+ parts) need every remaining failure type fixed; "parts matching" shows how close they are. Rate = models finished in the last 30 minutes, per hour; the time left is at that rate.</p>
+  <p class="note">Size classes use delivered STEP file size. Allocating more memory to a job does not move its model into a larger size class. Bar = models processed; orange part = processed and perfect. A model is perfect only when every one of its parts is - so large models (median 12,000+ parts) need every remaining failure type fixed; "parts matching" shows how close they are. Rate = models finished in the last 30 minutes, per hour; the time left is at that rate.</p>
   <div class="legend"><span><i class="sw" style="background:var(--series-1)"></i>processed</span><span><i class="sw" style="background:var(--series-2)"></i>perfect</span></div>
   <div id="meters"></div>
   <table id="clsTable"></table>
