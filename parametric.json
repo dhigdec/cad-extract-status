@@ -1,5 +1,5 @@
 {
- "updated": "2026-10-10T06:42:26Z",
+ "updated": "2026-10-10T06:47:26Z",
  "started": "2026-10-07T22:20:00Z",
  "models": {
   "total": 12735,
@@ -1409,12 +1409,17 @@
    1791615600,
    12717,
    10067
+  ],
+  [
+   1791616500,
+   12717,
+   10067
   ]
  ],
  "fleet": {
   "boxes": 49,
   "vcpu": 4288,
-  "load": 975,
+  "load": 1200,
   "benches": 27,
   "running_by_class": {
    "XXXL": 8,
@@ -1455,7 +1460,7 @@
     "role": "standard",
     "boxes": 27,
     "vcpu": 1728,
-    "load": 891,
+    "load": 1041,
     "benches": 26
    },
    {
@@ -1464,7 +1469,7 @@
     "role": "big",
     "boxes": 5,
     "vcpu": 960,
-    "load": 11,
+    "load": 127,
     "benches": 0
    },
    {
@@ -1482,7 +1487,7 @@
     "role": "standard",
     "boxes": 2,
     "vcpu": 128,
-    "load": 61,
+    "load": 21,
     "benches": 0
    },
    {
@@ -1499,8 +1504,8 @@
  "workstreams": [
   {
    "name": "Full-corpus run (code v9 / v9a / v9p)",
-   "state": "running (v10, biggest first)",
-   "note": "all 12,735 jobs; XL/XXL tail started first"
+   "state": "running v10.5; v10.6 combined gate",
+   "note": "8 additional 1.5 TB workers have claimed the memory-bound tail; no tolerance changes."
   },
   {
    "name": "Speed-up (v9p)",
@@ -1569,8 +1574,8 @@
   },
   {
    "name": "Publishing",
-   "state": "wave 1 PUBLISHED - publish-all running",
-   "note": "10-08 06:30 PDT: 378 models in 136 packages, all verified; now every perfect model in every package, updated hourly"
+   "state": "verifier compatibility update in cloud proof",
+   "note": "Updating source-policy evidence checks and READMEs before the next validated package publish pass."
   },
   {
    "name": "Fix: v10 crashes + levels / e2e residuals",
@@ -1596,6 +1601,11 @@
    "name": "v10.2 (IFC-integral matching, IFCINT)",
    "state": "in review",
    "note": "owner decision: rebuild = exact IFC geometry while the kernel reference is proven wrong counts as matching (strict, disclosed)"
+  },
+  {
+   "name": "v10.6 combined release",
+   "state": "combined proof running",
+   "note": "SOUNDCT + KFAILCUT + ZVIFC + RTBOX + KFACES + SDSKREP; regression 42/42, preservation 61 and affected pairs 270, cross-host J4/J8 and L/XL/XXL probes."
   }
  ]
 }
