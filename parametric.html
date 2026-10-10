@@ -201,9 +201,12 @@ function render(d) {
          + (m.perfect_relying_on_ifc_integral ? '; ' + fmt(m.perfect_relying_on_ifc_integral) + ' via exact IFC geometry' : '')
          + (m.perfect_with_kernel_left_out ? '; ' + fmt(m.perfect_with_kernel_left_out) + ' with kernel-unbuildable items left out' : '')
          + (m.perfect_with_kernel_failed_cut ? '; ' + fmt(m.perfect_with_kernel_failed_cut) + ' with kernel-failed cuts left out' : '')
+         + (m.perfect_relying_on_ifc_repaired_kernel ? '; ' + fmt(m.perfect_relying_on_ifc_repaired_kernel) + ' via SDS/2 body-minus-holes proof' : '')
+         + (m.perfect_with_kernel_faces_merged ? '; ' + fmt(m.perfect_with_kernel_faces_merged) + ' with disclosed kernel vertex merges' : '')
+         + (m.perfect_with_kernel_faces_split ? '; ' + fmt(m.perfect_with_kernel_faces_split) + ' with kernel face splits' : '')
          + (m.perfect_with_zero_volume_source ? '; ' + fmt(m.perfect_with_zero_volume_source) + ' with zero-volume source parts' : '')),
     tile('Running now', fmt(m.running), 'models in flight'),
-    tile('Parts rebuilt', fmt(P.built), pct(st.match || 0, P.built) + ' match both references'),
+    tile('Parts rebuilt', fmt(P.built), pct((st.match || 0) + (st.match_ifc_integral || 0) + (st.match_ifc_repaired_kernel || 0), P.built) + ' pass their disclosed reference checks'),
     tile('Assemblies verified', fmt(d.levels.assemblies.total), pct(d.levels.assemblies.ok, d.levels.assemblies.total) + ' fully ok'),
     tile('Fleet', fmt(d.fleet.vcpu) + ' vCPU', fmt(d.fleet.boxes) + ' boxes, ' + d.fleet.benches + ' serving as fix benches'));
   const met = $('meters'); met.replaceChildren();
