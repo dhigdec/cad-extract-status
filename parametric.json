@@ -1,5 +1,5 @@
 {
- "updated": "2026-10-10T06:07:26Z",
+ "updated": "2026-10-10T06:12:26Z",
  "started": "2026-10-07T22:20:00Z",
  "models": {
   "total": 12735,
@@ -9,7 +9,7 @@
   "perfect_with_kernel_left_out": 275,
   "perfect_with_kernel_failed_cut": 0,
   "perfect_with_zero_volume_source": 0,
-  "running": 15,
+  "running": 17,
   "reruns": 7319,
   "by_class": {
    "S": {
@@ -1402,13 +1402,13 @@
   ]
  ],
  "fleet": {
-  "boxes": 46,
-  "vcpu": 3584,
-  "load": 302,
+  "boxes": 48,
+  "vcpu": 3968,
+  "load": 407,
   "benches": 27,
   "running_by_class": {
+   "XXXL": 6,
    "XXL": 7,
-   "XXXL": 4,
    "XL": 4
   },
   "groups": [
@@ -1423,11 +1423,20 @@
    },
    {
     "region": "ap-south-2",
+    "type": "r7a.48xlarge",
+    "role": "big",
+    "boxes": 1,
+    "vcpu": 192,
+    "load": 1,
+    "benches": 0
+   },
+   {
+    "region": "ap-south-2",
     "type": "r7i.16xlarge",
     "role": "standard",
     "boxes": 27,
     "vcpu": 1728,
-    "load": 266,
+    "load": 355,
     "benches": 26
    },
    {
@@ -1454,7 +1463,16 @@
     "role": "standard",
     "boxes": 2,
     "vcpu": 128,
-    "load": 22,
+    "load": 36,
+    "benches": 0
+   },
+   {
+    "region": "ap-southeast-1",
+    "type": "r7i.48xlarge",
+    "role": "big",
+    "boxes": 1,
+    "vcpu": 192,
+    "load": 1,
     "benches": 0
    }
   ]
