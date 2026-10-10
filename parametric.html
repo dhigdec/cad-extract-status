@@ -72,16 +72,17 @@ footer{color:var(--muted);font-size:12px;margin-top:20px}
 <body>
 <div class="viz-root"><div class="wrap">
 <header><h1>Parametric CAD rebuild — live status</h1><span class="live"><span class="dot" id="dot"></span><span id="upd">loading…</span></span></header>
-<p class="sub">Every 3D steel model in the perfect tier is turned into a headless, deterministic build123d script that rebuilds it part by part.
-Each model is verified per part against two references (the IFC source geometry and the delivered STEP), per assembly / piece mark, as a whole model,
+<p class="sub">Every 3D steel model is rebuilt by a headless, deterministic build123d script. The regular PERFECT tier uses the owner’s disclosed script-acceptance policy from October 10.
+Each model is checked per part against two references (the IFC source geometry and the delivered STEP), per assembly / piece mark, as a whole model,
 by running the packaged script exactly as a client would, and by rebuilding it twice for a byte-identical STEP.
-Numbers are read from the run's state every 5 minutes. No project or client names are shown.</p>
+PERFECT now means accepted script readiness; geometry checks may still fail. Original verification verdicts and failures are retained. Numbers are read every 5 minutes. No project or client names are shown.</p>
 
 <div class="tiles" id="tiles"></div>
+<p class="note" id="acceptancePolicy"></p>
 
 <section>
   <h2>Progress by model size</h2>
-  <p class="note">Size classes use delivered STEP file size. Allocating more memory to a job does not move its model into a larger size class. Bar = models processed; orange part = processed and perfect. A model is perfect only when every one of its parts is - so large models (median 12,000+ parts) need every remaining failure type fixed; "parts matching" shows how close they are. Rate = models finished in the last 30 minutes, per hour; the time left is at that rate.</p>
+  <p class="note">Size classes use delivered STEP file size. Allocating more memory to a job does not move its model into a larger size class. Bar = models processed; orange part = processed and perfect. PERFECT uses the disclosed script-acceptance rule below; geometry failures can remain. Large models have a median of 12,000+ parts; "parts matching" shows how close they are. Rate = models finished in the last 30 minutes, per hour; the time left is at that rate.</p>
   <div class="legend"><span><i class="sw" style="background:var(--series-1)"></i>processed</span><span><i class="sw" style="background:var(--series-2)"></i>perfect</span></div>
   <div id="meters"></div>
   <table id="clsTable"></table>
@@ -195,9 +196,11 @@ function render(d) {
   $('upd').textContent = 'updated ' + new Date(d.updated).toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) + (age > 15 ? ' (stale)' : '');
   $('dot').className = 'dot' + (age > 15 ? ' stale' : '');
   const m = d.models, P = d.parts, st = P.status || {};
+  const ap = m.acceptance_policy;
+  $('acceptancePolicy').textContent = ap ? ap.definition + ' Policy effective ' + new Date(ap.effective).toLocaleString() + '. ' + fmt(ap.geometry_review_required) + ' accepted models still require geometry review. The jump at this time is reclassification, not newly corrected geometry.' : 'PERFECT uses the original full-verification rule.';
   $('tiles').replaceChildren(
     tile('Models processed', fmt(m.done), 'of ' + fmt(m.total) + ' (' + pct(m.done, m.total) + ')'),
-    tile('Perfect models', fmt(m.perfect), pct(m.perfect, m.done) + ' of processed'
+    tile('Perfect models', fmt(m.perfect), pct(m.perfect, m.done) + ' of processed; disclosed script acceptance'
          + (m.perfect_relying_on_ifc_integral ? '; ' + fmt(m.perfect_relying_on_ifc_integral) + ' via exact IFC geometry' : '')
          + (m.perfect_with_kernel_left_out ? '; ' + fmt(m.perfect_with_kernel_left_out) + ' with kernel-unbuildable items left out' : '')
          + (m.perfect_with_kernel_failed_cut ? '; ' + fmt(m.perfect_with_kernel_failed_cut) + ' with kernel-failed cuts left out' : '')
@@ -238,8 +241,8 @@ function render(d) {
     ['script run: piece-mark selections', fmt(e.piece.ok), fmt(e.piece.runs), pct(e.piece.ok, e.piece.runs)]], [1, 2, 3]);
   table($('geo'), ['geometry', 'parts', 'match', '%'], Object.entries(P.by_geometry).map(([g, c]) => { const t = sum(c); return [g, fmt(t), fmt(c.match || 0), pct(c.match || 0, t)]; }), [1, 2, 3]);
   if (d.gap) {
-    const g = d.gap, nonp = m.done - m.perfect;
-    $('gapNote').textContent = fmt(nonp) + ' processed models are not perfect yet. Half of them have ' + fmt(g.median_failing_parts) + ' or fewer failing parts (' + fmt(g.models_with_le5_failing_parts) + ' have 5 or fewer). Each row is the fix track a model depends on; models are rerun on the merged code (v10) once the fixes pass review.';
+    const g = d.gap, nonp = g.models_requiring_geometry_work ?? (m.done - m.perfect);
+    $('gapNote').textContent = fmt(nonp) + ' processed models still have verification checks requiring work, including accepted scripts. Half of them have ' + fmt(g.median_failing_parts) + ' or fewer failing parts (' + fmt(g.models_with_le5_failing_parts) + ' have 5 or fewer). Each row is the fix track a model depends on; models are rerun on the merged code (v10) once the fixes pass review.';
     const rows = g.single.map(x => [x.fix, x.cause.replace(/_/g, ' '), fmt(x.models), pct(x.models, nonp)]);
     rows.push(['several of the above', Object.entries(g.several_top).slice(0, 3).map(([k, v]) => k + ' (' + fmt(v) + ')').join('; ') + (Object.keys(g.several_top).length > 3 ? '; …' : ''), fmt(g.several_causes), pct(g.several_causes, nonp)]);
     table($('gap'), ['fix track', 'cause', 'models', 'share of the gap'], rows, [2, 3]);
