@@ -1,5 +1,5 @@
 {
- "updated": "2026-10-10T09:00:11Z",
+ "updated": "2026-10-10T09:05:11Z",
  "started": "2026-10-07T22:20:00Z",
  "models": {
   "total": 12735,
@@ -1467,7 +1467,7 @@
  "fleet": {
   "boxes": 52,
   "vcpu": 4472,
-  "load": 503,
+  "load": 362,
   "benches": 34,
   "running_by_class": {
    "XXXL": 9,
@@ -1480,7 +1480,7 @@
     "role": "standard",
     "boxes": 10,
     "vcpu": 640,
-    "load": 68,
+    "load": 29,
     "benches": 7
    },
    {
@@ -1498,7 +1498,7 @@
     "role": "standard",
     "boxes": 1,
     "vcpu": 192,
-    "load": 17,
+    "load": 2,
     "benches": 0
    },
    {
@@ -1507,7 +1507,7 @@
     "role": "big",
     "boxes": 1,
     "vcpu": 192,
-    "load": 56,
+    "load": 4,
     "benches": 0
    },
    {
@@ -1525,7 +1525,7 @@
     "role": "standard",
     "boxes": 27,
     "vcpu": 1728,
-    "load": 298,
+    "load": 287,
     "benches": 26
    },
    {
@@ -1543,7 +1543,7 @@
     "role": "big",
     "boxes": 5,
     "vcpu": 960,
-    "load": 16,
+    "load": 14,
     "benches": 0
    },
    {
@@ -1561,7 +1561,7 @@
     "role": "standard",
     "boxes": 2,
     "vcpu": 128,
-    "load": 3,
+    "load": 1,
     "benches": 1
    },
    {
@@ -1570,7 +1570,7 @@
     "role": "big",
     "boxes": 2,
     "vcpu": 384,
-    "load": 44,
+    "load": 25,
     "benches": 0
    }
   ]
@@ -1578,8 +1578,8 @@
  "workstreams": [
   {
    "name": "Full-corpus run (code v9 / v9a / v9p)",
-   "state": "running v10.5; v10.6 combined gate",
-   "note": "Nine additional workers (eight 1.5 TB and one 1 TB) have claimed memory-bound production jobs; production remains v10.5 pending the release gate."
+   "state": "running v10.5; v10.6 prepared",
+   "note": "Eleven additional workers launched. Read-only check 08:57 UTC: 52 fresh heartbeats and 13 running production jobs. Two newest workers await the next rerun queue; old heartbeat records are excluded from this running count. Release blocked by expired AWS SSO."
   },
   {
    "name": "Speed-up (v9p)",
@@ -1678,8 +1678,8 @@
   },
   {
    "name": "v10.6 combined release",
-   "state": "proofs running; production remains v10.5",
-   "note": "Regression 42/42 and preservation 61/61 all PERFECT. 45 unique candidate gains across 107 paired affected comparisons, zero losses so far. Test gains are excluded from the live total. Cross-host STEP bytes, larger cases and final SDS/2 tests still running. Updated 2026-10-10 07:35 UTC."
+   "state": "prepared; AWS login approval required",
+   "note": "42 regression and 61 preservation models all PERFECT. Completed paired proof: 57 additional PERFECT models, zero losses. 33 cross-host STEP comparisons identical; full L/XL/XXL checks pass. Production remains v10.5 / 10,067 PERFECT; test gains are excluded. Updated 2026-10-10 09:03 UTC."
   }
  ]
 }
