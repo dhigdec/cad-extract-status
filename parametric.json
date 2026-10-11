@@ -1,23 +1,23 @@
 {
- "updated": "2026-10-11T04:58:38Z",
+ "updated": "2026-10-11T05:03:38Z",
  "started": "2026-10-07T22:20:00Z",
  "models": {
   "total": 12735,
   "done": 12721,
-  "perfect": 10354,
+  "perfect": 10361,
   "acceptance_policy": {
    "id": "sm_geometry_006_2026_10_10",
    "effective": "2026-10-11T04:27:19Z",
    "definition": "PERFECT includes original full-verification proofs and S/M scripts certified within 0.6% geometry limits. The new S/M route checks volume error <=0.6% and centroid/bounding-box error <=0.6% of each reference part's bounding-box diagonal, against every available IFC and delivered STEP reference, including full-script STEP readbacks. Inventory, valid closed solids, execution and determinism remain mandatory; existing source-defect exceptions stay disclosed. Bounded admissions are counted separately in the breakdown and do not claim to pass the original tighter checks.",
-   "geometry_review_required": 119,
-   "bounded_geometry_006": 119,
-   "bounded_source_open_parts": 1941,
+   "geometry_review_required": 123,
+   "bounded_geometry_006": 123,
+   "bounded_source_open_parts": 2010,
    "bounded_no_source_parts": 12,
-   "original_fully_verified": 10235,
+   "original_fully_verified": 10238,
    "geometry_limit": 0.006,
    "bounded_by_class": {
     "S": 40,
-    "M": 79
+    "M": 83
    },
    "native_flags_refused_by_evidence_audit": 0
   },
@@ -29,21 +29,21 @@
   "perfect_with_kernel_faces_merged": 0,
   "perfect_with_kernel_faces_split": 46,
   "perfect_with_zero_volume_source": 2,
-  "running": 112,
+  "running": 369,
   "reruns": 7326,
   "by_class": {
    "S": {
     "total": 8029,
     "done": 8029,
-    "perfect": 7473,
+    "perfect": 7476,
     "size": "< 10 MB",
     "parts": 1276129,
-    "parts_match": 1272715
+    "parts_match": 1272718
    },
    "M": {
     "total": 2960,
     "done": 2960,
-    "perfect": 2224,
+    "perfect": 2228,
     "size": "10-100 MB",
     "parts": 9666546,
     "parts_match": 9652525
@@ -76,11 +76,11 @@
   "by_tool": {
    "tekla": {
     "done": 8134,
-    "perfect": 6438
+    "perfect": 6442
    },
    "sds2": {
     "done": 2886,
-    "perfect": 2545
+    "perfect": 2547
    },
    "blank": {
     "done": 1113,
@@ -88,7 +88,7 @@
    },
    "other": {
     "done": 404,
-    "perfect": 347
+    "perfect": 348
    },
    "db1": {
     "done": 171,
@@ -115,9 +115,9 @@
  "parts": {
   "built": 44919439,
   "status": {
-   "match": 44639143,
+   "match": 44639146,
    "BUILD_ERROR": 222592,
-   "MISMATCH": 40831,
+   "MISMATCH": 40828,
    "INVALID_SOLID": 9085,
    "match_ifc_integral": 7660,
    "match_ifc_repaired_kernel": 64,
@@ -126,8 +126,8 @@
   },
   "by_geometry": {
    "parametric": {
-    "match": 24324066,
-    "MISMATCH": 33783,
+    "match": 24324069,
+    "MISMATCH": 33780,
     "match_ifc_integral": 7660,
     "INVALID_SOLID": 2985,
     "BUILD_ERROR": 804,
@@ -147,10 +147,10 @@
    }
   },
   "source_check": {
-   "exact": 44410509,
+   "exact": 44410512,
    "source_open": 236352,
    "": 222595,
-   "DIFFERS": 49732,
+   "DIFFERS": 49729,
    "n/a": 251
   },
   "delivered_check": {
@@ -162,15 +162,15 @@
  "levels": {
   "assemblies": {
    "total": 8210447,
-   "ok": 8144481
+   "ok": 8144485
   },
   "assembly_marks": {
    "total": 1915804,
-   "ok": 1895487
+   "ok": 1895490
   },
   "piece_marks": {
    "total": 2743198,
-   "ok": 2724135
+   "ok": 2724136
   }
  },
  "e2e": {
@@ -192,8 +192,8 @@
   }
  },
  "reasons": {
-  "levels_not_ok": 2370,
-  "parts_not_all_match": 2369,
+  "levels_not_ok": 2367,
+  "parts_not_all_match": 2366,
   "e2e_model": 828,
   "e2e_assembly": 252,
   "e2e_determinism": 116,
@@ -218,29 +218,29 @@
    {
     "cause": "e2e_only",
     "fix": "end-to-end script fix",
-    "models": 72
+    "models": 71
    }
   ],
-  "several_causes": 2295,
-  "models_requiring_geometry_work": 2367,
-  "models_not_originally_verified": 2486,
+  "several_causes": 2289,
+  "models_requiring_geometry_work": 2360,
+  "models_not_originally_verified": 2483,
   "several_top": {
-   "end-to-end script fix + parametric cut / notch fix": 1405,
-   "end-to-end script fix + exact-face geometry fix": 616,
+   "end-to-end script fix + parametric cut / notch fix": 1402,
+   "end-to-end script fix + exact-face geometry fix": 613,
    "end-to-end script fix + exact-face geometry fix + parametric cut / notch fix": 172,
    "crash fixes + end-to-end script fix": 40,
    "crash fixes + end-to-end script fix + parametric cut / notch fix": 25,
    "crash fixes + end-to-end script fix + exact-face geometry fix": 17
   },
   "median_failing_parts": 4,
-  "models_with_le5_failing_parts": 1299
+  "models_with_le5_failing_parts": 1292
  },
  "code_versions": {
   "v9a": 4484,
   "v10": 3398,
-  "v10.8": 1333,
-  "v10.7": 815,
-  "v10.6": 499,
+  "v10.8": 1196,
+  "v10.7": 814,
+  "v10.6": 498,
   "v10.4": 439,
   "v9": 400,
   "v10.2": 382,
@@ -248,22 +248,23 @@
   "v10.3": 200,
   "db1": 171,
   "v10.1": 169,
+  "v10.9": 139,
   "sds2": 97,
   "v10.5": 52,
   "n/a": 3
  },
  "throughput_per_h": {
-  "S": 2,
-  "M": 116,
+  "S": 278,
+  "M": 84,
   "L": 0,
-  "XL": 4,
+  "XL": 2,
   "XXL": 0
  },
  "eta_h": {
   "S": null,
   "M": null,
   "L": null,
-  "XL": 0.8,
+  "XL": 1.5,
   "XXL": null
  },
  "timeline": [
@@ -1644,229 +1645,234 @@
   ],
   [
    1791659700,
-   10228,
+   10227,
    10073
   ],
   [
    1791660600,
-   10240,
+   10239,
    10073
   ],
   [
    1791661500,
-   10255,
+   10254,
    10073
   ],
   [
    1791662400,
-   10288,
+   10287,
    10073
   ],
   [
    1791663300,
-   10323,
+   10322,
    10073
   ],
   [
    1791664200,
-   10345,
+   10344,
    10073
   ],
   [
    1791665100,
-   10389,
+   10388,
    10074
   ],
   [
    1791666000,
-   10471,
+   10470,
    10092
   ],
   [
    1791666900,
-   10531,
+   10530,
    10092
   ],
   [
    1791667800,
-   10574,
+   10573,
    10092
   ],
   [
    1791668700,
-   10638,
+   10637,
    10092
   ],
   [
    1791669600,
-   10687,
+   10686,
    10092
   ],
   [
    1791670500,
-   10759,
+   10758,
    10092
   ],
   [
    1791671400,
-   10833,
+   10832,
    10095
   ],
   [
    1791672300,
-   10916,
+   10915,
    10097
   ],
   [
    1791673200,
-   11000,
+   10999,
    10105
   ],
   [
    1791674100,
-   11050,
+   11049,
    10113
   ],
   [
    1791675000,
-   11099,
+   11098,
    10115
   ],
   [
    1791675900,
-   11125,
+   11124,
    10119
   ],
   [
    1791676800,
-   11150,
+   11149,
    10127
   ],
   [
    1791677700,
-   11187,
+   11186,
    10149
   ],
   [
    1791678600,
-   11201,
+   11200,
    10156
   ],
   [
    1791679500,
-   11220,
+   11218,
    10164
   ],
   [
    1791680400,
-   11231,
+   11229,
    10169
   ],
   [
    1791681300,
-   11253,
+   11251,
    10177
   ],
   [
    1791682200,
-   11276,
+   11274,
    10184
   ],
   [
    1791683100,
-   11294,
+   11292,
    10191
   ],
   [
    1791684000,
-   11304,
+   11302,
    10191
   ],
   [
    1791684900,
-   11322,
+   11320,
    10192
   ],
   [
    1791685800,
-   11329,
+   11327,
    10196
   ],
   [
    1791686700,
-   11331,
+   11329,
    10196
   ],
   [
    1791687600,
-   11338,
+   11336,
    10196
   ],
   [
    1791688500,
-   11705,
+   11592,
    10213
   ],
   [
    1791689400,
-   11988,
+   11853,
    10219
   ],
   [
    1791690300,
-   12234,
+   12093,
    10226
   ],
   [
    1791691200,
-   12389,
+   12248,
    10229
   ],
   [
    1791692100,
-   12557,
+   12416,
    10232
   ],
   [
    1791693000,
-   12664,
+   12523,
    10235
   ],
   [
    1791693900,
-   12705,
+   12564,
    10354
   ],
   [
    1791694800,
-   12718,
+   12581,
    10354
   ],
   [
    1791695700,
    12718,
-   10354
+   10361
+  ],
+  [
+   1791696600,
+   12718,
+   10361
   ]
  ],
  "fleet": {
   "boxes": 55,
   "vcpu": 4376,
-  "load": 1467,
+  "load": 2608,
   "benches": 3,
   "running_by_class": {
    "XL": 5,
-   "M": 72,
+   "M": 75,
+   "S": 256,
    "XXL": 18,
-   "L": 15,
-   "S": 2
+   "L": 15
   },
   "running_by_allocation_tier": {
-   "XL": 1,
-   "M": 68,
+   "XL": 6,
+   "M": 67,
+   "S": 251,
    "XXXL": 8,
-   "XXL": 29,
-   "L": 4,
-   "S": 2
+   "L": 8,
+   "XXL": 29
   },
   "groups": [
    {
@@ -1875,7 +1881,7 @@
     "role": "big",
     "boxes": 1,
     "vcpu": 64,
-    "load": 2,
+    "load": 14,
     "benches": 0
    },
    {
@@ -1884,7 +1890,7 @@
     "role": "standard",
     "boxes": 11,
     "vcpu": 704,
-    "load": 166,
+    "load": 541,
     "benches": 0
    },
    {
@@ -1893,7 +1899,7 @@
     "role": "standard",
     "boxes": 1,
     "vcpu": 32,
-    "load": 18,
+    "load": 38,
     "benches": 0
    },
    {
@@ -1902,7 +1908,7 @@
     "role": "big",
     "boxes": 1,
     "vcpu": 128,
-    "load": 12,
+    "load": 13,
     "benches": 0
    },
    {
@@ -1911,7 +1917,7 @@
     "role": "standard",
     "boxes": 1,
     "vcpu": 192,
-    "load": 15,
+    "load": 53,
     "benches": 0
    },
    {
@@ -1920,7 +1926,7 @@
     "role": "big",
     "boxes": 1,
     "vcpu": 192,
-    "load": 12,
+    "load": 20,
     "benches": 0
    },
    {
@@ -1929,7 +1935,7 @@
     "role": "standard",
     "boxes": 1,
     "vcpu": 48,
-    "load": 2,
+    "load": 46,
     "benches": 0
    },
    {
@@ -1938,7 +1944,7 @@
     "role": "standard",
     "boxes": 26,
     "vcpu": 1664,
-    "load": 915,
+    "load": 1449,
     "benches": 3
    },
    {
@@ -1947,7 +1953,7 @@
     "role": "standard",
     "boxes": 1,
     "vcpu": 8,
-    "load": 0,
+    "load": 11,
     "benches": 0
    },
    {
@@ -1965,7 +1971,7 @@
     "role": "standard",
     "boxes": 6,
     "vcpu": 384,
-    "load": 222,
+    "load": 314,
     "benches": 0
    },
    {
@@ -1974,7 +1980,7 @@
     "role": "big",
     "boxes": 1,
     "vcpu": 192,
-    "load": 18,
+    "load": 24,
     "benches": 0
    }
   ]
@@ -1982,8 +1988,8 @@
  "workstreams": [
   {
    "name": "Full-corpus run (code v9 / v9a / v9p)",
-   "state": "running v10.8 / jobs_v17",
-   "note": "v10.8 released 20:01 PDT. Latest audited snapshot: 10,230 genuine PERFECT (+34: 16 S, 18 M), 1,085 completed reruns. 1,401 queued failures are opportunities, not estimated gains. 337 production jobs / 54 busy boxes. Original full proof required; large work retained."
+   "state": "running v10.9 / jobs_v18",
+   "note": "Released 21:59 PDT through sole validated writer: 542 S and 681 M failed-model reruns. All 55 fresh workers see v10.9; 53 busy / 266 actual jobs at 22:01. Fully accepted/pinned/active rows and all large work preserved. Tested count 10,358: 10,235 original proofs plus 123 current S/M 0.6% certificates. Reruns are not a gain forecast."
   },
   {
    "name": "Dashboard size-class correction",
@@ -2109,6 +2115,11 @@
    "name": "S/M diagnostic transport and next source repairs",
    "state": "v10.9 final proofs; next combined source gates active",
    "note": "v10.9 42 regression / 61 preservation pass; exactly three S affected gains; XL 60,243 full pass. XXL and cross-host hashes pending. CHS plane repair full pair fixes one 571-part M model. Future six-component-gain source candidate has actual broad/XL gates. 72 isolated exact S/M diagnostics (42 complete at read) produce part prospects only; eight new whole-model pairs dispatched. Two source-open IFC-face model repairs remain private pending owner policy review. No changed acceptance, tolerance or production gain claim."
+  },
+  {
+   "name": "v10.9 \u2014 S/M construction",
+   "state": "AWS RELEASED; S/M reruns",
+   "note": "Core gates complete; three controlled S repairs. Six Modal transport pilots gate new Modal production separately. 542 S / 681 M reruns are opportunities, not predicted gains."
   }
  ]
 }
