@@ -1,5 +1,5 @@
 {
- "updated": "2026-10-11T18:31:15Z",
+ "updated": "2026-10-11T18:36:15Z",
  "started": "2026-10-07T22:20:00Z",
  "models": {
   "total": 12735,
@@ -36,7 +36,7 @@
   "perfect_with_kernel_faces_merged": 0,
   "perfect_with_kernel_faces_split": 46,
   "perfect_with_zero_volume_source": 2,
-  "running": 32,
+  "running": 33,
   "reruns": 7337,
   "by_class": {
    "S": {
@@ -182,20 +182,20 @@
  },
  "e2e": {
   "model": {
-   "runs": 12642,
-   "ok": 11867
+   "runs": 12641,
+   "ok": 11866
   },
   "determinism": {
-   "runs": 12642,
-   "ok": 12553
+   "runs": 12641,
+   "ok": 12552
   },
   "assembly": {
    "runs": 115291,
    "ok": 114927
   },
   "piece": {
-   "runs": 94360,
-   "ok": 94263
+   "runs": 94354,
+   "ok": 94257
   }
  },
  "reasons": {
@@ -204,7 +204,7 @@
   "e2e_model": 775,
   "e2e_assembly": 220,
   "e2e_determinism": 89,
-  "no_e2e_summary": 77,
+  "no_e2e_summary": 78,
   "step_e2e_rc1": 73,
   "e2e_piece": 60,
   "step_recover_rc124": 31,
@@ -218,7 +218,7 @@
   "step_reference_defects_rc124": 8,
   "step_verify_rc1": 6,
   "step_extract+exact_rc124": 5,
-  "step_e2e_rc124": 3
+  "step_e2e_rc124": 4
  },
  "gap": {
   "single": [
@@ -232,12 +232,12 @@
   "models_requiring_geometry_work": 1932,
   "models_not_originally_verified": 2307,
   "several_top": {
-   "end-to-end script fix + parametric cut / notch fix": 1055,
+   "end-to-end script fix + parametric cut / notch fix": 1054,
    "end-to-end script fix + exact-face geometry fix": 572,
    "end-to-end script fix + exact-face geometry fix + parametric cut / notch fix": 134,
    "crash fixes + end-to-end script fix": 43,
    "crash fixes + end-to-end script fix + exact-face geometry fix": 29,
-   "crash fixes + end-to-end script fix + parametric cut / notch fix": 24
+   "crash fixes + end-to-end script fix + parametric cut / notch fix": 25
   },
   "median_failing_parts": 5,
   "models_with_le5_failing_parts": 989
@@ -250,8 +250,8 @@
   "v10.4": 413,
   "v9": 400,
   "v10.2": 382,
-  "v10.15": 372,
-  "v10.19": 370,
+  "v10.15": 373,
+  "v10.19": 369,
   "v10.9": 341,
   "v9p": 279,
   "v10.8": 200,
@@ -270,7 +270,7 @@
  },
  "throughput_per_h": {
   "S": 0,
-  "M": 8,
+  "M": 6,
   "L": 0,
   "XL": 2,
   "XXL": 0
@@ -2142,10 +2142,10 @@
  "fleet": {
   "boxes": 39,
   "vcpu": 3856,
-  "load": 278,
+  "load": 284,
   "benches": 5,
   "running_by_class": {
-   "S": 11,
+   "S": 12,
    "XXL": 15,
    "M": 6
   },
@@ -2153,6 +2153,7 @@
    "XL": 10,
    "L": 2,
    "XXXL": 11,
+   "S": 1,
    "XXL": 8,
    "M": 1
   },
@@ -2172,7 +2173,7 @@
     "role": "standard",
     "boxes": 6,
     "vcpu": 384,
-    "load": 4,
+    "load": 8,
     "benches": 0
    },
    {
@@ -2217,7 +2218,7 @@
     "role": "standard",
     "boxes": 17,
     "vcpu": 1088,
-    "load": 96,
+    "load": 85,
     "benches": 5
    },
    {
@@ -2226,7 +2227,7 @@
     "role": "big",
     "boxes": 7,
     "vcpu": 1344,
-    "load": 103,
+    "load": 108,
     "benches": 0
    },
    {
@@ -2235,7 +2236,7 @@
     "role": "standard",
     "boxes": 2,
     "vcpu": 128,
-    "load": 60,
+    "load": 68,
     "benches": 0
    },
    {
@@ -2244,7 +2245,7 @@
     "role": "big",
     "boxes": 2,
     "vcpu": 384,
-    "load": 3,
+    "load": 2,
     "benches": 0
    }
   ]
