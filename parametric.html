@@ -78,7 +78,6 @@ by running the packaged script exactly as a client would, and by rebuilding it t
 S/M admissions within 0.6% require complete inventory, valid closed solids, successful scripts and byte-identical deterministic rebuilds. Existing documented source-defect proof rules are disclosed below; all failures remain recorded. Numbers are read every 5 minutes. No project or client names are shown.</p>
 
 <div class="tiles" id="tiles"></div>
-<p class="note" id="acceptancePolicy"></p>
 
 <section>
   <h2>Progress by model size</h2>
@@ -197,7 +196,6 @@ function render(d) {
   $('dot').className = 'dot' + (age > 15 ? ' stale' : '');
   const m = d.models, P = d.parts, st = P.status || {};
   const ap = m.acceptance_policy;
-  $('acceptancePolicy').textContent = ap ? ap.definition + ' Corrected ' + new Date(ap.effective).toLocaleString() + '.' : 'PERFECT includes original full proofs plus S/M scripts certified within 0.6% geometry limits.';
   $('tiles').replaceChildren(
     tile('Models processed', fmt(m.done), 'of ' + fmt(m.total) + ' (' + pct(m.done, m.total) + ')'),
     tile('Perfect models', fmt(m.perfect), pct(m.perfect, m.done) + ' of processed; ' + (ap && ap.id === 'sm_geometry_006_2026_10_10' ? fmt(ap.original_fully_verified) + ' original full proofs; ' + fmt(ap.bounded_geometry_006) + ' S/M proofs within 0.6% geometry limits' + (ap.bounded_source_open_parts ? '; ' + fmt(ap.bounded_source_open_parts) + ' source-open parts in these admissions (no closed IFC volume reference)' : '') + (ap.bounded_no_source_parts ? '; ' + fmt(ap.bounded_no_source_parts) + ' parts without an IFC source reference' : '') : 'original verification rules')
