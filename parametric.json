@@ -1,15 +1,15 @@
 {
- "updated": "2026-10-12T04:01:16Z",
+ "updated": "2026-10-12T04:07:12Z",
  "started": "2026-10-07T22:20:00Z",
  "models": {
   "total": 12735,
   "done": 12734,
-  "perfect": 10847,
+  "perfect": 11670,
   "acceptance_policy": {
    "id": "original_bounded_and_closed_ifc_review_2026_10_11",
    "effective": "2026-10-11T07:13:50Z",
-   "definition": "PERFECT includes original full proofs, S/M proofs within 0.6% against all available IFC and STEP references, and separately recorded S/M approximate admissions within 0.6% of closed authoritative IFC geometry on every part and full-script readback. The IFC-authoritative route may fail delivered STEP limits; those comparisons and actual errors remain recorded. These admissions do not claim original full or both-reference proofs. Complete inventory, valid closed solids, execution, determinism and existing source-policy proofs remain mandatory. No source-open or missing-IFC part qualifies for the IFC-authoritative route.",
-   "geometry_review_required": 391,
+   "definition": "PERFECT includes original full proofs, S/M proofs within 0.6% against all available IFC and STEP references, and separately recorded S/M approximate admissions within 0.6% of closed authoritative IFC geometry on every part and full-script readback. The IFC-authoritative route may fail delivered STEP limits; those comparisons and actual errors remain recorded. These admissions do not claim original full or both-reference proofs. Complete inventory, valid closed solids, execution, determinism and existing source-policy proofs remain mandatory. No source-open or missing-IFC part qualifies for the IFC-authoritative route. Since 2026-10-12, by owner direction, PERFECT also includes a separately counted lenient tier (all sizes): complete deterministic scripts whose worst part error is within 5% (0.6% for the L/XL/XXL extension of the existing rule). Their failed tolerance checks remain recorded; structural checks remain mandatory. The tier may rely on the delivered STEP when the IFC kernel disagrees, and on IFC closed-form integral disagreements within 5%; both are recorded.",
+   "geometry_review_required": 1214,
    "bounded_geometry_006": 131,
    "bounded_source_open_parts": 1948,
    "bounded_no_source_parts": 35,
@@ -26,15 +26,29 @@
    },
    "reviewed_ifc_has_closed_reference_on_every_part": true,
    "reviewed_ifc_may_fail_delivered_step_limits": true,
-   "native_flags_refused_by_evidence_audit": 0
+   "native_flags_refused_by_evidence_audit": 0,
+   "lenient_small_geometry_005": 823,
+   "lenient_limit": 0.05,
+   "lenient_by_tier": {
+    "large_006": 248,
+    "lenient_005": 575
+   },
+   "lenient_by_class": {
+    "S": 183,
+    "M": 198,
+    "L": 345,
+    "XL": 58,
+    "XXL": 39
+   },
+   "lenient_structural_checks_mandatory": true
   },
   "size_class_basis": "immutable delivered STEP bytes; independent of memory allocation tier",
-  "perfect_relying_on_ifc_integral": 176,
-  "perfect_with_kernel_left_out": 407,
-  "perfect_with_kernel_failed_cut": 15,
-  "perfect_relying_on_ifc_repaired_kernel": 4,
+  "perfect_relying_on_ifc_integral": 394,
+  "perfect_with_kernel_left_out": 497,
+  "perfect_with_kernel_failed_cut": 50,
+  "perfect_relying_on_ifc_repaired_kernel": 23,
   "perfect_with_kernel_faces_merged": 0,
-  "perfect_with_kernel_faces_split": 46,
+  "perfect_with_kernel_faces_split": 57,
   "perfect_with_zero_volume_source": 2,
   "running": 18,
   "reruns": 7341,
@@ -42,7 +56,7 @@
    "S": {
     "total": 8029,
     "done": 8029,
-    "perfect": 7680,
+    "perfect": 7863,
     "size": "< 10 MB",
     "parts": 1276129,
     "parts_match": 1273505
@@ -50,7 +64,7 @@
    "M": {
     "total": 2960,
     "done": 2960,
-    "perfect": 2509,
+    "perfect": 2707,
     "size": "10-100 MB",
     "parts": 9669133,
     "parts_match": 9658339
@@ -58,7 +72,7 @@
    "L": {
     "total": 1392,
     "done": 1392,
-    "perfect": 595,
+    "perfect": 940,
     "size": "100-500 MB",
     "parts": 19677428,
     "parts_match": 19658092
@@ -66,7 +80,7 @@
    "XL": {
     "total": 219,
     "done": 219,
-    "perfect": 38,
+    "perfect": 96,
     "size": "0.5-1 GB",
     "parts": 6157568,
     "parts_match": 6147245
@@ -74,7 +88,7 @@
    "XXL": {
     "total": 135,
     "done": 134,
-    "perfect": 25,
+    "perfect": 64,
     "size": "1-14 GB",
     "parts": 8897067,
     "parts_match": 8671592
@@ -83,19 +97,19 @@
   "by_tool": {
    "tekla": {
     "done": 8136,
-    "perfect": 6837
+    "perfect": 7471
    },
    "sds2": {
     "done": 2886,
-    "perfect": 2575
+    "perfect": 2659
    },
    "blank": {
     "done": 1114,
-    "perfect": 898
+    "perfect": 993
    },
    "other": {
     "done": 404,
-    "perfect": 360
+    "perfect": 370
    },
    "db1": {
     "done": 171,
@@ -225,22 +239,22 @@
    {
     "cause": "e2e_only",
     "fix": "end-to-end script fix",
-    "models": 48
+    "models": 30
    }
   ],
-  "several_causes": 1839,
-  "models_requiring_geometry_work": 1887,
+  "several_causes": 1034,
+  "models_requiring_geometry_work": 1064,
   "models_not_originally_verified": 2278,
   "several_top": {
-   "end-to-end script fix + parametric cut / notch fix": 1045,
-   "end-to-end script fix + exact-face geometry fix": 558,
-   "end-to-end script fix + exact-face geometry fix + parametric cut / notch fix": 126,
+   "end-to-end script fix + parametric cut / notch fix": 479,
+   "end-to-end script fix + exact-face geometry fix": 357,
+   "end-to-end script fix + exact-face geometry fix + parametric cut / notch fix": 88,
    "crash fixes + end-to-end script fix": 43,
    "crash fixes + end-to-end script fix + parametric cut / notch fix": 26,
    "crash fixes + end-to-end script fix + exact-face geometry fix": 23
   },
-  "median_failing_parts": 5,
-  "models_with_le5_failing_parts": 954
+  "median_failing_parts": 9,
+  "models_with_le5_failing_parts": 399
  },
  "code_versions": {
   "v9a": 4484,
@@ -2322,18 +2336,18 @@
   [
    1791778500,
    12721,
-   10847
+   11670
   ],
   [
    1791779400,
    12721,
-   10847
+   11670
   ]
  ],
  "fleet": {
   "boxes": 30,
   "vcpu": 3120,
-  "load": 230,
+  "load": 247,
   "benches": 5,
   "running_by_class": {
    "S": 3,
@@ -2361,7 +2375,7 @@
     "role": "big",
     "boxes": 1,
     "vcpu": 192,
-    "load": 16,
+    "load": 17,
     "benches": 0
    },
    {
@@ -2379,7 +2393,7 @@
     "role": "standard",
     "boxes": 1,
     "vcpu": 192,
-    "load": 22,
+    "load": 21,
     "benches": 0
    },
    {
@@ -2397,7 +2411,7 @@
     "role": "standard",
     "boxes": 14,
     "vcpu": 896,
-    "load": 29,
+    "load": 25,
     "benches": 5
    },
    {
@@ -2406,7 +2420,7 @@
     "role": "big",
     "boxes": 5,
     "vcpu": 960,
-    "load": 98,
+    "load": 112,
     "benches": 0
    },
    {
@@ -2424,7 +2438,7 @@
     "role": "big",
     "boxes": 2,
     "vcpu": 384,
-    "load": 59,
+    "load": 67,
     "benches": 0
    }
   ]
