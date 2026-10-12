@@ -88,10 +88,10 @@ async function load(){
     set('b1','l1',d.models_packaged,target);set('b2','l2',d.projects_done,projTarget);set('b3','l3',d.projects_with_inputs,d.projects);
     document.getElementById('note').textContent=f(d.projects_without_perfect_models)+' of '+f(d.projects)+' projects have no perfect model yet (inputs only). Models in fully done projects: '+f(d.models_in_done_projects)+'.';
     const p=d.pii_inputs||{};
-    document.getElementById('pc').innerHTML=f(p.projects_cleaned)+' <small>/ '+f(p.projects_queued)+'</small>';
+    document.getElementById('pc').innerHTML=f(p.projects_cleaned)+' <small>/ '+f(p.projects_queued)+(p.projects_in_progress!=null?' · '+f(p.projects_in_progress)+' in progress':'')+'</small>';
     document.getElementById('pf').textContent=f(p.files_scanned);
     document.getElementById('pr').textContent=f(p.files_replaced);
-    document.getElementById('pw').innerHTML=f(p.coordinators_active)+' <small>boxes</small>';
+    document.getElementById('pw').innerHTML=f(p.boxes_active!=null?p.boxes_active:p.coordinators_active)+' <small>boxes</small>';
     set('b4','l4',p.projects_cleaned||0,p.projects_queued||0);
     const h=d.history||[];const svg=document.getElementById('ch');
     if(h.length>1){
