@@ -1,23 +1,23 @@
 {
- "updated": "2026-10-12T00:26:16Z",
+ "updated": "2026-10-12T00:31:16Z",
  "started": "2026-10-07T22:20:00Z",
  "models": {
   "total": 12735,
   "done": 12734,
-  "perfect": 10844,
+  "perfect": 10845,
   "acceptance_policy": {
    "id": "original_bounded_and_closed_ifc_review_2026_10_11",
    "effective": "2026-10-11T07:13:50Z",
    "definition": "PERFECT includes original full proofs, S/M proofs within 0.6% against all available IFC and STEP references, and separately recorded S/M approximate admissions within 0.6% of closed authoritative IFC geometry on every part and full-script readback. The IFC-authoritative route may fail delivered STEP limits; those comparisons and actual errors remain recorded. These admissions do not claim original full or both-reference proofs. Complete inventory, valid closed solids, execution, determinism and existing source-policy proofs remain mandatory. No source-open or missing-IFC part qualifies for the IFC-authoritative route.",
-   "geometry_review_required": 388,
-   "bounded_geometry_006": 128,
-   "bounded_source_open_parts": 1822,
+   "geometry_review_required": 389,
+   "bounded_geometry_006": 129,
+   "bounded_source_open_parts": 1864,
    "bounded_no_source_parts": 35,
    "original_fully_verified": 10456,
    "geometry_limit": 0.006,
    "bounded_by_class": {
     "S": 45,
-    "M": 83
+    "M": 84
    },
    "reviewed_ifc_authoritative_006": 260,
    "reviewed_ifc_by_class": {
@@ -36,7 +36,7 @@
   "perfect_with_kernel_faces_merged": 0,
   "perfect_with_kernel_faces_split": 46,
   "perfect_with_zero_volume_source": 2,
-  "running": 34,
+  "running": 33,
   "reruns": 7341,
   "by_class": {
    "S": {
@@ -50,7 +50,7 @@
    "M": {
     "total": 2960,
     "done": 2960,
-    "perfect": 2506,
+    "perfect": 2507,
     "size": "10-100 MB",
     "parts": 9669133,
     "parts_match": 9658342
@@ -87,7 +87,7 @@
    },
    "sds2": {
     "done": 2886,
-    "perfect": 2572
+    "perfect": 2573
    },
    "blank": {
     "done": 1114,
@@ -228,19 +228,19 @@
     "models": 48
    }
   ],
-  "several_causes": 1842,
-  "models_requiring_geometry_work": 1890,
+  "several_causes": 1841,
+  "models_requiring_geometry_work": 1889,
   "models_not_originally_verified": 2278,
   "several_top": {
    "end-to-end script fix + parametric cut / notch fix": 1044,
-   "end-to-end script fix + exact-face geometry fix": 559,
+   "end-to-end script fix + exact-face geometry fix": 558,
    "end-to-end script fix + exact-face geometry fix + parametric cut / notch fix": 125,
    "crash fixes + end-to-end script fix": 43,
    "crash fixes + end-to-end script fix + parametric cut / notch fix": 27,
    "crash fixes + end-to-end script fix + exact-face geometry fix": 25
   },
   "median_failing_parts": 5,
-  "models_with_le5_failing_parts": 956
+  "models_with_le5_failing_parts": 955
  },
  "code_versions": {
   "v9a": 4484,
@@ -271,7 +271,7 @@
  },
  "throughput_per_h": {
   "S": 0,
-  "M": 38,
+  "M": 32,
   "L": 0,
   "XL": 0,
   "XXL": 4
@@ -2247,27 +2247,32 @@
   [
    1791765000,
    12721,
-   10844
+   10845
   ],
   [
    1791765900,
    12721,
-   10844
+   10845
+  ],
+  [
+   1791766800,
+   12721,
+   10845
   ]
  ],
  "fleet": {
   "boxes": 40,
   "vcpu": 4048,
-  "load": 299,
+  "load": 280,
   "benches": 5,
   "running_by_class": {
    "S": 4,
-   "M": 19,
+   "M": 18,
    "XXL": 11
   },
   "running_by_allocation_tier": {
    "XL": 3,
-   "M": 15,
+   "M": 14,
    "XXXL": 9,
    "XXL": 6,
    "L": 1
@@ -2288,7 +2293,7 @@
     "role": "standard",
     "boxes": 6,
     "vcpu": 384,
-    "load": 17,
+    "load": 13,
     "benches": 0
    },
    {
@@ -2297,7 +2302,7 @@
     "role": "big",
     "boxes": 1,
     "vcpu": 192,
-    "load": 22,
+    "load": 27,
     "benches": 0
    },
    {
@@ -2315,7 +2320,7 @@
     "role": "standard",
     "boxes": 1,
     "vcpu": 192,
-    "load": 37,
+    "load": 33,
     "benches": 0
    },
    {
@@ -2333,7 +2338,7 @@
     "role": "standard",
     "boxes": 1,
     "vcpu": 48,
-    "load": 4,
+    "load": 5,
     "benches": 0
    },
    {
@@ -2342,7 +2347,7 @@
     "role": "standard",
     "boxes": 17,
     "vcpu": 1088,
-    "load": 20,
+    "load": 18,
     "benches": 5
    },
    {
@@ -2351,7 +2356,7 @@
     "role": "big",
     "boxes": 7,
     "vcpu": 1344,
-    "load": 142,
+    "load": 137,
     "benches": 0
    },
    {
@@ -2369,7 +2374,7 @@
     "role": "big",
     "boxes": 2,
     "vcpu": 384,
-    "load": 48,
+    "load": 38,
     "benches": 0
    }
   ]
