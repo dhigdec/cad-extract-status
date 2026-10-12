@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CAD Packaging Live</title>
+<style>
+:root{--bg:#f7f7f5;--card:#fff;--ink:#1d1d1b;--mute:#6b6b66;--line:#e3e2dc;--acc:#1f6feb;--ok:#1a7f37;--bar:#e9e8e2}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#121212;--card:#1c1c1c;--ink:#ececea;--mute:#9b9b95;--line:#2c2c2a;--acc:#58a6ff;--ok:#3fb950;--bar:#2a2a28}}
+:root[data-theme="dark"]{--bg:#121212;--card:#1c1c1c;--ink:#ececea;--mute:#9b9b95;--line:#2c2c2a;--acc:#58a6ff;--ok:#3fb950;--bar:#2a2a28}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+main{max-width:980px;margin:0 auto;padding:24px 16px 48px}
+h1{font-size:22px;margin:0 0 4px}
+.sub{color:var(--mute);font-size:13px;margin-bottom:20px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+.k{color:var(--mute);font-size:12px;text-transform:uppercase;letter-spacing:.04em}
+.v{font-size:30px;font-weight:650;margin-top:4px;font-variant-numeric:tabular-nums}
+.v small{font-size:14px;color:var(--mute);font-weight:500}
+.big .v{color:var(--acc)}
+.done .v{color:var(--ok)}
+.bars{margin-top:18px}
+.row{margin:12px 0}
+.row .lab{display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px}
+.track{height:12px;background:var(--bar);border-radius:6px;overflow:hidden}
+.fill{height:100%;background:var(--acc);border-radius:6px;transition:width .6s}
+.fill.ok{background:var(--ok)}
+svg{width:100%;height:180px;display:block}
+.note{color:var(--mute);font-size:12px;margin-top:18px}
+</style>
+</head>
+<body>
+<main>
+<h1>CAD packaging — live</h1>
+<div class="sub">Each project folder gets <b>inputs/</b> and <b>scripts/</b> (every perfect model's script folder + verify_build.py + README), alongside its original folders. Updated <span id="upd">…</span> · refreshes every minute.</div>
+<div class="grid">
+  <div class="card big"><div class="k">Models packaged</div><div class="v" id="mp">…</div></div>
+  <div class="card done"><div class="k">Projects fully done</div><div class="v" id="pd">…</div></div>
+  <div class="card"><div class="k">Projects with inputs/ + scripts/</div><div class="v" id="pis">…</div></div>
+  <div class="card"><div class="k">Projects with inputs/</div><div class="v" id="pi">…</div></div>
+</div>
+<div class="card bars">
+  <div class="row"><div class="lab"><span>Perfect models packaged</span><span id="l1"></span></div><div class="track"><div class="fill" id="b1"></div></div></div>
+  <div class="row"><div class="lab"><span>Projects fully done (inputs + all model scripts + verifier + README)</span><span id="l2"></span></div><div class="track"><div class="fill ok" id="b2"></div></div></div>
+  <div class="row"><div class="lab"><span>Projects with inputs/</span><span id="l3"></span></div><div class="track"><div class="fill" id="b3"></div></div></div>
+</div>
+<div class="card" style="margin-top:12px"><div class="k">Models packaged over time</div><svg id="ch" viewBox="0 0 900 180" preserveAspectRatio="none"></svg></div>
+<div class="note" id="note"></div>
+</main>
+<script>
+const f=n=>n==null?'–':n.toLocaleString('en-US');
+const pct=(a,b)=>b?Math.min(100,100*a/b):0;
+async function load(){
+  try{
+    const d=await (await fetch('packaging.json?t='+Date.now())).json();
+    const target=d.perfect_models||d.models_in_packaging_scope;
+    const projTarget=d.projects_with_perfect_models||d.projects;
+    document.getElementById('upd').textContent=d.updated;
+    document.getElementById('mp').innerHTML=f(d.models_packaged)+' <small>/ '+f(target)+'</small>';
+    document.getElementById('pd').innerHTML=f(d.projects_done)+' <small>/ '+f(projTarget)+'</small>';
+    document.getElementById('pis').innerHTML=f(d.projects_inputs_and_scripts)+' <small>/ '+f(d.projects)+'</small>';
+    document.getElementById('pi').innerHTML=f(d.projects_with_inputs)+' <small>/ '+f(d.projects)+'</small>';
+    const set=(b,l,a,t)=>{document.getElementById(b).style.width=pct(a,t)+'%';document.getElementById(l).textContent=f(a)+' / '+f(t)+' ('+pct(a,t).toFixed(1)+'%)'};
+    set('b1','l1',d.models_packaged,target);set('b2','l2',d.projects_done,projTarget);set('b3','l3',d.projects_with_inputs,d.projects);
+    document.getElementById('note').textContent=f(d.projects_without_perfect_models)+' of '+f(d.projects)+' projects have no perfect model yet (inputs only). Models in fully done projects: '+f(d.models_in_done_projects)+'.';
+    const h=d.history||[];const svg=document.getElementById('ch');
+    if(h.length>1){
+      const max=Math.max(target||1,...h.map(x=>x.models));
+      const pts=h.map((x,i)=>[(i/(h.length-1))*880+10,170-(x.models/max)*160]);
+      svg.innerHTML='<polyline fill="none" stroke="var(--acc)" stroke-width="2.5" points="'+pts.map(p=>p.join(',')).join(' ')+'"/>'+
+        '<line x1="10" x2="890" y1="10" y2="10" stroke="var(--line)" stroke-dasharray="4 4"/>';
+    }
+  }catch(e){document.getElementById('upd').textContent='(loading failed, retrying)'}
+}
+load();setInterval(load,60000);
+</script>
+</body>
+</html>
