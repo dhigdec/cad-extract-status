@@ -76,7 +76,8 @@ async function load(){
     document.getElementById('ago').textContent=(isNaN(mins)?'–':mins+' min ago')+' ('+d.updated+')';
     document.getElementById('chk').textContent=new Date().toLocaleTimeString();
     const dot=document.getElementById('dot'),ls=document.getElementById('lstate');dot.className='';
-    if(mins<=10){dot.classList.add('dot-ok');ls.textContent='LIVE — packaging + PII running';}
+    if(d.feed_age_s!=null&&d.feed_age_s>900){dot.classList.add('dot-bad');ls.textContent='PUBLISHING PAUSED — acceptance feed stale '+Math.round(d.feed_age_s/60)+' min (being fixed)';}
+    else if(mins<=10){dot.classList.add('dot-ok');ls.textContent='LIVE — packaging + PII running';}
     else if(mins<=30){dot.classList.add('dot-warn');ls.textContent='DELAYED — last update '+mins+' min ago';}
     else{dot.classList.add('dot-bad');ls.textContent='STALE — no update for '+mins+' min';}
     document.getElementById('mp').innerHTML=f(d.models_packaged)+' <small>/ '+f(target)+'</small>';
