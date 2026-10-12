@@ -27,12 +27,17 @@ h1{font-size:22px;margin:0 0 4px}
 .fill{height:100%;background:var(--acc);border-radius:6px;transition:width .6s}
 .fill.ok{background:var(--ok)}
 svg{width:100%;height:180px;display:block}
+.dot-ok{background:var(--ok)!important}.dot-warn{background:#d29922!important}.dot-bad{background:#cf222e!important}
 .note{color:var(--mute);font-size:12px;margin-top:18px}
 </style>
 </head>
 <body>
 <main>
 <h1>CAD packaging — live</h1>
+<div id="live" style="display:flex;gap:10px;align-items:center;margin:6px 0 4px;font-size:14px">
+  <span id="dot" style="width:10px;height:10px;border-radius:50%;background:var(--mute);display:inline-block"></span>
+  <b id="lstate">checking…</b><span class="sub" style="margin:0">· data refreshed <span id="ago">–</span> · page checked <span id="chk">–</span></span>
+</div>
 <div class="sub">Each project folder gets <b>inputs/</b> and <b>scripts/</b> (every perfect model's script folder + verify_build.py + README), alongside its original folders. Updated <span id="upd">…</span> · refreshes every minute.</div>
 <div class="grid">
   <div class="card big"><div class="k">Models packaged</div><div class="v" id="mp">…</div></div>
@@ -67,6 +72,13 @@ async function load(){
     const target=d.perfect_models||d.models_in_packaging_scope;
     const projTarget=d.projects_with_perfect_models||d.projects;
     document.getElementById('upd').textContent=d.updated;
+    const t=Date.parse(d.updated.replace(' ','T').replace('Z',':00Z'));const mins=Math.max(0,Math.round((Date.now()-t)/60000));
+    document.getElementById('ago').textContent=(isNaN(mins)?'–':mins+' min ago')+' ('+d.updated+')';
+    document.getElementById('chk').textContent=new Date().toLocaleTimeString();
+    const dot=document.getElementById('dot'),ls=document.getElementById('lstate');dot.className='';
+    if(mins<=10){dot.classList.add('dot-ok');ls.textContent='LIVE — packaging + PII running';}
+    else if(mins<=30){dot.classList.add('dot-warn');ls.textContent='DELAYED — last update '+mins+' min ago';}
+    else{dot.classList.add('dot-bad');ls.textContent='STALE — no update for '+mins+' min';}
     document.getElementById('mp').innerHTML=f(d.models_packaged)+' <small>/ '+f(target)+'</small>';
     document.getElementById('pd').innerHTML=f(d.projects_done)+' <small>/ '+f(projTarget)+'</small>';
     document.getElementById('pis').innerHTML=f(d.projects_inputs_and_scripts)+' <small>/ '+f(d.projects)+'</small>';
@@ -89,7 +101,7 @@ async function load(){
     }
   }catch(e){document.getElementById('upd').textContent='(loading failed, retrying)'}
 }
-load();setInterval(load,60000);
+load();setInterval(load,60000);setInterval(()=>{const a=document.getElementById('ago');},30000);
 </script>
 </body>
 </html>
