@@ -62,7 +62,7 @@ td.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap;paddi
     <div><div class="k">Files with PII replaced</div><div class="v" id="pr">…</div></div>
     <div><div class="k">Pipelines cleaned</div><div class="v" id="pc">…</div></div>
   </div>
-  <div class="row"><div class="lab"><span>Pipelines cleaned</span><span id="l6"></span></div><div class="track"><div class="fill ok" id="b6"></div></div></div>
+  <div class="row"><div class="lab"><span>Delivered pipelines whose drawings were cleaned (before publishing)</span><span id="l6"></span></div><div class="track"><div class="fill ok" id="b6"></div></div></div>
 </div>
 <div class="card" style="margin-top:12px">
   <div class="k">Held back for fixes, by reason (a pipeline can have several)</div>
@@ -96,8 +96,8 @@ async function load(){
     set('b4','l4',d.published,v.final?v.passed:D);set('b5','l5',d.sheet_rows,D);
     document.getElementById('pf').textContent=f(p.files_scanned);
     document.getElementById('pr').textContent=f(p.files_replaced);
-    document.getElementById('pc').innerHTML=f(p.pipelines_cleaned)+' <small>/ '+f(d.published)+'</small>';
-    set('b6','l6',p.pipelines_cleaned,d.published);
+    document.getElementById('pc').innerHTML=f(p.pipelines_cleaned)+' <small>/ '+f(D)+' delivered</small>';
+    set('b6','l6',p.pipelines_cleaned,D);
     const rs=w.by_reason||{};const keys=Object.keys(rs);
     document.getElementById('why').innerHTML=keys.length?keys.map(k=>'<tr><td>'+esc(k)+'</td><td class="n">'+f(rs[k])+'</td></tr>').join(''):'<tr><td>none yet</td><td class="n"></td></tr>';
     document.getElementById('note').textContent=d.note||'';
