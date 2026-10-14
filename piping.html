@@ -92,9 +92,9 @@ async function load(){
     document.getElementById('vp').innerHTML=f(v.passed)+' <small>/ '+f(v.checked)+'</small>';
     document.getElementById('pb').innerHTML=f(d.published)+' <small>/ '+f(v.final?v.passed:null)+'</small>';
     document.getElementById('wh').innerHTML=f(w.pipelines)+(d.adding?' <small>· '+f(d.adding)+' fixed, being added</small>':'');
+    const set=(b,l,a,t)=>{document.getElementById(b).style.width=pct(a||0,t)+'%';document.getElementById(l).textContent=f(a)+' / '+f(t)+' ('+pct(a||0,t).toFixed(1)+'%)'};
     const rv=d.reverify;document.getElementById('rvrow').style.display=rv?'':'none';
     if(rv){set('b0','l0',rv.checked,rv.total);}
-    const set=(b,l,a,t)=>{document.getElementById(b).style.width=pct(a||0,t)+'%';document.getElementById(l).textContent=f(a)+' / '+f(t)+' ('+pct(a||0,t).toFixed(1)+'%)'};
     set('b1','l1',d.restructured,D);set('b2','l2',v.checked,D);set('b3','l3',v.passed,D);
     set('b4','l4',d.published,v.final?v.passed:D);set('b5','l5',d.sheet_rows,D);
     document.getElementById('pf').textContent=f(p.files_scanned);
