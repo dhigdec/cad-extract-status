@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Piping Packaging Live</title>
+<style>
+:root{--bg:#f7f7f5;--card:#fff;--ink:#1d1d1b;--mute:#6b6b66;--line:#e3e2dc;--acc:#1f6feb;--ok:#1a7f37;--warn:#9a6700;--bar:#e9e8e2}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#121212;--card:#1c1c1c;--ink:#ececea;--mute:#9b9b95;--line:#2c2c2a;--acc:#58a6ff;--ok:#3fb950;--warn:#d29922;--bar:#2a2a28}}
+:root[data-theme="dark"]{--bg:#121212;--card:#1c1c1c;--ink:#ececea;--mute:#9b9b95;--line:#2c2c2a;--acc:#58a6ff;--ok:#3fb950;--warn:#d29922;--bar:#2a2a28}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+main{max-width:980px;margin:0 auto;padding:24px 16px 48px}
+h1{font-size:22px;margin:0 0 4px}
+.sub{color:var(--mute);font-size:13px;margin-bottom:20px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+.k{color:var(--mute);font-size:12px;text-transform:uppercase;letter-spacing:.04em}
+.v{font-size:30px;font-weight:650;margin-top:4px;font-variant-numeric:tabular-nums}
+.v small{font-size:14px;color:var(--mute);font-weight:500}
+.big .v{color:var(--acc)}
+.done .v{color:var(--ok)}
+.held .v{color:var(--warn)}
+.bars{margin-top:18px}
+.row{margin:12px 0}
+.row .lab{display:flex;justify-content:space-between;gap:12px;font-size:13px;margin-bottom:4px}
+.track{height:12px;background:var(--bar);border-radius:6px;overflow:hidden}
+.fill{height:100%;background:var(--acc);border-radius:6px;transition:width .6s}
+.fill.ok{background:var(--ok)}
+table{width:100%;border-collapse:collapse;font-size:14px;margin-top:8px}
+td{padding:6px 0;border-top:1px solid var(--line)}
+td.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap;padding-left:12px}
+.dot-ok{background:var(--ok)!important}.dot-warn{background:#d29922!important}.dot-bad{background:#cf222e!important}
+.note{color:var(--mute);font-size:12px;margin-top:18px}
+</style>
+</head>
+<body>
+<main>
+<h1>Piping packaging — live</h1>
+<div id="live" style="display:flex;gap:10px;align-items:center;margin:6px 0 4px;font-size:14px;flex-wrap:wrap">
+  <span id="dot" style="width:10px;height:10px;border-radius:50%;background:var(--mute);display:inline-block"></span>
+  <b id="lstate">checking…</b><span class="sub" style="margin:0">· data refreshed <span id="ago">–</span> · page checked <span id="chk">–</span></span>
+</div>
+<div class="sub">Smart 3D plant piping, re-laid into the steel package structure (model/, inputs/, scripts/, verification/ + package files), every pipeline rebuilt and checked by the client verifier, then PII-cleaned. Now: <b id="stage">…</b> · refreshes every minute.</div>
+<div class="grid">
+  <div class="card"><div class="k">Pipelines delivered</div><div class="v" id="dl">…</div></div>
+  <div class="card big"><div class="k">Pass client verification</div><div class="v" id="vp">…</div></div>
+  <div class="card done"><div class="k">Pipelines published</div><div class="v" id="pb">…</div></div>
+  <div class="card held"><div class="k">Held back for fixes</div><div class="v" id="wh">…</div></div>
+</div>
+<div class="card bars">
+  <div class="row"><div class="lab"><span>Re-laid into the package structure</span><span id="l1"></span></div><div class="track"><div class="fill" id="b1"></div></div></div>
+  <div class="row"><div class="lab"><span>Checked by the client verifier (rebuild + model + database + drawing + joints)</span><span id="l2"></span></div><div class="track"><div class="fill" id="b2"></div></div></div>
+  <div class="row"><div class="lab"><span>Passed every check</span><span id="l3"></span></div><div class="track"><div class="fill ok" id="b3"></div></div></div>
+  <div class="row"><div class="lab"><span>Published to the dataset</span><span id="l4"></span></div><div class="track"><div class="fill ok" id="b4"></div></div></div>
+  <div class="row"><div class="lab"><span>Listed in the piping sheet</span><span id="l5"></span></div><div class="track"><div class="fill ok" id="b5"></div></div></div>
+</div>
+<div class="card" style="margin-top:12px">
+  <div class="k">PII cleaning (drawings + database records, AWS)</div>
+  <div class="grid" style="margin-top:10px">
+    <div><div class="k">Files scanned</div><div class="v" id="pf">…</div></div>
+    <div><div class="k">Files with PII replaced</div><div class="v" id="pr">…</div></div>
+    <div><div class="k">Pipelines cleaned</div><div class="v" id="pc">…</div></div>
+  </div>
+  <div class="row"><div class="lab"><span>Pipelines cleaned</span><span id="l6"></span></div><div class="track"><div class="fill ok" id="b6"></div></div></div>
+</div>
+<div class="card" style="margin-top:12px">
+  <div class="k">Held back for fixes, by reason (a pipeline can have several)</div>
+  <table id="why"><tr><td>…</td><td class="n"></td></tr></table>
+</div>
+<div class="note" id="note"></div>
+</main>
+<script>
+const f=n=>n==null?'–':Number(n).toLocaleString('en-US');
+const pct=(a,b)=>b?Math.min(100,100*a/b):0;
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+async function load(){
+  try{
+    const d=await (await fetch('piping.json?t='+Date.now())).json();
+    const t=Date.parse(d.updated.replace(' ','T').replace('Z',':00Z'));const mins=Math.max(0,Math.round((Date.now()-t)/60000));
+    document.getElementById('ago').textContent=(isNaN(mins)?'–':mins+' min ago')+' ('+d.updated+')';
+    document.getElementById('chk').textContent=new Date().toLocaleTimeString();
+    document.getElementById('stage').textContent=d.stage||'–';
+    const dot=document.getElementById('dot'),ls=document.getElementById('lstate');dot.className='';
+    if(d.feed_age_s!=null&&d.feed_age_s>900&&!d.finished){dot.classList.add('dot-warn');ls.textContent='WAITING — no progress report for '+Math.round(d.feed_age_s/60)+' min';}
+    else if(mins<=10){dot.classList.add('dot-ok');ls.textContent=d.finished?'DONE — up to date':'LIVE — running';}
+    else if(mins<=30){dot.classList.add('dot-warn');ls.textContent='DELAYED — last update '+mins+' min ago';}
+    else{dot.classList.add('dot-bad');ls.textContent='STALE — no update for '+mins+' min';}
+    const D=d.delivered||0,v=d.verify||{},p=d.pii||{},w=d.withheld||{};
+    document.getElementById('dl').textContent=f(D);
+    document.getElementById('vp').innerHTML=f(v.passed)+' <small>/ '+f(v.checked)+'</small>';
+    document.getElementById('pb').innerHTML=f(d.published)+' <small>/ '+f(v.final?v.passed:null)+'</small>';
+    document.getElementById('wh').textContent=f(w.pipelines);
+    const set=(b,l,a,t)=>{document.getElementById(b).style.width=pct(a||0,t)+'%';document.getElementById(l).textContent=f(a)+' / '+f(t)+' ('+pct(a||0,t).toFixed(1)+'%)'};
+    set('b1','l1',d.restructured,D);set('b2','l2',v.checked,D);set('b3','l3',v.passed,D);
+    set('b4','l4',d.published,v.final?v.passed:D);set('b5','l5',d.sheet_rows,D);
+    document.getElementById('pf').textContent=f(p.files_scanned);
+    document.getElementById('pr').textContent=f(p.files_replaced);
+    document.getElementById('pc').innerHTML=f(p.pipelines_cleaned)+' <small>/ '+f(d.published)+'</small>';
+    set('b6','l6',p.pipelines_cleaned,d.published);
+    const rs=w.by_reason||{};const keys=Object.keys(rs);
+    document.getElementById('why').innerHTML=keys.length?keys.map(k=>'<tr><td>'+esc(k)+'</td><td class="n">'+f(rs[k])+'</td></tr>').join(''):'<tr><td>none yet</td><td class="n"></td></tr>';
+    document.getElementById('note').textContent=d.note||'';
+  }catch(e){document.getElementById('stage').textContent='(loading failed, retrying)'}
+}
+load();setInterval(load,60000);
+</script>
+</body>
+</html>
