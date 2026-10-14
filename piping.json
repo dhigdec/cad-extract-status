@@ -3,21 +3,29 @@
  "delivered": 4406,
  "restructured": 4406,
  "verify": {
-  "checked": 663,
-  "passed": 663,
-  "failed": 0,
-  "final": false
+  "checked": 4406,
+  "passed": 4259,
+  "failed": 147,
+  "final": true
  },
- "withheld": null,
- "published": null,
+ "withheld": {
+  "pipelines": 147,
+  "by_reason": {
+   "connection point": 10,
+   "drawing": 103,
+   "joint gap": 28,
+   "pipe bends, built straight (several bends or no database bend point)": 127
+  }
+ },
+ "published": 4259,
  "pii": {
   "files_scanned": 17624,
   "files_replaced": 4418,
   "pipelines_cleaned": 4406
  },
- "sheet_rows": null,
+ "sheet_rows": 4406,
  "finished": null,
- "note": "STEP rewrite: done, 4406 models \u00b7 PII: replaced 4406 left as is 13218",
- "updated": "2026-10-14 21:28Z",
- "feed_age_s": 26
+ "note": "re-verifying the whole package with the fixed pipelines added: 1579 checked, 1579 passed",
+ "updated": "2026-10-14 21:29Z",
+ "feed_age_s": 7
 }
