@@ -83,7 +83,8 @@ async function load(){
     document.getElementById('chk').textContent=new Date().toLocaleTimeString();
     document.getElementById('stage').textContent=d.stage||'–';
     const dot=document.getElementById('dot'),ls=document.getElementById('lstate');dot.className='';
-    if(d.feed_age_s!=null&&d.feed_age_s>900&&!d.finished){dot.classList.add('dot-warn');ls.textContent='WAITING — no progress report for '+Math.round(d.feed_age_s/60)+' min';}
+    if(d.finished){dot.classList.add('dot-ok');ls.textContent='DONE — final (last update '+d.updated+')';}
+    else if(d.feed_age_s!=null&&d.feed_age_s>900&&!d.finished){dot.classList.add('dot-warn');ls.textContent='WAITING — no progress report for '+Math.round(d.feed_age_s/60)+' min';}
     else if(mins<=10){dot.classList.add('dot-ok');ls.textContent=d.finished?'DONE — up to date':'LIVE — running';}
     else if(mins<=30){dot.classList.add('dot-warn');ls.textContent='DELAYED — last update '+mins+' min ago';}
     else{dot.classList.add('dot-bad');ls.textContent='STALE — no update for '+mins+' min';}
