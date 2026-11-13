@@ -1,0 +1,39 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>v7 Runs Tracker</title><style>
+:root{--bg:#f5f6f8;--panel:#fff;--ink:#17202a;--mute:#5f6b78;--line:#e1e5ea;--accent:#2f5bd3;--ok:#1b7f3b;--okbg:#e5f4ea;
+--bad:#b4232a;--badbg:#fbe9ea;--run:#0b6b8a;--runbg:#e3f2f8;--warn:#9a5b00;--warnbg:#fdf1de;--chip:#eef1f5;color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#0f1318;--panel:#161c23;--ink:#e7ecf1;--mute:#97a3b0;--line:#27313c;
+--accent:#7aa2ff;--ok:#4cc26e;--okbg:#14301e;--bad:#ff6b6b;--badbg:#3a1a1c;--run:#4fc3e8;--runbg:#11303b;--warn:#f0b04a;--warnbg:#3a2c12;--chip:#1f2730;color-scheme:dark}}
+*{box-sizing:border-box}body{background:var(--bg);color:var(--ink);font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;margin:0}
+.wrap{max-width:1180px;margin:0 auto;padding:22px 16px 50px}h1{font-size:24px;margin:0 0 4px}h2{font-size:17px;margin:30px 0 10px}
+.sub{color:var(--mute)}.box{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin:14px 0}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin:14px 0}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.card h3{margin:0;font-size:16px}.card .eff{color:var(--mute);font-size:13px}
+.big{font-size:30px;font-weight:700;margin:6px 0 2px;font-variant-numeric:tabular-nums}.big small{font-size:15px;color:var(--mute);font-weight:500}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:2px 12px;font-size:13px;margin-top:8px}.kv span{color:var(--mute)}
+.tbl{overflow-x:auto;background:var(--panel);border:1px solid var(--line);border-radius:12px}
+table{border-collapse:collapse;width:100%}th,td{padding:9px 11px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{font-size:12px;color:var(--mute);font-weight:600;background:var(--panel)}tr:last-child td{border-bottom:none}
+.b{display:inline-block;min-width:64px;text-align:center;padding:3px 8px;border-radius:8px;font-size:12.5px;font-weight:600;margin:2px 3px 2px 0;font-variant-numeric:tabular-nums}
+.s-ok{background:var(--okbg);color:var(--ok)}.s-bad{background:var(--badbg);color:var(--bad)}.s-run{background:var(--runbg);color:var(--run)}
+.s-warn{background:var(--warnbg);color:var(--warn)}.s-mute{background:var(--chip);color:var(--mute)}
+.bar{height:6px;background:var(--chip);border-radius:3px;width:130px;margin-top:5px;overflow:hidden}.bar i{display:block;height:100%;background:var(--accent)}
+.chip{display:inline-block;background:var(--chip);border-radius:6px;padding:0 6px;font-size:12px;color:var(--mute);margin-top:3px}
+.tname{font-weight:600}.small{font-size:12.5px;color:var(--mute)}.legend span.b{min-width:0}
+details{margin-top:8px}summary{cursor:pointer;font-weight:600}
+</style><script>setTimeout(function(){location.replace(location.pathname+"?t="+Date.now())},60000)</script></head><body><div class="wrap">
+<h1>FreeCAD GUI benchmark: five new rebuild tasks (v7)</h1>
+<div class="sub">Updated 13 Nov 2026, 21:10 UTC · this page refreshes itself every minute</div>
+<div class="box">Each run gives an AI model a real steel model with some pieces removed, plus the fabricator's drawings of those pieces. The model must rebuild the missing pieces in the FreeCAD desktop app using only the mouse and keyboard (no scripting), in exactly the right place, then save and export. <b>0 of 5 rebuild tasks published × 3 models × 3 attempts = 0 runs</b> of GPT-6.1 Sol, Claude Opus 5.5 and Gemini 4 Argon (all high thinking), up to 1500 steps each, no time limit. Score 0 to 1: <b>1.0 = solved</b> (every part within 1/16 in, every hole right, nothing else moved). These five tasks extend the 47-task benchmark, with the same setup as its runs: a task joins the benchmark when some model solves at most 1 of its 3 attempts. Each task's runs start as soon as it passes its final checks.</div>
+<div class="box"><b>Batch status</b><br>Tasks being built (13 Nov, 21:10 UTC). Each task&#x27;s 9 runs start as soon as it passes its final checks.<br>v7r04 rooftop dunnage roof frame: task built, answer-key gate running.<br>v7r01 tee-topped girders, v7r03 ceiling-corner mixed frame, v7r05 window girt frame with sag rod: inputs generated, drawings in progress.<br>v7r02 and v7r06 (backup): choosing candidates whose drawings match the model.</div>
+<div class="cards">
+<div class="card"><h3>GPT-6.1 Sol</h3><div class="eff">thinking: high</div><div class="big">0 <small>solved of 0 finished</small></div><div class="kv"><span>Finished</span><b>0 of 0</b><span>Running now</span><b>0</b><span>Average score</span><b>—</b><span>Median steps (finished)</span><b>—</b><span>Model spend so far</span><b>$0</b></div></div>
+<div class="card"><h3>Claude Opus 5.5</h3><div class="eff">thinking: high</div><div class="big">0 <small>solved of 0 finished</small></div><div class="kv"><span>Finished</span><b>0 of 0</b><span>Running now</span><b>0</b><span>Average score</span><b>—</b><span>Median steps (finished)</span><b>—</b><span>Model spend so far</span><b>$0</b></div></div>
+<div class="card"><h3>Gemini 4 Argon</h3><div class="eff">thinking: high</div><div class="big">0 <small>solved of 0 finished</small></div><div class="kv"><span>Finished</span><b>0 of 0</b><span>Running now</span><b>0</b><span>Average score</span><b>—</b><span>Median steps (finished)</span><b>—</b><span>Model spend so far</span><b>$0</b></div></div>
+</div>
+<h2>Every attempt at a glance</h2><div class="tbl"><table><tr><th>Task</th><th>GPT-6.1 Sol <span class="small">(high)</span></th><th>Claude Opus 5.5 <span class="small">(high)</span></th><th>Gemini 4 Argon <span class="small">(high)</span></th></tr>
+</table></div>
+<div class="legend small" style="margin-top:8px">Badges, one per attempt (1, 2, 3): <span class="b s-ok">✓ 1.0 solved</span> <span class="b s-bad">0.45</span> finished with that score · <span class="b s-run">312 steps</span> working · <span class="b s-warn">grading</span> finished, being scored · <span class="b s-warn">312 · waiting</span> no reply from the model for 15+ min (a hung request is retried automatically) · <span class="b s-mute">starting</span> setting up · <span class="b s-bad">check</span> needs a look (no step for over 40 min)</div>
+<h2>Details</h2>
+<div class="box small"><b>How to read this.</b> A run ends when the model says it is done or reaches 1500 steps. If FreeCAD or the harness crashes, that try is set aside (saved) and the run restarts from scratch; it is not scored. The score is 1.0 when every missing part is rebuilt in place within 1/16 in with every hole right and the given model untouched; otherwise 0.9 × the share of parts right. "What went wrong" lists the grader's diagnosis for the parts that failed (for example: part missing, shifted, turned, wrong shape, holes, clash with existing steel). Each run is recorded in full: desktop video, every screenshot, the model's reply and its reasoning-token count at every step (OpenAI's API returns Sol's reasoning as a token count only).</div>
+</div></body></html>
